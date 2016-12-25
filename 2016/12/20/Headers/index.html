@@ -6,8 +6,8 @@
 
 <head>
   <!-- 代码块的高亮 -->
-  <link rel="stylesheet" href="/Users/hc/HChong3210.github.io/themes/fexo/src/styles/tomorrow-night.css"></link>
-  <script src="//cdn.bootcss.com/highlight.js/9.9.0/highlight.min.js"></script>
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
 
   <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
@@ -22,55 +22,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="高亮,代码,测试," />
+    <meta name="keywords" content="测试,高亮,代码," />
   
 
-  <meta name="description" content="我想测试一下#import &amp;quot;SMSTempletCell.h&amp;quot;
+  <meta name="description" content="我想测试一下//
+//  Created by dasheng on 2016/11/29.
+//  Copyright © 2016年 zt. All rights reserved.
+//
 
-@interface SMSTempletCell(){
-
-    __weak IBOutlet UILabel *message;
-    __weak IBOutlet UIButton *deleteButton;
-}
-
-@end
-
-@implementation SMSTempletCell
-
-- (">
+#import &amp;quot;DFCSaleRemindReselectSaleVC.h&amp;quot;
+#import &amp;quot;DFCCRMHttpNewManager.h&amp;quot;
+#import &amp;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="我的第二篇文章">
 <meta property="og:url" content="http://hchong.net/2016/12/20/Headers/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="我想测试一下#import &amp;quot;SMSTempletCell.h&amp;quot;
+<meta property="og:description" content="我想测试一下//
+//  Created by dasheng on 2016/11/29.
+//  Copyright © 2016年 zt. All rights reserved.
+//
 
-@interface SMSTempletCell(){
-
-    __weak IBOutlet UILabel *message;
-    __weak IBOutlet UIButton *deleteButton;
-}
-
-@end
-
-@implementation SMSTempletCell
-
-- (">
-<meta property="og:updated_time" content="2016-12-20T15:29:31.000Z">
+#import &amp;quot;DFCSaleRemindReselectSaleVC.h&amp;quot;
+#import &amp;quot;DFCCRMHttpNewManager.h&amp;quot;
+#import &amp;">
+<meta property="og:updated_time" content="2016-12-21T12:59:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="我的第二篇文章">
-<meta name="twitter:description" content="我想测试一下#import &amp;quot;SMSTempletCell.h&amp;quot;
+<meta name="twitter:description" content="我想测试一下//
+//  Created by dasheng on 2016/11/29.
+//  Copyright © 2016年 zt. All rights reserved.
+//
 
-@interface SMSTempletCell(){
-
-    __weak IBOutlet UILabel *message;
-    __weak IBOutlet UIButton *deleteButton;
-}
-
-@end
-
-@implementation SMSTempletCell
-
-- (">
+#import &amp;quot;DFCSaleRemindReselectSaleVC.h&amp;quot;
+#import &amp;quot;DFCCRMHttpNewManager.h&amp;quot;
+#import &amp;">
 
   
 
@@ -265,40 +250,367 @@
 
   <div class="article-content">
     
-      <h1 id="我想测试一下"><a href="#我想测试一下" class="headerlink" title="我想测试一下"></a>我想测试一下</h1><pre><code class="objc">#import &quot;SMSTempletCell.h&quot;
+      <h1 id="我想测试一下"><a href="#我想测试一下" class="headerlink" title="我想测试一下"></a>我想测试一下</h1><pre><code>//
+//  Created by dasheng on 2016/11/29.
+//  Copyright © 2016年 zt. All rights reserved.
+//
 
-@interface SMSTempletCell(){
+#import &quot;DFCSaleRemindReselectSaleVC.h&quot;
+#import &quot;DFCCRMHttpNewManager.h&quot;
+#import &quot;NSUserDefaults+SafeAccess.h&quot;
+#import &quot;NSDictionary+SafeAccess.h&quot;
+#import &quot;DFCProgressHUD.h&quot;
+#import &quot;DFCRefreshTableVC+EmptyConfig.h&quot;
+#import &quot;DFCMacros.h&quot;
+#import &quot;DFCCRMSalersVO.h&quot;
+#import &quot;UIView+SCCLayout.h&quot;
+#import &quot;DFCColorFontLibrary.h&quot;
+#import &quot;Masonry.h&quot;
+#import &quot;UIViewController+DFCCustomBar.h&quot;
+#import &quot;DFCSaleRemindNotificationVC.h&quot;
+#import &quot;NSArray+SafeAccess.h&quot;
+#import &quot;DFCLog.h&quot;
 
-    __weak IBOutlet UILabel *message;
-    __weak IBOutlet UIButton *deleteButton;
+#pragma mark - def
+
+@interface DFCSaleRemindReselectSaleVC (){
+
+    NSInteger _selectIndex;
+
+    BOOL      _isNotification;
 }
+
+@property (nonatomic, strong) NSMutableArray *dataArray;
+@property (nonatomic, strong) UIButton       *doneButton;
+@property (nonatomic, strong) UIView         *topView;
+@property (nonatomic, strong) UIButton       *selectButton;
+@property (nonatomic, strong) UILabel        *titleLabel;
+@property (nonatomic, strong) UILabel        *notifiLabel;
+@property (nonatomic, strong) UIImageView    *arrowImageView;
+
+@property (nonatomic, strong) UILabel        *sectionLabel;
 
 @end
 
-@implementation SMSTempletCell
+@implementation DFCSaleRemindReselectSaleVC
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-       self = LoadNibWithName([[SMSTempletCell class] description]);
+#pragma mark - Life Cycle
+- (void)viewDidLoad{
+
+    [super viewDidLoad];
+
+    self.title = @&quot;选择销售&quot;;
+    _selectIndex = -1;
+    _isNotification = YES;
+    [self uiConfig];
+    [self refreshHeader];
+}
+
+- (void)dealloc{
+
+
+}
+
+#pragma mark - Private Methon
+
+- (void)uiConfig{
+
+    [self addBarRightButtons:@[self.doneButton]];
+    self.doneButton.enabled = NO;
+
+    self.tbView.frame = CGRectMake(0, 107, [DFCMacros deviceSize].width, [DFCMacros deviceSize].height - 107);
+    self.tbView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.tbView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
+    [self.view addSubview:self.topView];
+    [self.topView addSubview:self.selectButton];
+    [self.topView addSubview:self.sectionLabel];
+    [self.selectButton addSubview:self.notifiLabel];
+    [self.selectButton addSubview:self.titleLabel];
+    [self.selectButton addSubview:self.arrowImageView];
+
+    [self.topView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).offset(64);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@107);
+    }];
+
+    [self.selectButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.topView).offset(16);
+        make.left.equalTo(self.topView);
+        make.right.equalTo(self.topView);
+        make.height.equalTo(@44);
+    }];
+
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.selectButton).offset(16);
+        make.centerY.equalTo(self.selectButton);
+    }];
+
+    [self.notifiLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.arrowImageView.mas_left).offset(-10);
+        make.centerY.equalTo(self.selectButton);
+    }];
+
+    [self.arrowImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.selectButton).offset(-16);
+        make.centerY.equalTo(self.selectButton);
+        make.width.equalTo(@9.5);
+        make.height.equalTo(@16);
+    }];
+
+    [self.sectionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.selectButton.mas_bottom).offset(20);
+        make.left.equalTo(self.view).offset(16);
+    }];
+}
+
+#pragma mark - NetWork Request
+
+- (void)loadNewData{
+
+    [super loadNewData];
+
+    [self requstSalerList];
+}
+
+- (void)requstSalerList{
+
+    NSDictionary *parameter = @{
+                                    @&quot;shopCode&quot;: [[NSUserDefaults dfc_dictionaryForKey:DFC_User_Dic] dfc_stringForKey:@&quot;store&quot;]
+                                };
+
+    [DFCCRMHttpNewManager getShopSalersListWithParameter:parameter callBack:^(id data, DFCHttpStatus status) {
+
+        [self endRefreshHeader];
+        if (status == DFCHttpSuccess) {
+            [self addEmptyDelegate:self requestSuccess:YES];
+            self.dataArray = [DFCCRMSalersVO arrayOfModelsFromDictionaries:data error:nil];
+            [self.tbView reloadData];
+        }else if(status == DFCHttpFaild){
+
+            [self addEmptyDelegate:self requestSuccess:NO];
+            [DFCProgressHUD delayDisplayHUDWithType:SCProgressHudType_Error enableUserInteraction:YES msg:data];
+        }
+    }];
+}
+
+#pragma mark - Event Response
+
+- (void)doneButtonAction{
+
+    DFCCRMSalersVO *salersVO = [self.dataArray objectAtIndex:_selectIndex];
+
+    NSMutableString *ids = [@&quot;&quot; mutableCopy];
+    for (int i = 0; i&lt;[_selectIdArray count]; i++) {
+        if (i == [_selectIdArray count] - 1) {
+            [ids appendString:FormatStr(@&quot;%@&quot;,[_selectIdArray dfc_stringWithIndex:i])];
+        }else{
+            [ids appendString:FormatStr(@&quot;%@,&quot;,[_selectIdArray dfc_stringWithIndex:i])];
+        }
     }
-    return self;
+
+    NSDictionary *parameter = @{
+                                @&quot;belongSales&quot;: salersVO.salerId,
+                                @&quot;ids&quot;:ids,
+                                @&quot;isProduceChance&quot;:@(_isNotification)
+                                };
+
+    [DFCProgressHUD show];
+    [DFCCRMHttpNewManager changeToNewSalerWithParameter:parameter callBack:^(id data, DFCHttpStatus status) {
+
+        [DFCProgressHUD dismiss];
+        if (status == DFCHttpSuccess) {
+            [self redistributionMsg:_selectIdArray.count isNotification:_isNotification];
+
+            NSMutableArray *viewControllers = [[self.navigationController viewControllers] mutableCopy];
+            NSInteger index = [viewControllers indexOfObject:self];
+            if (index&gt;=2) {
+                [viewControllers removeObjectAtIndex:index - 1];
+                [self.navigationController setViewControllers:viewControllers];
+            }
+            [self.navigationController popViewControllerAnimated:YES];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [DFCProgressHUD showTextWithStatus:FormatStr(@&quot;已分配%ld名客户给%@&quot;,[_selectIdArray count],salersVO.salerName)];
+            });
+
+        }else if(status == DFCHttpFaild){
+
+            [DFCProgressHUD delayDisplayHUDWithType:SCProgressHudType_Error enableUserInteraction:YES msg:data];
+        }
+    }];
+}
+
+- (void)selectButtonAction{
+
+    DFCSaleRemindNotificationVC *notificationVC = [[DFCSaleRemindNotificationVC alloc] init];
+    notificationVC.isNotification = _isNotification;
+    notificationVC.callBack = ^(BOOL isNotifi){
+        if (isNotifi) {
+            _isNotification = YES;
+            self.notifiLabel.text = @&quot;通知&quot;;
+        }else{
+            _isNotification = NO;
+            self.notifiLabel.text = @&quot;不通知&quot;;
+        }
+    };
+    [self.navigationController pushViewController:notificationVC animated:YES];
+}
+
+//埋点
+- (void)redistributionMsg:(NSInteger)count isNotification:(BOOL)isNotification{
+    [DFCLog log:@&quot;过期回访提醒列表－重新分配－点击完成-是否通知到销售新商机&quot;];
+}
+
+#pragma mark - Delegate Or DataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+
+    return self.dataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (self.dataArray.count == 0) {
+        return [self frameZeroCell];
+    }
+
+    static NSString *CellIdentifier = @&quot;DFCSaleRemindReselectCell&quot;;
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                             reuseIdentifier:CellIdentifier];
+        if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+            cell.layoutMargins = UIEdgeInsetsZero;
+        }
+        cell.separatorInset = UIEdgeInsetsZero;
+    }
+    DFCCRMSalersVO *salersVO = [self.dataArray objectAtIndex:indexPath.row];
+    cell.tintColor = [DFCColorFontLibrary DFC_COLOR_Primary];
+    cell.textLabel.text = salersVO.salerName;
+    cell.textLabel.font = [DFCColorFontLibrary DFC_FONT_P2];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+    if (indexPath.row == _selectIndex) {
+
+        cell.textLabel.textColor = [DFCColorFontLibrary DFC_COLOR_Primary];
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }else{
+
+        cell.textLabel.textColor = [DFCColorFontLibrary DFC_COLOR_Black1];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+
+    return cell;
 }
 
 
-- (IBAction)deleteAction:(id)sender {
-    if ([self.delegate respondsToSelector:@selector(SMSTempletCell:deleteButtonClicked:)]) {
-        [self.delegate SMSTempletCell:self deleteButtonClicked:sender];
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    if (self.dataArray.count == 0) {
+        return 0;
+    }
+
+    return 44;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    if (indexPath.row &lt; [self.dataArray count]) {
+
+        _selectIndex = indexPath.row;
+        _doneButton.enabled = YES;
+        [self.tbView reloadData];
     }
 }
 
-- (void)fillMessage:(NSString*)msg cellIndex:(NSInteger)index{
-    message.text = msg;
-    deleteButton.tag = index;
+#pragma mark - Getter and Setter
+
+- (UIView *)topView{
+
+    if (!_topView) {
+
+        _topView = [[UIView alloc] init];
+        _topView.backgroundColor = [DFCColorFontLibrary DFC_COLOR_Gray3];
+    }
+    return _topView;
 }
+
+- (UIButton *)selectButton{
+
+    if (!_selectButton) {
+
+        _selectButton = [[UIButton alloc] init];
+        [_selectButton addTarget:self action:@selector(selectButtonAction) forControlEvents:UIControlEventTouchUpInside];
+        _selectButton.backgroundColor = [DFCColorFontLibrary DFC_COLOR_White1];
+    }
+    return _selectButton;
+}
+
+
+- (UILabel *)titleLabel{
+
+    if (!_titleLabel) {
+
+        _titleLabel = [[UILabel alloc] init];
+        _titleLabel.font = [DFCColorFontLibrary DFC_FONT_P2];
+        _titleLabel.textColor = [DFCColorFontLibrary DFC_COLOR_Black1];
+        _titleLabel.text = @&quot;通知到销售的新商机&quot;;
+    }
+    return _titleLabel;
+}
+
+- (UILabel *)notifiLabel{
+
+    if (!_notifiLabel) {
+
+        _notifiLabel = [[UILabel alloc] init];
+        _notifiLabel.font = [DFCColorFontLibrary DFC_FONT_P2];
+        _notifiLabel.textColor = [DFCColorFontLibrary DFC_COLOR_Black1];
+        _notifiLabel.text = @&quot;通知&quot;;
+    }
+    return _notifiLabel;
+}
+
+- (UIImageView *)arrowImageView{
+
+    if (!_arrowImageView) {
+
+        _arrowImageView = [[UIImageView alloc] init];
+        [_arrowImageView setImage:[UIImage imageNamed:@&quot;setting_entry&quot;]];
+    }
+    return _arrowImageView;
+}
+
+- (UILabel *)sectionLabel{
+
+    if (!_sectionLabel) {
+
+        _sectionLabel = [[UILabel alloc] init];
+        _sectionLabel.font = [DFCColorFontLibrary DFC_FONT_P2];
+        _sectionLabel.textColor = [DFCColorFontLibrary DFC_COLOR_Black3];
+        _sectionLabel.text = @&quot;选择要通知的销售&quot;;
+    }
+    return _sectionLabel;
+}
+
+- (UIButton *)doneButton {
+    if (!_doneButton) {
+        _doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _doneButton.backgroundColor = [UIColor clearColor];
+        [_doneButton addTarget:self action:@selector(doneButtonAction) forControlEvents:UIControlEventTouchUpInside];
+        _doneButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+        _doneButton.titleLabel.font = [DFCColorFontLibrary DFC_FONT_S2WithBold:YES];
+        [_doneButton setTitle:@&quot;完成&quot; forState:UIControlStateNormal];
+        [_doneButton setTitleColor:[DFCColorFontLibrary DFC_COLOR_C1] forState:UIControlStateNormal];
+        [_doneButton setTitleColor:[DFCColorFontLibrary DFC_COLOR_Gray1] forState:UIControlStateDisabled];
+        _doneButton.frame = CGRectMake(0, 0, 60, 44);
+    }
+    return _doneButton;
+}
+
 @end
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>你好啊</p>
 <hr>
 <p>这是一个测试</p>
