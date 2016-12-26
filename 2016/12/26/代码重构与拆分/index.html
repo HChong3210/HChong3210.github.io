@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 
-  <html class="light page-archives">
+  <html class="light page-post">
 
 
 <head>
@@ -17,23 +17,33 @@
 
   <meta charset="utf-8">
   
-  <title>Archives | 我的博客地址</title>
+  <title>代码重构与拆分 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+    <meta name="keywords" content="重构,拆分," />
   
 
-  <meta name="description" content="这是一个描述">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我的博客地址">
-<meta property="og:url" content="http://hchong.net/archives/index.html">
+  <meta name="description" content="代码的重构与拆分最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.
+实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.
+
+重构: 具体某一块代码的重新设计, 可以是业务模块,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码重构与拆分">
+<meta property="og:url" content="http://hchong.net/2016/12/26/代码重构与拆分/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这是一个描述">
+<meta property="og:description" content="代码的重构与拆分最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.
+实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.
+
+重构: 具体某一块代码的重新设计, 可以是业务模块,">
+<meta property="og:updated_time" content="2016-12-26T14:29:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我的博客地址">
-<meta name="twitter:description" content="这是一个描述">
+<meta name="twitter:title" content="代码重构与拆分">
+<meta name="twitter:description" content="代码的重构与拆分最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.
+实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.
+
+重构: 具体某一块代码的重新设计, 可以是业务模块,">
 
   
 
@@ -79,17 +89,8 @@
     <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
   
 
-  <div class="content content-archive">
-  <div class="page-header">
-
-  
-    <div class="breadcrumb">
-      <div class="location">博客</div>
-      <i class="icon-location"></i>
-    </div>
-  
-
-  
+  <div class="post-header CENTER">
+   
   <div class="toolbox">
     <a class="toolbox-entry" href="/">
       <span class="toolbox-entry-text">戳我</span>
@@ -179,67 +180,85 @@
   </div>
 
 
-
-  <div class="box-blog-info">
-    <a class="avatar" href="/">
-      <img src="/images/avatar.jpg" alt="" />
-    </a>
-    <div class="info">
-      <h3 class="name" style="font-family: calligraffittiregular">
-        HChong
-      </h3>
-      <div class="slogan">
-        Find the bug of the world
-      </div>
-    </div>
-  </div>
-
 </div>
 
 
-  <div class="post-list-box archive-body">
-    <ul class="list-post">  <li class="item-year item item-title item-title-1">
-    <a href="/archives/2016" class="text-year">
-      2016
-      <i class="icon-hou"></i>
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#代码的重构与拆分"><span class="toc-text">代码的重构与拆分</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-代码重构与拆分" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">代码重构与拆分</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.12.26</span>
+      </span>
+
       
-    </a>
-  </li>
-<li class="item-post item">
-  <span class="post-date">12-26</span>
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
 
-  
-  <a class="post-title" href="/2016/12/26/代码重构与拆分/">代码重构与拆分</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">12-21</span>
-
-  
-  <a class="post-title" href="/2016/12/21/hexo常见问题/">hexo常见问题</a>
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/架构/">架构</a>
+  </span>
 
 
-</li>
-<li class="item-post item">
-  <span class="post-date">08-16</span>
 
-  
-  <a class="post-title" href="/2016/08/16/hello-world/">Hello World</a>
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2016/12/26/代码重构与拆分/#disqus_thread"></a>
+        </span>
+      
 
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
 
-</li>
-</ul>
-  </div>
+      
+      
+    </div>
+  </header>
 
-  <div class="archive-footer">
+  <div class="article-content">
     
+      <h1 id="代码的重构与拆分"><a href="#代码的重构与拆分" class="headerlink" title="代码的重构与拆分"></a><strong>代码的重构与拆分</strong></h1><p>最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.</p>
+<p>实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.</p>
+<ul>
+<li>重构: 具体某一块代码的重新设计, 可以是业务模块, 也可能是功能模块. 目的是为了使代码能够更好的符合当前业务的发展要求, 新代码的加入不至于使得新的的开发者难以维护.</li>
+<li>拆分: 整体项目的架构, 降低代码的耦合性, 使得团队中的成员协作使用起来更加容易.</li>
+</ul>
+<p>不管重构还是拆分, 都是为了让代码能够跟上业务发展的水平, 不至于变得一团乱麻, 让团队之间的协作开发更加有效.</p>
 
+    
   </div>
+</article>
+
 </div>
 
 
 
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
 
 
 
@@ -338,6 +357,40 @@
 </div>
 
 
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2016/12/26/代码重构与拆分/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
 
   
 
