@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>常见的代码&quot;坏味道&quot; | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="重构,架构," />
+  
+
+  <meta name="description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长. 
+重复代码坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见的代码"坏味道"">
+<meta property="og:url" content="http://hchong.net/2016/12/28/常见的代码坏味道/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长. 
+重复代码坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会">
+<meta property="og:updated_time" content="2016-12-28T15:07:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常见的代码"坏味道"">
+<meta name="twitter:description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长. 
+重复代码坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/atom.xml"
+            rel="noopener noreferrer"
+            target="_blank"
+            >
+            RSS
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#常见的代码”坏味道”"><span class="toc-text">常见的代码”坏味道”</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#重复代码"><span class="toc-text">重复代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过长函数-Long-Method"><span class="toc-text">过长函数(Long Method)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过大的类-Large-Class"><span class="toc-text">过大的类(Large Class)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过长参数列-Long-Parameter-List"><span class="toc-text">过长参数列(Long Parameter List)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发散式变化-Divergent-Change"><span class="toc-text">发散式变化(Divergent Change)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#霰弹式修改-Shotgun-Surgery"><span class="toc-text">霰弹式修改(Shotgun Surgery)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#依恋情结-Feature-Envy"><span class="toc-text">依恋情结(Feature Envy)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据泥团-Data-Clumps"><span class="toc-text">数据泥团(Data Clumps)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本类型偏执-Primitive-Obsession"><span class="toc-text">基本类型偏执(Primitive Obsession)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Switch-惊悚现身-Switch-Statements"><span class="toc-text">Switch 惊悚现身(Switch Statements)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平行继承体系-Parallel-Inheritance-Hierarchies"><span class="toc-text">平行继承体系(Parallel Inheritance Hierarchies)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#冗赘类-Lazy-Class"><span class="toc-text">冗赘类(Lazy Class)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#夸夸其谈未来性-Speculative-Generatlity"><span class="toc-text">夸夸其谈未来性(Speculative Generatlity)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#令人迷惑的暂时字段-Temporary-Field"><span class="toc-text">令人迷惑的暂时字段(Temporary Field)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过度耦合的消息链-Message-Chains"><span class="toc-text">过度耦合的消息链(Message Chains)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中间人-Middle-Man"><span class="toc-text">中间人(Middle Man)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#狎昵关系-Inappropriate-Intimacy"><span class="toc-text">狎昵关系(Inappropriate Intimacy)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#异曲同工的类-AlertNative-Classes-with-Different-Interfaces"><span class="toc-text">异曲同工的类(AlertNative Classes with Different Interfaces)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不完美的库类-Incomplete-Library-Class"><span class="toc-text">不完美的库类(Incomplete Library Class)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#纯稚的数据类-Data-Class"><span class="toc-text">纯稚的数据类(Data Class)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#被拒绝的遗赠-Refused-Bequest"><span class="toc-text">被拒绝的遗赠(Refused Bequest)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过多的注释-COmments"><span class="toc-text">过多的注释(COmments)</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-常见的代码坏味道" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">常见的代码&quot;坏味道&quot;</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.12.28</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/架构/">架构</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2016/12/28/常见的代码坏味道/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h1 id="常见的代码”坏味道”"><a href="#常见的代码”坏味道”" class="headerlink" title="常见的代码”坏味道”"></a><strong>常见的代码”坏味道”</strong></h1><p>正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&lt;重构- 改善既有代码的设计&gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.<br>见贤思齐, 耗时把感想记录下来, 督促自己的成长. </p>
+<h2 id="重复代码"><a href="#重复代码" class="headerlink" title="重复代码"></a><em>重复代码</em></h2><p>坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会使得代码变得更好.</p>
+<ol>
+<li>最单纯的Duplicated Code就是”同一个类的两个函数有相同的表达式”, 解决办法就是:</li>
+</ol>
+<blockquote>
+<p>采用Extract Method(提炼函数)提炼出重复的代码, 然后这两个地方都调用提炼出来的那一段代码.</p>
+</blockquote>
+<h2 id="过长函数-Long-Method"><a href="#过长函数-Long-Method" class="headerlink" title="过长函数(Long Method)"></a><strong>过长函数(Long Method)</strong></h2><h2 id="过大的类-Large-Class"><a href="#过大的类-Large-Class" class="headerlink" title="过大的类(Large Class)"></a><strong>过大的类(Large Class)</strong></h2><h2 id="过长参数列-Long-Parameter-List"><a href="#过长参数列-Long-Parameter-List" class="headerlink" title="过长参数列(Long Parameter List)"></a><strong>过长参数列(Long Parameter List)</strong></h2><h2 id="发散式变化-Divergent-Change"><a href="#发散式变化-Divergent-Change" class="headerlink" title="发散式变化(Divergent Change)"></a><strong>发散式变化(Divergent Change)</strong></h2><h2 id="霰弹式修改-Shotgun-Surgery"><a href="#霰弹式修改-Shotgun-Surgery" class="headerlink" title="霰弹式修改(Shotgun Surgery)"></a><strong>霰弹式修改(Shotgun Surgery)</strong></h2><h2 id="依恋情结-Feature-Envy"><a href="#依恋情结-Feature-Envy" class="headerlink" title="依恋情结(Feature Envy)"></a><strong>依恋情结(Feature Envy)</strong></h2><h2 id="数据泥团-Data-Clumps"><a href="#数据泥团-Data-Clumps" class="headerlink" title="数据泥团(Data Clumps)"></a><strong>数据泥团(Data Clumps)</strong></h2><h2 id="基本类型偏执-Primitive-Obsession"><a href="#基本类型偏执-Primitive-Obsession" class="headerlink" title="基本类型偏执(Primitive Obsession)"></a><strong>基本类型偏执(Primitive Obsession)</strong></h2><h2 id="Switch-惊悚现身-Switch-Statements"><a href="#Switch-惊悚现身-Switch-Statements" class="headerlink" title="Switch 惊悚现身(Switch Statements)"></a><strong>Switch 惊悚现身(Switch Statements)</strong></h2><h2 id="平行继承体系-Parallel-Inheritance-Hierarchies"><a href="#平行继承体系-Parallel-Inheritance-Hierarchies" class="headerlink" title="平行继承体系(Parallel Inheritance Hierarchies)"></a><strong>平行继承体系(Parallel Inheritance Hierarchies)</strong></h2><h2 id="冗赘类-Lazy-Class"><a href="#冗赘类-Lazy-Class" class="headerlink" title="冗赘类(Lazy Class)"></a><strong>冗赘类(Lazy Class)</strong></h2><h2 id="夸夸其谈未来性-Speculative-Generatlity"><a href="#夸夸其谈未来性-Speculative-Generatlity" class="headerlink" title="夸夸其谈未来性(Speculative Generatlity)"></a><strong>夸夸其谈未来性(Speculative Generatlity)</strong></h2><h2 id="令人迷惑的暂时字段-Temporary-Field"><a href="#令人迷惑的暂时字段-Temporary-Field" class="headerlink" title="令人迷惑的暂时字段(Temporary Field)"></a><strong>令人迷惑的暂时字段(Temporary Field)</strong></h2><h2 id="过度耦合的消息链-Message-Chains"><a href="#过度耦合的消息链-Message-Chains" class="headerlink" title="过度耦合的消息链(Message Chains)"></a><strong>过度耦合的消息链(Message Chains)</strong></h2><h2 id="中间人-Middle-Man"><a href="#中间人-Middle-Man" class="headerlink" title="中间人(Middle Man)"></a><strong>中间人(Middle Man)</strong></h2><h2 id="狎昵关系-Inappropriate-Intimacy"><a href="#狎昵关系-Inappropriate-Intimacy" class="headerlink" title="狎昵关系(Inappropriate Intimacy)"></a><strong>狎昵关系(Inappropriate Intimacy)</strong></h2><h2 id="异曲同工的类-AlertNative-Classes-with-Different-Interfaces"><a href="#异曲同工的类-AlertNative-Classes-with-Different-Interfaces" class="headerlink" title="异曲同工的类(AlertNative Classes with Different Interfaces)"></a><strong>异曲同工的类(AlertNative Classes with Different Interfaces)</strong></h2><h2 id="不完美的库类-Incomplete-Library-Class"><a href="#不完美的库类-Incomplete-Library-Class" class="headerlink" title="不完美的库类(Incomplete Library Class)"></a><strong>不完美的库类(Incomplete Library Class)</strong></h2><h2 id="纯稚的数据类-Data-Class"><a href="#纯稚的数据类-Data-Class" class="headerlink" title="纯稚的数据类(Data Class)"></a><strong>纯稚的数据类(Data Class)</strong></h2><h2 id="被拒绝的遗赠-Refused-Bequest"><a href="#被拒绝的遗赠-Refused-Bequest" class="headerlink" title="被拒绝的遗赠(Refused Bequest)"></a><strong>被拒绝的遗赠(Refused Bequest)</strong></h2><h2 id="过多的注释-COmments"><a href="#过多的注释-COmments" class="headerlink" title="过多的注释(COmments)"></a><strong>过多的注释(COmments)</strong></h2>
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/atom.xml"
+              rel="noopener noreferrer"
+              target="_blank"
+              >
+              RSS
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2016/12/28/常见的代码坏味道/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
