@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长. 
 重复代码坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会">
-<meta property="og:updated_time" content="2017-01-03T15:02:14.000Z">
+<meta property="og:updated_time" content="2017-01-03T15:06:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见的代码"坏味道"">
 <meta name="twitter:description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长. 
@@ -233,14 +233,20 @@
   <div class="article-content">
     
       <h1 id="常见的代码”坏味道”"><a href="#常见的代码”坏味道”" class="headerlink" title="常见的代码”坏味道”"></a><strong>常见的代码”坏味道”</strong></h1><p>正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&lt;重构- 改善既有代码的设计&gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.<br>见贤思齐, 耗时把感想记录下来, 督促自己的成长. </p>
-<h2 id="重复代码"><a href="#重复代码" class="headerlink" title="重复代码"></a><em>重复代码</em></h2><p>坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会使得代码变得更好.</p>
+<h2 id="重复代码"><a href="#重复代码" class="headerlink" title="重复代码"></a><strong>重复代码</strong></h2><p>坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会使得代码变得更好.</p>
 <ol>
-<li>最单纯的Duplicated Code就是”同一个类的两个函数有相同的表达式”, 解决办法就是:<em>采用Extract Method(提炼函数)提炼出重复的代码, 然后这两个地方都调用提炼出来的那一段代码</em>.</li>
-<li>两个互为兄弟的子类内包含相同的表达式, 解决办法就是:<ul>
+<li><p>最单纯的Duplicated Code就是”同一个类的两个函数有相同的表达式”, 解决办法就是:</p>
+<ul>
+<li>采用Extract Method(提炼函数)提炼出重复的代码, 然后这两个地方都调用提炼出来的那一段代码.</li>
+</ul>
+</li>
+<li><p>两个互为兄弟的子类内包含相同的表达式, 解决办法就是:</p>
+<ul>
 <li>对两个类都是用Extract Method(提炼函数), 再对提炼出来的代码使用Pull Up Method(函数上移)</li>
 <li>如果代码只是类似而不完全相同, 那就要先使用Extract Method(提炼函数)将相似和差异的代码分隔开, 构造成一个单独的函数, 然后再<em>塑造模板函数</em></li>
-<li>如果两个毫不相关的类出现Duplicated Code, 应该把重复代码提炼到一个独立类中, 然后再另一个类中使用这个新类</li>
 </ul>
+</li>
+<li><p>如果两个毫不相关的类出现Duplicated Code, 应该把重复代码提炼到一个独立类中, 然后再另一个类中使用这个新类</p>
 </li>
 </ol>
 <blockquote>
