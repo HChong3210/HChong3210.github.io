@@ -17,33 +17,45 @@
 
   <meta charset="utf-8">
   
-  <title>代码重构与拆分 | 我的博客地址</title>
+  <title>属性的修饰符解析 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="重构,拆分," />
+    <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="代码的重构与拆分最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.
-实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.
+  <meta name="description" content="属性的修饰符解析属性的修饰符
+线程安全的: atomic, nonatomic 
+访问权限的: readonly， readwrite 
+内存管理（ARC）: assign，strong，weak，copy 
+内存管理（MRC）:assign， retain，copy 
+指定方法名称: setter= getter=
 
-重构: 对软件内部结构的一种调整, 目的是在不改变软">
+weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
 <meta property="og:type" content="article">
-<meta property="og:title" content="代码重构与拆分">
-<meta property="og:url" content="http://hchong.net/2016/12/26/代码重构与拆分/index.html">
+<meta property="og:title" content="属性的修饰符解析">
+<meta property="og:url" content="http://hchong.net/2016/09/16/属性的修饰符解析/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="代码的重构与拆分最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.
-实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.
+<meta property="og:description" content="属性的修饰符解析属性的修饰符
+线程安全的: atomic, nonatomic 
+访问权限的: readonly， readwrite 
+内存管理（ARC）: assign，strong，weak，copy 
+内存管理（MRC）:assign， retain，copy 
+指定方法名称: setter= getter=
 
-重构: 对软件内部结构的一种调整, 目的是在不改变软">
-<meta property="og:updated_time" content="2016-12-27T15:25:11.000Z">
+weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
+<meta property="og:updated_time" content="2017-02-16T11:21:07.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="代码重构与拆分">
-<meta name="twitter:description" content="代码的重构与拆分最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.
-实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.
+<meta name="twitter:title" content="属性的修饰符解析">
+<meta name="twitter:description" content="属性的修饰符解析属性的修饰符
+线程安全的: atomic, nonatomic 
+访问权限的: readonly， readwrite 
+内存管理（ARC）: assign，strong，weak，copy 
+内存管理（MRC）:assign， retain，copy 
+指定方法名称: setter= getter=
 
-重构: 对软件内部结构的一种调整, 目的是在不改变软">
+weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
 
   
 
@@ -185,20 +197,20 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#代码的重构与拆分"><span class="toc-text">代码的重构与拆分</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#属性的修饰符解析"><span class="toc-text">属性的修饰符解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性的修饰符"><span class="toc-text">属性的修饰符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#weak-amp-assign"><span class="toc-text">weak & assign</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#copy关键字的使用"><span class="toc-text">copy关键字的使用</span></a></li></ol></li></ol>
   </div>
 
 
 
 <div class="content content-post CENTER">
-   <article id="post-代码重构与拆分" class="article article-type-post" itemprop="blogPost">
+   <article id="post-属性的修饰符解析" class="article article-type-post" itemprop="blogPost">
   <header class="article-header">
-    <h1 class="post-title">代码重构与拆分</h1>
+    <h1 class="post-title">属性的修饰符解析</h1>
 
     <div class="article-meta">
       <span>
         <i class="icon-calendar"></i>
-        <span>2016.12.26</span>
+        <span>2016.09.16</span>
       </span>
 
       
@@ -209,17 +221,12 @@
       
 
       
-  <span class="article-category">
-    <i class="icon-list"></i>
-    <a class="article-category-link" href="/categories/架构/">架构</a>
-  </span>
-
 
 
       
         <span>
           <i class="icon-comment"></i>
-          <a href="http://www.hchong.net/2016/12/26/代码重构与拆分/#disqus_thread"></a>
+          <a href="http://www.hchong.net/2016/09/16/属性的修饰符解析/#disqus_thread"></a>
         </span>
       
 
@@ -238,15 +245,37 @@
 
   <div class="article-content">
     
-      <h1 id="代码的重构与拆分"><a href="#代码的重构与拆分" class="headerlink" title="代码的重构与拆分"></a><strong>代码的重构与拆分</strong></h1><p>最近项目中有一块代码, 几经人手, 流落到我这里. 代码的业务逻辑十分复杂, 而且随着业务的扩张, 被不同的人加入而不同风格的代码, 最初的架构已经不适合现有业务的发展了, 维护起来也是相当的困难. 于是, 我就走上了重构和拆分之路.</p>
-<p>实际上来讲, 重构和拆分是两个不同的概念, 但是又都是相辅相成, 下面我简单讲一下我的理解.</p>
-<blockquote>
-<p>重构: 对软件内部结构的一种调整, 目的是在不改变软件可观察行为的前提下, 提高其可理解性, 降低其修改成本.</p>
-</blockquote>
+      <h1 id="属性的修饰符解析"><a href="#属性的修饰符解析" class="headerlink" title="属性的修饰符解析"></a>属性的修饰符解析</h1><h2 id="属性的修饰符"><a href="#属性的修饰符" class="headerlink" title="属性的修饰符"></a>属性的修饰符</h2><ol>
+<li>线程安全的: atomic, nonatomic </li>
+<li>访问权限的: readonly， readwrite </li>
+<li>内存管理（ARC）: assign，strong，weak，copy </li>
+<li>内存管理（MRC）:assign， retain，copy </li>
+<li>指定方法名称: setter= getter=</li>
+</ol>
+<h2 id="weak-amp-assign"><a href="#weak-amp-assign" class="headerlink" title="weak &amp; assign"></a>weak &amp; assign</h2><p>assign修饰基本数据类型和结构体, weak修饰一个对象</p>
+<hr>
+<p>assign修饰的对象编译时会产生一个警告:Assigning retained object to unsafe_unretained variable; object will be released after assignment(Assign修饰的对象无法被保留). 并且在释放之后指针的地址还是存在的, 也就是说指针并没有被置为nil, 造成野指针. 对象分配一般分配在堆上的某块内存(详见<a href="">内存分配</a>), 如果在后续的内存分配中, 刚好分到了这块地址, 程序就会导致EXC_BAD_ACCESS(调用已释放的内存空间)崩溃掉.</p>
+<p>assign修饰的基本数据类型或者结构体因为技术数据类型和结构体一般分配在栈上, 栈的内存会由系统自己自动处理, 不会造成野指针.</p>
+<hr>
+<p>weak修饰的对象在释放之后, 指针会被置为nil, 所以一般弱引用指的就是用weak.</p>
+<p>weak主要使用在以下两个方面:</p>
 <ul>
-<li>拆分: 整体项目的架构, 降低代码的耦合性, 使得团队中的成员协作使用起来更加容易.</li>
+<li>在ARC下, 有可能出现循环引用的地方, 比如delegate<br><code>@property (nonatomic, weak) id XXXDelegate;</code></li>
+<li>自身已经被强引用过一次, 比如xib文件汇总的属性<br><code>@property (nonatomic, weak) IBOutlet UIButton *button;</code></li>
 </ul>
-<p>不管重构还是拆分, 都是为了让代码能够跟上业务发展的水平, 不至于变得一团乱麻, 让团队之间的协作开发更加有效.</p>
+<hr>
+<h2 id="copy关键字的使用"><a href="#copy关键字的使用" class="headerlink" title="copy关键字的使用"></a>copy关键字的使用</h2><p>copy和strong一样都会使引用计数加1, 但是strong是两个指针指向同一个内训地址, copy则会在内存里拷贝一份对象, 两个指针指向不同的内存地址.</p>
+<p>copy关键字主要有以下使用场景:</p>
+<ul>
+<li>不确定赋值过程中用的是可变还是不可变的变量. 例如NSString, NSArray, NSDictionary等等常使用关键字copy, 因为他们有对应的可变类型.<a href="">关于copy和strong的详解</a></li>
+<li>block也经常使用copy关键字. 用copy修饰block时要知道是在ARC还是MRC.<ul>
+<li>ARC下只要block访问了外部局部变量, block就会放到堆区里面, 使用strong或者copy都可以, 但是strong的性能可能会更好.</li>
+<li>MRC下, 如果block访问外部局部变量, block是在栈区的. 如果block访问了一个整个APP生命周期都存在的变量, 那他肯定在全局区. 只有使用copy属性才能把block放到堆区.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>参考内容:<br>1.<a href="http://www.jianshu.com/p/3e0f12e5faaa" target="_blank" rel="external">@property 关键字的区别详解</a><br>2.<a href="http://bihongbo.com/2014/05/20/IOSassignandweak/" target="_blank" rel="external">iOS开发中ARC下的assign和weak区别</a><br>3.<a href="http://www.jianshu.com/p/3aa1c650a967" target="_blank" rel="external">整理一下OC中的那些属性修饰符</a><br>4.<a href="http://blog.csdn.net/qq_32744055/article/details/53443805" target="_blank" rel="external">@property 后面可以有哪些修饰符</a></p>
 
     
   </div>
@@ -372,7 +401,7 @@
   <script>
     var disqus_shortname = 'forsigner';
     
-    var disqus_url = 'http://hchong.net/2016/12/26/代码重构与拆分/';
+    var disqus_url = 'http://hchong.net/2016/09/16/属性的修饰符解析/';
     
     (function(){
       var dsq = document.createElement('script');
