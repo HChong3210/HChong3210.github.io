@@ -32,7 +32,10 @@
 内存管理（MRC）:assign， retain，copy 
 指定方法名称: setter= getter=
 
-weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
+
+默认的修饰符是:
+
+基本数据类型使用atomic, readwrite, a">
 <meta property="og:type" content="article">
 <meta property="og:title" content="属性的修饰符解析">
 <meta property="og:url" content="http://hchong.net/2016/09/16/属性的修饰符解析/index.html">
@@ -44,8 +47,11 @@ weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
 内存管理（MRC）:assign， retain，copy 
 指定方法名称: setter= getter=
 
-weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
-<meta property="og:updated_time" content="2017-02-20T10:00:15.000Z">
+
+默认的修饰符是:
+
+基本数据类型使用atomic, readwrite, a">
+<meta property="og:updated_time" content="2017-02-21T09:44:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="属性的修饰符解析">
 <meta name="twitter:description" content="属性的修饰符解析属性的修饰符
@@ -55,7 +61,10 @@ weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
 内存管理（MRC）:assign， retain，copy 
 指定方法名称: setter= getter=
 
-weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
+
+默认的修饰符是:
+
+基本数据类型使用atomic, readwrite, a">
 
   
 
@@ -196,7 +205,7 @@ weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#属性的修饰符解析"><span class="toc-text">属性的修饰符解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性的修饰符"><span class="toc-text">属性的修饰符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#weak-amp-assign"><span class="toc-text">weak & assign</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#copy关键字的使用"><span class="toc-text">copy关键字的使用</span></a></li></ol></li></ol>
   </div>
 
@@ -257,9 +266,15 @@ weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
 <li>内存管理（MRC）:assign， retain，copy </li>
 <li>指定方法名称: setter= getter=</li>
 </ol>
+<hr>
+<p>默认的修饰符是:</p>
+<ul>
+<li>基本数据类型使用<code>atomic</code>, <code>readwrite</code>, <code>assign</code>.</li>
+<li>对于普通的Objective-C对象使用<code>atomic</code>, <code>readwrite</code>, <code>strong</code>.</li>
+</ul>
 <h2 id="weak-amp-assign"><a href="#weak-amp-assign" class="headerlink" title="weak &amp; assign"></a>weak &amp; assign</h2><p>assign修饰基本数据类型和结构体, weak修饰一个对象</p>
 <hr>
-<p>assign修饰的对象编译时会产生一个警告:Assigning retained object to unsafe_unretained variable; object will be released after assignment(Assign修饰的对象无法被保留). 并且在释放之后指针的地址还是存在的, 也就是说指针并没有被置为nil, 造成野指针. 对象分配一般分配在堆上的某块内存(详见<a href="http://hchong.net/2017/09/18/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">内存分配</a>), 如果在后续的内存分配中, 刚好分到了这块地址, 程序就会导致EXC_BAD_ACCESS(调用已释放的内存空间)崩溃掉.</p>
+<p>assign修饰的对象编译时会产生一个警告:Assigning retained object to unsafe_unretained variable; object will be released after assignment(Assign修饰的对象无法被保留). 并且在释放之后指针的地址还是存在的, 也就是说指针并没有被置为nil, 造成野指针. 对象分配一般分配在堆上的某块内存(详见<a href="http://hchong.net/2016/09/18/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">内存分配</a>), 如果在后续的内存分配中, 刚好分到了这块地址, 程序就会导致EXC_BAD_ACCESS(调用已释放的内存空间)崩溃掉.</p>
 <p>assign修饰的基本数据类型或者结构体因为技术数据类型和结构体一般分配在栈上, 栈的内存会由系统自己自动处理, 不会造成野指针.</p>
 <hr>
 <p>weak修饰的对象在释放之后, 指针会被置为nil, 所以一般弱引用指的就是用weak.</p>
@@ -303,7 +318,7 @@ weak &amp;amp; assignassign修饰基本数据类型和结构体, we">
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
