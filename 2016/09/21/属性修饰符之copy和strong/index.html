@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>属性修饰符之copy和strong | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="属性修饰符之copy和strong深浅拷贝在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说: 浅复制就是指针拷贝, 深复制就是内容拷贝.
+盗图两张:
+
+关于copy和mutableCopycopy就是复制了一个imutable对象, mutable">
+<meta property="og:type" content="article">
+<meta property="og:title" content="属性修饰符之copy和strong">
+<meta property="og:url" content="http://hchong.net/2016/09/21/属性修饰符之copy和strong/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="属性修饰符之copy和strong深浅拷贝在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说: 浅复制就是指针拷贝, 深复制就是内容拷贝.
+盗图两张:
+
+关于copy和mutableCopycopy就是复制了一个imutable对象, mutable">
+<meta property="og:image" content="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png">
+<meta property="og:updated_time" content="2017-02-23T11:34:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="属性修饰符之copy和strong">
+<meta name="twitter:description" content="属性修饰符之copy和strong深浅拷贝在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说: 浅复制就是指针拷贝, 深复制就是内容拷贝.
+盗图两张:
+
+关于copy和mutableCopycopy就是复制了一个imutable对象, mutable">
+<meta name="twitter:image" content="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/atom.xml"
+            rel="noopener noreferrer"
+            target="_blank"
+            >
+            RSS
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#属性修饰符之copy和strong"><span class="toc-text">属性修饰符之copy和strong</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#深浅拷贝"><span class="toc-text">深浅拷贝</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关于copy和mutableCopy"><span class="toc-text">关于copy和mutableCopy</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#系统的非容器类对象"><span class="toc-text">系统的非容器类对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#系统的容器类对象"><span class="toc-text">系统的容器类对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#容器类对象的完全深复制"><span class="toc-text">容器类对象的完全深复制</span></a></li></ol></li></ol></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-属性修饰符之copy和strong" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">属性修饰符之copy和strong</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.09.21</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2016/09/21/属性修饰符之copy和strong/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h1 id="属性修饰符之copy和strong"><a href="#属性修饰符之copy和strong" class="headerlink" title="属性修饰符之copy和strong"></a>属性修饰符之copy和strong</h1><h2 id="深浅拷贝"><a href="#深浅拷贝" class="headerlink" title="深浅拷贝"></a>深浅拷贝</h2><p>在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.<br>浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说: <strong>浅复制就是指针拷贝, 深复制就是内容拷贝.</strong></p>
+<p>盗图两张:</p>
+<p><img src="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png" alt="浅复制和深复制"></p>
+<h3 id="关于copy和mutableCopy"><a href="#关于copy和mutableCopy" class="headerlink" title="关于copy和mutableCopy"></a>关于copy和mutableCopy</h3><p><code>copy</code>就是复制了一个imutable对象, <code>mutableCopy</code>就是富孩子了一个mutable对象.</p>
+<p>一个<code>NSObject</code>对象要想使用这两个函数, 必须实现<code>NSCopying</code>协议和<code>NSMutableCopying</code>协议, 并且分别实现<code>- (id)copyWithZone:(nullable NSZone *)zone;</code>和<code>- (id)mutableCopyWithZone:(nullable NSZone *)zone;</code>方法.但是常见的<code>NSString</code>, <code>NSArray</code>, <code>NADictionary</code>等常用的系统提供的结构体都已经实现. </p>
+<h4 id="系统的非容器类对象"><a href="#系统的非容器类对象" class="headerlink" title="系统的非容器类对象"></a>系统的非容器类对象</h4><p>这里指的是<code>NSString</code>, <code>NSNumber</code>等等一类的对象.下面以<code>NSString</code>为例.</p>
+<p>对<code>NSString</code>进行copy和mutableCop操作:</p>
+<pre><code class="objective-c">NSString *originString = @&quot;origin&quot;;
+NSString *originStringCopy = [originString copy];
+NSMutableString *originStringMutableCopy = [originString mutableCopy];
+NSLog(@&quot;%p, %p, %p&quot;, originString, originStringCopy, originStringMutableCopy);
+</code></pre>
+<p>内存地址分别是:</p>
+<pre><code class="objective-c">(lldb) p originString
+(__NSCFConstantString *) $0 = 0x0000000108dd8190 @&quot;origin&quot;
+(lldb) p originStringCopy
+(__NSCFConstantString *) $1 = 0x0000000108dd8190 @&quot;origin&quot;
+(lldb) p originStringMutableCopy
+(__NSCFString *) $2 = 0x0000608000262800 @&quot;origin&quot;
+</code></pre>
+<hr>
+<p>对<code>NSMutableString</code>进行copy和mutableCopy操作:</p>
+<pre><code class="objective-c">NSMutableString *mutableOriginString = [NSMutableString stringWithString:@&quot;mutableOrigin&quot;];
+NSString *mutableOriginStringCopy = [mutableOriginString copy];
+NSMutableString *mutableOriginStringMutableCopy = [mutableOriginString mutableCopy];
+</code></pre>
+<p>内存地址分别是:</p>
+<pre><code class="objective-c">(lldb) p mutableOriginString
+(__NSCFString *) $0 = 0x000060800026aa40 @&quot;mutableOrigin&quot;
+(lldb) p mutableOriginStringCopy
+(__NSCFString *) $1 = 0x0000608000222340 @&quot;mutableOrigin&quot;
+(lldb) p mutableOriginStringMutableCopy
+(__NSCFString *) $2 = 0x000060800026a700 @&quot;mutableOrigin&quot;
+</code></pre>
+<p>这里要注意的是:</p>
+<pre><code class="objective-c">NSMutableString *mutableOriginStringCopy = [mutableOriginString copy];
+[mutableOriginStringCopy appendString:@&quot;123&quot;];
+</code></pre>
+<p>这样写是会crash的, 因为copy生成的是imutable对象, 不管声明是什么样的, 依旧是imutable的.</p>
+<p><strong>综上, 对于系统的非容器类对象:</strong></p>
+<ul>
+<li><strong>如果对一不可变对象复制, copy是指针复制(浅复制), mutableCopy是内容复制(深复制).</strong></li>
+<li><strong>如果对一可变对象复制, 都是深复制, 但是copy返回的对象是不可变的.</strong></li>
+</ul>
+<h4 id="系统的容器类对象"><a href="#系统的容器类对象" class="headerlink" title="系统的容器类对象"></a>系统的容器类对象</h4><p>容器类对象指的是<code>NSArray</code>, <code>NSDictionary</code>, <code>NSSet</code>等系统提供的结构体, 下面以<code>NSArray</code>为例.</p>
+<p>对<code>NSArray</code>进行copy操作:</p>
+<pre><code class="objective-c">NSArray *originArray = [NSArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;,nil];
+NSArray *originArrayCopy = [originArray copy];
+NSMutableArray *originArrayMutableCopy = [originArray mutableCopy];
+for (NSInteger i = 0; i &lt; originArray.count; i++) {
+    NSLog(@&quot;originArray--%p&quot;, originArray[i]);
+    NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);
+    NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);
+}
+</code></pre>
+<p>内存地址分别是:</p>
+<pre><code class="objective-c">(lldb) p originArray
+(__NSArrayI *) $0 = 0x00006080002405a0 @&quot;3 elements&quot;
+(lldb) p originArrayCopy
+(__NSArrayI *) $1 = 0x00006080002405a0 @&quot;3 elements&quot;
+(lldb) p originArrayMutableCopy
+(__NSArrayM *) $2 = 0x00006080002403c0 @&quot;3 elements&quot;
+</code></pre>
+<p>可以看出, copy是浅复制, mutableCopy是深复制. 需要注意的是,mutableCopy的对象是一个可变对象,  数组内元素全都是浅复制.</p>
+<hr>
+<p>对<code>NSMutableArray</code>进行copy和mutableCopy操作:</p>
+<pre><code class="objective-c">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];
+NSArray *originArrayCopy = [originArray copy];
+NSMutableArray *originArrayMutableCopy = [originArray mutableCopy];
+for (NSInteger i = 0; i &lt; originArray.count; i++) {
+    NSLog(@&quot;originArray--%p&quot;, originArray[i]);
+    NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);
+    NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);
+}
+</code></pre>
+<p>打印内存地址如下:</p>
+<pre><code class="objective-c">(lldb) p originArray
+(__NSArrayM *) $0 = 0x000060800005eae0 @&quot;3 elements&quot;
+(lldb) p originArrayCopy
+(__NSArrayI *) $1 = 0x000060800005e9f0 @&quot;3 elements&quot;
+(lldb) p originArrayMutableCopy
+(__NSArrayM *) $2 = 0x000060800005e900 @&quot;3 elements&quot;
+</code></pre>
+<p>可以发现可以看出, copy是浅复制, mutableCopy是深复制. 数组内元素都是浅复制.</p>
+<p>需要注意的是, mutable对象copy的对象是imutable对象, 如果当做可变对象来用是会崩溃的.</p>
+<pre><code class="objective-c">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];
+NSMutableArray *originArrayCopy1 = [originArray copy];
+[originArrayCopy1 addObject:@&quot;d&quot;];//crash
+</code></pre>
+<p>综上, 对于容器类对象:</p>
+<ul>
+<li><strong>如果对一不可变对象复制, copy是指针复制(浅复制), mutableCopy是内容复制(深复制).</strong></li>
+<li><strong>如果对一可变对象复制, 都是深复制, 但是copy返回的对象是不可变的.</strong></li>
+<li><strong>元素对象是浅复制.</strong></li>
+</ul>
+<h4 id="容器类对象的完全深复制"><a href="#容器类对象的完全深复制" class="headerlink" title="容器类对象的完全深复制"></a>容器类对象的完全深复制</h4><p>对于容器类对象而言, 元素对象始终是浅复制, 要想深复制可通过如下方法:</p>
+<pre><code class="objective-c">NSArray *array = [NSArray arrayWithObjects:[NSMutableString stringWithString:@&quot;a&quot;],[NSString stringWithString:@&quot;b&quot;],@&quot;c&quot;,nil];
+NSArray *deepCopyArray=[[NSArray alloc] initWithArray: array copyItems: YES];
+NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject: array]];
+</code></pre>
+<p>打印元素内存地址可以发现, trueDeepCopyArray的元素都是深复制, 而deepCopyArray由于第一个元素是可变对象, 所以是深复制, 其他的元素都是浅复制.</p>
+<p><strong>综上, 要想实现容器对象所有元素的深复制, 只能通过归档来实现.</strong></p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/atom.xml"
+              rel="noopener noreferrer"
+              target="_blank"
+              >
+              RSS
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2016/09/21/属性修饰符之copy和strong/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
