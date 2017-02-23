@@ -51,7 +51,7 @@
 默认的修饰符是:
 
 基本数据类型使用atomic, readwrite, a">
-<meta property="og:updated_time" content="2017-02-21T09:44:02.000Z">
+<meta property="og:updated_time" content="2017-02-23T13:31:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="属性的修饰符解析">
 <meta name="twitter:description" content="属性的修饰符解析属性的修饰符
@@ -287,7 +287,7 @@
 <h2 id="copy关键字的使用"><a href="#copy关键字的使用" class="headerlink" title="copy关键字的使用"></a>copy关键字的使用</h2><p>copy和strong一样都会使引用计数加1, 但是strong是两个指针指向同一个内训地址, copy则会在内存里拷贝一份对象, 两个指针指向不同的内存地址.</p>
 <p>copy关键字主要有以下使用场景:</p>
 <ul>
-<li>不确定赋值过程中用的是可变还是不可变的变量. 例如NSString, NSArray, NSDictionary等等常使用关键字copy, 因为他们有对应的可变类型.<a href="">关于copy和strong的详解</a></li>
+<li>不确定赋值过程中用的是可变还是不可变的变量. 例如NSString, NSArray, NSDictionary等等常使用关键字copy, 因为他们有对应的可变类型.<a href="http://hchong.net/2016/09/21/%E5%B1%9E%E6%80%A7%E4%BF%AE%E9%A5%B0%E7%AC%A6%E4%B9%8Bcopy%E5%92%8Cstrong/">关于copy和strong的详解</a></li>
 <li>block也经常使用copy关键字. 用copy修饰block时要知道是在ARC还是MRC.<ul>
 <li>ARC下只要block访问了外部局部变量, block就会放到堆区里面, 使用strong或者copy都可以, 但是strong的性能可能会更好.</li>
 <li>MRC下, 如果block访问外部局部变量, block是在栈区的. 如果block访问了一个整个APP生命周期都存在的变量, 那他肯定在全局区. 只有使用copy属性才能把block放到堆区.</li>
