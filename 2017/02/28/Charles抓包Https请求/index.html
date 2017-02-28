@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>Charles抓包Https请求 | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="逆向,安全,Charles," />
+  
+
+  <meta name="description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包.
+安装Charles这个纯属占坑(废话).
+抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手.
+查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:
+
+可以在网络偏好设置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Charles抓包Https请求">
+<meta property="og:url" content="http://hchong.net/2017/02/28/Charles抓包Https请求/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包.
+安装Charles这个纯属占坑(废话).
+抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手.
+查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:
+
+可以在网络偏好设置">
+<meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fd5z8oku1vj311a0lwgpb.jpg">
+<meta property="og:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fd65kx0mjhj308c0eft9q.jpg">
+<meta property="og:image" content="https://ww4.sinaimg.cn/large/006tKfTcgy1fd65mobyrjj30b40jrq3k.jpg">
+<meta property="og:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fd65mo3y0aj30b40jrmxm.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tKfTcgy1fd607vw0k6j30pk094gmj.jpg">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1552510-461959c476a2d9d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1552510-8c43e95be0a35b5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fd60jpjcgvj30nx094my0.jpg">
+<meta property="og:image" content="https://ww4.sinaimg.cn/large/006tKfTcgy1fd60l2cz81j30nz06t3yl.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tKfTcgy1fd65rnpokjj30b40jrgly.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tKfTcgy1fd60zndgejj30gj0cb0st.jpg">
+<meta property="og:updated_time" content="2017-02-28T06:27:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Charles抓包Https请求">
+<meta name="twitter:description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包.
+安装Charles这个纯属占坑(废话).
+抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手.
+查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:
+
+可以在网络偏好设置">
+<meta name="twitter:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fd5z8oku1vj311a0lwgpb.jpg">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Charles抓包HTTPS请求"><span class="toc-text">Charles抓包HTTPS请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Charles"><span class="toc-text">安装Charles</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#抓取HTTP请求"><span class="toc-text">抓取HTTP请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查看本地IP地址和Charles端口号"><span class="toc-text">查看本地IP地址和Charles端口号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看Charles的端口号"><span class="toc-text">查看Charles的端口号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在iPhone中设置"><span class="toc-text">在iPhone中设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#抓取HTTPS请求"><span class="toc-text">抓取HTTPS请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#设置代理地址和端口号"><span class="toc-text">设置代理地址和端口号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac安装证书"><span class="toc-text">Mac安装证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iPhone安装证书"><span class="toc-text">iPhone安装证书</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Charles抓包Https请求" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Charles抓包Https请求</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.02.28</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/逆向/">逆向</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2017/02/28/Charles抓包Https请求/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h1 id="Charles抓包HTTPS请求"><a href="#Charles抓包HTTPS请求" class="headerlink" title="Charles抓包HTTPS请求"></a>Charles抓包HTTPS请求</h1><p>有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器<a href="https://www.charlesproxy.com/" target="_blank" rel="external">Charles</a>了.<br>下面跟着我来教你从零开始抓取App的请求包.</p>
+<h2 id="安装Charles"><a href="#安装Charles" class="headerlink" title="安装Charles"></a>安装Charles</h2><p>这个纯属占坑(废话).</p>
+<h2 id="抓取HTTP请求"><a href="#抓取HTTP请求" class="headerlink" title="抓取HTTP请求"></a>抓取HTTP请求</h2><p>我们先拿一个简单的HTTP请求来练一下手.</p>
+<h3 id="查看本地IP地址和Charles端口号"><a href="#查看本地IP地址和Charles端口号" class="headerlink" title="查看本地IP地址和Charles端口号"></a>查看本地IP地址和Charles端口号</h3><p>查看IP地址的方法比较多, 这里只介绍两种比较常用的:</p>
+<ol>
+<li>可以在网络偏好设置-&gt;高级-&gt;TCP/IP下查看对应网络的IP.<br> <img src="https://ww2.sinaimg.cn/large/006tKfTcgy1fd5z8oku1vj311a0lwgpb.jpg" alt="网络偏好设置中查看"></li>
+<li>option+左键单击屏幕上方的WiFi标志也可以查看.<br> <img src="https://ww3.sinaimg.cn/large/006tKfTcgy1fd65kx0mjhj308c0eft9q.jpg" alt="option+左键查看"></li>
+</ol>
+<h3 id="查看Charles的端口号"><a href="#查看Charles的端口号" class="headerlink" title="查看Charles的端口号"></a>查看Charles的端口号</h3><p>打开Charles-&gt;Proxy-&gt;Proxy Settings查看端口号, 默认一般是<code>8888</code>. 注意不要随意修改端口号, 以避免被占用.</p>
+<h3 id="在iPhone中设置"><a href="#在iPhone中设置" class="headerlink" title="在iPhone中设置"></a>在iPhone中设置</h3><p>打开手机, 连上WiFi, 注意此处的WiFi最好和Mac连接的WiFi是同一个, 避免出现不在一个网段的情况.<br>打开设置-&gt;无线局域网-&gt;点击对应WiFi后的更多.<br><img src="https://ww4.sinaimg.cn/large/006tKfTcgy1fd65mobyrjj30b40jrq3k.jpg" alt="WiFi列表"><br>点击手动, 设置HTTP代理地址(与Mac的IP地址一致)和端口号(与Charles中代理的端口号一致)<br><img src="https://ww3.sinaimg.cn/large/006tKfTcgy1fd65mo3y0aj30b40jrmxm.jpg" alt="设置HTTP代理地址和端口号"></p>
+<p>至此, 就可以轻松的抓取App中的HTTP请求啦.</p>
+<h2 id="抓取HTTPS请求"><a href="#抓取HTTPS请求" class="headerlink" title="抓取HTTPS请求"></a>抓取HTTPS请求</h2><p>HTTPS的请求抓取, 略微复杂, 他的原理大致是这样的.</p>
+<blockquote>
+<p>Charles能进行https协议抓包分析，是使用了中间人代理的方法（man-in-the-middle，也常作为一个黑客攻击手段）。Charles代替你的app接受server的证书，然后使用这个证书通过SSL和server通信；同时，Charles会动态的生成一个对应的证书（用Charles的CA证书签名），然后使用这个证书和你的app通信，这样就完成了一个中间人代理，从而可以把app和server的https包给抓到和解码出来。</p>
+</blockquote>
+<p>从里面我们可以看到一些关键字: <code>证书</code>, <code>代理</code>, 等. 那么我们就通过这些手段来抓取HTTPS的请求.</p>
+<h3 id="设置代理地址和端口号"><a href="#设置代理地址和端口号" class="headerlink" title="设置代理地址和端口号"></a>设置代理地址和端口号</h3><p>这一步骤, 和抓取HTTP的方法一样, 这里不再赘述, 需要设置端口号和IP地址.</p>
+<h3 id="Mac安装证书"><a href="#Mac安装证书" class="headerlink" title="Mac安装证书"></a>Mac安装证书</h3><p>安装Charles的证书到Mac, 信任该证书, 以便Charles能够通过该证书进行通信. 具体步骤如下: </p>
+<ol>
+<li>打开Charles, 点击Help-&gt;SSL Proxying-&gt;Install Charles Root Certificate<br> <img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fd607vw0k6j30pk094gmj.jpg" alt="安装根证书"></li>
+<li>信任该证书<br><img src="http://upload-images.jianshu.io/upload_images/1552510-461959c476a2d9d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="证书不被信任时"></li>
+</ol>
+<p><img src="http://upload-images.jianshu.io/upload_images/1552510-8c43e95be0a35b5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="信任Charles证书"></p>
+<h3 id="iPhone安装证书"><a href="#iPhone安装证书" class="headerlink" title="iPhone安装证书"></a>iPhone安装证书</h3><p>安装Charles证书到手机, 信任该证书, 以便Charles能够截获网络请求. 具体步骤如下:</p>
+<ol>
+<li>在Charles中, 点击Help-&gt;SSL Proxying-&gt;Install Charles Root Certificate on a Mobile Device or Remote Browser, 来查看当前IP地址下, 手机下载证书的网址.<br> <img src="https://ww2.sinaimg.cn/large/006tKfTcgy1fd60jpjcgvj30nx094my0.jpg" alt="步骤一:选择生成手机下载证书的网址"></li>
+<li>在手机中用Safari打开网址(如图所示的网址)<br> <img src="https://ww4.sinaimg.cn/large/006tKfTcgy1fd60l2cz81j30nz06t3yl.jpg" alt="步骤二:输入生成的网址"></li>
+<li>打开网址后自动跳转到证书安装界面, 安装并信任该证书.<br> <img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fd65rnpokjj30b40jrgly.jpg" alt="步骤三:安装并信任该证书"></li>
+<li>打开Charles选择Proxy-&gt;SSL Proxying Settings-&gt;SSL Proxying(因为Charles默认是不会抓取任何域名下的HTTPS, 所以需要我们添加域名到Location下)勾选Enable SSL Proxying, 单击Add, 添加域名和端口(用*来表示所有).<br> <img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fd60zndgejj30gj0cb0st.jpg" alt="步骤四:设置抓取的域名和端口"></li>
+</ol>
+<p>至此, 我们再打开手机App就会发现, 之前<code>Unknown</code>的HTTPS接口, 就都可以正常现实啦.</p>
+<p>参考资料:<br>1.<a href="http://www.jianshu.com/p/a0215dd2047f" target="_blank" rel="external">HTTP/HTTPS抓包工具Charles</a><br>2.<a href="http://www.jianshu.com/p/a83b19a36a8b" target="_blank" rel="external">使用Charles进行https抓包</a><br>3.<a href="http://blog.devtang.com/2015/11/14/charles-introduction/" target="_blank" rel="external">Charles 从入门到精通</a></p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2017/02/28/Charles抓包Https请求/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
