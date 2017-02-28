@@ -31,7 +31,7 @@
 <meta property="og:url" content="http://hchong.net/2017/02/13/统计打点的AOP实现/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="统计打点的AOP实现每一个App, 必然会有大量的分析数据来统计用户行为. 而这些统计对应在客户端就是, 统计打点, 又称埋点.关于埋点的本质, 我理解的就是用户出发一个行为后, 调用一个特定的接口. 服务端拿到我们的请求后, 根据客户端传的参数也就是事件ID来区分是什么操作(注意, 这里的事件ID是具有唯一性的, 不同的ID对应用户不同的操作). 有时也可能会需要其他的信息, 比如操作人的ID等">
-<meta property="og:updated_time" content="2017-02-28T15:18:59.000Z">
+<meta property="og:updated_time" content="2017-02-28T15:23:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="统计打点的AOP实现">
 <meta name="twitter:description" content="统计打点的AOP实现每一个App, 必然会有大量的分析数据来统计用户行为. 而这些统计对应在客户端就是, 统计打点, 又称埋点.关于埋点的本质, 我理解的就是用户出发一个行为后, 调用一个特定的接口. 服务端拿到我们的请求后, 根据客户端传的参数也就是事件ID来区分是什么操作(注意, 这里的事件ID是具有唯一性的, 不同的ID对应用户不同的操作). 有时也可能会需要其他的信息, 比如操作人的ID等">
@@ -250,7 +250,7 @@
                              kIsLightEvent:@(NO)}];
     return trackList;
 }
-</code></pre><p>如上所示, 我们是要记录<code>HYZViewController1</code>类里面的<code>simpleTrack:para2:</code>方法的点击事件, 事件ID是<code>HYZViewController1SimpleButtonClick</code>.<br>我们在<code>APPDelegate</code>的<code>didFinishLaunchingWithOptions</code>方法中, 来hook所有的在<code>trackList</code>中记录的方法.<br>在``中, 实现如下相关代码.</p>
+</code></pre><p>如上所示, 我们是要记录<code>HYZViewController1</code>类里面的<code>simpleTrack:para2:</code>方法的点击事件, 事件ID是<code>HYZViewController1SimpleButtonClick</code>.<br>我们在<code>APPDelegate</code>的<code>application:didFinishLaunchingWithOptions:</code>方法中, 来hook所有的在<code>trackList</code>中记录的方法.<br>在``中, 实现如下相关代码.</p>
 <pre><code>+ (void)setup {
     //实现和替换hook的block方法
     NSMutableDictionary *blockDict = [[NSMutableDictionary alloc] init];
