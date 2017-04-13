@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>iOS逆向-下载历史版本 | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Charles,iOS逆向," />
+  
+
+  <meta name="description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:
+
+通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.
+准备工作
+安装Charles.
+为了Charles能够抓取HT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS逆向-下载历史版本">
+<meta property="og:url" content="http://hchong.net/2017/04/06/iOS逆向-下载历史版本/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:
+
+通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.
+准备工作
+安装Charles.
+为了Charles能够抓取HT">
+<meta property="og:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4m4udoqj30zo0iwdhx.jpg">
+<meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4n5nyodj30f707e74h.jpg">
+<meta property="og:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4nt57ykj30b60jr74v.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tKfTcgy1fel4ogb7edj30bg0lkab0.jpg">
+<meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4pltv74j310w0qjq5r.jpg">
+<meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4p2c1jqj30be08wwew.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tKfTcgy1fel4qg1avyj30yf0o60v0.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tNbRwgy1fel4komzx2j30p00c8t9i.jpg">
+<meta property="og:updated_time" content="2017-04-13T08:29:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS逆向-下载历史版本">
+<meta name="twitter:description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:
+
+通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.
+准备工作
+安装Charles.
+为了Charles能够抓取HT">
+<meta name="twitter:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4m4udoqj30zo0iwdhx.jpg">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS逆向-下载历史版本"><span class="toc-text">iOS逆向-下载历史版本</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始抓包"><span class="toc-text">开始抓包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获取APP的下载链接和版本号对应的参数"><span class="toc-text">获取APP的下载链接和版本号对应的参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#推断控制版本的关键字段"><span class="toc-text">推断控制版本的关键字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改Request参数下载历史版本"><span class="toc-text">修改Request参数下载历史版本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件安装"><span class="toc-text">软件安装</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-iOS逆向-下载历史版本" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS逆向-下载历史版本</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.04.06</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/iOS逆向/">iOS逆向</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2017/04/06/iOS逆向-下载历史版本/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h1 id="iOS逆向-下载历史版本"><a href="#iOS逆向-下载历史版本" class="headerlink" title="iOS逆向-下载历史版本"></a>iOS逆向-下载历史版本</h1><p>目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.<br>原理如下:</p>
+<blockquote>
+<p>通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>安装Charles.</li>
+<li>为了Charles能够抓取HTTPS类型的链接, 需要安装Charles的证书, 参考这里<a href="http://hchong.net/2017/02/28/Charles%E6%8A%93%E5%8C%85Https%E8%AF%B7%E6%B1%82/">Charles抓包HTTPS请求</a>.</li>
+</ol>
+</blockquote>
+<h2 id="开始抓包"><a href="#开始抓包" class="headerlink" title="开始抓包"></a>开始抓包</h2><p>安装了Charles之后, 我们就可以获取App的下载链接了, 并且从中分析出我们需要的参数.</p>
+<h3 id="获取APP的下载链接和版本号对应的参数"><a href="#获取APP的下载链接和版本号对应的参数" class="headerlink" title="获取APP的下载链接和版本号对应的参数"></a>获取APP的下载链接和版本号对应的参数</h3><p>下面我们以iOS上一款比较好用的看书软件<em>追书神器</em>为例来说明.</p>
+<ol>
+<li>首先打开ITunes来下载软件, 点击下载, 通过Charles来确定下载软件的链接.<br><img src="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4m4udoqj30zo0iwdhx.jpg" alt="点击下载"></li>
+<li>在Charles中观察发现, ITunes使用的是HTTPS链接, 无法直接查看request内容.<br><img src="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4n5nyodj30f707e74h.jpg" alt="无法直接查看HTTPS"></li>
+<li>我们通过添加SSL Proxying来查看request内容, 并且通过给链接加断点来详细分析请求的参数.</li>
+</ol>
+<p><img src="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4nt57ykj30b60jr74v.jpg" alt="添加SSL Proxy"><br><img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fel4ogb7edj30bg0lkab0.jpg" alt="添加断点"></p>
+<h3 id="推断控制版本的关键字段"><a href="#推断控制版本的关键字段" class="headerlink" title="推断控制版本的关键字段"></a>推断控制版本的关键字段</h3><p>观察response, 推断<code>softwareVersionExternalIdentifiers</code>展示的是全部的APP对应的版本, <code>softwareVersionExternalIdentifier</code>是用来标记当前版本.<em>追书神器</em>目前的版本标记是<code>820420814</code><br><img src="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4pltv74j310w0qjq5r.jpg" alt="字段分析"><br>通过在request中搜索<code>820420814</code>发现,<code>appExtVrsId</code>是来标记要下载哪个版本.<br><img src="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4p2c1jqj30be08wwew.jpg" alt="推断关键字"></p>
+<h3 id="修改Request参数下载历史版本"><a href="#修改Request参数下载历史版本" class="headerlink" title="修改Request参数下载历史版本"></a>修改Request参数下载历史版本</h3><p>我们在<code>softwareVersionExternalIdentifiers</code>中任选一个版本号, 此处我以<code>819147298</code>为例</p>
+<ol>
+<li>删除刚才下载好的软件, 重新下载.</li>
+<li>因为我们在下载链接中加的有断点, 再次下载时Charles会停在断点的位置</li>
+<li>点击<code>Edit Request</code>来编辑<code>appExtVrsId</code>字段<br><img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fel4qg1avyj30yf0o60v0.jpg" alt="Edit Request"></li>
+<li>执行断点, 继续下载.</li>
+<li>在ITunes中看到更新的标志说明下载成功<br><img src="https://ww1.sinaimg.cn/large/006tNbRwgy1fel4komzx2j30p00c8t9i.jpg" alt="下载成功"></li>
+</ol>
+<h2 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h2><p>通过ITunes来安装下载好的软件到手机.</p>
+<hr>
+<p>参考文献:<br>1.<a href="http://hchong.net/2017/02/28/Charles%E6%8A%93%E5%8C%85Https%E8%AF%B7%E6%B1%82/">Charles抓包HTTPS请求</a>.<br>2.<a href="http://www.jianshu.com/p/edfed1b1822c" target="_blank" rel="external">iOS秘籍-下载历史版本App超详细教程</a>.</p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2017/04/06/iOS逆向-下载历史版本/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
