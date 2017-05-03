@@ -25,16 +25,19 @@
     <meta name="keywords" content="通讯录," />
   
 
-  <meta name="description" content="通讯录数据的读取和性能优化通讯录数据写入和删除通讯录数据读取监听通讯录数据变化性能优化">
+  <meta name="description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
+通讯录的授权">
 <meta property="og:type" content="article">
 <meta property="og:title" content="通讯录数据的读取和性能优化">
 <meta property="og:url" content="http://hchong.net/2017/04/23/通讯录数据的读取和性能优化/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="通讯录数据的读取和性能优化通讯录数据写入和删除通讯录数据读取监听通讯录数据变化性能优化">
-<meta property="og:updated_time" content="2017-04-23T10:11:47.000Z">
+<meta property="og:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
+通讯录的授权">
+<meta property="og:updated_time" content="2017-05-02T14:36:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通讯录数据的读取和性能优化">
-<meta name="twitter:description" content="通讯录数据的读取和性能优化通讯录数据写入和删除通讯录数据读取监听通讯录数据变化性能优化">
+<meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
+通讯录的授权">
 
   
 
@@ -153,8 +156,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a></li></ol></li></ol>
   </div>
 
 
@@ -207,7 +210,112 @@
 
   <div class="article-content">
     
-      <h1 id="通讯录数据的读取和性能优化"><a href="#通讯录数据的读取和性能优化" class="headerlink" title="通讯录数据的读取和性能优化"></a>通讯录数据的读取和性能优化</h1><h2 id="通讯录数据写入和删除"><a href="#通讯录数据写入和删除" class="headerlink" title="通讯录数据写入和删除"></a>通讯录数据写入和删除</h2><h2 id="通讯录数据读取"><a href="#通讯录数据读取" class="headerlink" title="通讯录数据读取"></a>通讯录数据读取</h2><h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2>
+      <h1 id="通讯录数据的读取和性能优化"><a href="#通讯录数据的读取和性能优化" class="headerlink" title="通讯录数据的读取和性能优化"></a>通讯录数据的读取和性能优化</h1><p>前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用<code>Contacts Framework</code>替代<code>AddressBookFramework</code>. 下面我将就iOS9和iOS8两种API进行分析.</p>
+<h2 id="通讯录的授权"><a href="#通讯录的授权" class="headerlink" title="通讯录的授权"></a>通讯录的授权</h2><p>既然要读取通讯录, 那么通讯录授权状态的查询, 要放在在前面, 这里也区分iOS9和iOS8系统.<br>在iOS8下查询通讯录授权状态:</p>
+<pre><code>+ (void)checkAddressBookAuthorization:(void (^)(bool isAuthorized))block {
+    ABAddressBookRef addressBookRef =  ABAddressBookCreateWithOptions(NULL, NULL);
+    switch (ABAddressBookGetAuthorizationStatus()) {
+        case kABAuthorizationStatusNotDetermined: {
+            NSLog(@&quot;未询问用户是否授权&quot;);
+            ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+                if (granted) {
+                    NSLog(@&quot;授权可以读取&quot;);
+                    block(YES);
+                } else {
+                    NSLog(@&quot;授权不能读取&quot;);
+                    block(NO);
+                }
+            });
+        } break;
+        case kABAuthorizationStatusAuthorized: {
+            NSLog(@&quot;同意授权通讯录&quot;);
+            block(YES);
+        } break;
+        case kABAuthorizationStatusDenied: {
+            block(NO);
+            NSLog(@&quot;未授权，用户拒绝造成的&quot;);
+        } break;
+        case kABAuthorizationStatusRestricted: {
+            block(NO);
+            NSLog(@&quot;未授权，例如家长控制&quot;);
+        } break;
+        default: {
+        } break;
+    }
+}
+</code></pre><p>在iOS9下查询通讯录授权状态:</p>
+<pre><code>- (void)addressBookEmpowerCheck {
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    switch (status) {
+        case CNAuthorizationStatusNotDetermined: {
+            [[[CNContactStore alloc]init] requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                NSLog(@&quot;还没问&quot;);
+                if (granted) {
+                    NSLog(@&quot;点击了同意&quot;);
+                } else {
+                    NSLog(@&quot;点击了拒绝&quot;);
+                }
+            }];
+        }
+        break;
+        case CNAuthorizationStatusRestricted: {
+            NSLog(@&quot;未授权, 例如家长控制&quot;);
+        }
+        break;
+        case CNAuthorizationStatusDenied: {
+            NSLog(@&quot;未授权, 用户拒绝所致&quot;);
+        }
+        break;
+        case CNAuthorizationStatusAuthorized: {
+            NSLog(@&quot;已经授权&quot;);
+        }
+        break;
+        default: {
+        }
+        break;
+    }
+}
+</code></pre><h2 id="通讯录数据写入和删除"><a href="#通讯录数据写入和删除" class="headerlink" title="通讯录数据写入和删除"></a>通讯录数据写入和删除</h2><p>当通讯录数据少时, 数据的读取耗时较少, 为了更好地测试大量数据下的性能问题, 我们先写入大量的数据来进行测试.<br>在iOS8下面写入数据:</p>
+<pre><code>- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone {
+    if((name.length &lt; 1)||(phone.length &lt; 1)){
+        NSLog(@&quot;输入属性不能为空&quot;);
+        return;
+    }
+    CFErrorRef error = NULL;
+
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &amp;error);
+    ABRecordRef newRecord = ABPersonCreate();
+    ABRecordSetValue(newRecord, kABPersonFirstNameProperty, (__bridge CFTypeRef)name, &amp;error);
+
+    ABMutableMultiValueRef multi = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    ABMultiValueAddValueAndLabel(multi, (__bridge CFTypeRef)name, kABPersonPhoneMobileLabel, NULL);
+
+    ABRecordSetValue(newRecord, kABPersonPhoneProperty, multi, &amp;error);
+    CFRelease(multi);
+
+    ABAddressBookAddRecord(addressBook, newRecord, &amp;error);
+    CFRelease(newRecord);
+    CFRelease(addressBook);
+}
+</code></pre><p>需要注意的是, 在本例中, 只填写了<code>FirstName</code>和<code>phone</code>, 实际还有许多其他属性可供选择, 具体参照ABAddressBookRef<code>和</code>ABRecordRef<code>需要调用</code>CFRelease`来释放内存.</p>
+<p>在iOS9下面写入数据, 使用的是新的API:</p>
+<pre><code>- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone {
+    // 创建对象
+    CNMutableContact * contact = [[CNMutableContact alloc]init];
+    contact.givenName = name?:@&quot;defaultname&quot;;
+    CNLabeledValue *phoneNumber = [CNLabeledValue labeledValueWithLabel:CNLabelPhoneNumberMobile value:[CNPhoneNumber phoneNumberWithStringValue:phone?:@&quot;10086&quot;]];
+    contact.phoneNumbers = @[phoneNumber];
+
+    // 把对象加到请求中
+    CNSaveRequest * saveRequest = [[CNSaveRequest alloc]init];
+    [saveRequest addContact:contact toContainerWithIdentifier:nil];
+
+    // 执行请求
+    CNContactStore * store = [[CNContactStore alloc]init];
+    [store executeSaveRequest:saveRequest error:nil];
+}
+</code></pre><p>下面贴上删除通讯录指定内容的代码:<br>在iOS8下面:</p>
+<h2 id="通讯录数据读取"><a href="#通讯录数据读取" class="headerlink" title="通讯录数据读取"></a>通讯录数据读取</h2><h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2>
     
   </div>
 </article>
@@ -229,7 +337,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
