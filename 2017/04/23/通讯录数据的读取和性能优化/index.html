@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
 通讯录的授权">
-<meta property="og:updated_time" content="2017-05-02T14:36:40.000Z">
+<meta property="og:updated_time" content="2017-05-05T15:19:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通讯录数据的读取和性能优化">
 <meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
@@ -156,7 +156,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a></li></ol></li></ol>
   </div>
 
@@ -275,6 +275,9 @@
         break;
     }
 }
+</code></pre><p>注意: 如果是iOS10的系统需要在<code>Info.plist</code>配置<code>NSContactsUsageDescription</code></p>
+<pre><code>&lt;key&gt;NSContactsUsageDescription&lt;/key&gt;
+&lt;string&gt;请求访问通讯录&lt;/string&gt;
 </code></pre><h2 id="通讯录数据写入和删除"><a href="#通讯录数据写入和删除" class="headerlink" title="通讯录数据写入和删除"></a>通讯录数据写入和删除</h2><p>当通讯录数据少时, 数据的读取耗时较少, 为了更好地测试大量数据下的性能问题, 我们先写入大量的数据来进行测试.<br>在iOS8下面写入数据:</p>
 <pre><code>- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone {
     if((name.length &lt; 1)||(phone.length &lt; 1)){
@@ -314,8 +317,77 @@
     CNContactStore * store = [[CNContactStore alloc]init];
     [store executeSaveRequest:saveRequest error:nil];
 }
-</code></pre><p>下面贴上删除通讯录指定内容的代码:<br>在iOS8下面:</p>
-<h2 id="通讯录数据读取"><a href="#通讯录数据读取" class="headerlink" title="通讯录数据读取"></a>通讯录数据读取</h2><h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2>
+</code></pre><p>更稳健一点的写法, 是可以把请求放在通讯录授权判断的block中</p>
+<pre><code>    CNContactStore *store = [[CNContactStore alloc] init];
+    [store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (!granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //失败原因
+            });
+            return;
+        }
+        //do something
+    }];
+</code></pre><pre><code>使用下面这种方式
+
+```
+</code></pre><ul>
+<li><p>(void)addContactWithName:(NSString *)name {</p>
+<p>  CNContactStore <em>store = [[CNContactStore alloc] init];<br>  [store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError </em> _Nullable error) {</p>
+<pre><code>  if (!granted) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+          //失败原因
+      });
+      return;
+  }
+
+  CNMutableContact *contact = [[CNMutableContact alloc] init];
+  contact.familyName = @&quot;Doe&quot;;
+  contact.givenName = @&quot;John&quot;;
+
+  CNLabeledValue *homePhone = [CNLabeledValue labeledValueWithLabel:CNLabelHome value:[CNPhoneNumber phoneNumberWithStringValue:@&quot;312-555-1212&quot;]];
+  contact.phoneNumbers = @[homePhone];
+
+  CNSaveRequest *request = [[CNSaveRequest alloc] init];
+  [request addContact:contact toContainerWithIdentifier:nil];
+
+  // save it
+  NSError *saveError;
+  if (![store executeSaveRequest:request error:&amp;saveError]) {
+      NSLog(@&quot;error = %@&quot;, saveError);
+  }
+</code></pre><p>  }];<br>}</p>
+</li>
+</ul>
+<pre><code>
+下面贴上删除通讯录指定内容的代码:
+在iOS8下面:
+</code></pre><ul>
+<li>(void)removeItemWithName:(NSString <em>)name phone:(NSString </em>)phone {<br>  ABAddressBookRef addressbook = ABAddressBookCreate();<br>  CFStringRef nameRef = (__bridge CFStringRef) name;<br>  CFArrayRef  allSearchRecords = ABAddressBookCopyPeopleWithName(addressbook, nameRef);<br>  if (allSearchRecords != NULL)<br>  {<pre><code>  CFIndex count = CFArrayGetCount(allSearchRecords);
+  for (int i = 0; i &lt; count; ++i)
+  {
+      ABRecordRef contact = CFArrayGetValueAtIndex(allSearchRecords, i);
+      ABAddressBookRemoveRecord(addressbook, contact, nil);
+  }
+</code></pre>  }<br>  ABAddressBookSave(addressbook, nil);<br>  CFRelease(addressbook);<br>}<br>```</li>
+</ul>
+<p>iOS9以后的写法</p>
+<pre><code>- (void)removeContactWithName:(NSString *)name {
+    CNContactStore *store = [[CNContactStore alloc] init];
+    NSPredicate *predicate = [CNContact predicateForContactsMatchingName:name];
+    NSArray *contacts = [store unifiedContactsMatchingPredicate:predicate keysToFetch:@[CNContactGivenNameKey, CNContactFamilyNameKey] error:nil];
+
+    for (CNMutableContact *contact in contacts) {
+        CNSaveRequest *request = [[CNSaveRequest alloc] init];
+        [request deleteContact:contact];
+        // save it
+        NSError *saveError;
+        if (![store executeSaveRequest:request error:&amp;saveError]) {
+            NSLog(@&quot;error = %@&quot;, saveError);
+        }
+    }
+}
+</code></pre><h2 id="通讯录数据读取"><a href="#通讯录数据读取" class="headerlink" title="通讯录数据读取"></a>通讯录数据读取</h2><h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2>
     
   </div>
 </article>
@@ -337,7 +409,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
