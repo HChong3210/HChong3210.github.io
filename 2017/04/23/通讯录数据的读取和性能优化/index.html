@@ -33,11 +33,13 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
 通讯录的授权">
-<meta property="og:updated_time" content="2017-05-07T16:12:47.000Z">
+<meta property="og:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
+<meta property="og:updated_time" content="2017-05-08T14:36:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通讯录数据的读取和性能优化">
 <meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
 通讯录的授权">
+<meta name="twitter:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
 
   
 
@@ -156,8 +158,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8查询通讯录授权状态"><span class="toc-text">iOS8查询通讯录授权状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9查询通讯录授权状态"><span class="toc-text">iOS9查询通讯录授权状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8写入联系人"><span class="toc-text">iOS8写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9写入联系人"><span class="toc-text">iOS9写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8删除联系人"><span class="toc-text">iOS8删除联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9删除联系人"><span class="toc-text">iOS9删除联系人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8读取联系人"><span class="toc-text">iOS8读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9读取联系人"><span class="toc-text">iOS9读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通讯录分组"><span class="toc-text">通讯录分组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8查询通讯录授权状态"><span class="toc-text">iOS8查询通讯录授权状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9查询通讯录授权状态"><span class="toc-text">iOS9查询通讯录授权状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8写入联系人"><span class="toc-text">iOS8写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9写入联系人"><span class="toc-text">iOS9写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8删除联系人"><span class="toc-text">iOS8删除联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9删除联系人"><span class="toc-text">iOS9删除联系人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8读取联系人"><span class="toc-text">iOS8读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9读取联系人"><span class="toc-text">iOS9读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通讯录分组"><span class="toc-text">通讯录分组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a></li></ol></li></ol>
   </div>
 
 
@@ -472,7 +474,126 @@
         }
     }];
 </code></pre><p>我们通过上面的方法拿到的数据是一个元素是我们自定义数据模型<code>AddressBookContact</code>的数组, 所有的数据都在这一个数组里面, 没有分组, 相同首字母的联系人按照创建时间来排序.显然这样的数据是不能满足我们业务需求的. 常见的是按照首字母来分组, 下面我们就以iOS8为例来对数据进行分组排序和展示, 类似于系统通讯录列表.</p>
-<h3 id="通讯录分组"><a href="#通讯录分组" class="headerlink" title="通讯录分组"></a>通讯录分组</h3><h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><h3 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h3><h3 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h3><h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><p>参考文档:</p>
+<h3 id="通讯录分组"><a href="#通讯录分组" class="headerlink" title="通讯录分组"></a>通讯录分组</h3><pre><code>//返回包含分组信息和分组后通讯录数据的字典
++ (NSDictionary *)dealDataWithArray:(NSArray *)array {
+    if (array.count == 0) {
+        return nil;
+    }
+    NSMutableArray *titleArray = [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray *data = [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray * tmpArray = [[NSMutableArray alloc]init];
+    for (NSInteger i =0; i &lt;27; i++) {
+        //给临时数组创建27个数组作为元素，用来存放A-Z和#开头的联系人
+        NSMutableArray * array = [[NSMutableArray alloc]init];
+        [tmpArray addObject:array];
+    }
+
+    for (AddressBookContact * model in array) {
+        //AddressMode是联系人的数据模型
+        //转化为首拼音并取首字母
+        NSString * nickName = [AddressBookDataManager returnFirstWordWithString:model.name];
+
+        if (nickName.length == 0) {
+            //如果不是，就放到最后一个代表#的数组
+            NSMutableArray * array =[tmpArray lastObject];
+            [array addObject:model];
+        } else {
+            int firstWord = [nickName characterAtIndex:0];
+            //把字典放到对应的数组中去
+
+            if (firstWord &gt;= 65 &amp;&amp; firstWord &lt;= 90) {
+                //如果首字母是A-Z，直接放到对应数组
+                NSMutableArray * array = tmpArray[firstWord - 65];
+                [array addObject:model];
+
+            } else {
+                //如果不是，就放到最后一个代表#的数组
+                NSMutableArray * array =[tmpArray lastObject];
+                [array addObject:model];
+            }
+        }
+    }
+
+    //此时数据已按首字母排序并分组
+    //遍历数组，删掉空数组
+    for (NSMutableArray * mutArr in tmpArray) {
+        //如果数组不为空就添加到数据源当中
+        if (mutArr.count != 0) {
+            [data addObject:mutArr];
+            AddressBookContact * model = mutArr[0];
+            NSString * nickName = [AddressBookDataManager returnFirstWordWithString:model.name];
+
+            if (nickName.length != 0) {
+                int firstWord = [nickName characterAtIndex:0];
+                //取出其中的首字母放入到标题数组，暂时不考虑非A-Z的情况
+                if (firstWord &gt;= 65 &amp;&amp; firstWord &lt;= 90) {
+                    [titleArray addObject:nickName];
+                }
+            }
+        }
+    }
+
+    //判断是否需要加#
+    if (titleArray.count != data.count) {
+        [titleArray addObject:@&quot;#&quot;];
+    }
+
+    NSDictionary *dic = @{@&quot;source&quot;: [AddressBookDataManager sortedArray:data],
+                          @&quot;title&quot;: titleArray};
+    return dic;
+}
+
++ (NSArray *)sortedArray:(NSArray *)data {
+    NSMutableArray *sortedArray = [NSMutableArray array];
+    for (NSInteger index = 0; index &lt; data.count; index++) {
+        NSMutableArray *personArrayForSection = data[index];
+        NSArray *temp = [personArrayForSection sortedArrayUsingComparator:^NSComparisonResult(AddressBookContact * contact1, AddressBookContact * contact2) {
+            return [contact1.name compare:contact2.name];
+        }];
+        sortedArray[index] = temp;
+    }
+    return sortedArray;
+}
+
+
+#pragma mark - Tool
++ (BOOL)objectIsNull:(id)obj{
+    return ([obj isKindOfClass:[NSNull class]] || obj == nil) ? YES : NO;
+}
+
++ (NSString*)strNoNull:(id)str{
+    if ([AddressBookDataManager objectIsNull:str]) {
+        str = @&quot;&quot;;
+    }
+    return str;
+}
+
+//汉字转拼音并取得关键字
++ (NSString *)returnFirstWordWithString:(NSString *)str {
+    NSMutableString * mutStr = [NSMutableString stringWithString:str];
+
+    //将mutStr中的汉字转化为带音标的拼音（如果是汉字就转换，如果不是则保持原样）
+    CFStringTransform((__bridge CFMutableStringRef)mutStr, NULL, kCFStringTransformMandarinLatin, NO);
+    //将带有音标的拼音转换成不带音标的拼音（这一步是从上一步的基础上来的，所以这两句话一句也不能少）
+    CFStringTransform((__bridge CFMutableStringRef)mutStr, NULL, kCFStringTransformStripCombiningMarks, NO);
+    if (mutStr.length &gt; 0) {
+        //全部转换为大写    取出首字母并返回
+        NSString * res = [[mutStr uppercaseString] substringToIndex:1];
+        return res;
+    } else {
+        return @&quot;&quot;;
+    }
+}
+
+//剔除手机号中的特殊字符
++ (NSString *)filterPhoneFormate:(NSString *)phoneNumber {
+    NSCharacterSet *notAllowedChars = [[NSCharacterSet characterSetWithCharactersInString:@&quot;0123456789&quot;] invertedSet];
+    NSString *resultString = [[phoneNumber componentsSeparatedByCharactersInSet:notAllowedChars] componentsJoinedByString:@&quot;&quot;];
+    return resultString;
+}
+</code></pre><p><img src="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG" alt="数据截图"><br>至此, 我们可以得到符合业务需求的通讯录页面, 已经按照姓名首字母分组, 并且实现了快速索引. 我的通讯录测试数据有2700+条数据, 每次通讯录打开都要耗时特别久, 为了更好的用户体验, 这时就会想到要优化一下代码了.</p>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><p>说道性能优化, 首先就要进行性能分析, 知道我们需要优化的地方在哪里. Xcode提供了一个强大的分析工具Instruments, 具体一些常见的分析可以参考<a href="">这里</a>.<br>我们主要使用Instruments的Time ProFiler来分析一下, 究竟耗时的代码在哪里, 并且做一下优化.</p>
+<h4 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h4><h4 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h4><h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><p>参考文档:</p>
 <p>1.<a href="http://www.jianshu.com/p/47189c71543b" target="_blank" rel="external">iOS9下全新的通讯录框架</a></p>
 <p>2.<a href="http://www.jianshu.com/p/94e8444f1ad6" target="_blank" rel="external">iOS学习笔记29-系统服务(二)通讯录</a></p>
 <p>3.<a href="http://www.jianshu.com/p/6acad14cf3c9" target="_blank" rel="external">iOS通讯录开发</a></p>
@@ -500,7 +621,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
