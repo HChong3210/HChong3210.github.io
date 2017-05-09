@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNc79gy1ffevnuzt0zj30pg0e2wfj.jpg">
 <meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNc79gy1ffevnwtfovj317m0q440f.jpg">
-<meta property="og:updated_time" content="2017-05-09T12:07:43.000Z">
+<meta property="og:updated_time" content="2017-05-09T12:12:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通讯录数据的读取和性能优化">
 <meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
@@ -646,7 +646,7 @@
     return dic;
     }
 </code></pre><p>分析一下上面的代码, 我们使用<code>UILocalizedIndexedCollation</code>提供的方法, 按照A-Z来快读数据进行分组, 并且排序. 索引数组也直接使用<code>UILocalizedIndexedCollation</code>自带的方法.这样就避免了大量的循环遍历和取姓名拼音首字母造成的开销.</p>
-<p>响应的, 列表展示页面的title和索引也要做响应的调整</p>
+<p>相应的, 列表展示页面的title和索引也要做调整</p>
 <pre><code>- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     if ([self.dataArray[section] count] == 0 || self.dataArray.count == 0) {
         return 0.01;
@@ -759,6 +759,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 <p>5.<a href="https://developer.apple.com/reference/addressbook" target="_blank" rel="external">AddressBook官方文档</a></p>
 <p>6.<a href="http://www.bijishequ.com/detail/320846?p=" target="_blank" rel="external">UILocalizedIndexedCollation——本地化索引排序</a></p>
 <p>7.<a href="http://www.olinone.com/?p=131" target="_blank" rel="external">iOS开发中如何快速的实现汉字转拼音</a></p>
+<p>8.<a href="http://www.jianshu.com/p/d0a752bcda3f" target="_blank" rel="external">iOS通讯录数据变化监听</a></p>
 
     
   </div>
