@@ -17,7 +17,7 @@
 
   <meta charset="utf-8">
   
-  <title>多Target实现 | 我的博客地址</title>
+  <title>多渠道包和多环境包的自动化实现 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -25,16 +25,19 @@
     <meta name="keywords" content="自动化打包,Target," />
   
 
-  <meta name="description" content="这是一个描述">
+  <meta name="description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
+首先我们会想到在代码中建一个单独的类, 把用到的所有服务按照环境列一个遍, 每次需要">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多Target实现">
+<meta property="og:title" content="多渠道包和多环境包的自动化实现">
 <meta property="og:url" content="http://hchong.net/2017/03/12/多Target实现/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这是一个描述">
-<meta property="og:updated_time" content="2017-04-23T13:47:26.000Z">
+<meta property="og:description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
+首先我们会想到在代码中建一个单独的类, 把用到的所有服务按照环境列一个遍, 每次需要">
+<meta property="og:updated_time" content="2017-05-11T06:54:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="多Target实现">
-<meta name="twitter:description" content="这是一个描述">
+<meta name="twitter:title" content="多渠道包和多环境包的自动化实现">
+<meta name="twitter:description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
+首先我们会想到在代码中建一个单独的类, 把用到的所有服务按照环境列一个遍, 每次需要">
 
   
 
@@ -152,12 +155,17 @@
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#多渠道包和多环境包的自动化实现"><span class="toc-text">多渠道包和多环境包的自动化实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#打包脚本"><span class="toc-text">打包脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内测分发平台"><span class="toc-text">内测分发平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#APP配置多个环境变量"><span class="toc-text">APP配置多个环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-打包脚本-2-Demo-3"><span class="toc-text">1.打包脚本    2.Demo    3.</span></a></li></ol></li></ol>
+  </div>
+
 
 
 <div class="content content-post CENTER">
    <article id="post-多Target实现" class="article article-type-post" itemprop="blogPost">
   <header class="article-header">
-    <h1 class="post-title">多Target实现</h1>
+    <h1 class="post-title">多渠道包和多环境包的自动化实现</h1>
 
     <div class="article-meta">
       <span>
@@ -202,7 +210,63 @@
 
   <div class="article-content">
     
-      
+      <h1 id="多渠道包和多环境包的自动化实现"><a href="#多渠道包和多环境包的自动化实现" class="headerlink" title="多渠道包和多环境包的自动化实现"></a>多渠道包和多环境包的自动化实现</h1><p>在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  </p>
+<p>首先我们会想到在代码中建一个单独的类, 把用到的所有服务按照环境列一个遍, 每次需要运行什么环境就按照什么环境从类里面去取相关环境代码. 于是有了方案一.</p>
+<h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><p>方案一的伪代码, 大概是这个样子的:</p>
+<pre><code class="objective-c">+ (void)getHttpHostWithStatus:(NSInteger)status {
+    switch (status) {
+        case 0: {
+            Host1 = @&quot;开发环境&quot;;
+            Host2 = @&quot;开发环境&quot;;
+        }
+            break;
+        case 1: {
+            Host1 = @&quot;测试环境&quot;;
+            Host2 = @&quot;测试环境&quot;;
+        }
+            break;
+        case 2: {
+            Host1 = @&quot;预发布环境&quot;;
+            Host2 = @&quot;预发布环境&quot;;
+        }
+            break;
+        case 3: {
+            Host1 = @&quot;线上环境&quot;;
+            Host2 = @&quot;线上环境&quot;;
+        }
+            break;
+        default:
+            break;
+    }
+}
+</code></pre>
+<p>在App每次启动时调用这个方法, 来获取各个Host的地址, 完美解决. </p>
+<p>测试每次想要个新的包来测试, 都会有如下对话, “帮我打个包吧”, “你要什么环境的”, “预发环境”, “好的”. 于是 ,我们一同操作, 传入预发的status, 调用动态取Host的方法, 然后Product-&gt;Archive, 等个十几二十分钟, 打包完毕, 生成一个IPA文件, 自己拿ITunes安装. 嗯, 虽然辛苦点, 但是目前看来, 一切都很完美嘛, 打包的时候还能喝个茶.</p>
+<p>然而, 随着我司测试流程的规范化, 逐渐推进使用<a href="">Jenkins持续集成</a>来打包, 那么问题就来了. 你让测试也装个Xcode, 每次切换一下环境, 手动Archive吗, 呵呵. 于是我们有了方案二.</p>
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>我们先来理一下方案二主要解决的问题: <em>测试要能够在不改代码的前提下使用Jenkins打不同环境的包</em>. 听起来有点复杂呢, 我们来逐个分析下.</p>
+<ol>
+<li>使用Jenkins来打包, 那就是跑脚本嘛, xcodebuild已经寂寞难耐.</li>
+<li>既然搞Jenkins了, 不能再用IPA自己安装的方式了, Low, 蒲公英和Fir简直不要太方便.</li>
+<li>既然要用脚本来打包了, 那不能每次跑脚本之前, 先改一下代码吧, 于是想到我们应该有一个参数来在工程中区分不同的环境, </li>
+</ol>
+<p>以上就是我们方案二要解决的主要问题, 下面我们来逐个分析和解决</p>
+<h3 id="打包脚本"><a href="#打包脚本" class="headerlink" title="打包脚本"></a>打包脚本</h3><p>关于打包的脚本, 版本很多, 有Python流, 有Shell流, 但说到底, 无非用的是xcodebuild来实现的, 在终端中输入<code>xcodebuild -help</code>可以查看xcodebuild的相关操作<a href="http://www.jianshu.com/p/4f4d16326152" target="_blank" rel="external">这篇文章</a>将的也比较全面, 可以参考下.</p>
+<p>在这里, 我们主要用到的命令有两个</p>
+<pre><code class="objective-c">//编译
+xcodebuild -workspace &lt;workspacename&gt; -scheme &lt;schemeName&gt; [-destination &lt;destinationspecifier&gt;]... [-configuration &lt;configurationname&gt;] [-arch &lt;architecture&gt;]... [-sdk [&lt;sdkname&gt;|&lt;sdkpath&gt;]] [-showBuildSettings] [&lt;buildsetting&gt;=&lt;value&gt;]... [&lt;buildaction&gt;]...
+
+//生成IPA
+xcodebuild -exportArchive -archivePath &lt;xcarchivepath&gt; -exportPath &lt;destinationpath&gt; -exportOptionsPlist &lt;plistpath&gt;
+</code></pre>
+<p>到这一步, 我们的打包脚本仅仅完成了第一步, 生成了IPA文件. </p>
+<h3 id="内测分发平台"><a href="#内测分发平台" class="headerlink" title="内测分发平台"></a>内测分发平台</h3><p>生成IPA之后, 我们要提供一个可供下载安装的链接. 此处我们使用的是<a href="https://fir.im/" target="_blank" rel="external">Fir</a>, 它提供的也有<a href="https://github.com/FIRHQ/fir-cli/blob/master/README.md" target="_blank" rel="external">命令行操作</a>, 可以直接上传IPA文件, 生成可供下载的二维码.👍</p>
+<p>当然有条件的公司也可以自己搭建一个下载地址, 制作一个管理后台, 用来管理自己的内测.</p>
+<h3 id="APP配置多个环境变量"><a href="#APP配置多个环境变量" class="headerlink" title="APP配置多个环境变量"></a>APP配置多个环境变量</h3><p>接下来这个, 才是本次解决方案的重点, 先说下我们需要解决的问题. </p>
+<p>附件下载地址:</p>
+<h2 id="1-打包脚本-2-Demo-3"><a href="#1-打包脚本-2-Demo-3" class="headerlink" title="1.打包脚本    2.Demo    3."></a>1.<a href="">打包脚本</a>    2.<a href="">Demo</a>    3.<a href=""></a></h2><p>参考文章:<br>1.<a href="http://www.jianshu.com/p/4f4d16326152" target="_blank" rel="external">xcodebuild命令官方说明</a></p>
+<p>2.<a href="https://fir.im/" target="_blank" rel="external">Fir.im</a></p>
+<p>3.<a href="http://www.jianshu.com/p/83b6e781eb51" target="_blank" rel="external">手把手教你给一个iOS app配置多个环境变量</a></p>
+
     
   </div>
 </article>
