@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
 首先我们会想到在代码中建一个单独的类, 把用到的所有服务按照环境列一个遍, 每次需要">
-<meta property="og:updated_time" content="2017-05-11T06:54:32.000Z">
+<meta property="og:updated_time" content="2017-05-11T07:42:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多渠道包和多环境包的自动化实现">
 <meta name="twitter:description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
@@ -261,7 +261,7 @@ xcodebuild -exportArchive -archivePath &lt;xcarchivepath&gt; -exportPath &lt;des
 <p>到这一步, 我们的打包脚本仅仅完成了第一步, 生成了IPA文件. </p>
 <h3 id="内测分发平台"><a href="#内测分发平台" class="headerlink" title="内测分发平台"></a>内测分发平台</h3><p>生成IPA之后, 我们要提供一个可供下载安装的链接. 此处我们使用的是<a href="https://fir.im/" target="_blank" rel="external">Fir</a>, 它提供的也有<a href="https://github.com/FIRHQ/fir-cli/blob/master/README.md" target="_blank" rel="external">命令行操作</a>, 可以直接上传IPA文件, 生成可供下载的二维码.👍</p>
 <p>当然有条件的公司也可以自己搭建一个下载地址, 制作一个管理后台, 用来管理自己的内测.</p>
-<h3 id="APP配置多个环境变量"><a href="#APP配置多个环境变量" class="headerlink" title="APP配置多个环境变量"></a>APP配置多个环境变量</h3><p>接下来这个, 才是本次解决方案的重点, 先说下我们需要解决的问题. </p>
+<h3 id="APP配置多个环境变量"><a href="#APP配置多个环境变量" class="headerlink" title="APP配置多个环境变量"></a>APP配置多个环境变量</h3><p>接下来这个, 才是本次解决方案的重点, 明确了我们的目的, 就是配置多环境变量, 那么我们就开始吧. 关于多环境变量的配置, 冰霜大神的<a href="http://www.jianshu.com/p/83b6e781eb51" target="_blank" rel="external">这篇文章</a>讲解的比较详细. 但是我们采用的方案和他的又略有区别, 一开始我们使用的是多Target的方式, 后来感觉不够轻量化, 并且每个Target的Seeting也基本你没有大的不同, 于是就采用了多Scheme的方式来解决.</p>
 <p>附件下载地址:</p>
 <h2 id="1-打包脚本-2-Demo-3"><a href="#1-打包脚本-2-Demo-3" class="headerlink" title="1.打包脚本    2.Demo    3."></a>1.<a href="">打包脚本</a>    2.<a href="">Demo</a>    3.<a href=""></a></h2><p>参考文章:<br>1.<a href="http://www.jianshu.com/p/4f4d16326152" target="_blank" rel="external">xcodebuild命令官方说明</a></p>
 <p>2.<a href="https://fir.im/" target="_blank" rel="external">Fir.im</a></p>
