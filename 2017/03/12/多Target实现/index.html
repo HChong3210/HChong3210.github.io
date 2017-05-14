@@ -41,7 +41,7 @@
 <meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl9102hzij30ji0aoglq.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgy1ffl969kivwj316o0o0jrt.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl9dzmseoj310y0nqjsm.jpg">
-<meta property="og:updated_time" content="2017-05-14T14:29:39.000Z">
+<meta property="og:updated_time" content="2017-05-14T14:37:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多渠道包和多环境包的自动化实现">
 <meta name="twitter:description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
@@ -271,17 +271,12 @@ xcodebuild -exportArchive -archivePath &lt;xcarchivepath&gt; -exportPath &lt;des
 <h3 id="内测分发平台"><a href="#内测分发平台" class="headerlink" title="内测分发平台"></a>内测分发平台</h3><p>生成IPA之后, 我们要提供一个可供下载安装的链接. 此处我们使用的是<a href="https://fir.im/" target="_blank" rel="external">Fir</a>, 它提供的也有<a href="https://github.com/FIRHQ/fir-cli/blob/master/README.md" target="_blank" rel="external">命令行操作</a>, 可以直接上传IPA文件, 生成可供下载的二维码.👍</p>
 <p>当然有条件的公司也可以自己搭建一个下载地址, 制作一个管理后台, 用来管理自己的内测.</p>
 <h3 id="APP配置多个环境变量"><a href="#APP配置多个环境变量" class="headerlink" title="APP配置多个环境变量"></a>APP配置多个环境变量</h3><p>接下来这个, 才是本次解决方案的重点, 明确了我们的目的, 就是配置多环境变量, 那么我们就开始吧. 关于多环境变量的配置, 冰霜大神的<a href="http://www.jianshu.com/p/83b6e781eb51" target="_blank" rel="external">这篇文章</a>讲解的比较详细. 但是我们采用的方案和他的又略有区别, 一开始我们使用的是多Target的方式, 后来感觉不够轻量化, 并且每个Target的Seeting也基本你没有大的不同, 于是就采用了多Scheme的方式来解决.</p>
-<ol>
-<li>新建Scheme. 注意, 此处Scheme的名字是用来标记当前的环境.<br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl8ovbi6rj318o0aq0t6.jpg" alt="新建Scheme"></li>
-<li>新建xcconfig文件, 名字与Scheme. 在新建时, 一定要在Target那里勾选上(默认是非勾选状态).<br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl8qe5nx2j313k13umy6.jpg" alt="新建xcconfig"></li>
-<li>Project -&gt; Info -&gt; Configurations</li>
-</ol>
-<p>注意, 如果有使用Pod的话, 此处需要立马执行<code>pod install</code>, 生成对应的Pod的xcconfig文件<br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl8s76f92j318u0h2aap.jpg" alt="新建Configurations"></p>
-<ol>
-<li>修改新建的Configurations文件, 使之与对应的Scheme相关联.<br><img src="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl8vld5eyj31c00g4mxp.jpg" alt="修改Configurations"></li>
-<li>Edit Scheme,<br><img src="http://ww2.sinaimg.cn/large/006tNbRwgy1ffl92zbnlhj31ds0s0q3p.jpg" alt="Edit Scheme"></li>
-<li>修改PrePublish.xcconfig文件, 具体如下:</li>
-</ol>
+<p>具体步骤如下:<br>1.新建Scheme. 注意, 此处Scheme的名字是用来标记当前的环境, 此处以<code>PrePublish</code>为例.<br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl8ovbi6rj318o0aq0t6.jpg" alt="新建Scheme"></p>
+<p>2.新建xcconfig文件, 名字与Scheme对应. 在新建时, 一定要在Target那里勾选上(默认是非勾选状态).<br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl8qe5nx2j313k13umy6.jpg" alt="新建xcconfig"></p>
+<p>3.Project -&gt; Info -&gt; Configurations 新建Configurations文件. 注意, 如果有使用Pod的话, 此处需要立马执行<code>pod install</code>, 生成对应的Pod的xcconfig文件<br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl8s76f92j318u0h2aap.jpg" alt="新建Configurations"></p>
+<p>4.修改Configurations文件, 使之与对应的Scheme相关联.<br><img src="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl8vld5eyj31c00g4mxp.jpg" alt="修改Configurations"></p>
+<p>5.Edit Scheme<br><img src="http://ww2.sinaimg.cn/large/006tNbRwgy1ffl92zbnlhj31ds0s0q3p.jpg" alt="Edit Scheme"></p>
+<p>6.编辑PrePublish.xcconfig文件, 设置自定义字段. 具体如下:</p>
 <pre><code>#include &quot;Pods/Target Support Files/Pods-MultipleChannel/Pods-MultipleChannel.prepublish.xcconfig&quot;
 
 HOST1 = @&quot;HOST1/PrePublish&quot;
@@ -289,24 +284,20 @@ HOST1 = @&quot;HOST1/PrePublish&quot;
 HOST2 = @&quot;HOST2/PrePublish&quot;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HOST2=&#39;$(HOST2)&#39; HOST1=&#39;$(HOST1)&#39;
-</code></pre><p>注意, 此处必须要引入<code>pod install</code>生成的对应的Pod的xcconfig, 否则会报错<br><img src="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl9102hzij30ji0aoglq.jpg" alt="报错"></p>
-<ol>
-<li>Manage Schemes</li>
-</ol>
+</code></pre><p>注意, 此处必须要引入<code>pod install</code>生成的对应的Pod的xcconfig, 否则会报错.<br><img src="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl9102hzij30ji0aoglq.jpg" alt="报错"><br>7.Manage Schemes</p>
 <p>因为一般是多人合作开发, 所以此处的Scheme需要设置为Share状态<br><img src="http://ww1.sinaimg.cn/large/006tNbRwgy1ffl969kivwj316o0o0jrt.jpg" alt=""></p>
 <p>至此, 已经可以在工程中使用我们在xcconfig中自定义的字段了. 因为我们使用了<code>GCC_PREPROCESSOR_DEFINITIONS</code>, 他会在编译时生成一个宏定义, 所以我们可以直接使用宏定义</p>
 <pre><code>NSLog(@&quot;----------%@&quot;, HOST1);
 NSLog(@&quot;----------%@&quot;, HOST2);
-</code></pre><p>注: 此外, 还有另外一种使用方式. 我们可以每个Scheme新建一个plist(也可使用Info.plist)文件与之对应, 在plist文件中新增<code>key-value</code>来与xcconfig中的自定义字段对应.<br>使用方法如下:</p>
-<ol>
-<li>在plist中新增与xcconfig中自定义字段对应的<code>key-value</code><br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl9dzmseoj310y0nqjsm.jpg" alt="plist文件新增"></li>
-<li>使用方式如下</li>
-</ol>
+</code></pre><p>注: 此外, 还有另外一种使用方式. 我们可以每个Scheme新建一个plist(也可使用Info.plist)文件与之对应, 在plist文件中新增<code>key-value</code>来与xcconfig中的自定义字段对应.</p>
+<p>使用方法如下:</p>
+<p>1.在plist中新增与xcconfig中自定义字段对应的<code>key-value</code><br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl9dzmseoj310y0nqjsm.jpg" alt="plist文件新增"></p>
+<p>2.使用方式如下:</p>
 <pre><code>    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@&quot;Info&quot; ofType:@&quot;plist&quot;];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:bundlePath];
     NSLog(@&quot;----------%@&quot;, [dict objectForKey:@&quot;HOST1&quot;]);
     NSLog(@&quot;----------%@&quot;, [dict objectForKey:@&quot;HOST2&quot;]);
-</code></pre><p>至此, 我们已经实现不同Scheme下, 不同参数的动态化配置, 下面我们分析下原理:</p>
+</code></pre><p>至此, 我们已经实现不同Scheme下, 参数的动态化配置的两种方案, 下面我们分析下原理:</p>
 <hr>
 <p>附件下载地址:</p>
 <h2 id="1-打包脚本-2-Demo-3"><a href="#1-打包脚本-2-Demo-3" class="headerlink" title="1.打包脚本    2.Demo    3."></a>1.<a href="">打包脚本</a>    2.<a href="https://github.com/HChong3210/MultipleChannel" target="_blank" rel="external">Demo</a>    3.<a href=""></a></h2><p>参考文章:<br>1.<a href="http://www.jianshu.com/p/4f4d16326152" target="_blank" rel="external">xcodebuild命令说明</a></p>
