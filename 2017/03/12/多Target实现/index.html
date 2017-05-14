@@ -41,7 +41,7 @@
 <meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl9102hzij30ji0aoglq.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgy1ffl969kivwj316o0o0jrt.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl9dzmseoj310y0nqjsm.jpg">
-<meta property="og:updated_time" content="2017-05-14T14:43:10.000Z">
+<meta property="og:updated_time" content="2017-05-14T14:44:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多渠道包和多环境包的自动化实现">
 <meta name="twitter:description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?  
@@ -165,7 +165,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#多渠道包和多环境包的自动化实现"><span class="toc-text">多渠道包和多环境包的自动化实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#打包脚本"><span class="toc-text">打包脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内测分发平台"><span class="toc-text">内测分发平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#APP配置多个环境变量"><span class="toc-text">APP配置多个环境变量</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -299,7 +299,8 @@ NSLog(@&quot;----------%@&quot;, HOST2);
     NSLog(@&quot;----------%@&quot;, [dict objectForKey:@&quot;HOST2&quot;]);
 </code></pre><p>至此, 我们已经实现不同Scheme下, 参数的动态化配置的两种方案, 下面我们分析下原理:</p>
 <hr>
-<p>附件下载地址:<br>1.<a href="">打包脚本</a>    2.<a href="https://github.com/HChong3210/MultipleChannel" target="_blank" rel="external">Demo</a>    3.<a href=""></a></p>
+<p>附件下载地址:<br>1.<a href="">打包脚本</a>    </p>
+<p>2.<a href="https://github.com/HChong3210/MultipleChannel" target="_blank" rel="external">Demo</a>    </p>
 <hr>
 <p>参考文章:<br>1.<a href="http://www.jianshu.com/p/4f4d16326152" target="_blank" rel="external">xcodebuild命令说明</a></p>
 <p>2.<a href="https://fir.im/" target="_blank" rel="external">Fir.im</a></p>
@@ -329,7 +330,7 @@ NSLog(@&quot;----------%@&quot;, HOST2);
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
