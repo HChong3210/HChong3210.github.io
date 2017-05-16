@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 
-  <html class="light page-archives2017">
+  <html class="light page-xcode中的workspace,scheme,project,target,build">
 
 
 <head>
@@ -17,23 +17,30 @@
 
   <meta charset="utf-8">
   
-  <title>Archives: 2017 | 我的博客地址</title>
+  <title>Settings关系 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+    <meta name="keywords" content="Target,基础知识," />
   
 
-  <meta name="description" content="这是一个描述">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我的博客地址">
-<meta property="og:url" content="http://hchong.net/archives/2017/index.html">
+  <meta name="description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下: 
+
+A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Settings关系">
+<meta property="og:url" content="http://hchong.net/2017/05/16/Settings关系/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这是一个描述">
+<meta property="og:description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下: 
+
+A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
+<meta property="og:updated_time" content="2017-05-16T12:39:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我的博客地址">
-<meta name="twitter:description" content="这是一个描述">
+<meta name="twitter:title" content="Settings关系">
+<meta name="twitter:description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下: 
+
+A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
 
   
 
@@ -79,17 +86,8 @@
     <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
   
 
-  <div class="content content-archive">
-  <div class="page-header">
-
-  
-    <div class="breadcrumb">
-      <div class="location">博客</div>
-      <i class="icon-location"></i>
-    </div>
-  
-
-  
+  <div class="post-header CENTER">
+   
   <div class="toolbox">
     <a class="toolbox-entry" href="/">
       <span class="toolbox-entry-text">戳我</span>
@@ -157,115 +155,82 @@
   </div>
 
 
-
-  <div class="box-blog-info">
-    <a class="avatar" href="/">
-      <img src="/images/avatar.jpg" alt="" />
-    </a>
-    <div class="info">
-      <h3 class="name" style="font-family: calligraffittiregular">
-        HChong
-      </h3>
-      <div class="slogan">
-        Find the bug of the world
-      </div>
-    </div>
-  </div>
-
 </div>
 
 
-  <div class="post-list-box archive-body">
-    <ul class="list-post">  <li class="item-year item item-title item-title-2">
-    <a href="/archives/2017" class="text-year">
-      2017
-      <i class="icon-ji"></i>
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系"><span class="toc-text">Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode-Workspace"><span class="toc-text">Xcode Workspace</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="xcode中的workspace,scheme,project,target,build-Settings关系" class="article article-type-xcode中的workspace,scheme,project,target,build" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Settings关系</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.05.16</span>
+      </span>
+
       
-    </a>
-  </li>
-<li class="item-post item">
-  <span class="post-date">05-16</span>
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
 
-  
-  <a class="post-title" href="/2017/05/16/Settings关系/">Settings关系</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">04-23</span>
-
-  
-  <a class="post-title" href="/2017/04/23/通讯录数据的读取和性能优化/">通讯录数据的读取和性能优化</a>
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
 
 
-</li>
-<li class="item-post item">
-  <span class="post-date">04-13</span>
 
-  
-  <a class="post-title" href="/2017/04/13/Xcode神器-Instruments大法/">Xcode神器-Instruments大法</a>
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2017/05/16/Settings关系/#disqus_thread"></a>
+        </span>
+      
 
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
 
-</li>
-<li class="item-post item">
-  <span class="post-date">04-06</span>
+      
+      
+    </div>
+  </header>
 
-  
-  <a class="post-title" href="/2017/04/06/iOS逆向-下载历史版本/">iOS逆向-下载历史版本</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">03-23</span>
-
-  
-  <a class="post-title" href="/2017/03/23/Jenkins自动化打包/">Jenkins自动化打包</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">03-12</span>
-
-  
-  <a class="post-title" href="/2017/03/12/多Target实现/">多渠道包和多环境包的自动化实现</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">02-28</span>
-
-  
-  <a class="post-title" href="/2017/02/28/Charles抓包Https请求/">Charles抓包Https请求</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">02-13</span>
-
-  
-  <a class="post-title" href="/2017/02/13/统计打点的AOP实现/">统计打点的AOP实现</a>
-
-
-</li>
-<li class="item-post item">
-  <span class="post-date">02-08</span>
-
-  
-  <a class="post-title" href="/2017/02/08/设计模式-工厂模式/">设计模式-工厂模式</a>
-
-
-</li>
-</ul>
-  </div>
-
-  <div class="archive-footer">
+  <div class="article-content">
     
+      <h1 id="Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系"><a href="#Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系" class="headerlink" title="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系"></a>Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系</h1><h2 id="Xcode-Workspace"><a href="#Xcode-Workspace" class="headerlink" title="Xcode Workspace"></a>Xcode Workspace</h2><p>官方文档如下: </p>
+<blockquote>
+<p>A workspace is an Xcode document that groups projects and other documents so you can work on them together. A workspace can contain any number of Xcode projects, plus any other files you want to include. In addition to organizing all the files in each Xcode project, a workspace provides implicit and explicit relationships among the included projects and their targets.</p>
+</blockquote>
 
+    
   </div>
+</article>
+
 </div>
 
 
 
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
 
 
 
@@ -342,6 +307,40 @@
 </div>
 
 
+
+  
+      <div class="fexo-comments comments-xcode中的workspace,scheme,project,target,build">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2017/05/16/Settings关系/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
 
   
 
