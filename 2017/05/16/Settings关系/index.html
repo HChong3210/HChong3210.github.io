@@ -25,25 +25,22 @@
     <meta name="keywords" content="基础知识,Target," />
   
 
-  <meta name="description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode
-Xcode Workspace官方文档如下: 
+  <meta name="description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下: 
 
-A workspace is an Xcode document that groups projects and other documents so you can work on them together. A">
+A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系">
 <meta property="og:url" content="http://hchong.net/2017/05/16/Settings关系/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode
-Xcode Workspace官方文档如下: 
+<meta property="og:description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下: 
 
-A workspace is an Xcode document that groups projects and other documents so you can work on them together. A">
-<meta property="og:updated_time" content="2017-05-17T14:42:08.000Z">
+A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
+<meta property="og:updated_time" content="2017-05-18T02:57:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系">
-<meta name="twitter:description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode
-Xcode Workspace官方文档如下: 
+<meta name="twitter:description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下: 
 
-A workspace is an Xcode document that groups projects and other documents so you can work on them together. A">
+A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
 
   
 
@@ -162,8 +159,8 @@ A workspace is an Xcode document that groups projects and other documents so you
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系"><span class="toc-text">Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode-Workspace"><span class="toc-text">Xcode Workspace</span></a></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系"><span class="toc-text">Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode-Workspace"><span class="toc-text">Xcode Workspace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode-Project"><span class="toc-text">Xcode Project</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode-Target"><span class="toc-text">Xcode Target</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Scheme"><span class="toc-text">Scheme</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-Settings"><span class="toc-text">Build Settings</span></a></li></ol></li></ol>
   </div>
 
 
@@ -216,11 +213,67 @@ A workspace is an Xcode document that groups projects and other documents so you
 
   <div class="article-content">
     
-      <h1 id="Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系"><a href="#Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系" class="headerlink" title="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系"></a>Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系</h1><p>Xcode</p>
-<h2 id="Xcode-Workspace"><a href="#Xcode-Workspace" class="headerlink" title="Xcode Workspace"></a>Xcode Workspace</h2><p>官方文档如下: </p>
+      <h1 id="Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系"><a href="#Xcode中的Workspace-Scheme-Project-Target和Build-Settings的关系" class="headerlink" title="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系"></a>Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系</h1><h2 id="Xcode-Workspace"><a href="#Xcode-Workspace" class="headerlink" title="Xcode Workspace"></a>Xcode Workspace</h2><p>官方文档如下: </p>
 <blockquote>
 <p>A workspace is an Xcode document that groups projects and other documents so you can work on them together. A workspace can contain any number of Xcode projects, plus any other files you want to include. In addition to organizing all the files in each Xcode project, a workspace provides implicit and explicit relationships among the included projects and their targets.</p>
 </blockquote>
+<p>workspace是Xcode的一种文件，用来管理工程和里面的文件，一个workspace可以包含若干个工程，甚至可以添加任何你想添加的文件。workspace提供了工程和工程里面的target之间隐式和显式依赖关系，用来管理和组织工程里面的所有文件.</p>
+<h2 id="Xcode-Project"><a href="#Xcode-Project" class="headerlink" title="Xcode Project"></a>Xcode Project</h2><p>官方文档如下:</p>
+<blockquote>
+<p>An Xcode project is a repository for all the files, resources, and information required to build one or more software products. A project contains all the elements used to build your products and maintains the relationships between those elements. It contains one or more targets, which specify how to build products. A project defines default build settings for all the targets in the project (each target can also specify its own build settings, which override the project build settings).</p>
+</blockquote>
+<p>project就是一个个的仓库，里面会包含属于这个项目的所有文件，资源，以及生成一个或者多个软件产品的信息。每一个project会包含一个或者多个 targets，而每一个 target 告诉我们如何生产 products。project 会为所有 targets 定义了默认的 build settings，每一个 target 也能自定义自己的 build settings，且 target 的 build settings 会重写 project 的 build settings。</p>
+<p>Xcode中的 project里面包含了所有的源文件，资源文件和构建一个或者多个product的信息。project利用他们去编译我们所需的product，也帮我们组织它们之间的关系。一个project可以包含一个或者多个target。project定义了一些基本的编译设置，每个target都继承了project的默认设置，每个target可以通过重新设置target的编译选项来定义自己的特殊编译选项。</p>
+<p>project包含了以下信息：</p>
+<ul>
+<li>源文件<ul>
+<li>代码的头文件和实现文件</li>
+<li>静态库，动态库，</li>
+<li>资源文件(如文本，xml，plist等)</li>
+<li>图片资源</li>
+<li>界面资源文件(xib， storyboard等)</li>
+</ul>
+</li>
+<li>在文件结构的导航中，采用group去组织文件(实际开发中，尽量使用实体文件夹)</li>
+<li>project的编译级别配置文件如(debug， release)</li>
+<li>target</li>
+<li>运行环境如：debug，test</li>
+</ul>
+<p>project可以单独存在，或者存在于一个workspace中.</p>
+<h2 id="Xcode-Target"><a href="#Xcode-Target" class="headerlink" title="Xcode Target"></a>Xcode Target</h2><p>官方文档如下:</p>
+<blockquote>
+<p>A target specifies a product to build and contains the instructions for building the product from a set of files in a project or workspace. A target defines a single product; it organizes the inputs into the build system—the source files and instructions for processing those source files—required to build that product. Projects can contain one or more targets, each of which produces one product.</p>
+</blockquote>
+<p>target 定义了生成的唯一 product, 它将构建该 product 所需的文件和处理这些文件所需的指令集整合进 build system 中。Projects 会包含一个或者多个 targets,每一个 target 将会产出一个 product.</p>
+<p>这些指令以 build setting 和 build phases 的形式存在，你可在 Xcode 的项目编辑器(TARGETS-&gt;Build Setting, TARGETS-&gt;Build Phases)中进行查看和编辑。target 中的 build setting 参数继承自 project 的 build settings, 但是你可以在 target 中修改任意 settings 来重写 project settings，这样，最终生效的 settings 参数以在 target 中设置的为准. Project 可包含多个 target, 但是在同一时刻，只会有一个 target 生效，可用 Xcode 的 scheme 来指定是哪一个 target 生效.</p>
+<p>target 和其生成的 product 可与另一个 target 有关，如果一个 target 的 build 依赖于另一个 target 的输出，那么我们就说前一个 target 依赖于后一个 target .如果这些 target 在同一个 workspace 中，那么 Xcode 能够发现这种依赖关系，从而使其以我们期望的顺序生成 products.这种关系被称为隐式依赖关系。同时，你可以显示指定 targets 之间的依赖关系，并且这种依赖关系会覆盖 Xcode 推测出的隐式依赖关系。</p>
+<p>指定 targets 之间的依赖关系的地方在 Project Editor-&gt;TRAGETS-&gt;Build Phases-&gt;Target Dependencies 处设置.</p>
+<h2 id="Scheme"><a href="#Scheme" class="headerlink" title="Scheme"></a>Scheme</h2><p>官方文档如下:</p>
+<blockquote>
+<p>An Xcode scheme defines a collection of targets to build, a configuration to use when building, and a collection of tests to execute.</p>
+</blockquote>
+<p>一个Scheme就包含了一套targets(这些targets之间可能有依赖关系)，一个configuration，一套待执行的tests。指定了编译哪个target，使用哪个build configuration去编译target，提供运行target的执行环境等等。可以通过scheme editor来编辑scheme.</p>
+<blockquote>
+<p>You can have as many schemes as you want, but only one can be active at a time. You can specify whether a scheme should be stored in a project—in which case it’s available in every workspace that includes that project, or in the workspace—in which case it’s available only in that workspace. When you select an active scheme, you also select a run destination (that is, the architecture of the hardware for which the products are built).</p>
+</blockquote>
+<p>scheme定义了一系列构建的targets，构建时的配置，和一系列执行的测试。可以有很多scheme,但同一时刻只能有一个有效的。选择scheme时，意味着你也选择了一个运行目标（product构建的硬件平台)。可以指定scheme是否存储在project中，以便包含此project的所有workspace都可以使用些scheme,当然也可以指定只存储在某个workspace中。</p>
+<h2 id="Build-Settings"><a href="#Build-Settings" class="headerlink" title="Build Settings"></a>Build Settings</h2><p>官方文档如下:</p>
+<blockquote>
+<p>A build setting is a variable that contains information about how a particular aspect of a product’s build process should be performed. For example, the information in a build setting can specify which options Xcode passes to the compiler.</p>
+</blockquote>
+<p>一个build setting是一个指示产品某个方面构建方式的变量，比如决定xcode传给编译器的参数选项是怎样。其是一个常量或者一个公式供给xcode在构建的时候计算build setting。</p>
+<p>build setting 中包含了 product 生成过程中所需的参数信息。你可以在 project-level 和 target-level 层指定 build settings。project-level 的 build settings 适用于 project 中的所有targets，但是当 target-level 的 build settings 重写了 project-level 的 build settings，以 target-level 中的 build settings 中的值为准</p>
+<p>一个 build configaration 指定了一套 build settings 用于生成某一 target 的 product，例如，在 Xcode 创建项目时默认就有两套独立的 build configarations, 分别用于生成 debug 和 release 模式下的 product。</p>
+<p>除了创建工程时生成的默认 build settings，你也可以自定义 project-level 或者 target-level 的 build settings.</p>
+<p>关于继承关系，<a href="https://pewpewthespells.com/blog/xcconfig_guide.html#BuildSettingInheritance" target="_blank" rel="external">The Unofficial Guide to xcconfig files</a> 这里也有详细的说明，强烈建议阅读。</p>
+<p>动态环境配置就是使用自定义的 build settings 来实现的.</p>
+<hr>
+<p>参考资料:</p>
+<p>1.<a href="http://liumh.com/2016/05/22/use-xcconfig-config-specific-variable/" target="_blank" rel="external">Xcode使用xcconfig文件配置环境</a>.   </p>
+<p>2.<a href="https://developer.apple.com/library/content/featuredarticles/XcodeConcepts/Concept-Targets.html" target="_blank" rel="external">Apple官方文档</a>.</p>
+<p>3.<a href="https://xiuchundao.me/post/xcode-scheme-and-build-configuration" target="_blank" rel="external">Xcode中的Scheme和Build Configuration</a>.</p>
+<p>4.<a href="http://www.jianshu.com/p/1f312abafeff" target="_blank" rel="external">Xcode workSpace 多个project联编</a></p>
+<p>5.<a href="https://pewpewthespells.com/blog/xcconfig_guide.html#BuildSettingInheritance" target="_blank" rel="external">The Unofficial Guide to xcconfig files</a></p>
 
     
   </div>
@@ -243,7 +296,7 @@ A workspace is an Xcode document that groups projects and other documents so you
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
