@@ -22,22 +22,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+    <meta name="keywords" content="自动化打包,Target,解决方案," />
   
 
-  <meta name="description" content="遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:
-DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”UserInfo=0x7fda44b61b80 {NSLocalizedDescription">
+  <meta name="description" content="Xcode自动化打包脚本自动化打包脚本是配合多渠道包和多环境包的自动化实现使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁.
+打包的基本思路这里说一下打包脚本的基本实现思路:
+
+需要传入的参数有Scheme(用来指定打哪个环境的包), 如果使用Fir来作为内测分发工具的话, 还需要传入Fir的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xcode自动化打包脚本">
 <meta property="og:url" content="http://hchong.net/2017/05/17/Xcode自动化打包脚本/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:
-DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”UserInfo=0x7fda44b61b80 {NSLocalizedDescription">
-<meta property="og:updated_time" content="2017-05-19T13:43:56.000Z">
+<meta property="og:description" content="Xcode自动化打包脚本自动化打包脚本是配合多渠道包和多环境包的自动化实现使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁.
+打包的基本思路这里说一下打包脚本的基本实现思路:
+
+需要传入的参数有Scheme(用来指定打哪个环境的包), 如果使用Fir来作为内测分发工具的话, 还需要传入Fir的">
+<meta property="og:updated_time" content="2017-05-19T14:18:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Xcode自动化打包脚本">
-<meta name="twitter:description" content="遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:
-DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”UserInfo=0x7fda44b61b80 {NSLocalizedDescription">
+<meta name="twitter:description" content="Xcode自动化打包脚本自动化打包脚本是配合多渠道包和多环境包的自动化实现使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁.
+打包的基本思路这里说一下打包脚本的基本实现思路:
+
+需要传入的参数有Scheme(用来指定打哪个环境的包), 如果使用Fir来作为内测分发工具的话, 还需要传入Fir的">
 
   
 
@@ -155,6 +161,11 @@ DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 �
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Xcode自动化打包脚本"><span class="toc-text">Xcode自动化打包脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#打包的基本思路"><span class="toc-text">打包的基本思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode8-3后的plist文件"><span class="toc-text">Xcode8.3后的plist文件</span></a></li></ol></li></ol>
+  </div>
+
 
 
 <div class="content content-post CENTER">
@@ -176,6 +187,11 @@ DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 �
       
 
       
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/自动化打包/">自动化打包</a>
+  </span>
+
 
 
       
@@ -200,9 +216,89 @@ DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 �
 
   <div class="article-content">
     
-      <p>遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:</p>
-<p>DEDistribution: Step failed: <idedistributionthinningstep: 0x7fda446c5d90="">:<br>Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”<br>UserInfo=0x7fda44b61b80 {NSLocalizedDescription=No applicable devices found.}<br>error: exportArchive: No applicable devices found.<br>问题解决：</idedistributionthinningstep:></p>
-<p>sudo gem install CFPropertyList<br>rvm use system<br>期间可能会遇到fastlane命令失效的情况，重装fastlane即可。注意rvm use system之前需要通过rvm list验证一下，如果有多个ruby版本可以删除不需要的版本，通过sudo remove ruby xxxx进行。</p>
+      <h1 id="Xcode自动化打包脚本"><a href="#Xcode自动化打包脚本" class="headerlink" title="Xcode自动化打包脚本"></a>Xcode自动化打包脚本</h1><p>自动化打包脚本是配合<a href="http://hchong.net/2017/03/12/%E5%A4%9ATarget%E5%AE%9E%E7%8E%B0/">多渠道包和多环境包的自动化实现</a>使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁.</p>
+<h2 id="打包的基本思路"><a href="#打包的基本思路" class="headerlink" title="打包的基本思路"></a>打包的基本思路</h2><p>这里说一下打包脚本的基本实现思路:</p>
+<ol>
+<li>需要传入的参数有Scheme(用来指定打哪个环境的包), 如果使用Fir来作为内测分发工具的话, 还需要传入Fir的Token.</li>
+<li>在脚本内需要指定工程的路径, 工程名, Archive包的路径, IPA包的路径.</li>
+<li>通过Xcodebuild命令行生成Archive包.</li>
+<li>根据生成的Archive包导出IPA包.</li>
+<li>上传IPA包到Fir.</li>
+</ol>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><ol>
+<li>Xcode8.3后, 需要一个打包参数配置的plist文件, 生成Archive包时会用到.</li>
+<li>shell脚本需要给权限<code>chomd 777 xx.sh</code>.</li>
+<li>Archive导出为IPA有时会报错<code>Code=14 &quot;No applicable devices found.&quot;</code>, 这个多少是Ruby的路径没有指定导致, 找了一大圈有两个解决方案:<ol>
+<li>通过<code>sudo gem install CFPropertyList</code>, <code>rvm list</code>, <code>rvm use system</code>来解决, Python或者Shell都可以使用这种方式.</li>
+<li>Shell下还有另外的解决方案, 在shell脚本前加入如下代码, 指定路径.<pre><code>[[ -s &quot;$HOME/.rvm/scripts/rvm&quot; ]] &amp;&amp; source &quot;$HOME/.rvm/scripts/rvm&quot;
+rvm use system
+xcodebuild &quot;$@&quot;
+</code></pre></li>
+</ol>
+</li>
+</ol>
+<h2 id="Xcode8-3后的plist文件"><a href="#Xcode8-3后的plist文件" class="headerlink" title="Xcode8.3后的plist文件"></a>Xcode8.3后的plist文件</h2><p>使用<code>xcodebuild -help</code> 可以查看Xcodebuild相关介绍</p>
+<pre><code>Available keys for -exportOptionsPlist:
+
+    compileBitcode : Bool
+
+        For non-App Store exports, should Xcode re-compile the app from bitcode? Defaults to YES.
+
+    embedOnDemandResourcesAssetPacksInBundle : Bool
+
+        For non-App Store exports, if the app uses On Demand Resources and this is YES, asset packs are embedded in the app bundle so that the app can be tested without a server to host asset packs. Defaults to YES unless onDemandResourcesAssetPacksBaseURL is specified.
+
+    iCloudContainerEnvironment
+
+        For non-App Store exports, if the app is using CloudKit, this configures the &quot;com.apple.developer.icloud-container-environment&quot; entitlement. Available options: Development and Production. Defaults to Development.
+
+    manifest : Dictionary
+
+        For non-App Store exports, users can download your app over the web by opening your distribution manifest file in a web browser. To generate a distribution manifest, the value of this key should be a dictionary with three sub-keys: appURL, displayImageURL, fullSizeImageURL. The additional sub-key assetPackManifestURL is required when using on demand resources.
+
+    method : String
+
+        Describes how Xcode should export the archive. Available options: app-store, ad-hoc, package, enterprise, development, and developer-id. The list of options varies based on the type of archive. Defaults to development.
+
+    onDemandResourcesAssetPacksBaseURL : String
+
+        For non-App Store exports, if the app uses On Demand Resources and embedOnDemandResourcesAssetPacksInBundle isn&#39;t YES, this should be a base URL specifying where asset packs are going to be hosted. This configures the app to download asset packs from the specified URL.
+
+    teamID : String
+
+        The Developer Portal team to use for this export. Defaults to the team used to build the archive.
+
+    thinning : String
+
+        For non-App Store exports, should Xcode thin the package for one or more device variants? Available options: &lt;none&gt; (Xcode produces a non-thinned universal app), &lt;thin-for-all-variants&gt; (Xcode produces a universal app and all available thinned variants), or a model identifier for a specific device (e.g. &quot;iPhone7,1&quot;). Defaults to &lt;none&gt;.
+
+    uploadBitcode : Bool
+
+        For App Store exports, should the package include bitcode? Defaults to YES.
+
+    uploadSymbols : Bool
+
+        For App Store exports, should the package include symbols? Defaults to YES.
+</code></pre><p>我们在工程中新建一个plist文件, 可以看出, 大部分是有默认值的, 所以我们不用每个选项都填, 只写一些必填的就可以. </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
+&lt;plist version=&quot;1.0&quot;&gt;
+    &lt;dict&gt;
+        &lt;key&gt;method&lt;/key&gt;
+        &lt;string&gt;enterprise&lt;/string&gt;
+        &lt;key&gt;uploadSymbols&lt;/key&gt;
+        &lt;true/&gt;
+        &lt;key&gt;uploadBitcode&lt;/key&gt;
+        &lt;false/&gt;
+    &lt;/dict&gt;
+&lt;/plist&gt;
+</code></pre><hr>
+<p><a href="https://github.com/HChong3210/buildScript.git" target="_blank" rel="external">附件下载</a></p>
+<hr>
+<p>参考文章:</p>
+<p>1.<a href="https://diaojunxian.github.io/2016/10/21/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%AE%9E%E6%96%BD-%E4%B8%83/" target="_blank" rel="external">自动化测试-持续集成(7)</a></p>
+<p>2.<a href="http://stackoverflow.com/questions/33041109/xcodebuild-no-applicable-devices-found-when-exporting-archive" target="_blank" rel="external">xcodebuild: “No applicable devices found.” when exporting archive</a></p>
+<p>3.<a href=""></a></p>
 
     
   </div>
@@ -225,7 +321,7 @@ DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 �
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
