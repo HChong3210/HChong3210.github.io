@@ -25,16 +25,19 @@
     <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
   
 
-  <meta name="description" content="这是一个描述">
+  <meta name="description" content="遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:
+DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”UserInfo=0x7fda44b61b80 {NSLocalizedDescription">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xcode自动化打包脚本">
 <meta property="og:url" content="http://hchong.net/2017/05/17/Xcode自动化打包脚本/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这是一个描述">
-<meta property="og:updated_time" content="2017-05-17T14:22:54.000Z">
+<meta property="og:description" content="遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:
+DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”UserInfo=0x7fda44b61b80 {NSLocalizedDescription">
+<meta property="og:updated_time" content="2017-05-19T13:43:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Xcode自动化打包脚本">
-<meta name="twitter:description" content="这是一个描述">
+<meta name="twitter:description" content="遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:
+DEDistribution: Step failed: :Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”UserInfo=0x7fda44b61b80 {NSLocalizedDescription">
 
   
 
@@ -197,7 +200,10 @@
 
   <div class="article-content">
     
-      
+      <p>遇到问题：appstore包可以正常出，但是adhoc包出不来failed，报错提示为:</p>
+<p>DEDistribution: Step failed: <idedistributionthinningstep: 0x7fda446c5d90="">:<br>Error Domain=IDEDistributionErrorDomain Code=14 “No applicable devices found.”<br>UserInfo=0x7fda44b61b80 {NSLocalizedDescription=No applicable devices found.}<br>error: exportArchive: No applicable devices found.<br>问题解决：</idedistributionthinningstep:></p>
+<p>sudo gem install CFPropertyList<br>rvm use system<br>期间可能会遇到fastlane命令失效的情况，重装fastlane即可。注意rvm use system之前需要通过rvm list验证一下，如果有多个ruby版本可以删除不需要的版本，通过sudo remove ruby xxxx进行。</p>
+
     
   </div>
 </article>
