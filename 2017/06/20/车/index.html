@@ -17,33 +17,27 @@
 
   <meta charset="utf-8">
   
-  <title>Cocoapods实践 | 我的博客地址</title>
+  <title>车 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="生活," />
   
 
-  <meta name="description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有的包, 以及Cocoapods的实现原理. 
-Cocoapods的实现原理Cocoapods
-使用Cocoapods制作私有Pod
-参考文章:1.Carthage 包管理工具">
+  <meta name="description" content="十万左右落地数据来自汽车之家, 车主成交价是各地车主成交的真实价格, 和去4S店咨询的价格差不多
+         车系      车型      车型详情      车主成交价            别克-英朗      2017款 15N 自动精英型      http://www.autohome.com.cn/spec/28698/      http://jiage.autohome.c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Cocoapods实践">
-<meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
+<meta property="og:title" content="车">
+<meta property="og:url" content="http://hchong.net/2017/06/20/车/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有的包, 以及Cocoapods的实现原理. 
-Cocoapods的实现原理Cocoapods
-使用Cocoapods制作私有Pod
-参考文章:1.Carthage 包管理工具">
-<meta property="og:updated_time" content="2017-06-18T16:07:01.000Z">
+<meta property="og:description" content="十万左右落地数据来自汽车之家, 车主成交价是各地车主成交的真实价格, 和去4S店咨询的价格差不多
+         车系      车型      车型详情      车主成交价            别克-英朗      2017款 15N 自动精英型      http://www.autohome.com.cn/spec/28698/      http://jiage.autohome.c">
+<meta property="og:updated_time" content="2017-06-20T15:40:02.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Cocoapods实践">
-<meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有的包, 以及Cocoapods的实现原理. 
-Cocoapods的实现原理Cocoapods
-使用Cocoapods制作私有Pod
-参考文章:1.Carthage 包管理工具">
+<meta name="twitter:title" content="车">
+<meta name="twitter:description" content="十万左右落地数据来自汽车之家, 车主成交价是各地车主成交的真实价格, 和去4S店咨询的价格差不多
+         车系      车型      车型详情      车主成交价            别克-英朗      2017款 15N 自动精英型      http://www.autohome.com.cn/spec/28698/      http://jiage.autohome.c">
 
   
 
@@ -163,20 +157,20 @@ Cocoapods的实现原理Cocoapods
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用Cocoapods制作私有Pod"><span class="toc-text">使用Cocoapods制作私有Pod</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#十万左右落地"><span class="toc-text">十万左右落地</span></a></li></ol>
   </div>
 
 
 
 <div class="content content-post CENTER">
-   <article id="post-Cocoapods实践" class="article article-type-post" itemprop="blogPost">
+   <article id="post-车" class="article article-type-post" itemprop="blogPost">
   <header class="article-header">
-    <h1 class="post-title">Cocoapods实践</h1>
+    <h1 class="post-title">车</h1>
 
     <div class="article-meta">
       <span>
         <i class="icon-calendar"></i>
-        <span>2017.05.24</span>
+        <span>2017.06.20</span>
       </span>
 
       
@@ -192,7 +186,7 @@ Cocoapods的实现原理Cocoapods
       
         <span>
           <i class="icon-comment"></i>
-          <a href="http://www.hchong.net/2017/05/24/Cocoapods实践/#disqus_thread"></a>
+          <a href="http://www.hchong.net/2017/06/20/车/#disqus_thread"></a>
         </span>
       
 
@@ -211,12 +205,10 @@ Cocoapods的实现原理Cocoapods
 
   <div class="article-content">
     
-      <h1 id="Cocoapods实践"><a href="#Cocoapods实践" class="headerlink" title="Cocoapods实践"></a>Cocoapods实践</h1><p>Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有的包, 以及Cocoapods的实现原理. </p>
-<h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>Cocoapods</p>
-<h2 id="使用Cocoapods制作私有Pod"><a href="#使用Cocoapods制作私有Pod" class="headerlink" title="使用Cocoapods制作私有Pod"></a>使用Cocoapods制作私有Pod</h2><hr>
-<p>参考文章:<br>1.<a href="https://swiftcafe.io/2015/10/25/swift-daily-carthage-package/" target="_blank" rel="external">Carthage 包管理工具，另一种敏捷轻快的 iOS &amp; MAC 开发体验</a>.</p>
-<p>2.<a href="https://bestswifter.com/cocoapods/" target="_blank" rel="external">细聊Cocoapods与Xcode工程配置</a>.</p>
-<p>3.<a href=""></a>.</p>
+      <h1 id="十万左右落地"><a href="#十万左右落地" class="headerlink" title="十万左右落地"></a>十万左右落地</h1><p>数据来自汽车之家, 车主成交价是各地车主成交的真实价格, 和去4S店咨询的价格差不多</p>
+<table><br>   <tr><br>      <td>车系</td><br>      <td>车型</td><br>      <td>车型详情</td><br>      <td>车主成交价</td><br>   </tr><br>   <tr><br>      <td>别克-英朗</td><br>      <td>2017款 15N 自动精英型</td><br>      <td><a href="http://www.autohome.com.cn/spec/28698/" target="_blank" rel="external">http://www.autohome.com.cn/spec/28698/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-28698#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-28698#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>雪佛兰-科沃兹</td><br>      <td>2016款 1.5L 自动欣悦版</td><br>      <td><a href="http://www.autohome.com.cn/spec/27573/" target="_blank" rel="external">http://www.autohome.com.cn/spec/27573/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-27573#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-27573#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>现代-悦动</td><br>      <td>2017款 1.6L 自动悦值版GLS</td><br>      <td><a href="http://www.autohome.com.cn/spec/29502/" target="_blank" rel="external">http://www.autohome.com.cn/spec/29502/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-29502#pvareaid=103597" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-29502#pvareaid=103597</a></td><br>   </tr><br>   <tr><br>      <td>东风-标致</td><br>      <td>2017款 1.6L 自动豪华版</td><br>      <td><a href="http://www.autohome.com.cn/spec/29620/" target="_blank" rel="external">http://www.autohome.com.cn/spec/29620/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-29620#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-29620#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>大众-朗逸</td><br>      <td>2017款 1.6L 自动风尚版</td><br>      <td><a href="http://www.autohome.com.cn/spec/29362/" target="_blank" rel="external">http://www.autohome.com.cn/spec/29362/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-29362#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-29362#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>大众-捷达</td><br>      <td>2017款 1.5L 自动舒适型</td><br>      <td><a href="http://www.autohome.com.cn/spec/28451/" target="_blank" rel="external">http://www.autohome.com.cn/spec/28451/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-28451#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-28451#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>东风雪铁龙-爱丽舍</td><br>      <td>2017款 1.6L 自动舒适型</td><br>      <td><a href="http://www.autohome.com.cn/spec/29341/" target="_blank" rel="external">http://www.autohome.com.cn/spec/29341/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/s-98#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/s-98#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>吉利-帝豪GS</td><br>      <td>2016款 运动版 1.3T 自动领尚型</td><br>      <td><a href="http://www.autohome.com.cn/spec/26402/" target="_blank" rel="external">http://www.autohome.com.cn/spec/26402/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-26402#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-26402#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>吉利-帝豪GL</td><br>      <td>2017款 1.3T 自动尊贵型</td><br>      <td><a href="http://www.autohome.com.cn/spec/26596/" target="_blank" rel="external">http://www.autohome.com.cn/spec/26596/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-26596#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-26596#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>吉利-帝豪</td><br>      <td>2017款 三厢百万款 1.5L CVT向上版</td><br>      <td><a href="http://www.autohome.com.cn/spec/28104/" target="_blank" rel="external">http://www.autohome.com.cn/spec/28104/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-28104#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-28104#pvareaid=103596</a></td><br>   </tr><br>   <tr><br>      <td>吉利-帝豪</td><br>      <td>2017款 两厢RS百万款 1.5L CVT向上版</td><br>      <td><a href="http://www.autohome.com.cn/spec/28133/" target="_blank" rel="external">http://www.autohome.com.cn/spec/28133/</a></td><br>      <td><a href="http://jiage.autohome.com.cn/price/carlist/p-28133#pvareaid=103596" target="_blank" rel="external">http://jiage.autohome.com.cn/price/carlist/p-28133#pvareaid=103596</a></td><br>   </tr><br></table>
+
+
 
     
   </div>
@@ -320,7 +312,7 @@ Cocoapods的实现原理Cocoapods
   <script>
     var disqus_shortname = 'forsigner';
     
-    var disqus_url = 'http://hchong.net/2017/05/24/Cocoapods实践/';
+    var disqus_url = 'http://hchong.net/2017/06/20/车/';
     
     (function(){
       var dsq = document.createElement('script');
