@@ -33,7 +33,7 @@
 <meta property="og:description" content="自己动手制作Xcode插件Xcode8以后, 以前的插件都不能用了. 网上虽然也有方法来解决这个问题, 但是稍显复杂, 这里我们采用曲线救国的方式, 使用Apple官方推荐的方式Xcode Source Editor Extension来自己制作插件. Extension的方式开发的插件, 可以独立上架AppStore, 并且是独立于Xcode工程独立运行的. 但是没有UI交互, 不能在后台运行并">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fgyotdiqdbj312w0q03zl.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fgz0hh71w6j30ht0ccdgm.jpg">
-<meta property="og:updated_time" content="2017-06-26T15:22:13.000Z">
+<meta property="og:updated_time" content="2017-06-28T14:43:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自己动手制作Xcode插件">
 <meta name="twitter:description" content="自己动手制作Xcode插件Xcode8以后, 以前的插件都不能用了. 网上虽然也有方法来解决这个问题, 但是稍显复杂, 这里我们采用曲线救国的方式, 使用Apple官方推荐的方式Xcode Source Editor Extension来自己制作插件. Extension的方式开发的插件, 可以独立上架AppStore, 并且是独立于Xcode工程独立运行的. 但是没有UI交互, 不能在后台运行并">
@@ -220,12 +220,12 @@
 </ol>
 <p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fgyotdiqdbj312w0q03zl.jpg" alt="主工程页面"></p>
 <h2 id="工程环境和参数介绍"><a href="#工程环境和参数介绍" class="headerlink" title="工程环境和参数介绍"></a>工程环境和参数介绍</h2><p>这里我们会主要用到AutoImport文件夹下面的两个类<code>SourceEditorExtension</code> 和 <code>SourceEditorCommand</code>. </p>
-<p><code>SourceEditorExtension</code>中我们可以看到两个方法:</p>
+<p><code>SourceEditorExtension.m</code>中我们可以看到两个方法:</p>
 <ul>
 <li><code>-(void)extensionDidFinishLaunching{}</code>, 注释内容为<code>If your extension needs to do any work at launch, implement this optional method.</code>   指的是指刚刚加载好插件但还未点击插件按钮时，可以执行某些准备工作.</li>
 <li><code>- (NSArray &lt;NSDictionary &lt;XCSourceEditorCommandDefinitionKey, id&gt; *&gt; *)commandDefinitions{}</code>. 返回字典类型的数组, 可以为每个插件重写名字、标识符和自定义类名等信息，和<code>Info.plist</code>文件中对应的<code>XCSourceEditorCommandName</code>、<code>XCSourceEditorCommandIdentifier</code>和<code>XCSourceEditorCommandClassName</code>等信息一致.</li>
 </ul>
-<p><code>SourceEditorCommand</code>中只有一个方法:</p>
+<p><code>SourceEditorCommand.m</code>中只有一个方法:</p>
 <pre><code>- (void)performCommandWithInvocation:(XCSourceEditorCommandInvocation *)invocation completionHandler:(void (^)(NSError * _Nullable nilOrError))completionHandler
 {
     // Implement your command here, invoking the completion handler when done. Pass it nil on success, and an NSError on failure.
@@ -271,10 +271,14 @@
 <p>需要注意的是, 我们在插件工程中两个Target的Singing一定要保持一致, 并且不能为空. 否则在Xcode中看不到插件.</p>
 <h3 id="进阶用法"><a href="#进阶用法" class="headerlink" title="进阶用法"></a>进阶用法</h3><p>以上我们已经可以在自己电脑上调试和使用Xcode插件了, 那么怎么才能在其他电脑上也使用我们开发的插件呢?</p>
 <ol>
-<li>我们可以在插件工程中, 找到Products文件夹下生成的的.app文件</li>
-<li>右键点击此文件 -&gt; “在Finder中显示” -&gt; 将这个.app文件拷贝到你或者小伙伴电脑上的”应用程序”里</li>
-<li>在“应用程序”中双击.app文件运行。然后，打开“系统偏好设置” -&gt; “扩展” -&gt; “Xcode Source Editor” -&gt; 确认插件名字前已打钩 -&gt; 此时Xcode中菜单栏Editor下的插件虽然显示，但是为灰色，无法点按，所以要 -&gt; 重启Xcode -&gt; 大功告成！</li>
-<li>添加快捷键: Xcode -&gt; “Preferences” -&gt; “Key Bindings” -&gt; 搜索插件名字 -&gt; 添加对应的快捷键.</li>
+<li><p>我们可以在插件工程中, 找到Products文件夹下生成的的.app文件</p>
+</li>
+<li><p>右键点击此文件 -&gt; “在Finder中显示” -&gt; 将这个.app文件拷贝到你或者小伙伴电脑上的”应用程序”里</p>
+</li>
+<li><p>在“应用程序”中双击.app文件运行。然后，打开“系统偏好设置” -&gt; “扩展” -&gt; “Xcode Source Editor” -&gt; 确认插件名字前已打钩 -&gt; 此时Xcode中菜单栏Editor下的插件虽然显示，但是为灰色，无法点按，所以要 -&gt; 重启Xcode -&gt; 大功告成！</p>
+</li>
+<li><p>添加快捷键: Xcode -&gt; “Preferences” -&gt; “Key Bindings” -&gt; 搜索插件名字 -&gt; 添加对应的快捷键.</p>
+</li>
 </ol>
 <hr>
 <p>下载地址: <a href="https://github.com/HChong3210/AutoGetterPlugin" target="_blank" rel="external">AutoPlugin</a></p>
