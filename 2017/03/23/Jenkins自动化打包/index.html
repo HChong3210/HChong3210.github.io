@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fh5vt9bk89j30yg0jemxk.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fh93xkbelyj31ei0qk75f.jpg">
 <meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fh94ryjjgvj31kw0qngml.jpg">
-<meta property="og:updated_time" content="2017-07-05T09:34:55.000Z">
+<meta property="og:updated_time" content="2017-07-05T12:41:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Jenkins实现持续集成">
 <meta name="twitter:description" content="使用Jenkins实现持续集成什么是持续集成, 持续集成是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。
@@ -164,7 +164,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
+    <strong class="toc-title">Posts List</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkins实现持续集成"><span class="toc-text">使用Jenkins实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Jenkins"><span class="toc-text">安装Jenkins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins插件配置-amp-系统设置"><span class="toc-text">Jenkins插件配置&系统设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包项目配置"><span class="toc-text">Jenkins打包项目配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a></li></ol></li></ol>
   </div>
 
@@ -262,7 +262,8 @@
 <p><em>kind</em> , <em>Scope</em> 和 <em>Private Key</em> 就按照如图所示选择好. <em>UserName</em> 表示这个证书的名字, <em>ID</em> 自动生成, 用来标记这个证书. <em>Description</em>是关于这个证书的描述. <em>key</em> 那里填写SSH的Private Key, <em>Passphrase</em> 那里填写生成SSH时填写的密码.  <a href="https://git-scm.com/book/zh/v1/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-%E7%94%9F%E6%88%90-SSH-%E5%85%AC%E9%92%A5" target="_blank" rel="external">关于SSH的申请</a>.</p>
 <p>注意: 这里记得要在你的gitlab的Profile Settings -&gt; SSH Keys中添加上一步生成的Public Key, </p>
 <ol>
-<li></li>
+<li><p>添加</p>
+</li>
 <li><p>General, 配置一些通用的选项. 项目名称和项目描述如其字面意思一样. <code>GitLab connection</code>是源码的地址, 在外面配置好的选线, 在这里可选.</p>
 <ol>
 <li>节流构建，通过设置时间段内允许并发的次数来实现构建的控制</li>
@@ -301,7 +302,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
