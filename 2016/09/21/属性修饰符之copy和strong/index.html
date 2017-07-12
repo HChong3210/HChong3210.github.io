@@ -25,38 +25,18 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.
-深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:
-
-浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; 
-深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.
-
-
-copy和mut">
+  <meta name="description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
+<meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="属性修饰符之copy和strong">
 <meta property="og:url" content="http://hchong.net/2016/09/21/属性修饰符之copy和strong/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.
-深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:
-
-浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; 
-深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.
-
-
-copy和mut">
+<meta property="og:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
 <meta property="og:image" content="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png">
 <meta property="og:updated_time" content="2017-02-23T13:29:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="属性修饰符之copy和strong">
-<meta name="twitter:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.
-深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:
-
-浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; 
-深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.
-
-
-copy和mut">
+<meta name="twitter:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
 <meta name="twitter:image" content="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png">
 
   
@@ -176,7 +156,7 @@ copy和mut">
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#属性修饰符之copy和strong"><span class="toc-text">属性修饰符之copy和strong</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#深浅拷贝"><span class="toc-text">深浅拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#copy和mutableCopy"><span class="toc-text">copy和mutableCopy</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#系统的非容器类对象"><span class="toc-text">系统的非容器类对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#系统的容器类对象"><span class="toc-text">系统的容器类对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#系统类对象的完全深复制"><span class="toc-text">系统类对象的完全深复制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义对象"><span class="toc-text">自定义对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性修饰之copy与strong"><span class="toc-text">属性修饰之copy与strong</span></a></li></ol></li></ol>
   </div>
 
@@ -450,7 +430,7 @@ person.nameStrong = testString;
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">

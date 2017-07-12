@@ -25,22 +25,13 @@
     <meta name="keywords" content="逆向,安全,Charles," />
   
 
-  <meta name="description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包.
-安装Charles这个纯属占坑(废话).
-抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手.
-查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:
-
-可以在网络偏好设置">
+  <meta name="description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包. 安装Charles这个纯属占坑(废话). 抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手. 查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:  可以在网络偏好设置">
+<meta name="keywords" content="逆向,安全,Charles">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Charles抓包Https请求">
 <meta property="og:url" content="http://hchong.net/2017/02/28/Charles抓包Https请求/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包.
-安装Charles这个纯属占坑(废话).
-抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手.
-查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:
-
-可以在网络偏好设置">
+<meta property="og:description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包. 安装Charles这个纯属占坑(废话). 抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手. 查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:  可以在网络偏好设置">
 <meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fd5z8oku1vj311a0lwgpb.jpg">
 <meta property="og:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fd65kx0mjhj308c0eft9q.jpg">
 <meta property="og:image" content="https://ww4.sinaimg.cn/large/006tKfTcgy1fd65mobyrjj30b40jrq3k.jpg">
@@ -55,12 +46,7 @@
 <meta property="og:updated_time" content="2017-04-23T13:38:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Charles抓包Https请求">
-<meta name="twitter:description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包.
-安装Charles这个纯属占坑(废话).
-抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手.
-查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:
-
-可以在网络偏好设置">
+<meta name="twitter:description" content="Charles抓包HTTPS请求有时我们会对手机里面的App进行一些分析, 产看App的请求包, 这时我们就需要祭出神器Charles了.下面跟着我来教你从零开始抓取App的请求包. 安装Charles这个纯属占坑(废话). 抓取HTTP请求我们先拿一个简单的HTTP请求来练一下手. 查看本地IP地址和Charles端口号查看IP地址的方法比较多, 这里只介绍两种比较常用的:  可以在网络偏好设置">
 <meta name="twitter:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fd5z8oku1vj311a0lwgpb.jpg">
 
   
@@ -180,7 +166,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Charles抓包HTTPS请求"><span class="toc-text">Charles抓包HTTPS请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Charles"><span class="toc-text">安装Charles</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#抓取HTTP请求"><span class="toc-text">抓取HTTP请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查看本地IP地址和Charles端口号"><span class="toc-text">查看本地IP地址和Charles端口号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看Charles的端口号"><span class="toc-text">查看Charles的端口号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在iPhone中设置"><span class="toc-text">在iPhone中设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#抓取HTTPS请求"><span class="toc-text">抓取HTTPS请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#设置代理地址和端口号"><span class="toc-text">设置代理地址和端口号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac安装证书"><span class="toc-text">Mac安装证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iPhone安装证书"><span class="toc-text">iPhone安装证书</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -288,7 +274,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">

@@ -25,22 +25,20 @@
     <meta name="keywords" content="通讯录," />
   
 
-  <meta name="description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
-通讯录的授权">
+  <meta name="description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析. 通讯录的授权">
+<meta name="keywords" content="通讯录">
 <meta property="og:type" content="article">
 <meta property="og:title" content="通讯录数据的读取和性能优化">
 <meta property="og:url" content="http://hchong.net/2017/04/23/通讯录数据的读取和性能优化/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
-通讯录的授权">
+<meta property="og:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析. 通讯录的授权">
 <meta property="og:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNc79gy1ffevnuzt0zj30pg0e2wfj.jpg">
 <meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNc79gy1ffevnwtfovj317m0q440f.jpg">
 <meta property="og:updated_time" content="2017-05-09T12:12:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通讯录数据的读取和性能优化">
-<meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析.
-通讯录的授权">
+<meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析. 通讯录的授权">
 <meta name="twitter:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
 
   
@@ -160,7 +158,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8查询通讯录授权状态"><span class="toc-text">iOS8查询通讯录授权状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9查询通讯录授权状态"><span class="toc-text">iOS9查询通讯录授权状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8写入联系人"><span class="toc-text">iOS8写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9写入联系人"><span class="toc-text">iOS9写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8删除联系人"><span class="toc-text">iOS8删除联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9删除联系人"><span class="toc-text">iOS9删除联系人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8读取联系人"><span class="toc-text">iOS8读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9读取联系人"><span class="toc-text">iOS9读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通讯录分组"><span class="toc-text">通讯录分组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ios8监听通讯录变化"><span class="toc-text">ios8监听通讯录变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ios9监听通讯录变化"><span class="toc-text">ios9监听通讯录变化</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -782,7 +780,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
