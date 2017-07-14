@@ -45,7 +45,9 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fhab3vad6rj30tm0f3q3d.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fhfrpjn2twj31kw0cegma.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fhgvjboomwj31a60eujrv.jpg">
-<meta property="og:updated_time" content="2017-07-12T12:55:47.000Z">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fhjnx3dnwvj31gg0jo755.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fhjo37irdyj31g20hojs1.jpg">
+<meta property="og:updated_time" content="2017-07-14T12:15:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Jenkins实现持续集成">
 <meta name="twitter:description" content="使用Jenkins实现持续集成什么是持续集成, 持续集成是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 常见的持续集成的工具有Jenkins  Travis  Hudson  Circle. 然而好多我并没有实践过, 😂. 这里有一篇文章">
@@ -168,8 +170,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkins实现持续集成"><span class="toc-text">使用Jenkins实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Jenkins"><span class="toc-text">安装Jenkins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins插件配置-amp-系统设置"><span class="toc-text">Jenkins插件配置&系统设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置准备工作"><span class="toc-text">Jenkins打包配置准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gitlab代码地址配置"><span class="toc-text">gitlab代码地址配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加与gitlab连接的证书"><span class="toc-text">添加与gitlab连接的证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加钥匙串和描述文件"><span class="toc-text">添加钥匙串和描述文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode-Builder"><span class="toc-text">Xcode Builder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置"><span class="toc-text">Jenkins打包配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#General"><span class="toc-text">General</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码管理"><span class="toc-text">源码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发器"><span class="toc-text">构建触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建环境"><span class="toc-text">构建环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkins实现持续集成"><span class="toc-text">使用Jenkins实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Jenkins"><span class="toc-text">安装Jenkins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins插件配置-amp-系统设置"><span class="toc-text">Jenkins插件配置&系统设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置准备工作"><span class="toc-text">Jenkins打包配置准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gitlab代码地址配置"><span class="toc-text">gitlab代码地址配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加与gitlab连接的证书"><span class="toc-text">添加与gitlab连接的证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加钥匙串和描述文件"><span class="toc-text">添加钥匙串和描述文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode-Builder"><span class="toc-text">Xcode Builder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置"><span class="toc-text">Jenkins打包配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#General"><span class="toc-text">General</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码管理"><span class="toc-text">源码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发器"><span class="toc-text">构建触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建环境"><span class="toc-text">构建环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a></li></ol></li></ol>
   </div>
 
 
@@ -302,6 +304,10 @@
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fhfrpjn2twj31kw0cegma.jpg" alt="构建触发器"></p>
 <h2 id="构建环境"><a href="#构建环境" class="headerlink" title="构建环境"></a>构建环境</h2><p>构建环境, 主要是对构建时一些环境变量的配置.<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fhgvjboomwj31a60eujrv.jpg" alt="构建环境"></p>
 <p>在该模块中 主要设置 xcode build 打包时需要的 keychains 和 Provision Profiles 配置文件。<br>如果不配置 就会使用 xcode 自动的配置，来去系统中查找相应的配置，不过有一点需要注意,就是钥匙串中，登陆钥匙串中的证书 要复制到 系统钥匙串中，因为jenkins 访问的是系统中的钥匙串 这样在第一次打包的时候，会提示 是否授权访问钥匙串，点击始终允许就可以了。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fhjnx3dnwvj31gg0jo755.jpg" alt="Keychains and Code Signing Identities"><br><em>Keychains and Code Signing Identities</em> 中的选项, 因为在前面已经选择过了 <em> Keychain </em> 和 <em>Code Signing Identity</em>在前面已经填写过, 此处只用根据当前工程来选择正确的选项.</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fhjo37irdyj31g20hojs1.jpg" alt="Mobile Provisioning Profiles"></p>
+<p><em>Mobile Provisioning Profiles</em>由于前面已经填写过描述文件, 此处只需要选择与当前打包工程相匹配的描述文件.</p>
+<h2 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h2><p>在这里才进入了自动化集成的关键步骤, 前面的都是一些准备工作. 我们选择<em>增加构建步骤</em>, 按照自己</p>
 <h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><hr>
 <p>参考文章:</p>
 <p>1.<a href="https://runningyoung.github.io/2016/04/01/2016-04-05-jenkins2/" target="_blank" rel="external">iOS持续集成：jenkins+gitlab+蒲公英+邮件通知(Part 2)</a></p>
@@ -331,7 +337,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
