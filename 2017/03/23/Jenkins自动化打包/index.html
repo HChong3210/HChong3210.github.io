@@ -47,7 +47,8 @@
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fhgvjboomwj31a60eujrv.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tNc79gy1fhjnx3dnwvj31gg0jo755.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNc79gy1fhjo37irdyj31g20hojs1.jpg">
-<meta property="og:updated_time" content="2017-07-14T14:19:36.000Z">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79gy1fhjsalg3fej31b80cewfp.jpg">
+<meta property="og:updated_time" content="2017-07-14T14:40:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Jenkins实现持续集成">
 <meta name="twitter:description" content="使用Jenkins实现持续集成什么是持续集成, 持续集成是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 常见的持续集成的工具有Jenkins  Travis  Hudson  Circle. 然而好多我并没有实践过, 😂. 这里有一篇文章">
@@ -171,7 +172,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkins实现持续集成"><span class="toc-text">使用Jenkins实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Jenkins"><span class="toc-text">安装Jenkins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins插件配置-amp-系统设置"><span class="toc-text">Jenkins插件配置&系统设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置准备工作"><span class="toc-text">Jenkins打包配置准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gitlab代码地址配置"><span class="toc-text">gitlab代码地址配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加与gitlab连接的证书"><span class="toc-text">添加与gitlab连接的证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加钥匙串和描述文件"><span class="toc-text">添加钥匙串和描述文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode-Builder"><span class="toc-text">Xcode Builder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置"><span class="toc-text">Jenkins打包配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#General"><span class="toc-text">General</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码管理"><span class="toc-text">源码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发器"><span class="toc-text">构建触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建环境"><span class="toc-text">构建环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建后的操作"><span class="toc-text">构建后的操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkins实现持续集成"><span class="toc-text">使用Jenkins实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Jenkins"><span class="toc-text">安装Jenkins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins插件配置-amp-系统设置"><span class="toc-text">Jenkins插件配置&系统设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置准备工作"><span class="toc-text">Jenkins打包配置准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gitlab代码地址配置"><span class="toc-text">gitlab代码地址配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加与gitlab连接的证书"><span class="toc-text">添加与gitlab连接的证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加钥匙串和描述文件"><span class="toc-text">添加钥匙串和描述文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode-Builder"><span class="toc-text">Xcode Builder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置"><span class="toc-text">Jenkins打包配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#General"><span class="toc-text">General</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码管理"><span class="toc-text">源码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发器"><span class="toc-text">构建触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建环境"><span class="toc-text">构建环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建后的操作"><span class="toc-text">构建后的操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#找不到Fir命令"><span class="toc-text">找不到Fir命令</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -314,8 +315,80 @@ rm -rf Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa
 security unlock-keychain  -p &quot;HChong&quot; ~/Library/Keychains/login.keychain
 sh /Users/Shared/Jenkins/Library/BuildScript/build.sh JenkinsTest 4c86cf7c8b4d00013c59b30b0c8d5e77
 fir p /Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa -T 4c86cf7c8b4d00013c59b30b0c8d5e77
+</code></pre><p>shell脚本的具体内容如下</p>
+<pre><code>#!/bin/bash
+
+#=================项目路径配置===============
+PROJECT_PATH=&#39;/Users/Shared/Jenkins/Home/workspace/iOSPackage&#39;
+WORKSPACE_NAME=&#39;JenkinsTest.xcworkspace&#39;
+Archive_PATH=&#39;/Users/Shared/Jenkins/Library/archive&#39;
+IPA_PATH=&#39;/Users/Shared/Jenkins/Library/ipa&#39;
+PLIST_PATH=&#39;/Users/Shared/Jenkins/Home/workspace/iOSPackage/exportArchive.plist&#39;
+
+
+#===================================脚本开始=================================================
+#使用帮助
+if [ $# == 0 ];then
+echo &quot;===========================如何使用=============================&quot;
+echo &quot; eg: ./build [scheme] [token] &#39;版本描述中间不要留空格&#39;, 不传token默认用当前已经登录的fir token&quot;
+echo &quot; scheme list:&quot;
+echo &quot; JenkinsTest&quot;
+echo &quot; token list:&quot;
+echo &quot;================================================================&quot;
+exit
+fi
+
+#update code from gitlab
+cd $PROJECT_PATH
+#git pull
+
+#update pod
+#pod install --repo-update
+#pod update
+
+#删除旧的编译目录
+APP_BUILD_LOCATION=${PROJECT_PATH}/Build/
+rm -rf ${APP_BUILD_LOCATION}
+#创建dfc目录
+
+#key auth
+security unlock-keychain &quot;-p&quot; &quot;钥匙串密码&quot; &quot;/Users/hc/Library/Keychains/login.keychain&quot;
+
+#创建ARCHIVE目录
+mkdir -p IPA_PATH
+#Archive_NAME = $1.xcarchive
+
+#开始打包
+cd ${PROJECT_PATH}
+pwd
+
+XCCONFIG_PATH=${PROJECT_PATH}/dfc_v2/appconfig
+
+#xcodebuild -workspace ${WORKSPACE_NAME} -scheme Enterprise -xcconfig ${XCCONFIG_PATH}/$1.xcconfig -archivePath ${Archive_PATH}/$1.xcarchive archive
+xcodebuild -workspace ${WORKSPACE_NAME} -scheme $1 -config $1 -archivePath ${Archive_PATH}/$1.xcarchive archive
+echo &quot;--------------------------------------------&quot;${Archive_PATH}/$1.xcarchive
+
+#创建ipa
+IPA_LOCATION=${IPA_PATH}/$1
+
+#删除旧的ipa
+rm -rf IPA_LOCATION
+mkdir -p ${IPA_PATH}/$1
+xcodebuild -exportArchive -exportOptionsPlist ${PLIST_PATH} -archivePath ${Archive_PATH}/$1.xcarchive -exportPath ${IPA_LOCATION}
+
+
+IPA_FILE_LOCATION=${IPA_PATH}/$1/$1.ipa
+
+#检查ipa是否创建成功
+if [ -f $IPA_FILE_LOCATION ]; then
+echo &quot;ipa已经创建:&quot;${IPA_FILE_LOCATION}
+else
+echo &quot;打包失败&quot;
+exit 0
+fi
 </code></pre><h2 id="构建后的操作"><a href="#构建后的操作" class="headerlink" title="构建后的操作"></a>构建后的操作</h2><p>顾名思义, 就是构建之后进行的操作. 在这里我们可以选择<em>Execute a set of scripts</em>, 通过脚本来实现构建后的操作. 常见的是将构建的结果, 上传到内测平台或者内部下载地址. 但是如果构建操作的脚本中包含有这一项, 这一个步骤也就可以忽略掉了.</p>
-<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><hr>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="找不到Fir命令"><a href="#找不到Fir命令" class="headerlink" title="找不到Fir命令"></a>找不到Fir命令</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fhjsalg3fej31b80cewfp.jpg" alt="找不到Fir命令"></p>
+<hr>
 <p>参考文章:</p>
 <p>1.<a href="https://runningyoung.github.io/2016/04/01/2016-04-05-jenkins2/" target="_blank" rel="external">iOS持续集成：jenkins+gitlab+蒲公英+邮件通知(Part 2)</a></p>
 <p>2.<a href="http://www.jianshu.com/p/c69deb29720d" target="_blank" rel="external">一步一步构建iOS持续集成:Jenkins+GitLab+蒲公英+FTP</a></p>
