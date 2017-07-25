@@ -25,17 +25,17 @@
     <meta name="keywords" content="模块化,路由," />
   
 
-  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是良心博主.  应用间路由协议应用内路由协议设计思路页面间">
+  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
 <meta name="keywords" content="模块化,路由">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS的路由协议实践">
 <meta property="og:url" content="http://hchong.net/2017/05/23/iOS的路由协议实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是良心博主.  应用间路由协议应用内路由协议设计思路页面间">
-<meta property="og:updated_time" content="2017-07-24T14:48:15.000Z">
+<meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
+<meta property="og:updated_time" content="2017-07-25T15:03:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
-<meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是良心博主.  应用间路由协议应用内路由协议设计思路页面间">
+<meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
 
   
 
@@ -155,7 +155,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由协议"><span class="toc-text">应用间路由协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由协议"><span class="toc-text">应用间路由协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MGJRouter"><span class="toc-text">MGJRouter</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -209,8 +209,20 @@
   <div class="article-content">
     
       <h1 id="iOS的路由协议实践"><a href="#iOS的路由协议实践" class="headerlink" title="iOS的路由协议实践"></a>iOS的路由协议实践</h1><p>路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题.</p>
-<p>关于路由协议, 冰霜大神的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是良心博主. </p>
-<h2 id="应用间路由协议"><a href="#应用间路由协议" class="headerlink" title="应用间路由协议"></a>应用间路由协议</h2><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p>页面间跳转和组件间调用, 是应用内路由协议要解决的两大问题. 现在比较流行的路由协议有如下几种, </p>
+<p>关于路由协议, 冰霜大神的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是业界良心. </p>
+<h2 id="应用间路由协议"><a href="#应用间路由协议" class="headerlink" title="应用间路由协议"></a>应用间路由协议</h2><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题. 现在比较流行的路由协议有如下几种;</p>
+<ul>
+<li><a href="https://github.com/joeldev/JLRoutes" target="_blank" rel="external">JLRouts</a></li>
+<li><a href="https://github.com/clayallsopp/routable-ios" target="_blank" rel="external">Routable</a></li>
+<li><a href="https://github.com/lightory/HHRouter" target="_blank" rel="external">HHRouter</a></li>
+<li><a href="https://github.com/meili/MGJRouter" target="_blank" rel="external">MGJRouter</a></li>
+<li><a href="https://github.com/casatwy/CTMediator" target="_blank" rel="external">CTMediator</a></li>
+</ul>
+<p>下面我们以实现MGJRouter和CTMediator的伪代码来分析目前最为流行的两种路由解决方案.</p>
+<h3 id="MGJRouter"><a href="#MGJRouter" class="headerlink" title="MGJRouter"></a>MGJRouter</h3><p>MGJRouter, 最早是由蘑菇街技术团队在解决组件化是提出的路由解决方案. 他的主要实现思路应该是这样的:</p>
+<ul>
+<li></li>
+</ul>
 
     
   </div>
