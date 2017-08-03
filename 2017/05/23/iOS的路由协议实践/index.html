@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
-<meta property="og:updated_time" content="2017-08-03T12:32:01.000Z">
+<meta property="og:updated_time" content="2017-08-03T14:40:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
 <meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
@@ -212,7 +212,12 @@
     
       <h1 id="iOS的路由协议实践"><a href="#iOS的路由协议实践" class="headerlink" title="iOS的路由协议实践"></a>iOS的路由协议实践</h1><p>路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题.</p>
 <p>关于路由协议, 冰霜大神的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是业界良心. </p>
-<h2 id="应用间路由协议"><a href="#应用间路由协议" class="headerlink" title="应用间路由协议"></a>应用间路由协议</h2><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题. 现在比较流行的路由协议有如下几种;</p>
+<h2 id="应用间路由协议"><a href="#应用间路由协议" class="headerlink" title="应用间路由协议"></a>应用间路由协议</h2><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题, 举个例子来说明一下:</p>
+<ul>
+<li><em>页面跳转</em>, 如果以传统的Push来说, 我们怎么才能从任一界面push到另外任一界面, 各个界面之间的跳转必然要相互<code>Import</code>, 这些怎么解决.</li>
+<li><em>组件见调用</em>, 随着业务的模块化拆分, 各个模块之间有业务调用怎么办, 本身独立的模块, 为了相互调用必然又增加接口供外部调用, 本身相对独立的业务模块, 瞬间又变得相互耦合了.</li>
+</ul>
+<p>而路由协议正是为了解决这一类问题, 现在比较流行的路由协议有如下几种:</p>
 <ul>
 <li><a href="https://github.com/joeldev/JLRoutes" target="_blank" rel="external">JLRouts</a></li>
 <li><a href="https://github.com/clayallsopp/routable-ios" target="_blank" rel="external">Routable</a></li>
@@ -220,12 +225,20 @@
 <li><a href="https://github.com/meili/MGJRouter" target="_blank" rel="external">MGJRouter</a></li>
 <li><a href="https://github.com/casatwy/CTMediator" target="_blank" rel="external">CTMediator</a></li>
 </ul>
-<p>通过应用件的跳转, 我们可以发现iOS 系统里面使用的是URL Scheme方式. 对于一个资源的访问，苹果也是用URL的方式来访问的, 那么我们就可以想办法通过URL来统一三端的跳转.<br><img src="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png" alt="URL资源">.</p>
+<p><img src="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png" alt="URL资源"></p>
+<p>通过上面应用间的跳转, 我们可以发现iOS 系统里面使用的是URL Scheme方式. 对于一个资源的访问，苹果也是用URL的方式来访问的, 那么我们就可以想办法通过URL来统一三端的跳转. 一段标准的URL的格式, 每一部分都代表不同的含义. 我们可以按照规则来解析接受到的URL, 从而获得有用的信息. </p>
 <p>下面我们以实现MGJRouter和CTMediator的伪代码来分析目前最为流行的两种路由解决方案.</p>
 <h3 id="MGJRouter"><a href="#MGJRouter" class="headerlink" title="MGJRouter"></a>MGJRouter</h3><p>MGJRouter, 最早是由蘑菇街技术团队在解决组件化是提出的路由解决方案. 我司的组件化方案, 在蘑菇街的基础上改造, 但是又略微有些区别, 下面我就一些具体的实现来分析一下.</p>
+<p>以A -&gt; B页面为例:</p>
 <ul>
-<li>首先</li>
+<li>首先跳转协议会是一段格式的URL, </li>
+<li>会有一个</li>
 </ul>
+<hr>
+<p>参考文章:<br>1.<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">iOS 组件化 —— 路由设计思路分析</a></p>
+<p>2.<a href="http://awhisper.github.io/2016/06/12/%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC%E7%9A%84%E6%80%9D%E8%80%83/" target="_blank" rel="external">路由跳转的思考</a></p>
+<p>3.<a href="http://wereadteam.github.io/2016/03/19/iOS-Component/" target="_blank" rel="external">iOS组件化方案探讨</a></p>
+<p>4.<a href="https://casatwy.com/iOS-Modulization.html" target="_blank" rel="external">iOS应用架构谈-组件化方案</a></p>
 
     
   </div>
