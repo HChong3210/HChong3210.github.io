@@ -32,10 +32,12 @@
 <meta property="og:url" content="http://hchong.net/2017/05/23/iOS的路由协议实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
-<meta property="og:updated_time" content="2017-07-25T15:03:20.000Z">
+<meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
+<meta property="og:updated_time" content="2017-08-03T12:32:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
 <meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
+<meta name="twitter:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
 
   
 
@@ -218,10 +220,11 @@
 <li><a href="https://github.com/meili/MGJRouter" target="_blank" rel="external">MGJRouter</a></li>
 <li><a href="https://github.com/casatwy/CTMediator" target="_blank" rel="external">CTMediator</a></li>
 </ul>
+<p>通过应用件的跳转, 我们可以发现iOS 系统里面使用的是URL Scheme方式. 对于一个资源的访问，苹果也是用URL的方式来访问的, 那么我们就可以想办法通过URL来统一三端的跳转.<br><img src="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png" alt="URL资源">.</p>
 <p>下面我们以实现MGJRouter和CTMediator的伪代码来分析目前最为流行的两种路由解决方案.</p>
-<h3 id="MGJRouter"><a href="#MGJRouter" class="headerlink" title="MGJRouter"></a>MGJRouter</h3><p>MGJRouter, 最早是由蘑菇街技术团队在解决组件化是提出的路由解决方案. 他的主要实现思路应该是这样的:</p>
+<h3 id="MGJRouter"><a href="#MGJRouter" class="headerlink" title="MGJRouter"></a>MGJRouter</h3><p>MGJRouter, 最早是由蘑菇街技术团队在解决组件化是提出的路由解决方案. 我司的组件化方案, 在蘑菇街的基础上改造, 但是又略微有些区别, 下面我就一些具体的实现来分析一下.</p>
 <ul>
-<li></li>
+<li>首先</li>
 </ul>
 
     
