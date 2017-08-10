@@ -25,17 +25,17 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理Cocoapods是基于Ruby实现的 使用Cocoapods制作私有Pod新建一个私有Pod已有代码">
+  <meta name="description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cocoapods实践">
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理Cocoapods是基于Ruby实现的 使用Cocoapods制作私有Pod新建一个私有Pod已有代码">
-<meta property="og:updated_time" content="2017-08-09T15:27:14.000Z">
+<meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
+<meta property="og:updated_time" content="2017-08-10T13:56:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
-<meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理Cocoapods是基于Ruby实现的 使用Cocoapods制作私有Pod新建一个私有Pod已有代码">
+<meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
 
   
 
@@ -155,7 +155,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用Cocoapods制作私有Pod"><span class="toc-text">使用Cocoapods制作私有Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新建一个私有Pod"><span class="toc-text">新建一个私有Pod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#已有代码改造为Pod"><span class="toc-text">已有代码改造为Pod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods创建私有Pod"><span class="toc-text">Cocoapods创建私有Pod</span></a></li></ol></li></ol>
   </div>
 
 
@@ -203,12 +203,38 @@
 
   <div class="article-content">
     
-      <h1 id="Cocoapods实践"><a href="#Cocoapods实践" class="headerlink" title="Cocoapods实践"></a>Cocoapods实践</h1><p>Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 相信每个iOS开发都使用过, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理. </p>
-<h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>Cocoapods是基于Ruby实现的</p>
-<h2 id="使用Cocoapods制作私有Pod"><a href="#使用Cocoapods制作私有Pod" class="headerlink" title="使用Cocoapods制作私有Pod"></a>使用Cocoapods制作私有Pod</h2><h3 id="新建一个私有Pod"><a href="#新建一个私有Pod" class="headerlink" title="新建一个私有Pod"></a>新建一个私有Pod</h3><h3 id="已有代码改造为Pod"><a href="#已有代码改造为Pod" class="headerlink" title="已有代码改造为Pod"></a>已有代码改造为Pod</h3><h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><hr>
+      <h1 id="Cocoapods实践"><a href="#Cocoapods实践" class="headerlink" title="Cocoapods实践"></a>Cocoapods实践</h1><p>Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理. </p>
+<h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一<code>Podfile</code>. Podfile 是一个文件，用于定义项目所需要使用的第三方库。该文件支持高度定制，你可以根据个人喜好对其做出定制。<a href="https://guides.cocoapods.org/syntax/podfile.html" target="_blank" rel="external">查看更多官方介绍</a>. </p>
+<p>下面是一个🌰</p>
+<pre><code>
+</code></pre><pre><code>  MyLib
+  ├── .travis.yml
+  ├── _Pods.xcproject
+  ├── Example
+  │   ├── MyLib
+  │   ├── MyLib.xcodeproj
+  │   ├── MyLib.xcworkspace
+  │   ├── Podfile
+  │   ├── Podfile.lock
+  │   ├── Pods
+  │   └── Tests
+  ├── LICENSE
+  ├── MyLib.podspec
+  ├── Pod
+  │   ├── Assets
+  │   └── Classes
+  │     └── RemoveMe.[swift/m]
+  └── README.md
+</code></pre><h2 id="Cocoapods创建私有Pod"><a href="#Cocoapods创建私有Pod" class="headerlink" title="Cocoapods创建私有Pod"></a>Cocoapods创建私有Pod</h2><hr>
 <p>参考文章:<br>1.<a href="https://swiftcafe.io/2015/10/25/swift-daily-carthage-package/" target="_blank" rel="external">Carthage 包管理工具，另一种敏捷轻快的 iOS &amp; MAC 开发体验</a>.</p>
 <p>2.<a href="https://bestswifter.com/cocoapods/" target="_blank" rel="external">细聊Cocoapods与Xcode工程配置</a>.</p>
-<p>3.<a href=""></a>.</p>
+<p>3.<a href="http://guides.cocoapods.org/making/using-pod-lib-create.html" target="_blank" rel="external">Cocoapods官方文档</a>.</p>
+<p>4.<a href="http://blog.wtlucky.com/blog/2015/02/26/create-private-podspec/" target="_blank" rel="external">使用Cocoapods创建私有podspec</a></p>
+<p>5.<a href="http://draveness.me/cocoapods.html" target="_blank" rel="external">CocoaPods 都做了什么？</a></p>
+<p>6.<a href="http://www.jianshu.com/p/d6a592d6fced" target="_blank" rel="external">使用私有Cocoapods仓库 中高级用法</a></p>
+<p>7.<a href="https://objccn.io/issue-6-4/" target="_blank" rel="external">深入理解CocoaPods</a></p>
+<p>8.<a href="https://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">podspec官方文档</a></p>
+<p>9.<a href="https://guides.cocoapods.org/syntax/podfile.html" target="_blank" rel="external">podfile官方文档</a></p>
 
     
   </div>
