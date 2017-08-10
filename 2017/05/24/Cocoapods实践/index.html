@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta property="og:updated_time" content="2017-08-10T13:56:42.000Z">
+<meta property="og:updated_time" content="2017-08-10T15:25:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
 <meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
@@ -205,9 +205,17 @@
     
       <h1 id="Cocoapods实践"><a href="#Cocoapods实践" class="headerlink" title="Cocoapods实践"></a>Cocoapods实践</h1><p>Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理. </p>
 <h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一<code>Podfile</code>. Podfile 是一个文件，用于定义项目所需要使用的第三方库。该文件支持高度定制，你可以根据个人喜好对其做出定制。<a href="https://guides.cocoapods.org/syntax/podfile.html" target="_blank" rel="external">查看更多官方介绍</a>. </p>
-<p>下面是一个🌰</p>
-<pre><code>
-</code></pre><pre><code>  MyLib
+<p>下面是一个🌰, 我们来挨个分析下他们背后都代表着什么.</p>
+<pre><code class="Ruby">source &#39;http://source.git&#39;
+platform :ios, &#39;8.0&#39;
+
+target &#39;Demo&#39; do
+    pod &#39;AFNetworking&#39;
+    pod &#39;SDWebImage&#39;
+    pod &#39;Masonry&#39;
+end
+</code></pre>
+<pre><code>  MyLib
   ├── .travis.yml
   ├── _Pods.xcproject
   ├── Example
