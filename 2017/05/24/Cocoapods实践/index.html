@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta property="og:updated_time" content="2017-08-13T10:43:20.000Z">
+<meta property="og:updated_time" content="2017-08-14T02:48:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
 <meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
@@ -154,7 +154,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install"><span class="toc-text">pod install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install-vs-pod-update"><span class="toc-text">pod install vs pod update</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods创建私有Pod"><span class="toc-text">Cocoapods创建私有Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol>
   </div>
 
@@ -351,7 +351,13 @@ Sending stats
 </ul>
 </li>
 </ol>
-<h3 id="pod-install-vs-pod-update"><a href="#pod-install-vs-pod-update" class="headerlink" title="pod install vs pod update"></a>pod install vs pod update</h3><pre><code>  MyLib
+<h3 id="pod-install-vs-pod-update"><a href="#pod-install-vs-pod-update" class="headerlink" title="pod install vs pod update"></a>pod install vs pod update</h3><p>引用官方的文档<a href="https://guides.cocoapods.org/using/pod-install-vs-update.html" target="_blank" rel="external">https://guides.cocoapods.org/using/pod-install-vs-update.html</a>来说明一下二者的区别, 以及使用场景.</p>
+<p>You will only use pod update when you want to update the version of a specific pod (or all the pods).</p>
+<ul>
+<li><code>pod install</code>主要用在第一次安装pods时, 如果后面你新增, 修改, 删除你的<code>Podfile</code>文件时也可以使用该命令. 每次执行<code>pod install</code>命令会把每一个安装的pod的版本写进<code>Podfile.lock</code>文件中, 来记录和lock这些已经安装Pod的版本. 当执行<code>Pod install</code>. 如果是新增Pod, 那么会搜索与Podfile中描述的匹配的版本; 如果已经存在, 他会下载<code>Podfile.lock</code>文件中明确的版本, 但不会去检查有没有可用的最新版本.</li>
+<li><code>pod update</code>会不关注<code>Podfile.lock</code>中的版本而直接更新到符合<code>Podfile</code>中定义的最新版本.</li>
+</ul>
+<h2 id="Cocoapods创建私有Pod"><a href="#Cocoapods创建私有Pod" class="headerlink" title="Cocoapods创建私有Pod"></a>Cocoapods创建私有Pod</h2><pre><code>  MyLib
   ├── .travis.yml
   ├── _Pods.xcproject
   ├── Example
@@ -369,7 +375,7 @@ Sending stats
   │   └── Classes
   │     └── RemoveMe.[swift/m]
   └── README.md
-</code></pre><h2 id="Cocoapods创建私有Pod"><a href="#Cocoapods创建私有Pod" class="headerlink" title="Cocoapods创建私有Pod"></a>Cocoapods创建私有Pod</h2><h2 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h2><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
+</code></pre><h2 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h2><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
 <ul>
 <li>= 0.1 Version 0.1.</li>
 <li>0.1 Any version higher than 0.1.</li>
@@ -421,7 +427,7 @@ Sending stats
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
