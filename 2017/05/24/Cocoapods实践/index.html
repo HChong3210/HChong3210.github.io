@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta property="og:updated_time" content="2017-08-14T08:50:00.000Z">
+<meta property="og:updated_time" content="2017-08-15T15:16:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
 <meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
@@ -154,8 +154,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install"><span class="toc-text">pod install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install-vs-pod-update"><span class="toc-text">pod install vs pod update</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用CocoaPods创建私有Pod"><span class="toc-text">使用CocoaPods创建私有Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个Spec-Repo"><span class="toc-text">创建一个Spec Repo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建Pod工程文件"><span class="toc-text">创建Pod工程文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Podspec文件"><span class="toc-text">编辑Podspec文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cocoapods的相关知识"><span class="toc-text">cocoapods的相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install"><span class="toc-text">pod install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install-vs-pod-update"><span class="toc-text">pod install vs pod update</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用CocoaPods创建私有Pod"><span class="toc-text">使用CocoaPods创建私有Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个Spec-Repo"><span class="toc-text">创建一个Spec Repo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建Pod工程文件"><span class="toc-text">创建Pod工程文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Podspec文件"><span class="toc-text">编辑Podspec文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Pod文件"><span class="toc-text">提交Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Podspec文件"><span class="toc-text">提交Podspec文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cocoapods的相关知识"><span class="toc-text">cocoapods的相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -403,8 +403,8 @@ Sending stats
 $ git commit -s -m &quot;Initial Commit of Library&quot;
 $ git remote add origin [Pod的远端地址]           #添加远端仓库
 $ git push origin master     #提交到远端仓库
-</code></pre><h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p><a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">http://guides.cocoapods.org/syntax/podspec.html</a></p>
-<h2 id="cocoapods的相关知识"><a href="#cocoapods的相关知识" class="headerlink" title="cocoapods的相关知识"></a>cocoapods的相关知识</h2><p>这里是CocoaPods的其他相关知识, 组一个备忘.</p>
+</code></pre><h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p><a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">Podspec的官方文档</a></p>
+<h3 id="提交Pod文件"><a href="#提交Pod文件" class="headerlink" title="提交Pod文件"></a>提交Pod文件</h3><h3 id="提交Podspec文件"><a href="#提交Podspec文件" class="headerlink" title="提交Podspec文件"></a>提交Podspec文件</h3><h2 id="cocoapods的相关知识"><a href="#cocoapods的相关知识" class="headerlink" title="cocoapods的相关知识"></a>cocoapods的相关知识</h2><p>这里是CocoaPods的其他相关知识, 做一个备忘.</p>
 <h3 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h3><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
 <ul>
 <li>= 0.1 Version 0.1.</li>
@@ -457,7 +457,7 @@ $ git push origin master     #提交到远端仓库
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
