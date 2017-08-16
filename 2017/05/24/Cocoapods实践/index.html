@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta property="og:updated_time" content="2017-08-15T15:34:00.000Z">
+<meta property="og:updated_time" content="2017-08-16T02:57:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
 <meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
@@ -154,7 +154,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
+    <strong class="toc-title">Posts List</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install"><span class="toc-text">pod install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install-vs-pod-update"><span class="toc-text">pod install vs pod update</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用CocoaPods创建私有Pod"><span class="toc-text">使用CocoaPods创建私有Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个Spec-Repo"><span class="toc-text">创建一个Spec Repo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建Pod工程文件"><span class="toc-text">创建Pod工程文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Pod文件"><span class="toc-text">编辑Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Podspec文件"><span class="toc-text">编辑Podspec文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Pod文件"><span class="toc-text">提交Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Podspec文件"><span class="toc-text">提交Podspec文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cocoapods的相关知识"><span class="toc-text">cocoapods的相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -408,9 +408,50 @@ $ git push origin master     #提交到远端仓库
 <li>Assets文件主要用来存放资源文件, 例如图片资源和XIB文件.</li>
 <li>Classes则存放主要的功能代码, 类.</li>
 </ul>
-<p>在这里需要注意, 当我们要使用<code>Pod</code>中的资源时, 以图片为例, 我们通过<code>[UIImage imageWithName:@&quot;xxx.png&quot;]</code>是取不到Pod中的图片的, 因为<code>imageWithName:</code>方法默认是从<code>mainBundle</code>中来取的, 而Pod不属于<code>mainBundle</code>的范畴, 我们需要先根据<code>class</code>来拿到当前类所在的<code>bundle</code>, 再取该<code>Bundle</code>中的资源. </p>
-<h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p><a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">Podspec的官方文档</a></p>
-<h3 id="提交Pod文件"><a href="#提交Pod文件" class="headerlink" title="提交Pod文件"></a>提交Pod文件</h3><h3 id="提交Podspec文件"><a href="#提交Podspec文件" class="headerlink" title="提交Podspec文件"></a>提交Podspec文件</h3><h2 id="cocoapods的相关知识"><a href="#cocoapods的相关知识" class="headerlink" title="cocoapods的相关知识"></a>cocoapods的相关知识</h2><p>这里是CocoaPods的其他相关知识, 做一个备忘.</p>
+<p>在这里需要注意两个地方:</p>
+<ol>
+<li>当我们要使用<code>Pod</code>中的资源时, 以图片为例, 我们通过<code>[UIImage imageWithName:@&quot;xxx.png&quot;]</code>是取不到Pod中的图片的, 因为<code>imageWithName:</code>方法默认是从<code>mainBundle</code>中来取的, 而Pod不属于<code>mainBundle</code>的范畴, 我们需要先根据<code>class</code>来拿到当前类所在的<code>bundle</code>, 再取该<code>Bundle</code>中的资源.</li>
+<li>每次在Pod文件夹中添加新的文件或者资源时, 都需要执行<code>pod update</code>命令来重新建立索引.</li>
+</ol>
+<h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p>关于<code>Podspec</code>文件<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">官方</a>是这样描述的:</p>
+<blockquote>
+<p>A specification describes a version of Pod library. It includes details about where the source should be fetched from, what files to use, the build settings to apply, and other general metadata such as its name, version, and description.</p>
+</blockquote>
+<p><code>pod lib create XXX</code>创建出来的Pod, 初始时的<code>Podspec</code>文件包含了各种信息, 详细的说明我们可以看<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">官方文档</a>, 这里贴上最基础的用法代码:</p>
+<pre><code>Pod::Spec.new do |s|
+  s.name             = &#39;HCPods&#39;
+  #Pod的版本
+  s.version          = &#39;0.1.0&#39;
+  s.summary          = &#39;你在搜索时会呈现&#39;
+
+  s.description      = &lt;&lt;-DESC
+    这里是关于你Pod功能的描述
+                       DESC
+
+  s.homepage         = &#39;https://github.com/HChong3210/HCPods&#39;
+  s.license          = { :type =&gt; &#39;MIT&#39;, :file =&gt; &#39;LICENSE&#39; }
+  s.author           = { &#39;HChong3210&#39; =&gt; &#39;hchong7557@gmail.com&#39; }
+  #Pod的远端仓库地址
+  s.source           = { :git =&gt; &#39;https://github.com/HChong3210/HCPods.git&#39;, :tag =&gt; s.version.to_s }
+
+    #Pod支持的最低版本
+  s.ios.deployment_target = &#39;8.0&#39;
+    #Pod源文件的位置
+  s.source_files = &#39;HCPods/Classes/**/*&#39;
+  #Pod中资源文件的位置
+  s.resource_bundles = {
+    &#39;DFCForms&#39; =&gt; [&#39;HCPods/Assets/*.{png,xib,plist}&#39;]
+  }
+  #对外公开的类
+  s.public_header_files = &#39;DFCForms/Classes/**/*.h&#39;
+
+  #Pod中用到的第三方库
+  s.frameworks = &#39;UIKit&#39;
+  s.dependency &#39;AFNetworking&#39;, &#39;~&gt; 2.3&#39;
+  s.dependency &#39;SDWebImage&#39;
+
+end
+</code></pre><h3 id="提交Pod文件"><a href="#提交Pod文件" class="headerlink" title="提交Pod文件"></a>提交Pod文件</h3><h3 id="提交Podspec文件"><a href="#提交Podspec文件" class="headerlink" title="提交Podspec文件"></a>提交Podspec文件</h3><h2 id="cocoapods的相关知识"><a href="#cocoapods的相关知识" class="headerlink" title="cocoapods的相关知识"></a>cocoapods的相关知识</h2><p>这里是CocoaPods的其他相关知识, 做一个备忘.</p>
 <h3 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h3><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
 <ul>
 <li>= 0.1 Version 0.1.</li>
@@ -463,7 +504,7 @@ $ git push origin master     #提交到远端仓库
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
