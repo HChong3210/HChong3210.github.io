@@ -22,17 +22,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,模块化," />
   
 
   <meta name="description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta name="keywords" content="基础知识">
+<meta name="keywords" content="基础知识,模块化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cocoapods实践">
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta property="og:updated_time" content="2017-08-16T03:22:47.000Z">
+<meta property="og:updated_time" content="2017-08-16T03:29:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
 <meta name="twitter:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
@@ -154,7 +154,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install"><span class="toc-text">pod install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install-vs-pod-update"><span class="toc-text">pod install vs pod update</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用CocoaPods创建私有Pod"><span class="toc-text">使用CocoaPods创建私有Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个Spec-Repo"><span class="toc-text">创建一个Spec Repo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建Pod工程文件"><span class="toc-text">创建Pod工程文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Pod文件"><span class="toc-text">编辑Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Podspec文件"><span class="toc-text">编辑Podspec文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Pod文件"><span class="toc-text">提交Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Podspec文件"><span class="toc-text">提交Podspec文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cocoapods的相关知识"><span class="toc-text">cocoapods的相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -179,6 +179,11 @@
       
 
       
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a> / <a class="article-category-link" href="/categories/基础知识/模块化/">模块化</a>
+  </span>
+
 
 
       
@@ -514,7 +519,7 @@ git push origin master —tags
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
