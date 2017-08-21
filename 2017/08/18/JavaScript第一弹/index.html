@@ -31,7 +31,7 @@
 <meta property="og:url" content="http://hchong.net/2017/08/18/JavaScript第一弹/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="title: JavaScript第一弹date: 2017-08-18 14:37:04tags:            — JavaScript            — 基础知识categories:    —JavaScript JavaScript第一弹主要是一些JavaScript的一些基础知识, 和OC的一些区别 入门JavaScript可以嵌在网页的任意地方, 不过通常有两种写法">
-<meta property="og:updated_time" content="2017-08-21T06:45:43.000Z">
+<meta property="og:updated_time" content="2017-08-21T08:48:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="我的博客地址">
 <meta name="twitter:description" content="title: JavaScript第一弹date: 2017-08-18 14:37:04tags:            — JavaScript            — 基础知识categories:    —JavaScript JavaScript第一弹主要是一些JavaScript的一些基础知识, 和OC的一些区别 入门JavaScript可以嵌在网页的任意地方, 不过通常有两种写法">
@@ -154,7 +154,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JavaScript第一弹"><span class="toc-text">JavaScript第一弹</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#入门"><span class="toc-text">入门</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JavaScript第一弹"><span class="toc-text">JavaScript第一弹</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#入门"><span class="toc-text">入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据类型"><span class="toc-text">数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串"><span class="toc-text">字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#比较运算符"><span class="toc-text">比较运算符</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -227,6 +227,25 @@
 &lt;/html&gt;
 </code></pre><p>把JavaScript代码放入一个单独的<code>.js</code>文件中更利于维护代码，并且多个页面可以各自引用同一份<code>.js</code>文件。</p>
 <p>可以在同一个页面中引入多个<code>.js</code>文件，还可以在页面中多次编写<code>&lt;script&gt; js代码... &lt;/script&gt;</code>，浏览器按照顺序依次执行。</p>
+<h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><p>字符串是以<code>单引号&#39;</code>或<code>双引号&quot;</code>括起来的任意文本, 这和OC的略有不同. 和OC的字符串初始化不同的是, JS只需用引号括起来就代表一个字符串了.</p>
+<h3 id="比较运算符"><a href="#比较运算符" class="headerlink" title="比较运算符"></a>比较运算符</h3><p>JavaScript允许对任意数据类型做比较. 要特别注意相等运算符<code>==</code>。JavaScript在设计时，有两种比较运算符：</p>
+<ul>
+<li>第一种是<code>==</code>比较，它会自动转换数据类型再比较，很多时候，会得到非常诡异的结果；</li>
+<li>第二种是<code>===</code>比较，它不会自动转换数据类型，如果数据类型不一致，返回false，如果一致，再比较。</li>
+</ul>
+<p>由于JavaScript这个设计缺陷，不要使用==比较，始终坚持使用<code>===</code>比较。</p>
+<p>这个和<code>OC</code>类似, 如果使用<code>===</code>比较的是两个基本数据类型, 只要值相等就位<code>true</code>. 但是如果是数组, 字典, 对象等其他类型, 那比较的就是内存地址, 而不是元素.</p>
+<pre><code>var arr1 = [1,2,3];
+var arr2 = [1,2,3];
+alert(arr1 === arr2)//false
+
+var str1 = &#39;123&#39;;
+var str2 = &#39;123&#39;;
+alert(str1 === str2);//true
+</code></pre><p>关于数组元素的比较, 如果是OC的话, 可以使用<code>-(BOOL)isEquleToArray:(NSArray *)array;</code>来比较数组中的元素, 然而JS没有这种方法, 常见的做法是先排序, 再转成String, 再比较String是否相等. 参考<a href="https://gist.github.com/smallnewer/6535788" target="_blank" rel="external">equalArray.js</a></p>
+<p><code>NaN</code>这个值通过<code>===</code>来比较大小永远为<code>false</code>, 包括与自身比较. 唯一的判断方法就是通过<code>isNaN()</code>函数.</p>
+<hr>
+<p>1.<a href="http://www.bootcss.com/p/underscore/" target="_blank" rel="external">Underscore - 一个JavaScript 工具库</a>.</p>
 
     
   </div>
