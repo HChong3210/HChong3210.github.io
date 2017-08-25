@@ -22,20 +22,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="JavaScript,基础知识," />
+    <meta name="keywords" content="基础知识,JavaScript," />
   
 
-  <meta name="description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串数组区别于OC的数组, JavaScript的Array可以包含任意的数据类型, 通过索引来访问每个元素. Array属性">
-<meta name="keywords" content="JavaScript,基础知识">
+  <meta name="description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串和OC的没什么太大的区别, 这里只说几点比较特殊的.  可以使用反引号` ... `来标记一串带符号的文本, 例如  al">
+<meta name="keywords" content="基础知识,JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaScript第二弹">
 <meta property="og:url" content="http://hchong.net/2017/08/22/JavaScript第二弹/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串数组区别于OC的数组, JavaScript的Array可以包含任意的数据类型, 通过索引来访问每个元素. Array属性">
-<meta property="og:updated_time" content="2017-08-23T14:52:19.000Z">
+<meta property="og:description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串和OC的没什么太大的区别, 这里只说几点比较特殊的.  可以使用反引号` ... `来标记一串带符号的文本, 例如  al">
+<meta property="og:updated_time" content="2017-08-25T15:01:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript第二弹">
-<meta name="twitter:description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串数组区别于OC的数组, JavaScript的Array可以包含任意的数据类型, 通过索引来访问每个元素. Array属性">
+<meta name="twitter:description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串和OC的没什么太大的区别, 这里只说几点比较特殊的.  可以使用反引号` ... `来标记一串带符号的文本, 例如  al">
 
   
 
@@ -212,7 +212,17 @@
 <blockquote>
 <p>在 <code>JavaScript</code>中，对象的定义是拥有属性和方法的数据.<br>严格来讲, <code>JavaScript</code>中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.</p>
 </blockquote>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>区别于OC的数组, <code>JavaScript</code>的<code>Array</code>可以包含任意的数据类型, 通过索引来访问每个元素.</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>和OC的没什么太大的区别, 这里只说几点比较特殊的.</p>
+<ul>
+<li>可以使用反引号` <code>...</code> `来标记一串带符号的文本, 例如</li>
+</ul>
+<pre><code>alert(`你好, 
+哈哈`);
+</code></pre><p>中间的所有符号都会被保留下来, </p>
+<ul>
+<li>还可以在在` <code>你好 + ${string}</code> `来拼接字符串, 其中<code>${String}</code>代表一个叫做<code>String</code>的变量</li>
+</ul>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>区别于OC的数组, <code>JavaScript</code>的<code>Array</code>可以包含任意的数据类型, 通过索引来访问每个元素.</p>
 <p>Array属性:</p>
 <blockquote>
 <p>constructor 返回对创建此对象的数组函数的引用.<br>length 设置或返回数组中元素的数目.<br>prototype 使您有能力向对象添加属性和方法.</p>
