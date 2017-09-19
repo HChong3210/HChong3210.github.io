@@ -17,7 +17,7 @@
 
   <meta charset="utf-8">
   
-  <title>面试题拾遗系列之一 | 我的博客地址</title>
+  <title>面试题拾遗系列之一UIView系列 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -25,17 +25,17 @@
     <meta name="keywords" content="基础知识,面试题," />
   
 
-  <meta name="description" content="面试题拾遗系列之一UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主要是对显示内容的管理, 而CALayer则主要侧重显示内容的绘制. 访问UIVIew的与绘图和跟坐标有关的属性, 例如frame, bounds等, 实际上内部都是在访问它所包含的CALayer的相关属性. UIV">
+  <meta name="description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
 <meta name="keywords" content="基础知识,面试题">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面试题拾遗系列之一">
+<meta property="og:title" content="面试题拾遗系列之一UIView系列">
 <meta property="og:url" content="http://hchong.net/2017/08/30/面试题拾遗系列之一/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="面试题拾遗系列之一UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主要是对显示内容的管理, 而CALayer则主要侧重显示内容的绘制. 访问UIVIew的与绘图和跟坐标有关的属性, 例如frame, bounds等, 实际上内部都是在访问它所包含的CALayer的相关属性. UIV">
-<meta property="og:updated_time" content="2017-09-13T15:28:29.000Z">
+<meta property="og:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
+<meta property="og:updated_time" content="2017-09-19T07:38:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面试题拾遗系列之一">
-<meta name="twitter:description" content="面试题拾遗系列之一UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主要是对显示内容的管理, 而CALayer则主要侧重显示内容的绘制. 访问UIVIew的与绘图和跟坐标有关的属性, 例如frame, bounds等, 实际上内部都是在访问它所包含的CALayer的相关属性. UIV">
+<meta name="twitter:title" content="面试题拾遗系列之一UIView系列">
+<meta name="twitter:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
 
   
 
@@ -154,8 +154,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#面试题拾遗系列之一"><span class="toc-text">面试题拾遗系列之一</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UILabel的Size计算"><span class="toc-text">UILabel的Size计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见UIView的写法"><span class="toc-text">常见UIView的写法</span></a></li></ol></li></ol>
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度"><span class="toc-text">iOS的动态高度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
   </div>
 
 
@@ -163,7 +163,7 @@
 <div class="content content-post CENTER">
    <article id="post-面试题拾遗系列之一" class="article article-type-post" itemprop="blogPost">
   <header class="article-header">
-    <h1 class="post-title">面试题拾遗系列之一</h1>
+    <h1 class="post-title">面试题拾遗系列之一UIView系列</h1>
 
     <div class="article-meta">
       <span>
@@ -208,7 +208,8 @@
 
   <div class="article-content">
     
-      <h1 id="面试题拾遗系列之一"><a href="#面试题拾遗系列之一" class="headerlink" title="面试题拾遗系列之一"></a>面试题拾遗系列之一</h1><h2 id="UIView和CALayer"><a href="#UIView和CALayer" class="headerlink" title="UIView和CALayer"></a>UIView和CALayer</h2><ol>
+      <h1 id="UIView系列之—UIView和CALayer"><a href="#UIView系列之—UIView和CALayer" class="headerlink" title="UIView系列之—UIView和CALayer"></a>UIView系列之—UIView和CALayer</h1><p><a href="">UIView系列之—UIView和CALayer</a><br><a href="">UIView系列之—UIView的常见layout方法</a><br><a href="">UIView系列之—iOS的动态高度</a><br><a href="">UIView系列之—自定义UIView的写法</a></p>
+<h2 id="UIView和CALayer"><a href="#UIView和CALayer" class="headerlink" title="UIView和CALayer"></a>UIView和CALayer</h2><ol>
 <li><p><code>UIView</code>继承自<code>UIResponder</code>, 可以相应触摸事件. 而<code>CALayer</code>继承自<code>NSObject</code>, 不能响应触摸.</p>
 </li>
 <li><p><code>UIView</code>主要是对显示内容的管理, 而<code>CALayer</code>则主要侧重显示内容的绘制. 访问<code>UIVIew</code>的与绘图和跟坐标有关的属性, 例如<code>frame</code>, <code>bounds</code>等, 实际上内部都是在访问它所包含的CALayer的相关属性. <code>UIView</code>的<code>frame</code>实际是<code>layer</code>的<code>frame</code>, <code>center</code>, <code>bounds</code>实际也是只是内部<code>layer</code>相对应属性的<code>get</code>和<code>set</code>方法, 当你改变一个<code>view</code>的<code>frame</code>的时候, 你其实改变的是内部<code>layer</code>的<code>frame</code>. CALayer的frame由<code>anchorPoint</code>, <code>position</code>, <code>bounds</code>, <code>transform</code>共同决定. <code>UIView</code>的创建, 实际上是一系列<code>UILayer</code>创建的过程.</p>
@@ -235,13 +236,64 @@
 <li><p><code>UIView</code> 是<code>UIKit</code>框架下的(只能iOS使用). <code>CALayer</code> 是<code>QuartzCore</code>的(iOS 和macOS通用).</p>
 </li>
 <li><p><code>QuartzCore</code>的渲染能力，使二维图像可以被自由操纵, 就好像是三维的. 图像可以在一个三维坐标系中以任意角度被旋转, 缩放和倾斜. <code>CATransform3D</code>的一套方法提供了一些魔术般的变换效果. </p>
-<h2 id="UIView的常见layout方法"><a href="#UIView的常见layout方法" class="headerlink" title="UIView的常见layout方法"></a>UIView的常见layout方法</h2></li>
+</li>
 </ol>
-<h2 id="UILabel的Size计算"><a href="#UILabel的Size计算" class="headerlink" title="UILabel的Size计算"></a>UILabel的Size计算</h2><h2 id="常见UIView的写法"><a href="#常见UIView的写法" class="headerlink" title="常见UIView的写法"></a>常见UIView的写法</h2><hr>
+<h2 id="UIView的常见layout方法"><a href="#UIView的常见layout方法" class="headerlink" title="UIView的常见layout方法"></a>UIView的常见layout方法</h2><ul>
+<li><p><code>init</code> &amp; <code>initWithFrame</code></p>
+<p>  <code>init</code> 和 <code>initWithFrame</code>方法, 实际上都会调用<code>initWithFrame</code>方法来完成初始化, 不同的是在<code>init</code>方法内部获取到的<code>self.frame</code>是<code>CGRectZero</code>, 在<code>initWithFrame</code>中获取到的<code>self.frame</code>就是初始化时, 传入的<code>frame</code>的大小. 不过一般不建议在初始化方法中设置子控件的<code>frame</code>, 因为这时<code>self.frame</code>时机还不是固定的.</p>
+</li>
+<li><p>layoutSubviews</p>
+</li>
+</ul>
+<blockquote>
+<p>官方文档：</p>
+<p>Lays out subviews.<br>The default implementation of this method does nothing on iOS 5.1 and earlier. Otherwise, the default implementation uses any constraints you have set to determine the size and position of any subviews.</p>
+<p>Subclasses can override this method as needed to perform more precise layout of their subviews. You should override this method only if the autoresizing and constraint-based behaviors of the subviews do not offer the behavior you want. You can use your implementation to set the frame rectangles of your subviews directly.</p>
+<p>You should not call this method directly. If you want to force a layout update, call the setNeedsLayout method instead to do so prior to the next drawing update. If you want to update the layout of your views immediately, call the layoutIfNeeded method.</p>
+</blockquote>
+<p>翻译成人话大概就是: <code>layoutSubviews</code>方法用来布局子视图. 在<code>layoutSubviews</code>方法内部直接给需要改变布局的子视图赋值新frame来改变其<code>frame</code>. 该方法主要应用在封装的自定义<code>view</code>中, 我们通过重写这个方法完成自定义<code>view</code>中子视图的布局. 但是我们不能直接调用他来更新子视图的<code>frame</code>. 只能通过<a href="#layoutIfNeeded">layoutIfNeeded</a>或者<a href="#setNeedsLayout">setNeedsLayout</a>来调用, 或者等待系统触发. 系统触发<code>layoutSubviews</code>的<a href="#layoutSubviews">条件</a>.</p>
+<ul>
+<li><span id="setNeedsLayout">setNeedsLayout</span></li>
+</ul>
+<blockquote>
+<p>官方文档：</p>
+<p>Invalidates the current layout of the receiver and triggers a layout update during the next update cycle.</p>
+<p>Call this method on your application’s main thread when you want to adjust the layout of a view’s subviews. This method makes a note of the request and returns immediately. Because this method does not force an immediate update, but instead waits for the next update cycle, you can use it to invalidate the layout of multiple views before any of those views are updated. This behavior allows you to consolidate all of your layout updates to one update cycle, which is usually better for performance.</p>
+</blockquote>
+<p>翻译成人话大概就是: 如果一个layer的sublayer布局发生了改变需要更新布局, 我们通过调用<code>setNeedsLayout</code>方法来标记这个layer. 或者当layer的bounds发生变化或者layer上进行了add或者remove sublayer操作, 系统会自动调用<code>setNeedsLayout</code>方法. 这些被标记需要更新布局的layer会在下一个视图绘制周期(iOS屏幕刷新频率为60HZ, 因此下一个视图绘制周期是1/60s后)触发layoutSubviews完成子视图布局更新.</p>
+<p>如果你想要更新一个视图的子视图布局, 那么可以在主线程中调用这个方法来标记当前视图为需要更新子视图布局的视图. 可以使用这个方法给多个不同的view标记需要更新子视图布局, 然后在下一个视图绘制周期中这些view的subviews就会被一块更新布局, 这样做是可以很大地提高性能和效率的. </p>
+<ul>
+<li><span id="layoutIfNeeded">layoutIfNeeded</span></li>
+</ul>
+<blockquote>
+<p>官方文档：</p>
+<p>Lays out the subviews immediately.<br>Use this method to force the layout of subviews before drawing. Using the view that receives the message as the root view, this method lays out the view subtree starting at the root.</p>
+</blockquote>
+<p>翻译成人话大概就是: 在下一次绘图周期开始之前使用此方法强制进行子视图的布局更新. 此方法会将receiver作为根视图, 然后从根视图开始遍历根视图的subview链, 判断super layer是否被标记需要更新布局, 直到找到一个super layer没有标记更新布局为止, 然后系统会向所有这些被标记需要更新布局的layer发送<code>layoutSublayers</code>消息. <code>layoutSublayers</code>是<code>setNeedsLayout</code>的一个辅助方法, 调用该方法就意味着不会等到下个绘制周期, 而是立马触发<code>layoutSubviews</code>方法, 完成子视图的布局. </p>
+<p>但是需要注意只有当系统检测到某个view被<code>setNeedsLayout</code>标记之后才会立即触发<code>layoutSubviews</code>, 如果没有检测到<code>setNeedsLayout</code>标记就不会触发<code>layoutSubviews</code>, 所以如果想要立即刷新某个视图的子视图布局, 需要先让该视图调用<code>setNeedsLayout</code>方法标记一下, 然后再调用<code>layoutIfNeeded</code>. 另外所有的视图在第一次显示之前都是默认有<code>setNeedsLayout</code>标记的, 所以视图第一次显示的时候就可以直接调用<code>layoutIfNeeded</code>. 但是当第一次显示完成后, 如果还想要调用<code>layoutIfNeeded</code>就必须先使用<code>setNeedsLayout</code>标记一下. </p>
+<ul>
+<li><p>setNeedsDisplay</p>
+<p>  标记layer内容需要重新绘制, 在下个draw周期自动重绘, iPhone刷新频率为60Hz，也就是1/60秒后重绘.</p>
+</li>
+</ul>
+<p>drawRect<br>sizeThatFits<br>sizeToFit</p>
+<h2 id="系统触发layoutSubviews的条件"><a href="#系统触发layoutSubviews的条件" class="headerlink" title="系统触发layoutSubviews的条件"></a><span id="layoutSubviews">系统触发layoutSubviews的条件</span></h2><ol>
+<li>父视图使用<code>init</code>方法完成初始化时不会触发<code>layoutSubviews</code>. </li>
+<li>父视图用<code>initWithFrame</code>完成初始化并且当frame参数为<code>CGRectZero</code>时不会触发<code>layoutSubviews</code>，当frame参数不为<code>CGRectZero</code>时则会触发<code>layoutSubviews</code>.</li>
+<li>父视图<code>setFrame</code>的时候会触发<code>layoutSubviews</code>, 当然frame前后值得发生变化.</li>
+<li>父视图<code>addSubview</code>添加子视图时会触发其内部的<code>layoutSubviews</code>.</li>
+<li>子视图从父视图上<code>removeFromSuperView</code>的时候会触发其内部的<code>layoutSubviews</code>. </li>
+<li>滚动ScrollView的时候会触发<code>layoutSubviews</code>. </li>
+<li>旋转屏幕的时候会触发<code>layoutSubviews</code>. </li>
+</ol>
+<h2 id="iOS的动态高度"><a href="#iOS的动态高度" class="headerlink" title="iOS的动态高度"></a>iOS的动态高度</h2><h2 id="自定义UIView的写法"><a href="#自定义UIView的写法" class="headerlink" title="自定义UIView的写法"></a>自定义UIView的写法</h2><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.jianshu.com/p/079e5cf0f014" target="_blank" rel="external">详解CALayer 和 UIView的区别和联系</a></p>
 <p>2.<a href="http://blog.csdn.net/weiwangchao_/article/details/7771538" target="_blank" rel="external">UIView和CALayer的区别</a></p>
 <p>3.<a href="http://www.jianshu.com/p/087529c83747" target="_blank" rel="external">Core Animation 之 CALayer</a></p>
+<p>4.<a href="http://www.jianshu.com/p/3282c93c1a61" target="_blank" rel="external">UIView几个layout方法的理解</a></p>
+<p>5.<a href="http://www.jianshu.com/p/b3bb9b08e3da" target="_blank" rel="external">UIView布局深入理解</a></p>
+<p>6.<a href="http://www.jianshu.com/p/eb2c4bb4e3f1" target="_blank" rel="external">UIViewLayout的几个方法</a></p>
 
     
   </div>
@@ -264,7 +316,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
