@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/08/30/面试题拾遗系列之一/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
-<meta property="og:updated_time" content="2017-09-19T07:38:52.000Z">
+<meta property="og:updated_time" content="2017-09-21T02:43:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试题拾遗系列之一UIView系列">
 <meta name="twitter:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
@@ -155,7 +155,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度"><span class="toc-text">iOS的动态高度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度"><span class="toc-text">iOS的动态高度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
   </div>
 
 
@@ -246,8 +246,7 @@
 </li>
 </ul>
 <blockquote>
-<p>官方文档：</p>
-<p>Lays out subviews.<br>The default implementation of this method does nothing on iOS 5.1 and earlier. Otherwise, the default implementation uses any constraints you have set to determine the size and position of any subviews.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622482-layoutsubviews?language=objc" target="_blank" rel="external">官方文档</a><br>Lays out subviews.<br>The default implementation of this method does nothing on iOS 5.1 and earlier. Otherwise, the default implementation uses any constraints you have set to determine the size and position of any subviews.</p>
 <p>Subclasses can override this method as needed to perform more precise layout of their subviews. You should override this method only if the autoresizing and constraint-based behaviors of the subviews do not offer the behavior you want. You can use your implementation to set the frame rectangles of your subviews directly.</p>
 <p>You should not call this method directly. If you want to force a layout update, call the setNeedsLayout method instead to do so prior to the next drawing update. If you want to update the layout of your views immediately, call the layoutIfNeeded method.</p>
 </blockquote>
@@ -256,8 +255,7 @@
 <li><span id="setNeedsLayout">setNeedsLayout</span></li>
 </ul>
 <blockquote>
-<p>官方文档：</p>
-<p>Invalidates the current layout of the receiver and triggers a layout update during the next update cycle.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622601-setneedslayout?language=objc" target="_blank" rel="external">官方文档</a><br>Invalidates the current layout of the receiver and triggers a layout update during the next update cycle.</p>
 <p>Call this method on your application’s main thread when you want to adjust the layout of a view’s subviews. This method makes a note of the request and returns immediately. Because this method does not force an immediate update, but instead waits for the next update cycle, you can use it to invalidate the layout of multiple views before any of those views are updated. This behavior allows you to consolidate all of your layout updates to one update cycle, which is usually better for performance.</p>
 </blockquote>
 <p>翻译成人话大概就是: 如果一个layer的sublayer布局发生了改变需要更新布局, 我们通过调用<code>setNeedsLayout</code>方法来标记这个layer. 或者当layer的bounds发生变化或者layer上进行了add或者remove sublayer操作, 系统会自动调用<code>setNeedsLayout</code>方法. 这些被标记需要更新布局的layer会在下一个视图绘制周期(iOS屏幕刷新频率为60HZ, 因此下一个视图绘制周期是1/60s后)触发layoutSubviews完成子视图布局更新.</p>
@@ -266,17 +264,27 @@
 <li><span id="layoutIfNeeded">layoutIfNeeded</span></li>
 </ul>
 <blockquote>
-<p>官方文档：</p>
-<p>Lays out the subviews immediately.<br>Use this method to force the layout of subviews before drawing. Using the view that receives the message as the root view, this method lays out the view subtree starting at the root.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622507-layoutifneeded?language=objc" target="_blank" rel="external">官方文档</a><br>Lays out the subviews immediately.<br>Use this method to force the layout of subviews before drawing. Using the view that receives the message as the root view, this method lays out the view subtree starting at the root.</p>
 </blockquote>
 <p>翻译成人话大概就是: 在下一次绘图周期开始之前使用此方法强制进行子视图的布局更新. 此方法会将receiver作为根视图, 然后从根视图开始遍历根视图的subview链, 判断super layer是否被标记需要更新布局, 直到找到一个super layer没有标记更新布局为止, 然后系统会向所有这些被标记需要更新布局的layer发送<code>layoutSublayers</code>消息. <code>layoutSublayers</code>是<code>setNeedsLayout</code>的一个辅助方法, 调用该方法就意味着不会等到下个绘制周期, 而是立马触发<code>layoutSubviews</code>方法, 完成子视图的布局. </p>
 <p>但是需要注意只有当系统检测到某个view被<code>setNeedsLayout</code>标记之后才会立即触发<code>layoutSubviews</code>, 如果没有检测到<code>setNeedsLayout</code>标记就不会触发<code>layoutSubviews</code>, 所以如果想要立即刷新某个视图的子视图布局, 需要先让该视图调用<code>setNeedsLayout</code>方法标记一下, 然后再调用<code>layoutIfNeeded</code>. 另外所有的视图在第一次显示之前都是默认有<code>setNeedsLayout</code>标记的, 所以视图第一次显示的时候就可以直接调用<code>layoutIfNeeded</code>. 但是当第一次显示完成后, 如果还想要调用<code>layoutIfNeeded</code>就必须先使用<code>setNeedsLayout</code>标记一下. </p>
 <ul>
-<li><p>setNeedsDisplay</p>
-<p>  标记layer内容需要重新绘制, 在下个draw周期自动重绘, iPhone刷新频率为60Hz，也就是1/60秒后重绘.</p>
-</li>
+<li>setNeedsDisplay</li>
 </ul>
-<p>drawRect<br>sizeThatFits<br>sizeToFit</p>
+<blockquote>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622437-setneedsdisplay?language=objc" target="_blank" rel="external">官方文档</a><br>Marks the receiver’s entire bounds rectangle as needing to be redrawn.<br>You can use this method or the <code>setNeedsDisplayInRect:</code> to notify the system that your view’s contents need to be redrawn. This method makes a note of the request and returns immediately. The view is not actually redrawn until the next drawing cycle, at which point all invalidated views are updated.</p>
+<p>其他说明:<br>You should only be calling setNeedsDisplay if you override drawRect in a subclass of UIView which is basically a custom view drawing something on the screen, like lines, images, or shapes like a rectangle.</p>
+</blockquote>
+<p>如果我们在自定义的UIView中, 重写了<code>drawRect:</code>方法在屏幕上绘制一些东西, 那就需要在合适的地方调用<code>setNeedsDisplay</code>来标记当前视图, 系统会在下一个绘制周期时触发<code>drawRect:</code>方法. 系统触发<code>drawRect:</code>的<a href="#drawRect">条件</a>.</p>
+<p>也可以使用<code>setNeedsDisplayInRect:</code>方法来标记视图的某个区域需要重新绘制.</p>
+<ul>
+<li>drawRect</li>
+</ul>
+<blockquote>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622529-drawrect" target="_blank" rel="external">官方文档</a></p>
+</blockquote>
+<p>这里有一篇<a href="http://bihongbo.com/2016/01/03/memoryGhostdrawRect/" target="_blank" rel="external">使用drawRect:实现绘制画板功能的内存优化</a>的文章.</p>
+<p>sizeThatFits<br>sizeToFit</p>
 <h2 id="系统触发layoutSubviews的条件"><a href="#系统触发layoutSubviews的条件" class="headerlink" title="系统触发layoutSubviews的条件"></a><span id="layoutSubviews">系统触发layoutSubviews的条件</span></h2><ol>
 <li>父视图使用<code>init</code>方法完成初始化时不会触发<code>layoutSubviews</code>. </li>
 <li>父视图用<code>initWithFrame</code>完成初始化并且当frame参数为<code>CGRectZero</code>时不会触发<code>layoutSubviews</code>，当frame参数不为<code>CGRectZero</code>时则会触发<code>layoutSubviews</code>.</li>
@@ -286,7 +294,7 @@
 <li>滚动ScrollView的时候会触发<code>layoutSubviews</code>. </li>
 <li>旋转屏幕的时候会触发<code>layoutSubviews</code>. </li>
 </ol>
-<h2 id="iOS的动态高度"><a href="#iOS的动态高度" class="headerlink" title="iOS的动态高度"></a>iOS的动态高度</h2><h2 id="自定义UIView的写法"><a href="#自定义UIView的写法" class="headerlink" title="自定义UIView的写法"></a>自定义UIView的写法</h2><hr>
+<h2 id="系统出发drawRect-的条件"><a href="#系统出发drawRect-的条件" class="headerlink" title="系统出发drawRect:的条件"></a><span id="drawRect">系统出发drawRect:的条件</span></h2><h2 id="iOS的动态高度"><a href="#iOS的动态高度" class="headerlink" title="iOS的动态高度"></a>iOS的动态高度</h2><h2 id="自定义UIView的写法"><a href="#自定义UIView的写法" class="headerlink" title="自定义UIView的写法"></a>自定义UIView的写法</h2><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.jianshu.com/p/079e5cf0f014" target="_blank" rel="external">详解CALayer 和 UIView的区别和联系</a></p>
 <p>2.<a href="http://blog.csdn.net/weiwangchao_/article/details/7771538" target="_blank" rel="external">UIView和CALayer的区别</a></p>
