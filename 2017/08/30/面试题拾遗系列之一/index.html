@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/08/30/面试题拾遗系列之一/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
-<meta property="og:updated_time" content="2017-09-21T02:43:53.000Z">
+<meta property="og:updated_time" content="2017-09-21T09:27:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试题拾遗系列之一UIView系列">
 <meta name="twitter:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
@@ -154,8 +154,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度"><span class="toc-text">iOS的动态高度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度-AutoLayout"><span class="toc-text">iOS的动态高度, AutoLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
   </div>
 
 
@@ -214,7 +214,7 @@
 </li>
 <li><p><code>UIView</code>主要是对显示内容的管理, 而<code>CALayer</code>则主要侧重显示内容的绘制. 访问<code>UIVIew</code>的与绘图和跟坐标有关的属性, 例如<code>frame</code>, <code>bounds</code>等, 实际上内部都是在访问它所包含的CALayer的相关属性. <code>UIView</code>的<code>frame</code>实际是<code>layer</code>的<code>frame</code>, <code>center</code>, <code>bounds</code>实际也是只是内部<code>layer</code>相对应属性的<code>get</code>和<code>set</code>方法, 当你改变一个<code>view</code>的<code>frame</code>的时候, 你其实改变的是内部<code>layer</code>的<code>frame</code>. CALayer的frame由<code>anchorPoint</code>, <code>position</code>, <code>bounds</code>, <code>transform</code>共同决定. <code>UIView</code>的创建, 实际上是一系列<code>UILayer</code>创建的过程.</p>
 </li>
-<li><p><code>UIView</code>有个重要属性<code>layer</code>，可以返回它的主<code>CALayer</code>实例. 所有从UIView继承来的对象都继承了这个属性. 这意味着你可以在所有的<code>UIVIew</code>子类上增加动画, 旋转, 缩放等<code>CALayer</code>支持的操作. <code>UIView</code>的<code>layerClass</code>方法, 可以返回主<code>layer</code>所使用的类, <code>UIView</code>的子类可以通过重载这个方法, 来让<code>UIView</code>使用不同的CALayer来显示. 代码示例：</p>
+<li><p><code>UIView</code>有个重要属性<code>layer</code>. 可以返回它的主<code>CALayer</code>实例. 所有从UIView继承来的对象都继承了这个属性. 这意味着你可以在所有的<code>UIVIew</code>子类上增加动画, 旋转, 缩放等<code>CALayer</code>支持的操作. <code>UIView</code>的<code>layerClass</code>方法, 可以返回主<code>layer</code>所使用的类, <code>UIView</code>的子类可以通过重载这个方法, 来让<code>UIView</code>使用不同的CALayer来显示. 代码示例：</p>
 <pre><code> - (class)layerClass {
      return ([CAEAGLLayer class]);
  }
@@ -225,7 +225,7 @@
  grayCover.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2] CGColor];
  [self.layer addSubLayer:grayCover];
 </code></pre></li>
-<li><p><code>UIView</code>的内部, 有三个<code>layer tree</code>: 1.逻辑树, 这里是代码可以操纵的. 2.动画树, 是一个中间层, 系统就在这一层上通过逻辑树来更改属性, 进行各种渲染操作. 3.显示树, 其内容就是当前正被显示在屏幕上得内容。</p>
+<li><p><code>UIView</code>的内部, 有三个<code>layer tree</code>: 1.逻辑树, 这里是代码可以操纵的. 2.动画树, 是一个中间层, 系统就在这一层上通过逻辑树来更改属性, 进行各种渲染操作. 3.显示树, 其内容就是当前正被显示在屏幕上得内容. </p>
 </li>
 <li><p><code>UIView</code>实际上是<code>CALayer</code>的<code>CALayerDelegate</code>, 通过实现一系列的代理方法来显示<code>CALayer</code>绘制的内容.</p>
 </li>
@@ -235,7 +235,7 @@
 </li>
 <li><p><code>UIView</code> 是<code>UIKit</code>框架下的(只能iOS使用). <code>CALayer</code> 是<code>QuartzCore</code>的(iOS 和macOS通用).</p>
 </li>
-<li><p><code>QuartzCore</code>的渲染能力，使二维图像可以被自由操纵, 就好像是三维的. 图像可以在一个三维坐标系中以任意角度被旋转, 缩放和倾斜. <code>CATransform3D</code>的一套方法提供了一些魔术般的变换效果. </p>
+<li><p><code>QuartzCore</code>的渲染能力. 使二维图像可以被自由操纵, 就好像是三维的. 图像可以在一个三维坐标系中以任意角度被旋转, 缩放和倾斜. <code>CATransform3D</code>的一套方法提供了一些魔术般的变换效果. </p>
 </li>
 </ol>
 <h2 id="UIView的常见layout方法"><a href="#UIView的常见layout方法" class="headerlink" title="UIView的常见layout方法"></a>UIView的常见layout方法</h2><ul>
@@ -275,26 +275,69 @@
 <p><a href="https://developer.apple.com/documentation/uikit/uiview/1622437-setneedsdisplay?language=objc" target="_blank" rel="external">官方文档</a><br>Marks the receiver’s entire bounds rectangle as needing to be redrawn.<br>You can use this method or the <code>setNeedsDisplayInRect:</code> to notify the system that your view’s contents need to be redrawn. This method makes a note of the request and returns immediately. The view is not actually redrawn until the next drawing cycle, at which point all invalidated views are updated.</p>
 <p>其他说明:<br>You should only be calling setNeedsDisplay if you override drawRect in a subclass of UIView which is basically a custom view drawing something on the screen, like lines, images, or shapes like a rectangle.</p>
 </blockquote>
-<p>如果我们在自定义的UIView中, 重写了<code>drawRect:</code>方法在屏幕上绘制一些东西, 那就需要在合适的地方调用<code>setNeedsDisplay</code>来标记当前视图, 系统会在下一个绘制周期时触发<code>drawRect:</code>方法. 系统触发<code>drawRect:</code>的<a href="#drawRect">条件</a>.</p>
+<p>如果我们在自定义的UIView中, 重写了<code>drawRect:</code>方法在屏幕上绘制一些东西, 那就需要在合适的地方调用<code>setNeedsDisplay</code>来标记当前视图, 系统会在下一个绘制周期时触发<code>drawRect:</code>方法. <a href="#drawRect">系统触发drawRect:的条件</a>.</p>
 <p>也可以使用<code>setNeedsDisplayInRect:</code>方法来标记视图的某个区域需要重新绘制.</p>
 <ul>
 <li>drawRect</li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622529-drawrect" target="_blank" rel="external">官方文档</a></p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622529-drawrect" target="_blank" rel="external">官方文档</a><br>Draws the receiver’s image within the passed-in rectangle</p>
+<p>The default implementation of this method does nothing. Subclasses that use technologies such as Core Graphics and UIKit to draw their view’s content should override this method and implement their drawing code there. You do not need to override this method if your view sets its content in other ways. For example, you do not need to override this method if your view just displays a background color or if your view sets its content directly using the underlying layer object.</p>
+<p>This method is called when a view is first displayed or when an event occurs that invalidates a visible part of the view. You should never call this method directly yourself. To invalidate part of your view, and thus cause that portion to be redrawn, call the <code>setNeedsDisplay</code> or <code>setNeedsDisplayInRect:</code> method instead.</p>
 </blockquote>
+<p>drawRect使用:</p>
+<p>该方法默认没有做任何操作, 如果视图中包含我们用<code>UIKit</code>或者<code>Core Graphics</code>绘制的内容, 我们需要重写该方法. 当视图第一次出现, 或者是改变约束条件让视图的全部或者一部分在屏幕上发生变化时, 系统都会调用<code>UIView</code>类的<code>drawRect</code>方法. 然后我们在此方法中能过获取到当前图形上下文, 实现我们的绘制内容, 最后系统会在合适的时机自动调用此方法. </p>
+<p><code>drawRect</code>一般调用是在<code>UIView</code>的<code>layoutSubviews</code>方法执行后. 但是, 在我们的视图全部初始化后,如果视图又发生了改变, 此时视图就需要重绘, 但是系统不会再帮我们自动调用<code>drewRect</code>方法. 这个时候就需要我们手动调用<code>UIView</code>类的 <code>setNeedsDisplay</code>或<code>setNeedsDisplayInRect</code>方法. 这两个方法是用来告诉系统, 我们的视图有了更新需要去重绘. 相当于是给系统做了标记, 在系统 runloop 的下一个周期自动调用<code>drawRect</code>方法.</p>
+<p>使用中要注意的地方:</p>
+<ol>
+<li><p>不要直接调用 drawRect 方法,如果强行调用此方法也是无效果的.苹果要求我们调用 UIView 类的 setNeedsDisplay 方法,则程序会自动调用 drawRect 方法进行重绘.</p>
+</li>
+<li><p>因为在绘制时要拿到图形上下文,如果在 UIView 初始化时没有设置 rect 大小, drawRect 方法不会被调用.</p>
+</li>
+<li><p>调用 sizeThatFits 后, 控件 frame 改变, UIView 的 layoutSubviews 被调用, 然后再调用 drawRect 方法. 所以可以先调用 sizeToFit 计算出size. 然后系统自动调用 drawRect 方法.</p>
+</li>
+<li><p>通过设置 contentMode 属性值为 UIViewContentModeRedraw.那么将在每次设置或更改 bounds 的时候自动调用 drawRect.</p>
+</li>
+<li><p>若要实时画图, 如果使用 gestureRecognizer 来刷新屏幕, 需要判断并转化 point 的坐标; 使用 touchbegan 等方法, 只需调用 setNeedsDisplay 实时刷新屏幕.</p>
+</li>
+</ol>
 <p>这里有一篇<a href="http://bihongbo.com/2016/01/03/memoryGhostdrawRect/" target="_blank" rel="external">使用drawRect:实现绘制画板功能的内存优化</a>的文章.</p>
-<p>sizeThatFits<br>sizeToFit</p>
+<ul>
+<li>sizeToFit</li>
+</ul>
+<blockquote>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622630-sizetofit?language=objc" target="_blank" rel="external">官方文档</a><br>Resizes and moves the receiver view so it just encloses its subviews.</p>
+<p>Call this method when you want to resize the current view so that it uses the most appropriate amount of space. Specific UIKit views resize themselves according to their own internal needs. In some cases, if a view does not have a superview, it may size itself to the screen bounds. Thus, if you want a given view to size itself to its parent view, you should add it to the parent view before calling this method.<br>You should not override this method. If you want to change the default sizing information for your view, override the sizeThatFits: instead. That method performs any needed calculations and returns them to this method, which then makes the change.</p>
+</blockquote>
+<p>当我们想要resize当前View以便获取他合适的大小时, 我们需要调用该方法. 尤其是<code>UIKit</code>的<code>View</code>视图是根据内部需要进行尺寸调整时. 在某些情况下, 如果当前View没有父视图, 他会根据屏幕的bounds来resize自身大小. 如果你想让一个View根据父视图来调整大小, 必须将该View添加到父视图中.</p>
+<p>一般情况下, 我们不需要重写该方法, 如果你想改变当前View的default size, 我们通过重写<a href="#sizeThatFits">sizeThatFits:</a>来实现. 在<code>sizeThatFits:</code>方法中进行必要的计算, 返回结果, 然后改变他的大小.</p>
+<ul>
+<li><span id="sizeThatFits">sizeThatFits</span></li>
+</ul>
+<blockquote>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622625-sizethatfits?language=objc" target="_blank" rel="external">官方文档</a><br>Asks the view to calculate and return the size that best fits the specified size.</p>
+<p>Parameters<br>size<br>The size for which the view should calculate its best-fitting size.</p>
+<p>Return Value<br>A new size that fits the receiver’s subviews.</p>
+<p>Discussion<br>The default implementation of this method returns the existing size of the view. Subclasses can override this method to return a custom value based on the desired layout of any subviews. For example, a UISwitch object returns a fixed size value that represents the standard size of a switch view, and a UIImageView object returns the size of the image it is currently displaying.<br>This method does not resize the receiver.</p>
+</blockquote>
+<p>该方法要求View计算并返回最适合指定大小的大小. 传入的参数就是View需要最合适的大小, 返回值是根据传入的大小, 计算得到的一个最适合receiver子视图的尺寸. </p>
+<p>该方法默认返回视图的现有大小, 子类能够通过重写该方法获得一个基于该子类所有子视图的期望布局的自定义大小. 调用<code>sizeThatFits:</code>并不改变view的size, 它只是让view根据已有content和给定size计算出最合适的view.size. </p>
 <h2 id="系统触发layoutSubviews的条件"><a href="#系统触发layoutSubviews的条件" class="headerlink" title="系统触发layoutSubviews的条件"></a><span id="layoutSubviews">系统触发layoutSubviews的条件</span></h2><ol>
 <li>父视图使用<code>init</code>方法完成初始化时不会触发<code>layoutSubviews</code>. </li>
-<li>父视图用<code>initWithFrame</code>完成初始化并且当frame参数为<code>CGRectZero</code>时不会触发<code>layoutSubviews</code>，当frame参数不为<code>CGRectZero</code>时则会触发<code>layoutSubviews</code>.</li>
+<li>父视图用<code>initWithFrame</code>完成初始化并且当frame参数为<code>CGRectZero</code>时不会触发<code>layoutSubviews</code>. 当frame参数不为<code>CGRectZero</code>时则会触发<code>layoutSubviews</code>.</li>
 <li>父视图<code>setFrame</code>的时候会触发<code>layoutSubviews</code>, 当然frame前后值得发生变化.</li>
 <li>父视图<code>addSubview</code>添加子视图时会触发其内部的<code>layoutSubviews</code>.</li>
 <li>子视图从父视图上<code>removeFromSuperView</code>的时候会触发其内部的<code>layoutSubviews</code>. </li>
 <li>滚动ScrollView的时候会触发<code>layoutSubviews</code>. </li>
 <li>旋转屏幕的时候会触发<code>layoutSubviews</code>. </li>
 </ol>
-<h2 id="系统出发drawRect-的条件"><a href="#系统出发drawRect-的条件" class="headerlink" title="系统出发drawRect:的条件"></a><span id="drawRect">系统出发drawRect:的条件</span></h2><h2 id="iOS的动态高度"><a href="#iOS的动态高度" class="headerlink" title="iOS的动态高度"></a>iOS的动态高度</h2><h2 id="自定义UIView的写法"><a href="#自定义UIView的写法" class="headerlink" title="自定义UIView的写法"></a>自定义UIView的写法</h2><hr>
+<h2 id="系统出发drawRect-的条件"><a href="#系统出发drawRect-的条件" class="headerlink" title="系统出发drawRect:的条件"></a><span id="drawRect">系统出发drawRect:的条件</span></h2><ol>
+<li>如果在<code>UIView</code>初始化时没有设置rect大小, 将直接导致<code>drawRect</code>不被自动调用. <code>drawRect</code>调用是在Controller-&gt;loadView, Controller-&gt;viewDidLoad 两方法之后掉用的. 所以不用担心一进入到控制器中, 这些View的drawRect就开始画了. 这样可以在控制器中设置一些值给View(如果这些View draw的时候需要用到某些变量值).</li>
+<li>该方法在调用<code>sizeToFit</code>后被调用, 所以可以先调用<code>sizeToFit</code>计算出size, 然后系统自动调用drawRect:方法. </li>
+<li>通过设置<code>contentMode</code>属性值为<code>UIViewContentModeRedraw</code>. 那么将在每次设置或更改frame的时候自动调用<code>drawRect:</code>.</li>
+<li>直接调用<code>setNeedsDisplay</code>或者<code>setNeedsDisplayInRect:</code>触发<code>drawRect:</code>. 但是有个前提条件是rect不能为<code>CGRectZero</code>.<br>以上1, 2推荐; 而3, 4不提倡. </li>
+</ol>
+<h2 id="iOS的动态高度-AutoLayout"><a href="#iOS的动态高度-AutoLayout" class="headerlink" title="iOS的动态高度, AutoLayout"></a>iOS的动态高度, AutoLayout</h2><h2 id="自定义UIView的写法"><a href="#自定义UIView的写法" class="headerlink" title="自定义UIView的写法"></a>自定义UIView的写法</h2><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.jianshu.com/p/079e5cf0f014" target="_blank" rel="external">详解CALayer 和 UIView的区别和联系</a></p>
 <p>2.<a href="http://blog.csdn.net/weiwangchao_/article/details/7771538" target="_blank" rel="external">UIView和CALayer的区别</a></p>
@@ -302,6 +345,7 @@
 <p>4.<a href="http://www.jianshu.com/p/3282c93c1a61" target="_blank" rel="external">UIView几个layout方法的理解</a></p>
 <p>5.<a href="http://www.jianshu.com/p/b3bb9b08e3da" target="_blank" rel="external">UIView布局深入理解</a></p>
 <p>6.<a href="http://www.jianshu.com/p/eb2c4bb4e3f1" target="_blank" rel="external">UIViewLayout的几个方法</a></p>
+<p>7.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="external">深入理解Auto Layout 第一弹</a></p>
 
     
   </div>
@@ -324,7 +368,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
