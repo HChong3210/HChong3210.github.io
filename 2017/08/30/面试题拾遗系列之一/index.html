@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/08/30/面试题拾遗系列之一/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
-<meta property="og:updated_time" content="2017-09-21T09:27:42.000Z">
+<meta property="og:updated_time" content="2017-09-21T09:57:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试题拾遗系列之一UIView系列">
 <meta name="twitter:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
@@ -154,8 +154,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度-AutoLayout"><span class="toc-text">iOS的动态高度, AutoLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sizeToFit-vs-sizeThatFits"><span class="toc-text">sizeToFit vs sizeThatFits:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度-AutoLayout"><span class="toc-text">iOS的动态高度, AutoLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
   </div>
 
 
@@ -322,6 +322,15 @@
 </blockquote>
 <p>该方法要求View计算并返回最适合指定大小的大小. 传入的参数就是View需要最合适的大小, 返回值是根据传入的大小, 计算得到的一个最适合receiver子视图的尺寸. </p>
 <p>该方法默认返回视图的现有大小, 子类能够通过重写该方法获得一个基于该子类所有子视图的期望布局的自定义大小. 调用<code>sizeThatFits:</code>并不改变view的size, 它只是让view根据已有content和给定size计算出最合适的view.size. </p>
+<h2 id="sizeToFit-vs-sizeThatFits"><a href="#sizeToFit-vs-sizeThatFits" class="headerlink" title="sizeToFit vs sizeThatFits:"></a>sizeToFit vs sizeThatFits:</h2><ol>
+<li>sizeToFit会自动调用sizeThatFits方法；</li>
+<li>sizeToFit不应该在子类中被重写, 应该重写sizeThatFits</li>
+<li>sizeThatFits传入的参数是receiver当前的size, 返回一个适合subviews的size</li>
+<li>sizeToFit可以被手动直接调用, </li>
+<li>sizeToFit和sizeThatFits方法都没有递归，对subviews也不负责，只负责自己</li>
+<li>调用 sizeToFit() 会去自动调用 sizeThatFits(_ size: CGSize) 方法。</li>
+<li>sizeThatFits 不会改变 receiver 的 size, 调用 sizeToFit() 会改变 receiver 的 size. 此处的receiver一般是方法的调用者. </li>
+</ol>
 <h2 id="系统触发layoutSubviews的条件"><a href="#系统触发layoutSubviews的条件" class="headerlink" title="系统触发layoutSubviews的条件"></a><span id="layoutSubviews">系统触发layoutSubviews的条件</span></h2><ol>
 <li>父视图使用<code>init</code>方法完成初始化时不会触发<code>layoutSubviews</code>. </li>
 <li>父视图用<code>initWithFrame</code>完成初始化并且当frame参数为<code>CGRectZero</code>时不会触发<code>layoutSubviews</code>. 当frame参数不为<code>CGRectZero</code>时则会触发<code>layoutSubviews</code>.</li>
@@ -368,7 +377,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
