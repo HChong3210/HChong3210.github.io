@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/08/30/面试题拾遗系列之一/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
-<meta property="og:updated_time" content="2017-09-21T09:57:43.000Z">
+<meta property="og:updated_time" content="2017-09-22T03:00:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试题拾遗系列之一UIView系列">
 <meta name="twitter:description" content="UIView系列之—UIView和CALayerUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—自定义UIView的写法 UIView和CALayer UIView继承自UIResponder, 可以相应触摸事件. 而CALayer继承自NSObject, 不能响应触摸.  UIView主">
@@ -154,8 +154,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sizeToFit-vs-sizeThatFits"><span class="toc-text">sizeToFit vs sizeThatFits:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度-AutoLayout"><span class="toc-text">iOS的动态高度, AutoLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义UIView的写法"><span class="toc-text">自定义UIView的写法</span></a></li></ol></li></ol>
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—UIView和CALayer"><span class="toc-text">UIView系列之—UIView和CALayer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView和CALayer"><span class="toc-text">UIView和CALayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的常见layout方法"><span class="toc-text">UIView的常见layout方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sizeToFit-vs-sizeThatFits"><span class="toc-text">sizeToFit vs sizeThatFits:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统触发layoutSubviews的条件"><span class="toc-text">系统触发layoutSubviews的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统出发drawRect-的条件"><span class="toc-text">系统出发drawRect:的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS的动态高度-AutoLayout"><span class="toc-text">iOS的动态高度, AutoLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何写一个自定义UIView"><span class="toc-text">如何写一个自定义UIView</span></a></li></ol></li></ol>
   </div>
 
 
@@ -346,7 +346,7 @@
 <li>通过设置<code>contentMode</code>属性值为<code>UIViewContentModeRedraw</code>. 那么将在每次设置或更改frame的时候自动调用<code>drawRect:</code>.</li>
 <li>直接调用<code>setNeedsDisplay</code>或者<code>setNeedsDisplayInRect:</code>触发<code>drawRect:</code>. 但是有个前提条件是rect不能为<code>CGRectZero</code>.<br>以上1, 2推荐; 而3, 4不提倡. </li>
 </ol>
-<h2 id="iOS的动态高度-AutoLayout"><a href="#iOS的动态高度-AutoLayout" class="headerlink" title="iOS的动态高度, AutoLayout"></a>iOS的动态高度, AutoLayout</h2><h2 id="自定义UIView的写法"><a href="#自定义UIView的写法" class="headerlink" title="自定义UIView的写法"></a>自定义UIView的写法</h2><hr>
+<h2 id="iOS的动态高度-AutoLayout"><a href="#iOS的动态高度-AutoLayout" class="headerlink" title="iOS的动态高度, AutoLayout"></a>iOS的动态高度, AutoLayout</h2><h2 id="如何写一个自定义UIView"><a href="#如何写一个自定义UIView" class="headerlink" title="如何写一个自定义UIView"></a>如何写一个自定义UIView</h2><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.jianshu.com/p/079e5cf0f014" target="_blank" rel="external">详解CALayer 和 UIView的区别和联系</a></p>
 <p>2.<a href="http://blog.csdn.net/weiwangchao_/article/details/7771538" target="_blank" rel="external">UIView和CALayer的区别</a></p>
@@ -377,7 +377,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>如何写一个自定义UIView | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+  
+
+  <meta name="description" content="如何写一个自定义UIView这一篇和前面的实际是一个系列, 但是有不太一样, 也稍微偏架构和规范一些. 说一下在实际编程中的写法.  通用的自定义类的function归纳一个自定义类中的代码首先是有序的, 不管是UIVIewControl, UIVIew, 或者NSObject, 都应该把具有相同作用的function归纳为一个类, 我一般按照下面这样来分割代码, 这样看上去会比较有条理:  #p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何写一个自定义UIView">
+<meta property="og:url" content="http://hchong.net/2017/09/21/如何写一个自定义UIView/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="如何写一个自定义UIView这一篇和前面的实际是一个系列, 但是有不太一样, 也稍微偏架构和规范一些. 说一下在实际编程中的写法.  通用的自定义类的function归纳一个自定义类中的代码首先是有序的, 不管是UIVIewControl, UIVIew, 或者NSObject, 都应该把具有相同作用的function归纳为一个类, 我一般按照下面这样来分割代码, 这样看上去会比较有条理:  #p">
+<meta property="og:updated_time" content="2017-09-24T06:40:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何写一个自定义UIView">
+<meta name="twitter:description" content="如何写一个自定义UIView这一篇和前面的实际是一个系列, 但是有不太一样, 也稍微偏架构和规范一些. 说一下在实际编程中的写法.  通用的自定义类的function归纳一个自定义类中的代码首先是有序的, 不管是UIVIewControl, UIVIew, 或者NSObject, 都应该把具有相同作用的function归纳为一个类, 我一般按照下面这样来分割代码, 这样看上去会比较有条理:  #p">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#如何写一个自定义UIView"><span class="toc-text">如何写一个自定义UIView</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通用的自定义类的function归纳"><span class="toc-text">通用的自定义类的function归纳</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组合代替继承"><span class="toc-text">组合代替继承</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的写法"><span class="toc-text">UIView的写法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化必要的子view和变量"><span class="toc-text">初始化必要的子view和变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在合适的时机进行布局"><span class="toc-text">在合适的时机进行布局</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-如何写一个自定义UIView" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">如何写一个自定义UIView</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.09.21</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2017/09/21/如何写一个自定义UIView/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h1 id="如何写一个自定义UIView"><a href="#如何写一个自定义UIView" class="headerlink" title="如何写一个自定义UIView"></a>如何写一个自定义UIView</h1><p>这一篇和前面的实际是一个系列, 但是有不太一样, 也稍微偏架构和规范一些. 说一下在实际编程中的写法. </p>
+<h2 id="通用的自定义类的function归纳"><a href="#通用的自定义类的function归纳" class="headerlink" title="通用的自定义类的function归纳"></a>通用的自定义类的function归纳</h2><p>一个自定义类中的代码首先是有序的, 不管是<code>UIVIewControl</code>, <code>UIVIew</code>, 或者<code>NSObject</code>, 都应该把具有相同作用的function归纳为一个类, 我一般按照下面这样来分割代码, 这样看上去会比较有条理: </p>
+<pre><code>#pragma mark - LifeCycle
+这里面是一些类的生命周期的方法, 以及overWrite的父类的方法
+#pragma mark - UIConfig
+这里面是和当前类的UI相关的设置信息
+#pragma mark - HttpRequest
+当前类的网络请求部分
+#pragma mark - XXXDelegate
+当前类响应的代理事件
+#pragma mark - Action
+当前类的EventResponse事件
+#pragma mark - Private
+当前类中所用到的一些工具function, 不过一般不建议写在这里面, 我们应该按照模块新建一个专门的工具类来管理这些function
+#pragma mark - Getter, Setter
+当前类中用到的所有属性的Getter和Setter, 强烈推荐这么些, 这样可以把当前类的子控件的初始化放到Getter中去, 维护了代码的整洁度.
+</code></pre><p>除此之外, 上面这个顺序一般是按照使用者对这个类中所有function的关心程度来排序的, 例如对Lifecycle和UIConfig的关心程度就比Getter和Setter的程度高. 如果这个类还是特别长的话, 那就建议把代码在拆分为各个独立功能的category, 或者把尽量多的Private方法拆分为独立的工具类, 这样不管是对当前类的代码量, 或者后面可能会使用到这些PrivateFunction的人来说都是比较合理的做法. </p>
+<h2 id="组合代替继承"><a href="#组合代替继承" class="headerlink" title="组合代替继承"></a>组合代替继承</h2><p>除此之外, 对于复杂类来说我们要尽量<em>使用组合来代替继承</em>. 例如当前有一个类实现了A功能, 业务发展我们要使用A+B功能, 我们可能会想到写一个A的子类A’, 在里面再加上B功能, 完美解决. 那么后面我们要再使用A+B+C功能, 那么我们可能会写一个A’的子类A’’, 在里面实现C的功能, 又完美实现. 那如果突然有一天, 产品经理突然说要实现A+C功能呢, 傻眼了, 一大坨代码怎么拆分. 所以正确的做法应该是, 我们新建三个类, 分别独立实现A, B, C的功能, 业务方要用哪个就自由组合, 假设后面再来了D, E, F我们也不怕, 我们只用像插件一样, 用到哪个组合哪个就好. </p>
+<h2 id="UIView的写法"><a href="#UIView的写法" class="headerlink" title="UIView的写法"></a>UIView的写法</h2><p>UIView作为直接展示给用户看的层面, 是最重要的部分. 我强烈推荐使用纯代码布局, 使用Frame或者Autolayout都可以. 使用Frame的话, 推荐使用<a href="https://github.com/casatwy/HandyAutoLayout" target="_blank" rel="external">这个项目</a>. 如果使用AutoLayout的话, <code>masonry</code>则是很不错的选择. </p>
+<p>objc构建一个对象使用的是两段式, 首先分配内存<code>alloc</code>然后<code>init</code>, 这样的好处就是将内存操作和初始化操作解耦合, 让我们能够在初始化的时候对对象做一些必要的操作. 这是个很好的思路, 我们在做很多事情的时候都可以使用这种两段式的思路. 比如布局一个UIView, 我们可以分成两部, <a href="#alloc">初始化必要的子view和变量</a>, <a href="#init">然后在合适的时机进行布局</a>. 一般来说我们的自定义类继承自UIView, 首先在initWithFrame:方法中将需要的子控件加入view中. 注意, 这里只是加入到view中, 并没有设置各个子控件的尺寸.</p>
+<h3 id="初始化必要的子view和变量"><a href="#初始化必要的子view和变量" class="headerlink" title="初始化必要的子view和变量"></a><span id="alloc">初始化必要的子view和变量</span></h3><p>所以第一步应该是: <code>- (id)initWithFrame:(CGRect)aRect</code>, 那我们为什么不适用<code>- (id)init</code>来完成初始化呢? 如果是这种情况, 那么在init方法中frame是不确定的, 此时如果在initWithFrame:方法中设置尺寸, 那么各个子控件的尺寸都会是0, 因为这个view的frame还没有设置.所以我们应该保证view的frame设置完才会设置它的子控件的尺寸. </p>
+<p>还有就是这个函数是无论你用什么初始化函数都会被调用的一个, 比如你用<code>[UIView new]</code>或者<code>[[UIView alloc] init]</code>都会调用initWithFrame这个函数(有些UIView的子类有特殊情况，比如UITableViewCell), 所以你要是对一个view的变量有初始化的操作尽量往initWithFrame里面放还是非常合适的.  并且这样也能够保证, 以后在使用的时候所有的变量都被正确的初始化过. 而我们一般会在initWithFrame中做些什么呢.</p>
+<ul>
+<li>添加子View</li>
+<li>初始化属性变量</li>
+<li>其他一些共用操作</li>
+</ul>
+<h3 id="在合适的时机进行布局"><a href="#在合适的时机进行布局" class="headerlink" title="在合适的时机进行布局"></a><span id="init">在合适的时机进行布局</span></h3><p>初始化函数中有一个名称withFrame, 大家可能就会以为这个函数使用布局用的. 然而在代码逻辑比较清晰的工程中，几乎很少看到在这个函数中进行界面布局的工作, 因为UIKit给你提供了一个专门的函数<code>layoutSubViews</code>来干这个事情. 而且, 在这个函数中做的界面布局的工作, 是一次性编码, 界面布局没有任何复用性, 如果父View的大小变了之后, 这个View还是傻傻的保持原来的模样. 同时也会造成, 初始化函数臃肿, 导致维护上的困难. 所以在<code>layoutSubViews</code>中对子视图进行布局才是最合理的地方. </p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>一个控件有2种创建方式: </p>
+<ul>
+<li>通过代码创建</li>
+</ul>
+<p>初始化时一定会调用<code>initWithFrame:</code>方法. </p>
+<ul>
+<li>通过xib\storyboard创建</li>
+</ul>
+<p>初始化时不会调用<code>initWithFrame:</code>方法, 只会调用<code>initWithCoder:</code>方法, 初始化完毕后会调用<code>awakeFromNib</code>方法注意要在在awakeFromNib中初始化子控件</p>
+<hr>
+<p>参考资料:</p>
+<p>1.<a href="https://casatwy.com/iosying-yong-jia-gou-tan-viewceng-de-zu-zhi-he-diao-yong-fang-an.html" target="_blank" rel="external">iOS应用架构谈</a></p>
+<p>2.<a href="https://yishuiliunian.gitbooks.io/implementate-tableview-to-understand-ios/content/uikit/1124.html" target="_blank" rel="external">视图类, 如何布局</a></p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">Close</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2017/09/21/如何写一个自定义UIView/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
