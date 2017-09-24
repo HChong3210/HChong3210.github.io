@@ -31,7 +31,7 @@
 <meta property="og:url" content="http://hchong.net/2017/09/24/UIView系列之---iOS的动态高度/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
-<meta property="og:updated_time" content="2017-09-24T16:04:02.000Z">
+<meta property="og:updated_time" content="2017-09-24T16:13:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UIView系列之---iOS的动态高度">
 <meta name="twitter:description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
@@ -154,7 +154,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—iOS的动态高度"><span class="toc-text">UIView系列之—iOS的动态高度</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS布局机制大概分这么几种常见的方式"><span class="toc-text">iOS布局机制大概分这么几种常见的方式:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见Auto-Layout场景下的运用"><span class="toc-text">常见Auto Layout场景下的运用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Leaf-level-views高度计算"><span class="toc-text">Leaf-level views高度计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非Leaf-level-views高度计算"><span class="toc-text">非Leaf-level views高度计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不包含任何subview的view和包含subView的view混合使用下高度计算"><span class="toc-text">不包含任何subview的view和包含subView的view混合使用下高度计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cell的动态高度计算"><span class="toc-text">Cell的动态高度计算</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—iOS的动态高度"><span class="toc-text">UIView系列之—iOS的动态高度</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS布局机制大概分这么几种常见的方式"><span class="toc-text">iOS布局机制大概分这么几种常见的方式:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见Auto-Layout场景下的运用"><span class="toc-text">常见Auto Layout场景下的运用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Leaf-level-views高度计算"><span class="toc-text">Leaf-level views高度计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非Leaf-level-views高度计算"><span class="toc-text">非Leaf-level views高度计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Leaf-level-views和非Leaf-level-views混合使用下高度计算"><span class="toc-text">Leaf-level views和非Leaf-level views混合使用下高度计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cell的动态高度计算"><span class="toc-text">Cell的动态高度计算</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -241,16 +241,21 @@
 }
 
 @end
-</code></pre><p>以上如果是单行label的话, 实现起来没问题. 但是如果label需要换行的话, 那事情就没这么简单了. 首先我们要设置<code>preferredMaxLayoutWidth</code>, 也就是UILabel的Width最大值, label会根据这个最大值来换行. 在设置<code>numberOfLines = 0</code>, 来实现换行. 那么这时label虽然换行了, 但是怎么计算label的高度呢. 有下面几种方法:</p>
+</code></pre><p>以上如果是单行label的话, 实现起来没问题. 但是如果label需要换行的话, 那事情就没这么简单了. 首先我们要设置<code>preferredMaxLayoutWidth</code>, 也就是UILabel的Width最大值, label会根据这个最大值来换行. 在设置<code>numberOfLines = 0</code>, 来实现换行. 那么这时label虽然换行了, 但是怎么计算多行label的高度呢? 有以下几种方法:</p>
 <ol>
 <li><p><code>boundingRectWithSize:options:attributes:context:</code></p>
 <p> <code>boundingRectWithSize:options:attributes:context:</code>是NSString的方法. 理解起来也非常简单, 根据一些绘制字符的选项和字符属性(字体, 字号, 字体颜色)等信息返回一个可以容纳字符串内容的CGRect. 它同样也需要一个CGSize来确定绘制区域.<br> size: 通常你可以传一个任意的Size, 它会返回一个它认为最合适的CGSize给你. 不过如果要想把视图的内容显示完全(纵向), 最好是将视图的实际宽度和最大高度<code>CGFLOAT_MAX</code>作为参数传递. 这样返回的才是完全显示内容的Size.<br> options: 默认情况下这个方法不会绘制多行, 如果要绘制多行字符, 那么options参数必须为: <code>NSStringDrawingUsesLineFragmentOrigin</code>.<br> attributes: 字符属性信息也非常重要. 如果要显示UILabel的全部内容, 必须传递这个参数. 以确保绘制的字体大小和UILabel的字体大小一致, </p>
 <p> 最后一个关键点是，这个方法返回的CGRect中Size的width和height都是小数，所以必须使用ceil函数才能确保结果的准确性。</p>
 </li>
-<li><p>sizeThatFits:</p>
+<li><p><span id="sizeThatFits">sizeThatFits:</span></p>
+<blockquote>
+<p>Asks the view to calculate and return the size that best fits the specified size.</p>
+<p>Return Value<br>A new size that fits the receiver’s subviews.</p>
+<p>Discussion<br>The default implementation of this method returns the existing size of the view. Subclasses can override this method to return a custom value based on the desired layout of any subviews. For example, a UISwitch object returns a fixed size value that represents the standard size of a switch view, and a UIImageView object returns the size of the image it is currently displaying.</p>
+</blockquote>
 <p> sizeThatFits: 方法意味着「根据文本计算最适合的size」, 但是并不改变调用者的size. 它需要传入一个CGSize参数这个参数和<code>boundingRectWithSize:options:attributes:context:</code>中size的作用和意义是一样的. </p>
 </li>
-<li><p>sizeToFit:</p>
+<li><p><span id="sizeToFit">sizeToFit:</span></p>
 <blockquote>
 <p>calls sizeThatFits: with current view bounds and changes bounds size. </p>
 </blockquote>
@@ -277,7 +282,8 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 <p>  <code>sizeThatFits:</code>和<code>boundingRectWithSize:options:attributes:context:</code>这两个API也可以在传统布局(基于Frame)的情况下使用. </p>
 </li>
 </ul>
-<h3 id="非Leaf-level-views高度计算"><a href="#非Leaf-level-views高度计算" class="headerlink" title="非Leaf-level views高度计算"></a>非Leaf-level views高度计算</h3><h3 id="不包含任何subview的view和包含subView的view混合使用下高度计算"><a href="#不包含任何subview的view和包含subView的view混合使用下高度计算" class="headerlink" title="不包含任何subview的view和包含subView的view混合使用下高度计算"></a>不包含任何subview的view和包含subView的view混合使用下高度计算</h3><h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><hr>
+<h3 id="非Leaf-level-views高度计算"><a href="#非Leaf-level-views高度计算" class="headerlink" title="非Leaf-level views高度计算"></a>非Leaf-level views高度计算</h3><p>以UITextView显示文本为例, 让其能够自适应文本, 即根据文本自动调整其大小; 由于<code>intrinsicContentSize</code>的特性, 当其内部含有subView时返回值是(-1, -1), 无法向auto layout system传递我们想要传达的值, 我们可以使用<a href="#sizeThatFits">sizeThatFits</a>或者<a href="#sizeToFit">sizeToFit</a>来计算或者改变UITextView的大小. </p>
+<h3 id="Leaf-level-views和非Leaf-level-views混合使用下高度计算"><a href="#Leaf-level-views和非Leaf-level-views混合使用下高度计算" class="headerlink" title="Leaf-level views和非Leaf-level views混合使用下高度计算"></a>Leaf-level views和非Leaf-level views混合使用下高度计算</h3><h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="external">深入理解Auto Layout</a>.</p>
 <p>2.<a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="external">动态计算UITableViewCell高度</a></p>
