@@ -32,7 +32,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fjvnn0tr2lj30ok0ru0st.jpg">
-<meta property="og:updated_time" content="2017-09-25T12:11:57.000Z">
+<meta property="og:updated_time" content="2017-09-25T13:30:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UIView系列之---iOS的动态高度">
 <meta name="twitter:description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
@@ -314,7 +314,81 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 </ol>
 </li>
 </ol>
-<h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><hr>
+<h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><p>对于使用auto layout机制布局的view, auto layout system会在布局过程中综合各种约束的考虑为之设置一个size, 在布局完成后, 该size的值即为view.frame.size的值; 这包含的另外一层意思, 即在布局完成前, 我们是不能通过view.frame.size准确获取view的size的. 但有时候, 我们需要在auto layout system对view完成布局前就知道它的size, <code>systemLayoutSizeFittingSize:</code>方法正是能够满足这种要求的API. <code>systemLayoutSizeFittingSize:</code>方法会根据其constraints返回一个合适的size值. </p>
+<p>在这里看一下比较知名的cell高度计算库<a href="https://github.com/forkingdog/UITableView-FDTemplateLayoutCell" target="_blank" rel="external">UITableView-FDTemplateLayoutCell</a>的核心高度计算方法, 大体上和我们所使用的方法差不多. Auto layout mode using <code>-systemLayoutSizeFittingSize:</code>, Frame layout mode using <code>-sizeThatFits:</code>. </p>
+<pre><code>- (CGFloat)fd_systemFittingHeightForConfiguratedCell:(UITableViewCell *)cell {
+    CGFloat contentViewWidth = CGRectGetWidth(self.frame);
+
+    // If a cell has accessory view or system accessory type, its content view&#39;s width is smaller
+    // than cell&#39;s by some fixed values.
+    if (cell.accessoryView) {
+        contentViewWidth -= 16 + CGRectGetWidth(cell.accessoryView.frame);
+    } else {
+        static const CGFloat systemAccessoryWidths[] = {
+            [UITableViewCellAccessoryNone] = 0,
+            [UITableViewCellAccessoryDisclosureIndicator] = 34,
+            [UITableViewCellAccessoryDetailDisclosureButton] = 68,
+            [UITableViewCellAccessoryCheckmark] = 40,
+            [UITableViewCellAccessoryDetailButton] = 48
+        };
+        contentViewWidth -= systemAccessoryWidths[cell.accessoryType];
+    }
+
+    // If not using auto layout, you have to override &quot;-sizeThatFits:&quot; to provide a fitting size by yourself.
+    // This is the same height calculation passes used in iOS8 self-sizing cell&#39;s implementation.
+    //
+    // 1. Try &quot;- systemLayoutSizeFittingSize:&quot; first. (skip this step if &#39;fd_enforceFrameLayout&#39; set to YES.)
+    // 2. Warning once if step 1 still returns 0 when using AutoLayout
+    // 3. Try &quot;- sizeThatFits:&quot; if step 1 returns 0
+    // 4. Use a valid height or default row height (44) if not exist one
+
+    CGFloat fittingHeight = 0;
+
+    if (!cell.fd_enforceFrameLayout &amp;&amp; contentViewWidth &gt; 0) {
+        // Add a hard width constraint to make dynamic content views (like labels) expand vertically instead
+        // of growing horizontally, in a flow-layout manner.
+        NSLayoutConstraint *widthFenceConstraint = [NSLayoutConstraint constraintWithItem:cell.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:contentViewWidth];
+        [cell.contentView addConstraint:widthFenceConstraint];
+
+        // Auto layout engine does its math
+        fittingHeight = [cell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+        [cell.contentView removeConstraint:widthFenceConstraint];
+
+        [self fd_debugLog:[NSString stringWithFormat:@&quot;calculate using system fitting size (AutoLayout) - %@&quot;, @(fittingHeight)]];
+    }
+
+    if (fittingHeight == 0) {
+#if DEBUG
+        // Warn if using AutoLayout but get zero height.
+        if (cell.contentView.constraints.count &gt; 0) {
+            if (!objc_getAssociatedObject(self, _cmd)) {
+                NSLog(@&quot;[FDTemplateLayoutCell] Warning once only: Cannot get a proper cell height (now 0) from &#39;- systemFittingSize:&#39;(AutoLayout). You should check how constraints are built in cell, making it into &#39;self-sizing&#39; cell.&quot;);
+                objc_setAssociatedObject(self, _cmd, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            }
+        }
+#endif
+        // Try &#39;- sizeThatFits:&#39; for frame layout.
+        // Note: fitting height should not include separator view.
+        fittingHeight = [cell sizeThatFits:CGSizeMake(contentViewWidth, 0)].height;
+
+        [self fd_debugLog:[NSString stringWithFormat:@&quot;calculate using sizeThatFits - %@&quot;, @(fittingHeight)]];
+    }
+
+    // Still zero height after all above.
+    if (fittingHeight == 0) {
+        // Use default row height.
+        fittingHeight = 44;
+    }
+
+    // Add 1px extra space for separator line if needed, simulating default UITableViewCell.
+    if (self.separatorStyle != UITableViewCellSeparatorStyleNone) {
+        fittingHeight += 1.0 / [UIScreen mainScreen].scale;
+    }
+
+    return fittingHeight;
+}
+</code></pre><p><a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="external">这篇文章</a>也有一些常见cell布局的高度计算方法, 可以参考下.</p>
+<hr>
 <p>参考资料:</p>
 <p>1.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="external">深入理解Auto Layout</a>.</p>
 <p>2.<a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="external">动态计算UITableViewCell高度</a></p>
