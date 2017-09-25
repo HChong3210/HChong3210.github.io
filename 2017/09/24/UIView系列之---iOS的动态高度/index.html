@@ -32,7 +32,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fjvnn0tr2lj30ok0ru0st.jpg">
-<meta property="og:updated_time" content="2017-09-25T06:36:41.000Z">
+<meta property="og:updated_time" content="2017-09-25T12:11:57.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UIView系列之---iOS的动态高度">
 <meta name="twitter:description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
@@ -272,7 +272,7 @@ bounds.size.width = size.width;
 bounds.size.height = size.width;
 self.bounds = bounds;
 </code></pre></li>
-<li><p>systemLayoutSizeFittingSize </p>
+<li><p><span id="systemLayoutSizeFittingSize">systemLayoutSizeFittingSize</span> </p>
 <p> <code>systemLayoutSizeFittingSize</code>, 它也是UIView的方法, 是AutoLayout诞生后的产物. 所以使用它的前提是需要展示内容的控件(这里指的就是UILabel)必须约束完美. 不然就不会起作用。而且必须要设置UILabel的<code>preferredMaxLayoutWidth</code>属性.<br> 这个属性非常重要, 它影响着layout. 如果设置了<code>preferredMaxLayoutWidth</code>, 当内容超过约束区域, 就会自动换行并且更新约束. 在良好约束的前提下, <code>systemLayoutSizeFittingSize</code>同样接受一个CGSize, 不同的是这次不用计算了, 直接使用系统提供的Fitting Size即可:</p>
 <pre><code>const CGSize UILayoutFittingCompressedSize; //在保证适当尺寸的前提下尽量压缩CGSize的大小
 const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽量扩充CGSize的大小
@@ -283,15 +283,15 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 <ul>
 <li><p>(void)layoutSubviews {<br>  [super layoutSubviews];<br>  self.label.preferredMaxLayoutWidth = CGRectGetWidth(self.label.bounds);<br>  CGSize size = [self.label systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];<br>  self.labelConstraintHeight.constant = size.height + (2 * MARGIN);<br>}<br>  ```</p>
 <p>  需要注意的是: 约束的上下左右一定要写好, 但是不能约束UILabel的高度. 否则可能会导致返回的CGRect不准确. <code>numberOfLines = 0</code> 让Label可以显示多行内容. 设置<code>preferredMaxLayoutWidth</code>属性, 使UILabel能自适应多行内容. <code>UILayoutFittingCompressedSize</code> 使用这个参数会返回符合条件最合适的Size. 最后也要加上边距, 主要是因为这里我们在内部计算UILabel的Size, 而如果在外部对View调用<code>systemLayoutSizeFittingSize</code>方法, 就会得到整个View视图的Size. </p>
-<p>  <code>sizeThatFits:</code>和<code>boundingRectWithSize:options:attributes:context:</code>这两个API也可以在传统布局(基于Frame)的情况下使用. </p>
 </li>
 </ul>
+<p><code>sizeThatFits:</code>和<code>boundingRectWithSize:options:attributes:context:</code>这两个API也可以在传统布局(基于Frame)的情况下使用. </p>
 <h3 id="非Leaf-level-views高度计算"><a href="#非Leaf-level-views高度计算" class="headerlink" title="非Leaf-level views高度计算"></a>非Leaf-level views高度计算</h3><p>以UITextView显示文本为例, 让其能够自适应文本, 即根据文本自动调整其大小; 由于<code>intrinsicContentSize</code>的特性, 当其内部含有subView时返回值是(-1, -1), 无法向auto layout system传递我们想要传达的值, 我们可以使用<a href="#sizeThatFits">sizeThatFits</a>或者<a href="#sizeToFit">sizeToFit</a>来计算或者改变UITextView的大小. </p>
 <p>==这里需要注意的是:== 当调用<code>sizeThatFits:</code>的size=(width, height)，当width/height的值为0时，width/height就被认为是无穷大, size就不能被正常的显示. 所以区别于UILabel, 我们的约束一定要设置好Width和height, 否则使用<code>sizeToFit</code>也不能正确计算出. </p>
 <h3 id="Leaf-level-views和非Leaf-level-views混合使用下高度计算"><a href="#Leaf-level-views和非Leaf-level-views混合使用下高度计算" class="headerlink" title="Leaf-level views和非Leaf-level views混合使用下高度计算"></a>Leaf-level views和非Leaf-level views混合使用下高度计算</h3><p>这里我们需要计算的是根据subView来确定superView的frame, 大致分为一下几种情况: </p>
 <ol>
 <li><p>多个纯Leaf-level views的组合使用</p>
-<p> 这个计算起来比较简单, 我们以一个UIView里面添加两个UILabel为例. 我们只需要从上到下, 把subViews的子约束撑满superView. 需要注意, 如果UILabel需要换行, 那么高度约束就不能写, 并且要设置<code>numberOfLines = 0</code>. 虽然我们什么也没做, 但是子控件会通过<code>intrinsicContentSize</code>方法将最合适的size告诉superView. 但是对于superView, 因为它本身是UIVIew, 他的<code>intrinsicContentSize</code>返回是(-1, -1), 那么它是怎么得出正确的结果呢. auto layout system在处理某个view的size时，参考值包括:</p>
+<p> 这个计算起来比较简单, 我们以一个UIView里面添加两个UILabel为例. 我们只需要从上到下, 把subViews的子约束撑满superView. 需要注意, 如果UILabel需要换行, 那么高度约束就不能写, 并且要设置<code>numberOfLines = 0</code>. 虽然我们什么也没做, 但是子控件会通过<code>intrinsicContentSize</code>方法将最合适的size告诉superView. 但是对于superView, 因为它本身是UIVIew, 他的<code>intrinsicContentSize</code>返回是(-1, -1), 那么它是怎么得出正确的结果呢. auto layout system在处理某个view的size时，<span id="size">参考值</span>包括:</p>
 <ul>
 <li>自身的<code>intrinsicContentSize</code>方法返回值;</li>
 <li>subviews的<code>intrinsicContentSize</code>方法返回值;</li>
@@ -302,10 +302,17 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 </ul>
 </li>
 <li><p>多个纯非Leaf-level views的组合使用</p>
+<p> 仍旧以UITextView为例, 如果没有设定UItextView的height属性的话, 由于非Leaf-level views的<code>intrinsicContentSize</code>返回值值为(-1, -1). 设置某个View的size有三个<a href="#size">参考值</a>, 在<code>intrinsicContentSize</code>方法返回值和constraints中取最大值为0, 导致height=0不能正常显示. 解决方案参考<a href="#next">下一个</a>;</p>
+</li>
+<li><p><span id="next">Leaf-level views和非Leaf-level views混合使用</span></p>
+<p> 因为有UItextView这种非Leaf-level views的存在, 会导致superView的size不能得到正常值. 解决方案有两种:</p>
+<ol>
+<li><p>设置非Leaf-level views的height, width约束, 因为<code>intrinsicContentSize</code>方法不能正常的返回size, 但是如果我们设置了width和height约束, constraints就不为0, 那么就可以正常显示了. </p>
+</li>
+<li><p>使用<code>systemLayoutSizeFittingSize:</code>, 具体使用方式可以参考<a href="#systemLayoutSizeFittingSize">systemLayoutSizeFittingSize:</a>.</p>
 </li>
 </ol>
-<ol>
-<li>Leaf-level views和非Leaf-level views混合使用</li>
+</li>
 </ol>
 <h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><hr>
 <p>参考资料:</p>
