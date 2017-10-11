@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
-<meta property="og:updated_time" content="2017-10-11T14:48:27.000Z">
+<meta property="og:updated_time" content="2017-10-11T15:46:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
 <meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
@@ -156,7 +156,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由协议"><span class="toc-text">应用间路由协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a></li></ol></li></ol>
   </div>
 
@@ -234,7 +234,8 @@
 </li>
 <li><p>有一个<code>HCModuleProtocol</code>协议, 里面有几个必须要实现的方法.</p>
 <p> 如果某个类想要通过协议被跳转就必须实现该协议, 并且实现协议中的<code>@required</code>方法. <code>@optional</code>方法根据实际需要选择实现.</p>
-<pre><code>
+<pre><code> HCModuleProtocol.h
+
  @required
  /**
  该方法返回当前类的标签, 该标签是当前类的唯一标识, 不可重复
@@ -262,7 +263,26 @@
  - (id)open_present:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;
 </code></pre></li>
 <li><p><code>HCModuleCore</code>是个单例, 在初始化的时候, 通过runtime提供的方法把遵守``的类名缓存起来, 缓存信息存储在单例中, 存在于整个APP的生命周期中.</p>
-<pre><code> /**
+<pre><code> HCModuleCore.m
+
+ + (instancetype)moduleCore {
+     static HCModuleCore *moduleCore;
+     static dispatch_once_t onceToken;
+     dispatch_once(&amp;onceToken, ^{
+         moduleCore = [[HCModuleCore alloc] init];
+     });
+     return moduleCore;
+ }
+
+ - (instancetype)init {
+     self = [super init];
+     if (self) {
+         [self cacheModuleProrocolClasses];
+     }
+     return self;
+ }
+
+ /**
  把遵守HCModuleProtocol的类缓存起来
  */
  - (void)cacheModuleProrocolClasses {
@@ -288,7 +308,43 @@
      self.cache = [tmpCache copy];
 }
 </code></pre></li>
-<li></li>
+<li><p>主要是通过传入的moduleName或者URl来获取到被打开页面的唯一标识, 再通过唯一标识从单例中缓存的遵守跳转协议的类中去找. 如果找到的话, <code>performSelector:withObject:withObject:</code>方法的返回值是响应的方法的返回值, 通过该函数获取到被跳转的类的实例. </p>
+<pre><code> HCModuleCore.m
+
+ //根据moduleName返回对应注册的类
+ - (id)moduleName:(NSString *)moduleName openWithParams:(NSDictionary *)params callback:(void(^)(NSDictionary *moduleInfo))callback {
+     NSCAssert(moduleName != nil, @&quot;moduleName can not be nil!&quot;);
+     id module = [self moduleName:moduleName performSelectorName:@&quot;open:callback:&quot; withParams:params callback:callback];
+     if (module == nil) {
+         module = [self moduleName:moduleName performSelectorName:@&quot;open_present:callback:&quot; withParams:params callback:callback];
+     }
+     return module;
+ }
+
+ //获取缓存起来的响应相应协议方法的类
+ - (id)moduleName:(NSString *)moduleName performSelectorName:(NSString *)selectorName withParams:(NSDictionary *)params callback:(void(^)(NSDictionary *moduleInfo))callback {
+     NSCAssert(moduleName != nil &amp;&amp; selectorName != nil, @&quot;moduleName and selectorName can not be nil!&quot;);
+     id module;
+     NSString *clsName = self.cache[moduleName];
+     if (clsName.length) {
+         Class class = NSClassFromString(clsName);//根据缓存的类名字创建类
+         SEL selec = NSSelectorFromString(selectorName);
+         if (class) {
+             id target = [[class alloc] init];//初始化一个类的对象
+             if ([target respondsToSelector:selec]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;
+                 //performSelector:withObject:withObject:的返回值是响应的方法的返回值
+                 module = [target performSelector:selec withObject:params withObject:callback];
+#pragma clang diagnostic pop
+             }
+         }
+     }
+     return module;
+ }
+</code></pre></li>
+<li><p>然后有两个category, 分别是<code>UINavigationController+HCModuleCore</code>和<code>UIViewController+HCModuleCore</code>. 分别对应push和present的情况. 因为上面已经拿到了要跳转到的页面的实例, 这里就可以通过push或者present的方法跳转过去.   </p>
+</li>
 </ol>
 <hr>
 <p>参考文章:<br>1.<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">iOS 组件化 —— 路由设计思路分析</a></p>
@@ -317,7 +373,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
