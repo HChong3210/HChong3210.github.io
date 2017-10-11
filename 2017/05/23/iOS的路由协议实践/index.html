@@ -25,18 +25,18 @@
     <meta name="keywords" content="模块化,路由," />
   
 
-  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
+  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
 <meta name="keywords" content="模块化,路由">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS的路由协议实践">
 <meta property="og:url" content="http://hchong.net/2017/05/23/iOS的路由协议实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
+<meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
-<meta property="og:updated_time" content="2017-08-03T14:40:09.000Z">
+<meta property="og:updated_time" content="2017-10-11T14:48:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
-<meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜大神的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间">
+<meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
 <meta name="twitter:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
 
   
@@ -157,7 +157,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由协议"><span class="toc-text">应用间路由协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MGJRouter"><span class="toc-text">MGJRouter</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由协议"><span class="toc-text">应用间路由协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a></li></ol></li></ol>
   </div>
 
 
@@ -211,7 +211,7 @@
   <div class="article-content">
     
       <h1 id="iOS的路由协议实践"><a href="#iOS的路由协议实践" class="headerlink" title="iOS的路由协议实践"></a>iOS的路由协议实践</h1><p>路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题.</p>
-<p>关于路由协议, 冰霜大神的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是业界良心. </p>
+<p>关于路由协议, 冰霜的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是业界良心. </p>
 <h2 id="应用间路由协议"><a href="#应用间路由协议" class="headerlink" title="应用间路由协议"></a>应用间路由协议</h2><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题, 举个例子来说明一下:</p>
 <ul>
 <li><em>页面跳转</em>, 如果以传统的Push来说, 我们怎么才能从任一界面push到另外任一界面, 各个界面之间的跳转必然要相互<code>Import</code>, 这些怎么解决.</li>
@@ -226,14 +226,70 @@
 <li><a href="https://github.com/casatwy/CTMediator" target="_blank" rel="external">CTMediator</a></li>
 </ul>
 <p><img src="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png" alt="URL资源"></p>
-<p>通过上面应用间的跳转, 我们可以发现iOS 系统里面使用的是URL Scheme方式. 对于一个资源的访问，苹果也是用URL的方式来访问的, 那么我们就可以想办法通过URL来统一三端的跳转. 一段标准的URL的格式, 每一部分都代表不同的含义. 我们可以按照规则来解析接受到的URL, 从而获得有用的信息. </p>
-<p>下面我们以实现MGJRouter和CTMediator的伪代码来分析目前最为流行的两种路由解决方案.</p>
-<h3 id="MGJRouter"><a href="#MGJRouter" class="headerlink" title="MGJRouter"></a>MGJRouter</h3><p>MGJRouter, 最早是由蘑菇街技术团队在解决组件化是提出的路由解决方案. 我司的组件化方案, 在蘑菇街的基础上改造, 但是又略微有些区别, 下面我就一些具体的实现来分析一下.</p>
-<p>以A -&gt; B页面为例:</p>
-<ul>
-<li>首先跳转协议会是一段格式的URL, </li>
-<li>会有一个</li>
-</ul>
+<p>通过上面应用间的跳转, 我们可以发现iOS 系统里面使用的是URL Scheme方式. 对于一个资源的访问，苹果也是用URL的方式来访问的, 那么我们就可以想办法通过URL来统一三端的跳转. 一段标准的URL的格式, 每一部分都代表不同的含义. 我们可以按照规则来解析接受到的URL, 从而获得有用的信息. 下面说一下我的解决方案. </p>
+<p>大致的解决思路如下:</p>
+<ol>
+<li><p>在APP开始加载时设置Module的<code>Scheme</code>, 并且初始化Module的核心类<code>HCModuleCore</code>.</p>
+<p> <code>Scheme</code>是用来标记当前APP, 每个APP的<code>Scheme</code>不尽相同, 他和应用间跳转时设置的<code>Scheme</code>是一个东西. <code>HCModuleCore</code>是个单例, 它存在于整个APP的生命周期中. </p>
+</li>
+<li><p>有一个<code>HCModuleProtocol</code>协议, 里面有几个必须要实现的方法.</p>
+<p> 如果某个类想要通过协议被跳转就必须实现该协议, 并且实现协议中的<code>@required</code>方法. <code>@optional</code>方法根据实际需要选择实现.</p>
+<pre><code>
+ @required
+ /**
+ 该方法返回当前类的标签, 该标签是当前类的唯一标识, 不可重复
+ @return 字符串类型
+ */
+ + (NSString *)moduleName;
+
+ @optional
+ /**
+ 如果是通过push方式打开, 就实现该方法, 返回当前类的self
+
+ @param params 传入的参数
+ @param callback 传入的block回调
+ @return 实现跳转协议类的self
+ */
+ - (id)open:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;
+
+ /**
+如果是通过present方式打开, 就实现该方法, 返回当前类的self
+
+ @param params 传入的参数
+ @param callback 传入的block回调
+ @return 实现跳转协议类的self
+ */
+ - (id)open_present:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;
+</code></pre></li>
+<li><p><code>HCModuleCore</code>是个单例, 在初始化的时候, 通过runtime提供的方法把遵守``的类名缓存起来, 缓存信息存储在单例中, 存在于整个APP的生命周期中.</p>
+<pre><code> /**
+ 把遵守HCModuleProtocol的类缓存起来
+ */
+ - (void)cacheModuleProrocolClasses {
+     if (_cache.count != 0) {
+         return;
+     }
+     NSMutableDictionary *tmpCache = [NSMutableDictionary dictionary];
+     Class *classes;
+     unsigned int outCount;
+     classes = objc_copyClassList(&amp;outCount);//获取全部类
+     for (int i = 0; i &lt; outCount; i++) {
+         Class class = classes[i];
+
+         //实现了HCModuleProtocol的类
+         if (class_conformsToProtocol(class, @protocol(HCModuleProtocol))) {
+             NSString *moduleName = [class moduleName];
+             //重复检查
+             NSCAssert([tmpCache objectForKey:moduleName] == nil, @&quot;in class %@, module %@ has defined, please check!&quot;, NSStringFromClass(class), moduleName);
+             [tmpCache setObject:NSStringFromClass(class) forKey:moduleName];
+         }
+     }
+     free(classes);
+     self.cache = [tmpCache copy];
+}
+</code></pre></li>
+<li></li>
+</ol>
 <hr>
 <p>参考文章:<br>1.<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">iOS 组件化 —— 路由设计思路分析</a></p>
 <p>2.<a href="http://awhisper.github.io/2016/06/12/%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC%E7%9A%84%E6%80%9D%E8%80%83/" target="_blank" rel="external">路由跳转的思考</a></p>
