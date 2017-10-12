@@ -173,7 +173,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
+    <strong class="toc-title">Posts List</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkins实现持续集成"><span class="toc-text">使用Jenkins实现持续集成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Jenkins"><span class="toc-text">安装Jenkins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins插件配置-amp-系统设置"><span class="toc-text">Jenkins插件配置&系统设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置准备工作"><span class="toc-text">Jenkins打包配置准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#gitlab代码地址配置"><span class="toc-text">gitlab代码地址配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加与gitlab连接的证书"><span class="toc-text">添加与gitlab连接的证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加钥匙串和描述文件"><span class="toc-text">添加钥匙串和描述文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Xcode-Builder"><span class="toc-text">Xcode Builder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Jenkins打包配置"><span class="toc-text">Jenkins打包配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#General"><span class="toc-text">General</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码管理"><span class="toc-text">源码管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建触发器"><span class="toc-text">构建触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建环境"><span class="toc-text">构建环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建后的操作"><span class="toc-text">构建后的操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#找不到Fir命令"><span class="toc-text">找不到Fir命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fir-cli-jenkins-fir-command-not-found"><span class="toc-text">fir-cli jenkins fir:command not found</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#证书配置文件没有找到"><span class="toc-text">证书配置文件没有找到</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Command-usr-bin-codesign-failed-with-exit-code-1"><span class="toc-text">Command/usr/bin/codesign failed with exit code 1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这个是由于没有给钥匙串开锁权限导致-编译之前添加-security-unlock-keychain-p-quot-你的密码-quot-quot-path-to-keychain-login-keychain-quot-解决"><span class="toc-text">这个是由于没有给钥匙串开锁权限导致, 编译之前添加 security unlock-keychain -p "你的密码" "path to keychain/login.keychain"解决.</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#待解决"><span class="toc-text">待解决</span></a></li></ol></li></ol>
   </div>
 
@@ -422,7 +422,7 @@ fi
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">

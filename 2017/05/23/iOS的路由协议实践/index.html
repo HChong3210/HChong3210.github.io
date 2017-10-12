@@ -33,12 +33,13 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
 <meta property="og:locale" content="zh-zh-Hans">
+<meta property="og:image" content="http://img.souche.com/f2e/2b762dfb368b3b50621cd5c39b51a86e.png">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
-<meta property="og:updated_time" content="2017-10-12T08:28:37.000Z">
+<meta property="og:updated_time" content="2017-10-12T15:53:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
 <meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
-<meta name="twitter:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
+<meta name="twitter:image" content="http://img.souche.com/f2e/2b762dfb368b3b50621cd5c39b51a86e.png">
 
   
 
@@ -157,7 +158,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
+    <strong class="toc-title">Posts List</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由跳转"><span class="toc-text">应用间路由跳转</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL-Scheme方式跳转"><span class="toc-text">URL Scheme方式跳转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Universal-Links方式跳转"><span class="toc-text">Universal Links方式跳转</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a></li></ol></li></ol>
   </div>
 
@@ -230,7 +231,57 @@
 <li>使用系统内置程序, 如跳转到打电话, 发短信, 发邮件, Safari等.</li>
 </ol>
 <p>应用间的跳转主要有两种方式: URL Scheme和Universal Links. 这两种实现方式并不冲突, 可以共存.</p>
-<h3 id="URL-Scheme方式跳转"><a href="#URL-Scheme方式跳转" class="headerlink" title="URL Scheme方式跳转"></a>URL Scheme方式跳转</h3><h3 id="Universal-Links方式跳转"><a href="#Universal-Links方式跳转" class="headerlink" title="Universal Links方式跳转"></a>Universal Links方式跳转</h3><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题, 举个例子来说明一下:</p>
+<h3 id="URL-Scheme方式跳转"><a href="#URL-Scheme方式跳转" class="headerlink" title="URL Scheme方式跳转"></a>URL Scheme方式跳转</h3><p>以A-&gt;B为例, 来说明下如何跳转.<br>首先我们需要分别在两个App的info.plist里面添加对应的URL types - URL Schemes, 如图所示:</p>
+<p><img src="http://img.souche.com/f2e/2b762dfb368b3b50621cd5c39b51a86e.png" alt="添加URL types"></p>
+<p>A的URL Schemes是APPA, B的URL Schemes是APPB. 由于iOS9引入了白名单的概念,<br>如果使用 canOpenURL:方法, 该方法所涉及到的 URL Schemes 必须在”Info.plist”中将它们列为白名单, 否则<code>canOpenURL</code>返回<code>NO</code>, 不能正常跳转. 所以要在A中添加B的URL Schemes, B中添加A的Schemes. key叫做<code>LSApplicationQueriesSchemes</code>, 键值内容是上一步对应应用程序的URL Schemes. </p>
+<pre><code>
+- jumpToAppB:(id)sender {
+   // 1.获取应用程序App-B的URL Scheme
+   NSURL *appBUrl = [NSURL URLWithString:@&quot;zacharyB1://&quot;];
+   // 2.判断手机中是否安装了对应程序
+   if ([[UIApplication sharedApplication] canOpenURL:appBUrl]) {
+       // 3. 打开应用程序App-B
+       //[[UIApplication sharedApplication] openURL:appBUrl];//iOS 9之后被废弃
+       [[UIApplication sharedApplication] openURL:appBUrl options:@{UIApplicationOpenURLOptionUniversalLinksOnly : @YES} completionHandler:^(BOOL success) {
+
+        }];
+   } else {
+       NSLog(@&quot;没有安装&quot;);
+   }
+}
+</code></pre><p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
+<p>至此, 就可以正常跳转了, 如果我们不希望某个APP通过URL Scheme的方式打开我们的应用, 我们可以在<code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</code>方法中判断指定的Scheme然后返回<code>NO</code>, 如下所示, 只有<code>com.tencent.weixin</code>的Scheme才能打开我们的APP. </p>
+<pre><code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    NSLog(@&quot;sourceApplication: %@&quot;, sourceApplication);
+    NSLog(@&quot;URL scheme:%@&quot;, [url scheme]);
+    NSLog(@&quot;URL query: %@&quot;, [url query]);
+
+    if ([sourceApplication isEqualToString:@&quot;com.tencent.weixin&quot;]){
+        // 允许打开
+        return YES;
+    }else{
+        return NO;
+    }
+}
+</code></pre><h3 id="Universal-Links方式跳转"><a href="#Universal-Links方式跳转" class="headerlink" title="Universal Links方式跳转"></a>Universal Links方式跳转</h3><p>使用这个功能可以使我们的App通过HTTP链接来启动App, 通用链接就是HTTP协议的普通URL, 通过在服务器上配置一些文件, 配合应用. 实现客户点击网页链接之后直接打开应用. 客户在微信\QQ中点击链接时不再需要点击右上’在Safari浏览器打开’才能打开软件, 实现客户操作的无缝跳转, 让客户体验更加连贯, 更顺畅. </p>
+<ol>
+<li><p>如果安装过App, 不管在微信里面http链接还是在Safari浏览器, 还是其他第三方浏览器, 都可以打开App. </p>
+</li>
+<li><p>如果没有安装过App, 就会打开网页. </p>
+</li>
+</ol>
+<p>具体设置需要3步: </p>
+<ol>
+<li><p>App需要开启Associated Domains服务, 并设置Domains, 注意必须要applinks：开头. 这里需要在APP使用的证书中设置这个选项, 否则在APP设置中看不到Associated Domains服务. </p>
+</li>
+<li><p>域名必须要支持HTTPS. </p>
+</li>
+<li><p>上传内容是Json格式的文件, 文件名为apple-app-site-association到自己域名的根目录下, 或者.well-known目录下. iOS自动会去读取这个文件. 具体的文件内容请查看<a href="https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html" target="_blank" rel="external">官方文档</a>. </p>
+</li>
+</ol>
+<p><a href="http://www.jianshu.com/p/c83164c2aec2" target="_blank" rel="external">参考文章一</a></p>
+<p><a href="http://www.jianshu.com/p/1970fd59de12" target="_blank" rel="external">参考文章二</a></p>
+<h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题, 举个例子来说明一下:</p>
 <ul>
 <li><em>页面跳转</em>, 如果以传统的Push来说, 我们怎么才能从任一界面push到另外任一界面, 各个界面之间的跳转必然要相互<code>Import</code>, 这些怎么解决.</li>
 <li><em>组件见调用</em>, 随着业务的模块化拆分, 各个模块之间有业务调用怎么办, 本身独立的模块, 为了相互调用必然又增加接口供外部调用, 本身相对独立的业务模块, 瞬间又变得相互耦合了.</li>
@@ -369,6 +420,11 @@
 <p>2.<a href="http://awhisper.github.io/2016/06/12/%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC%E7%9A%84%E6%80%9D%E8%80%83/" target="_blank" rel="external">路由跳转的思考</a></p>
 <p>3.<a href="http://wereadteam.github.io/2016/03/19/iOS-Component/" target="_blank" rel="external">iOS组件化方案探讨</a></p>
 <p>4.<a href="https://casatwy.com/iOS-Modulization.html" target="_blank" rel="external">iOS应用架构谈-组件化方案</a></p>
+<p>5.<a href="http://www.jianshu.com/p/bb3f42fdbc31" target="_blank" rel="external">iOS10跳转系统设置的正确姿势</a></p>
+<p>6.<a href="http://www.jianshu.com/p/32ca4bcda3d1" target="_blank" rel="external">关于 iOS 系统功能的 URL 汇总列表</a></p>
+<p>7.<a href="http://www.jianshu.com/p/b5e8ef8c76a3" target="_blank" rel="external">iOS应用间相互跳转</a></p>
+<p>8.<a href="http://www.jianshu.com/p/c83164c2aec2" target="_blank" rel="external">从微信直接跳转到我们的APP</a></p>
+<p>9.<a href="http://www.jianshu.com/p/1970fd59de12" target="_blank" rel="external">iOS Universal Links(通用链接)的使用</a></p>
 
     
   </div>
@@ -391,7 +447,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
