@@ -25,19 +25,19 @@
     <meta name="keywords" content="模块化,路由," />
   
 
-  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
+  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
 <meta name="keywords" content="模块化,路由">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS的路由协议实践">
 <meta property="og:url" content="http://hchong.net/2017/05/23/iOS的路由协议实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
+<meta property="og:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
-<meta property="og:updated_time" content="2017-10-11T15:46:00.000Z">
+<meta property="og:updated_time" content="2017-10-12T08:28:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
-<meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心.  应用间路由协议应用内路由协议设计思路页面间跳转">
+<meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
 <meta name="twitter:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
 
   
@@ -157,8 +157,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由协议"><span class="toc-text">应用间路由协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a></li></ol></li></ol>
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS的路由协议实践"><span class="toc-text">iOS的路由协议实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用间路由跳转"><span class="toc-text">应用间路由跳转</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL-Scheme方式跳转"><span class="toc-text">URL Scheme方式跳转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Universal-Links方式跳转"><span class="toc-text">Universal Links方式跳转</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用内路由协议设计思路"><span class="toc-text">应用内路由协议设计思路</span></a></li></ol></li></ol>
   </div>
 
 
@@ -212,8 +212,25 @@
   <div class="article-content">
     
       <h1 id="iOS的路由协议实践"><a href="#iOS的路由协议实践" class="headerlink" title="iOS的路由协议实践"></a>iOS的路由协议实践</h1><p>路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题.</p>
-<p>关于路由协议, 冰霜的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是业界良心. </p>
-<h2 id="应用间路由协议"><a href="#应用间路由协议" class="headerlink" title="应用间路由协议"></a>应用间路由协议</h2><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题, 举个例子来说明一下:</p>
+<p>关于路由协议, 冰霜的<a href="https://halfrost.com/ios_router/" target="_blank" rel="external">这篇博客</a>写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:</p>
+<ol>
+<li>外部跳转到App内部一个很深层次的一个界面.</li>
+<li>App之间的相互跳转.</li>
+<li>解除App组件之间和App页面之间的耦合性.</li>
+<li>统一iOS和Android两端的页面跳转逻辑, 统一三端的请求资源的方式.</li>
+<li>iOS和Android两边只要共用一套动态下发配置文件来配置App的跳转逻辑.</li>
+<li>在App任何界面都可以调用任意一个界面或者任意一个组件.</li>
+</ol>
+<h2 id="应用间路由跳转"><a href="#应用间路由跳转" class="headerlink" title="应用间路由跳转"></a>应用间路由跳转</h2><p>应用间路由跳转主要有以下几种常见的使用场景: </p>
+<ol>
+<li>使用第三方用户登录，跳转到需授权的App或跳转到分享app的对应页面.</li>
+<li>应用程序推广, 跳转到另一个应用程序(本机已经安装).</li>
+<li>跳转到iTunes并显示应用程序下载页面(本机没有安装).</li>
+<li>第三方支付, 跳转到第三方支付App, 如支付宝支付, 微信支付.</li>
+<li>使用系统内置程序, 如跳转到打电话, 发短信, 发邮件, Safari等.</li>
+</ol>
+<p>应用间的跳转主要有两种方式: URL Scheme和Universal Links. 这两种实现方式并不冲突, 可以共存.</p>
+<h3 id="URL-Scheme方式跳转"><a href="#URL-Scheme方式跳转" class="headerlink" title="URL Scheme方式跳转"></a>URL Scheme方式跳转</h3><h3 id="Universal-Links方式跳转"><a href="#Universal-Links方式跳转" class="headerlink" title="Universal Links方式跳转"></a>Universal Links方式跳转</h3><h2 id="应用内路由协议设计思路"><a href="#应用内路由协议设计思路" class="headerlink" title="应用内路由协议设计思路"></a>应用内路由协议设计思路</h2><p><em>页面间跳转</em> 和 <em>组件间调用</em>, 是应用内路由协议要解决的两大问题, 举个例子来说明一下:</p>
 <ul>
 <li><em>页面跳转</em>, 如果以传统的Push来说, 我们怎么才能从任一界面push到另外任一界面, 各个界面之间的跳转必然要相互<code>Import</code>, 这些怎么解决.</li>
 <li><em>组件见调用</em>, 随着业务的模块化拆分, 各个模块之间有业务调用怎么办, 本身独立的模块, 为了相互调用必然又增加接口供外部调用, 本身相对独立的业务模块, 瞬间又变得相互耦合了.</li>
@@ -374,7 +391,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
