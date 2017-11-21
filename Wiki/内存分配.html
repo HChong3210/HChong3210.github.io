@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 
-  <html class="light page-post">
+  <html class="light page-page">
 
 
 <head>
@@ -17,19 +17,19 @@
 
   <meta charset="utf-8">
   
-  <title>内存分配 | 我的博客地址</title>
+  <title>Category: 基础知识 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="undefined," />
   
 
   <meta name="description" content="iOS开发的内存分配计算机系统中, 应用程序的数据都保存在内存中, 不同类型的数据, 保存的区域不同. RAM ROM RAM: 运行内存, 不能掉电存储.ROM: 存储型内存, 可以掉电存储, 例如内存卡, FLash.    由于RAM类型不具备掉电存储的能力, 所以App程序一般存放在RMO中. RAM的访问速度和价格都高于ROM.  App程序启动 App程序启动, 系统会把开启的那个Ap">
 <meta name="keywords" content="基础知识">
-<meta property="og:type" content="article">
+<meta property="og:type" content="website">
 <meta property="og:title" content="内存分配">
-<meta property="og:url" content="http://hchong.net/2016/09/18/内存分配/index.html">
+<meta property="og:url" content="http://hchong.net/Wiki/内存分配.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="iOS开发的内存分配计算机系统中, 应用程序的数据都保存在内存中, 不同类型的数据, 保存的区域不同. RAM ROM RAM: 运行内存, 不能掉电存储.ROM: 存储型内存, 可以掉电存储, 例如内存卡, FLash.    由于RAM类型不具备掉电存储的能力, 所以App程序一般存放在RMO中. RAM的访问速度和价格都高于ROM.  App程序启动 App程序启动, 系统会把开启的那个Ap">
 <meta property="og:locale" content="zh-zh-Hans">
@@ -168,14 +168,14 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
+    <strong class="toc-title">Posts List</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发的内存分配"><span class="toc-text">iOS开发的内存分配</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#RAM-ROM"><span class="toc-text">RAM ROM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#App程序启动"><span class="toc-text">App程序启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存分区"><span class="toc-text">内存分区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#栈区-stack"><span class="toc-text">栈区(stack)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#堆区-heap"><span class="toc-text">堆区(heap)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局区-static"><span class="toc-text">全局区(static)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常量区"><span class="toc-text">常量区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码区"><span class="toc-text">代码区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存申请后的系统响应"><span class="toc-text">内存申请后的系统响应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存大小的限制"><span class="toc-text">内存大小的限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意事项"><span class="toc-text">注意事项</span></a></li></ol></li></ol>
   </div>
 
 
 
 <div class="content content-post CENTER">
-   <article id="post-内存分配" class="article article-type-post" itemprop="blogPost">
+   <article id="page-undefined" class="article article-type-page" itemprop="blogPost">
   <header class="article-header">
     <h1 class="post-title">内存分配</h1>
 
@@ -193,17 +193,12 @@
       
 
       
-  <span class="article-category">
-    <i class="icon-list"></i>
-    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
-  </span>
-
 
 
       
         <span>
           <i class="icon-comment"></i>
-          <a href="http://www.hchong.net/2016/09/18/内存分配/#disqus_thread"></a>
+          <a href="http://www.hchong.net/Wiki/内存分配.html#disqus_thread"></a>
         </span>
       
 
@@ -290,7 +285,7 @@ int b = 10;//初始化的
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
@@ -371,7 +366,7 @@ int b = 10;//初始化的
 
 
   
-      <div class="fexo-comments comments-post">
+      <div class="fexo-comments comments-page">
     
   <section class="disqus-comments">
     <div id="disqus_thread">
@@ -382,7 +377,7 @@ int b = 10;//初始化的
   <script>
     var disqus_shortname = 'forsigner';
     
-    var disqus_url = 'http://hchong.net/2016/09/18/内存分配/';
+    var disqus_url = 'http://hchong.net/Wiki/内存分配.html';
     
     (function(){
       var dsq = document.createElement('script');
