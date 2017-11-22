@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程  进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.   线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-22T15:25:15.380Z">
+<meta property="og:updated_time" content="2017-11-22T15:42:57.920Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程  进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.   线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数">
@@ -169,7 +169,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -250,8 +250,57 @@
 </ol>
 <h2 id="多线程实现方案"><a href="#多线程实现方案" class="headerlink" title="多线程实现方案"></a>多线程实现方案</h2><p>在iOS开发中常见的多线程方案一共有4套, 分别是<code>Pthreads</code>, <code>NSThread</code>, <code>GCD</code>, <code>NSOperation &amp; NSOperationQueue</code>. 前两种不怎么常用, 这里就简单的介绍一下, 着重介绍后两种. </p>
 <h3 id="Pthresds"><a href="#Pthresds" class="headerlink" title="Pthresds"></a>Pthresds</h3><p>POSIX线程(POSIX threads), 简称Pthreads, 是线程的POSIX标准. 该标准定义了创建和操纵线程的一整套API, 在类Unix操作系统(Unix、Linux、Mac OSX等)中, 都使用Pthreads作为操作系统的线程. 那也就意味着可以跨平台使用, 但是使用起来特别酸爽. 🙂</p>
-<pre><code>#import &quot;ptheard.h&quot;
-</code></pre><hr>
+<pre><code>#import &lt;pthread.h&gt;
+
+- (void)pthreadsDoTask {
+    /*
+     pthread_t：线程指针
+     pthread_attr_t：线程属性
+     pthread_mutex_t：互斥对象
+     pthread_mutexattr_t：互斥属性对象
+     pthread_cond_t：条件变量
+     pthread_condattr_t：条件属性对象
+     pthread_key_t：线程数据键
+     pthread_rwlock_t：读写锁
+     //
+     pthread_create()：创建一个线程
+     pthread_exit()：终止当前线程
+     pthread_cancel()：中断另外一个线程的运行
+     pthread_join()：阻塞当前的线程，直到另外一个线程运行结束
+     pthread_attr_init()：初始化线程的属性
+     pthread_attr_setdetachstate()：设置脱离状态的属性（决定这个线程在终止时是否可以被结合）
+     pthread_attr_getdetachstate()：获取脱离状态的属性
+     pthread_attr_destroy()：删除线程的属性
+     pthread_kill()：向线程发送一个信号
+     pthread_equal(): 对两个线程的线程标识号进行比较
+     pthread_detach(): 分离线程
+     pthread_self(): 查询线程自身线程标识号
+     //
+     *创建线程
+     int pthread_create(pthread_t _Nullable * _Nonnull __restrict, //指向新建线程标识符的指针
+     const pthread_attr_t * _Nullable __restrict,  //设置线程属性。默认值NULL。
+     void * _Nullable (* _Nonnull)(void * _Nullable),  //该线程运行函数的地址
+     void * _Nullable __restrict);  //运行函数所需的参数
+     *返回值：
+     *若线程创建成功，则返回0
+     *若线程创建失败，则返回出错编号
+     */
+
+    //
+    pthread_t thread = NULL;
+    NSString *params = @&quot;Hello World&quot;;
+    int result = pthread_create(&amp;thread, NULL, threadTask, (__bridge void *)(params));
+    result == 0 ? NSLog(@&quot;creat thread success&quot;) : NSLog(@&quot;creat thread failure&quot;);
+    //设置子线程的状态设置为detached,则该线程运行结束后会自动释放所有资源
+    pthread_detach(thread);
+}
+
+void *threadTask(void *params) {
+    NSLog(@&quot;%@ - %@&quot;, [NSThread currentThread], (__bridge NSString *)(params));
+    return NULL;
+}
+</code></pre><p>看下这些API设计可以说是相当不友好, 并且需要手动管理线程的各个状态的转换和生命周期的管理.</p>
+<h3 id="NSThread"><a href="#NSThread" class="headerlink" title="NSThread"></a>NSThread</h3><hr>
 <p>参考资料:<br>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程，你看我就够了</a></p>
 <p>2.<a href="https://bestswifter.com/multithreadconclusion/" target="_blank" rel="external">iOS多线程编程总结</a></p>
 <p>3.<a href="http://www.jianshu.com/p/51fd1362249e" target="_blank" rel="external">关于iOS多线程，我说，你听，没准你就懂了</a></p>
