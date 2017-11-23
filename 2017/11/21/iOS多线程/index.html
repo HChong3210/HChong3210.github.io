@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程  进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.   线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-22T15:42:57.920Z">
+<meta property="og:updated_time" content="2017-11-23T16:04:03.604Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程  进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.   线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数">
@@ -169,7 +169,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -233,11 +233,11 @@
  2. 线程的划分尺度小于进程, 使得多线程程序的并发性高. 
  3. 另外, 进程在执行过程中拥有独立的内存单元, 而多个线程共享内存, 从而极大地提高了程序的运行效率. 
  4. 线程在执行过程中与进程还是有区别的. 每个独立的线程有一个程序运行的入口, 顺序执行序列和程序的出口. 但是线程不能够独立执行, 必须依存在应用程序中, 由应用程序提供多个线程执行控制. 
- 5. 从逻辑角度来看, 多线程的意义在于一个应用程序中, 有多个执行部分可以同时执行. 但操作系统并没有将多个线程看做多个独立的应用, 来实现进程的调度和管理以及资源分配。这就是进程和线程的重要区别.
+ 5. 从逻辑角度来看, 多线程的意义在于一个应用程序中, 有多个执行部分可以同时执行. 但操作系统并没有将多个线程看做多个独立的应用, 来实现进程的调度和管理以及资源分配. 这就是进程和线程的重要区别.
 </code></pre><p> 打个比方, 多进程就好比同时执行多个程序. 比如同时运行QQ, 音乐播放器, 以及浏览器. 多线程就是同一时刻执行多个线程, 用浏览器一边下载, 一边听歌, 一边看视频, 一边看网页. 浏览器这个进程下有多个线程, 这些线程共享系统分配给浏览器这个进程的资源, 所以各个线程之间可很方便的通信, 一个线程死了, 不会影响其他线程的运行. 如果浏览器这个进程死了, 那么他下面的所有线程就都用不了了. 我们可以通过浏览器打开QQ这里就是进程间通信, 由于不同的进程系统资源不同, 所以进程间的通信不是很容易实现. 并且切换进程会有性能问题.</p>
 </li>
 <li><p>并发和并行</p>
-<p> 并发指能够让多个任务在逻辑上交织执行的程序设计, 但并发事件之间不一定要同一时刻发生. 并行指的是程序运行时的状态是物理上同时执行, 是指同时发生的两个并发事件，具有并发的含义, 而并发则不一定并行. </p>
+<p> 并发指能够让多个任务在逻辑上交织执行的程序设计, 但并发事件之间不一定要同一时刻发生. 并行指的是程序运行时的状态是物理上同时执行, 是指同时发生的两个并发事件, 具有并发的含义, 而并发则不一定并行. </p>
 <p> 并发是一种现象, 面对这一现象, 我们首先创建多个线程. 真正加快程序运行速度的, 是并行技术. 也就是让多个CPU同时工作. 而多线程, 是为了让多个CPU同时工作成为可能. 并发设计让并发执行成为可能, 而并行是并发执行的一种模式.</p>
 <p> 并发和并行的区别就是一个人同时吃三个馒头和三个人同时吃三个馒头. 一个人同时吃三个馒头但是同一时间只能啃一个馒头, 三个人同时吃三个馒头, 三个馒头同一时间都会被啃.</p>
 <p> 下图反映了一个包含8个操作的任务在一个有两核心的CPU中创建四个线程运行的情况. 假设每个核心有两个线程, 那么每个CPU中两个线程会交替并发, 两个CPU之间的操作会并行运算. 就CPU1而言虽然实现了并发但是同一时间只有一个任务在进行, CPU只是快速的在任务之间切换, CPU1和CPU2整体来看是并行元算, 同一时间是有多个任务在进行. 单就一个CPU而言两个线程可以解决线程阻塞造成的不流畅问题, 其本身运行效率并没有提高. 多CPU的并行运算才真正解决了运行效率问题, 这也正是并发和并行的区别. </p>
@@ -266,7 +266,7 @@
      pthread_create()：创建一个线程
      pthread_exit()：终止当前线程
      pthread_cancel()：中断另外一个线程的运行
-     pthread_join()：阻塞当前的线程，直到另外一个线程运行结束
+     pthread_join()：阻塞当前的线程, 直到另外一个线程运行结束
      pthread_attr_init()：初始化线程的属性
      pthread_attr_setdetachstate()：设置脱离状态的属性（决定这个线程在终止时是否可以被结合）
      pthread_attr_getdetachstate()：获取脱离状态的属性
@@ -278,12 +278,12 @@
      //
      *创建线程
      int pthread_create(pthread_t _Nullable * _Nonnull __restrict, //指向新建线程标识符的指针
-     const pthread_attr_t * _Nullable __restrict,  //设置线程属性。默认值NULL。
+     const pthread_attr_t * _Nullable __restrict,  //设置线程属性. 默认值NULL. 
      void * _Nullable (* _Nonnull)(void * _Nullable),  //该线程运行函数的地址
      void * _Nullable __restrict);  //运行函数所需的参数
      *返回值：
-     *若线程创建成功，则返回0
-     *若线程创建失败，则返回出错编号
+     *若线程创建成功, 则返回0
+     *若线程创建失败, 则返回出错编号
      */
 
     //
@@ -300,12 +300,94 @@ void *threadTask(void *params) {
     return NULL;
 }
 </code></pre><p>看下这些API设计可以说是相当不友好, 并且需要手动管理线程的各个状态的转换和生命周期的管理.</p>
-<h3 id="NSThread"><a href="#NSThread" class="headerlink" title="NSThread"></a>NSThread</h3><hr>
-<p>参考资料:<br>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程，你看我就够了</a></p>
+<h3 id="NSThread"><a href="#NSThread" class="headerlink" title="NSThread"></a>NSThread</h3><p><code>NSThread</code>的API设计大致如下: </p>
+<pre><code>@interface NSThread : NSObject
+//当前线程
+@property (class, readonly, strong) NSThread *currentThread;
+//使用类方法创建线程执行任务
++ (void)detachNewThreadWithBlock:(void (^)(void))block API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0));
++ (void)detachNewThreadSelector:(SEL)selector toTarget:(id)target withObject:(nullable id)argument;
+//判断当前是否为多线程
++ (BOOL)isMultiThreaded;
+//指定线程的线程参数, 例如设置当前线程的断言处理器. 
+@property (readonly, retain) NSMutableDictionary *threadDictionary;
+//当前线程暂停到某个时间
++ (void)sleepUntilDate:(NSDate *)date;
+//当前线程暂停一段时间
++ (void)sleepForTimeInterval:(NSTimeInterval)ti;
+//退出当前线程
++ (void)exit;
+//当前线程优先级
++ (double)threadPriority;
+//设置当前线程优先级
++ (BOOL)setThreadPriority:(double)p;
+//指定线程对象优先级 0.0～1.0, 默认值为0.5
+@property double threadPriority NS_AVAILABLE(10_6, 4_0);
+//服务质量
+@property NSQualityOfService qualityOfService NS_AVAILABLE(10_10, 8_0);
+//线程名称
+@property (nullable, copy) NSString *name NS_AVAILABLE(10_5, 2_0);
+//栈区大小
+@property NSUInteger stackSize NS_AVAILABLE(10_5, 2_0);
+//是否为主线程
+@property (class, readonly) BOOL isMainThread NS_AVAILABLE(10_5, 2_0);
+//获取主线程
+@property (class, readonly, strong) NSThread *mainThread NS_AVAILABLE(10_5, 2_0);
+//初始化
+- (instancetype)init NS_AVAILABLE(10_5, 2_0) NS_DESIGNATED_INITIALIZER;
+//实例方法初始化, 需要再调用start方法
+- (instancetype)initWithTarget:(id)target selector:(SEL)selector object:(nullable id)argument NS_AVAILABLE(10_5, 2_0);
+- (instancetype)initWithBlock:(void (^)(void))block API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0));
+//线程状态, 正在执行
+@property (readonly, getter=isExecuting) BOOL executing NS_AVAILABLE(10_5, 2_0);
+//线程状态, 正在完成
+@property (readonly, getter=isFinished) BOOL finished NS_AVAILABLE(10_5, 2_0);
+//线程状态, 已经取消
+@property (readonly, getter=isCancelled) BOOL cancelled NS_AVAILABLE(10_5, 2_0);
+//取消, 仅仅改变线程状态, 并不能像exist一样真正的终止线程
+- (void)cancel NS_AVAILABLE(10_5, 2_0);
+//开始
+- (void)start NS_AVAILABLE(10_5, 2_0);
+//线程需要执行的代码, 一般写子类的时候会用到
+- (void)main NS_AVAILABLE(10_5, 2_0);
+@end
+
+还有一个NSObject的分类
+@interface NSObject (NSThreadPerformAdditions)
+//隐式的创建并启动线程, 并在指定的线程（主线程或子线程）上执行方法. 
+- (void)performSelectorOnMainThread:(SEL)aSelector withObject:(nullable id)arg waitUntilDone:(BOOL)wait modes:(nullable NSArray&lt;NSString *&gt; *)array;
+- (void)performSelectorOnMainThread:(SEL)aSelector withObject:(nullable id)arg waitUntilDone:(BOOL)wait;
+- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(nullable id)arg waitUntilDone:(BOOL)wait modes:(nullable NSArray&lt;NSString *&gt; *)array NS_AVAILABLE(10_5, 2_0);
+- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(nullable id)arg waitUntilDone:(BOOL)wait NS_AVAILABLE(10_5, 2_0);
+- (void)performSelectorInBackground:(SEL)aSelector withObject:(nullable id)arg NS_AVAILABLE(10_5, 2_0);
+@end
+</code></pre><p>常见的用法有以下几种: </p>
+<pre><code>- (void) startThread {
+
+    //创建并且手动启动
+    NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(run) object:nil];
+    [thread start];
+
+    //类方法创建并且自动启动
+    [NSThread detachNewThreadSelector:@selector(run) toTarget:self withObject:nil];
+
+    //通过NSObject的方法自动启动
+    [self performSelectorInBackground:@selector(run) withObject:nil];
+}    
+
+- (void)run {
+    NSLog(@&quot;%@&quot;, [NSThread currentThread]);
+}
+</code></pre><h3 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h3><p>Grand Central Dispatch, 它是苹果为多核的并行运算提出的解决方案, 会自动合理地利用更多的CPU内核(比如双核、四核), 最重要的是它会自动管理线程的生命周期(创建线程、调度任务、销毁线程), 完全不需要我们管理, 我们只需要告诉干什么就行. 同时它使用的也是C语言, 不过由于使用了Block(Swift里叫做闭包), 使得使用起来更加方便, 而且灵活. </p>
+<p>了解GCD我们需要先了解两个概念, <strong><code>队列</code></strong>和<strong><code>任务</code></strong>. </p>
+<p>队列(dispatch queue)</p>
+<hr>
+<p>参考资料:</p>
+<p>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程, 你看我就够了</a></p>
 <p>2.<a href="https://bestswifter.com/multithreadconclusion/" target="_blank" rel="external">iOS多线程编程总结</a></p>
-<p>3.<a href="http://www.jianshu.com/p/51fd1362249e" target="_blank" rel="external">关于iOS多线程，我说，你听，没准你就懂了</a></p>
+<p>3.<a href="http://www.jianshu.com/p/51fd1362249e" target="_blank" rel="external">关于iOS多线程, 我说, 你听, 没准你就懂了</a></p>
 <p>4.<a href="http://www.jianshu.com/p/06a18323d9d2" target="_blank" rel="external">深入理解 GCD</a></p>
-<p>5.<a href="http://www.jianshu.com/p/6a6722f12fe3" target="_blank" rel="external">关于 iOS 多线程，都在这里了</a></p>
+<p>5.<a href="http://www.jianshu.com/p/6a6722f12fe3" target="_blank" rel="external">关于 iOS 多线程, 都在这里了</a></p>
 <p>6.<a href="http://blog.csdn.net/mxsgoden/article/details/8821936" target="_blank" rel="external">进程与线程的区别</a></p>
 <p>7.<a href="https://laike9m.com/blog/huan-zai-yi-huo-bing-fa-he-bing-xing,61/" target="_blank" rel="external">并发和并行</a></p>
 
