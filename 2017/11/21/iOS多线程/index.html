@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程  进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.   线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-24T10:04:01.010Z">
+<meta property="og:updated_time" content="2017-11-24T15:56:21.215Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程  进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.   线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数">
@@ -169,7 +169,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -363,72 +363,12 @@ void *threadTask(void *params) {
 @end
 </code></pre><p>常见的用法有以下几种: </p>
 <pre><code>- (void) startThread {
+</code></pre><pre><code>    //获取系统主队列, 并赋值给队列queue
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    ```
 
-    //创建并且手动启动
-    NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(run) object:nil];
-    [thread start];
-
-    //类方法创建并且自动启动
-    [NSThread detachNewThreadSelector:@selector(run) toTarget:self withObject:nil];
-
-    //通过NSObject的方法自动启动
-    [self performSelectorInBackground:@selector(run) withObject:nil];
-}    
-
-- (void)run {
-    NSLog(@&quot;%@&quot;, [NSThread currentThread]);
-}
-</code></pre><h3 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h3><p>Grand Central Dispatch, 它是苹果为多核的并行运算提出的解决方案, 会自动合理地利用更多的CPU内核(比如双核、四核), 最重要的是它会自动管理线程的生命周期(创建线程、调度任务、销毁线程), 完全不需要我们管理, 我们只需要告诉干什么就行. 同时它使用的也是C语言, 不过由于使用了Block(Swift里叫做闭包), 使得使用起来更加方便, 而且灵活. </p>
-<p>了解GCD我们需要先了解两个概念, <strong><code>队列</code></strong>和<strong><code>任务</code></strong>. </p>
-<ol>
-<li><p>任务</p>
-<p> 要执行的操作或方法函数. 在GCD中指的就是block块, 在NSThread中指的是<code>performSelector:</code>中的方法. 加入任务时有两种形式: <code>同步任务(dispatch_sync)</code>和<code>异步任务(dispatch_async)</code>. </p>
-<ol>
-<li><p>同步任务: 不会开启新的线程, 会阻塞当前线程. 完成需要做的任务后才会返回, 进行下一任务. 创建方式为: </p>
-<pre><code> //把右边的参数(任务)提交给左边的参数(队列)进行执行
- dispatch_sync(dispatch_queue_t queue, dispatch_block_t block);
-</code></pre></li>
-<li><p>异步任务: 不会等待任务完成才返回, 会立即返回. 异步是多线程的代名词, 因为必定会开启新的线程, 线程的申请是由异步负责, 起到开分支的作用.  创建方式为: </p>
-<pre><code> //把右边的参数(任务)提交给左边的参数(队列)进行执行
- dispatch_async(dispatch_queue_t queue, dispatch_block_t block);
-</code></pre></li>
-</ol>
-</li>
-<li><p>队列</p>
-<p> 存放任务的集合, 我们要做的就是将任务添加到队列然后执行, GCD会自动将队列中的任务按先进先出的方式取出. 队列主要有的有<code>串行队列(Serial Dispatch Queue)</code>, <code>并行队列(Concurrent Dispatch Queue)</code>, <code>全局队列(Global Queue)</code>和<code>主队列(Main Queue)</code>.</p>
-<ol>
-<li><p>串行队列: 任务依次执行, 同一时间队列中只有一个任务在执行, 每个任务只有在前一个任务执行完成后才能开始执行. 你不知道在一个Block(任务)执行结束到下一个Block(任务)开始执行之间的这段时间时间是多长, 这部分是由GCD控制. 创建方式为:</p>
-<pre><code> //创建一个名为queue的串行队列
- //第一个参数为队列名称
- //第二个参数为队列类型, DISPATCH_QUEUE_SERIAL和NULL表示串行队列
- dispatch_queue_t queue = dispatch_queue_create(&quot;com.private.SerialQueue&quot;, DISPATCH_QUEUE_SERIAL);
-</code></pre></li>
-<li><p>并行队列: 任务并发执行, 唯一能保证的是, 这些任务会按照被添加的顺序开始执行. 但是任务可以以任何顺序完成, 你不知道在执行下一个任务是从什么时候开始, 或者说任意时刻有多个Block(任务)运行, 这个完全是取决于GCD. GCD默认已经提供了全局的并发队列, 供整个应用使用, 一般不需要手动创建创建方式为:</p>
-<pre><code> //创建一个名为queue的并行队列
- //第一个参数为队列名称
- //第二个参数为队列类型, DISPATCH_QUEUE_CONCURRENT表示并行队列
- dispatch_queue_t queue = dispatch_queue_create(&quot;com.private.ConcurrentQueue&quot;,DISPATCH_QUEUE_CONCURRENT);
-</code></pre></li>
-<li><p>全局队列: <strong>隶属于并行队列</strong>, 不要与 <code>barrier</code> 栅栏方法搭配使用, <code>barrier</code> 只有与自定义的并行队列一起使用, 才能让 <code>barrier</code> 达到我们所期望的栅栏功能. 与串行队列或者<code>global</code>队列 一起使用, barrier的表现会和<code>dispatch_sync</code>方法一样. 创建方式为:</p>
-<pre><code> //获取系统全局队列, 并赋值给队列queue
- //第一个参数表示优先级, 这里是新老优先级的对照Map
- *  - DISPATCH_QUEUE_PRIORITY_HIGH:         QOS_CLASS_USER_INITIATED//高
- *  - DISPATCH_QUEUE_PRIORITY_DEFAULT:      QOS_CLASS_DEFAULT//默认
- *  - DISPATCH_QUEUE_PRIORITY_LOW:          QOS_CLASS_UTILITY//低
- *  - DISPATCH_QUEUE_PRIORITY_BACKGROUND:   QOS_CLASS_BACKGROUND//后台
-
- //第二个参数是预留参数, 传0就好
- dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-</code></pre></li>
-<li><p>主队列: <strong>隶属于串行队列</strong>, 不能与<code>sync</code>同步方法搭配使用, 会造成死循环. 主队列是GCD自带的一种特殊的串行队列, 放在主队列中的任务, 都会放到主线程中执行. 创建方式为:</p>
-<pre><code> //获取系统主队列, 并赋值给队列queue
- dispatch_queue_t queue = dispatch_get_main_queue();
-</code></pre><p>不管是串行队列(SerialQueue)还是并行队列(ConcurrencyQueue), 都是FIFO队列. 也就意味着, 任务一定是一个一个地, 按照先进先出的顺序来执行. </p>
-</li>
-</ol>
-</li>
-</ol>
-<hr>
+不管是串行队列(SerialQueue)还是并行队列(ConcurrencyQueue), 都是FIFO队列. 也就意味着, 任务一定是一个一个地, 按照先进先出的顺序来执行. 
+</code></pre><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程, 你看我就够了</a></p>
 <p>2.<a href="https://bestswifter.com/multithreadconclusion/" target="_blank" rel="external">iOS多线程编程总结</a></p>
