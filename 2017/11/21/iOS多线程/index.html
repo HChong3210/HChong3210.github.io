@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-26T11:18:02.939Z">
+<meta property="og:updated_time" content="2017-11-26T11:55:48.738Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
@@ -169,7 +169,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作"><span class="toc-text">GCD延时操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例"><span class="toc-text">GCD单例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a></li></ol></li></ol>
   </div>
 
 
@@ -616,7 +616,90 @@ dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU
 </code></pre><p> 一般情况下, <code>NSOperationQueue</code>会按照任务添加的顺序来执行任务, 但是我们可以通过使用优先级和依赖关系来改变执行顺序. 并发数大于任务数, 没有设置依赖关系, 并且在同一队列.</p>
 </li>
 </ol>
-<h2 id="常见的使用方式"><a href="#常见的使用方式" class="headerlink" title="常见的使用方式"></a>常见的使用方式</h2><hr>
+<h2 id="常见的使用方式"><a href="#常见的使用方式" class="headerlink" title="常见的使用方式"></a>常见的使用方式</h2><h3 id="GCD向并行队列中添加异步任务"><a href="#GCD向并行队列中添加异步任务" class="headerlink" title="GCD向并行队列中添加异步任务"></a>GCD向并行队列中添加异步任务</h3><p>该过程一共分为两步, 第一步获取系统提供的全局并行队列, 第二步向并行队列中添加异步任务. 任务会遵守FIFO原则来执行, 但是每个任务何时执行完我们却并不知道. 但是系统会新开线程来执行异步任务, 三个异步任务会分别在三个线程中执行, 各个任务的执行顺序无法确定.</p>
+<pre><code>- (void)test1 {
+    //获取系统提供的全局队列
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片1----%@&quot;, [NSThread currentThread]);
+        sleep(5);
+    });
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片2----%@&quot;, [NSThread currentThread]);
+    });
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片3----%@&quot;, [NSThread currentThread]);
+    });
+}
+</code></pre><h3 id="GCD向串行队列中添加异步任务"><a href="#GCD向串行队列中添加异步任务" class="headerlink" title="GCD向串行队列中添加异步任务"></a>GCD向串行队列中添加异步任务</h3><p>该过程一共分为两步, 第一步创建串行队列, 第二步向并行队列中添加异步任务. 任务会遵守FIFO原则来执行, 每个任务何时执行完我们却并不知道. 但是由于我们是在串行队列中添加的任务, 不会新开线程, 所有的异步任务会按照顺序前一个执行完毕再执行后一个.</p>
+<pre><code> - (void)test2 {
+    //创建串行队列, 第一个参数为串行队列的名称, 第二个参数为队列的属性, NULL或者DISPATCH_QUEUE_SERIAL表示是串行队列
+    dispatch_queue_t queue = dispatch_queue_create(&quot;test2&quot;, NULL);
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片1----%@&quot;, [NSThread currentThread]);
+        sleep(5);
+    });
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片2----%@&quot;, [NSThread currentThread]);
+    });
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片3----%@&quot;, [NSThread currentThread]);
+    });
+}
+</code></pre><h3 id="GCD向并行队列添加同步任务"><a href="#GCD向并行队列添加同步任务" class="headerlink" title="GCD向并行队列添加同步任务"></a>GCD向并行队列添加同步任务</h3><p>该过程一共分为两步, 第一步获取系统提供的全局并行队列, 第二步向并行队列中添加同步任务. 任务会遵守FIFO原则来执行, 每个任务何时执行完我们却并不知道. 虽然是并行队列, 单由于添加的是同步任务, 不会新开线程, 全都在当前线程中执行, 所以三个任务会顺序执行, 并行队列失去了并行的能力. </p>
+<pre><code>//并行队列中添加同步任务
+- (void)test3 {
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+    //向队列中添加异步任务
+    dispatch_sync(queue, ^{
+        NSLog(@&quot;下载图片1----%@&quot;, [NSThread currentThread]);
+        sleep(5);
+    });
+
+    //向队列中添加异步任务
+    dispatch_sync(queue, ^{
+        NSLog(@&quot;下载图片2----%@&quot;, [NSThread currentThread]);
+    });
+
+    //向队列中添加异步任务
+    dispatch_sync(queue, ^{
+        NSLog(@&quot;下载图片3----%@&quot;, [NSThread currentThread]);
+    });
+}
+</code></pre><h3 id="GCD-向串行队列添加异步任务"><a href="#GCD-向串行队列添加异步任务" class="headerlink" title="GCD 向串行队列添加异步任务"></a>GCD 向串行队列添加异步任务</h3><p>该过程一共分为两步, 第一步创建自定义串行队列, 第二步向并行队列中添加异步任务. 虽然异步任务会新开线程, 但是由于是在串行队列中执行, 所以不新开线程, 所有任务前一个执行完毕再执行下一个.</p>
+<pre><code>- (void)test4 {
+    dispatch_queue_t queue = dispatch_queue_create(&quot;test4&quot;, NULL);
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片1----%@&quot;, [NSThread currentThread]);
+        sleep(5);
+    });
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片2----%@&quot;, [NSThread currentThread]);
+    });
+
+    //向队列中添加异步任务
+    dispatch_async(queue, ^{
+        NSLog(@&quot;下载图片3----%@&quot;, [NSThread currentThread]);
+    });
+}
+</code></pre><h3 id="GCD监听并行队列中多个异步任务是否已经完成"><a href="#GCD监听并行队列中多个异步任务是否已经完成" class="headerlink" title="GCD监听并行队列中多个异步任务是否已经完成"></a>GCD监听并行队列中多个异步任务是否已经完成</h3><h3 id="GCD延时操作"><a href="#GCD延时操作" class="headerlink" title="GCD延时操作"></a>GCD延时操作</h3><h3 id="GCD单例"><a href="#GCD单例" class="headerlink" title="GCD单例"></a>GCD单例</h3><h2 id="常见使用案列分析"><a href="#常见使用案列分析" class="headerlink" title="常见使用案列分析"></a>常见使用案列分析</h2><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程, 你看我就够了</a></p>
 <p>2.<a href="https://bestswifter.com/multithreadconclusion/" target="_blank" rel="external">iOS多线程编程总结</a></p>
