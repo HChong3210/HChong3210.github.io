@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-26T16:17:46.532Z">
+<meta property="og:updated_time" content="2017-11-26T16:27:28.847Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
@@ -169,7 +169,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作"><span class="toc-text">GCD延时操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例"><span class="toc-text">GCD单例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成-dispatch-group-notify"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成(dispatch_group_notify)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作-dispatch-after"><span class="toc-text">GCD延时操作(dispatch_after)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例-dispatch-once"><span class="toc-text">GCD单例(dispatch_once)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-线程间的通讯"><span class="toc-text">GCD 线程间的通讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD等待-dispatch-group-wait"><span class="toc-text">GCD等待(dispatch_group_wait)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD重复执行同一个任务-dispatch-apply"><span class="toc-text">GCD重复执行同一个任务(dispatch_apply)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD设置优先级-dispatch-set-target-queue"><span class="toc-text">GCD设置优先级(dispatch_set_target_queue)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD栅栏-dispatch-barrier-async"><span class="toc-text">GCD栅栏(dispatch_barrier_async)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD信号量-dispatch-semaphore-t"><span class="toc-text">GCD信号量(dispatch_semaphore_t)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a></li></ol></li></ol>
   </div>
 
 
@@ -699,7 +699,7 @@ dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU
         NSLog(@&quot;下载图片3----%@&quot;, [NSThread currentThread]);
     });
 }
-</code></pre><h3 id="GCD监听并行队列中多个异步任务是否已经完成"><a href="#GCD监听并行队列中多个异步任务是否已经完成" class="headerlink" title="GCD监听并行队列中多个异步任务是否已经完成"></a>GCD监听并行队列中多个异步任务是否已经完成</h3><p>分组模式 <code>dispatch_group_notify</code>. 可以异步执行多个耗时操作. 等耗时操作都执行完毕之后会回到主线程执行操作, 主要用于监听任务是否完成. 主要有两种用法: </p>
+</code></pre><h3 id="GCD监听并行队列中多个异步任务是否已经完成-dispatch-group-notify"><a href="#GCD监听并行队列中多个异步任务是否已经完成-dispatch-group-notify" class="headerlink" title="GCD监听并行队列中多个异步任务是否已经完成(dispatch_group_notify)"></a>GCD监听并行队列中多个异步任务是否已经完成(dispatch_group_notify)</h3><p>分组模式 <code>dispatch_group_notify</code>. 可以异步执行多个耗时操作. 等耗时操作都执行完毕之后会回到主线程执行操作, 主要用于监听任务是否完成. 主要有两种用法: </p>
 <p>第一种用法是通过<code>dispatch_group_async</code>, 首先创建一个全局并行队列和一个group队列组, 再次创建异步group任务加入到前面创建的group队列中去. 当所有异步任务完成后, 会通过<code>dispatch_group_notify</code>回到主线程.</p>
 <pre><code>- (void)groupTest1 {
     //获取全局队列
@@ -750,7 +750,7 @@ dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU
         NSLog(@&quot;group finished&quot;);
     });
 }
-</code></pre><h3 id="GCD延时操作"><a href="#GCD延时操作" class="headerlink" title="GCD延时操作"></a>GCD延时操作</h3><p>使用很简单, 两个核心的对象<code>dispatch_time_t</code>和<code>dispatch_after</code>. 大家都经常使用, 不用多说. </p>
+</code></pre><h3 id="GCD延时操作-dispatch-after"><a href="#GCD延时操作-dispatch-after" class="headerlink" title="GCD延时操作(dispatch_after)"></a>GCD延时操作(dispatch_after)</h3><p>使用很简单, 两个核心的对象<code>dispatch_time_t</code>和<code>dispatch_after</code>. 大家都经常使用, 不用多说. </p>
 <pre><code>- (void)afterTest {
     double delayInSeconds = 2.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t) (delayInSeconds * NSEC_PER_SEC));
@@ -759,7 +759,7 @@ dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU
         NSLog(@&quot;%@&quot;, [NSThread currentThread]);
     });
 }
-</code></pre><h3 id="GCD单例"><a href="#GCD单例" class="headerlink" title="GCD单例"></a>GCD单例</h3><p>这个更是不用多说, 直接贴上代码.</p>
+</code></pre><h3 id="GCD单例-dispatch-once"><a href="#GCD单例-dispatch-once" class="headerlink" title="GCD单例(dispatch_once)"></a>GCD单例(dispatch_once)</h3><p>这个更是不用多说, 直接贴上代码.</p>
 <pre><code>@interface Tool : NSObject
 + (instancetype)sharedTool;
 @end
@@ -774,7 +774,7 @@ static id _instance;
     return _instance;
 }
 @end
-</code></pre><h3 id="NSOperation的优先级"><a href="#NSOperation的优先级" class="headerlink" title="NSOperation的优先级"></a>NSOperation的优先级</h3><p>NSOperationQueue中NSOperation对象的执行方式是按照FIFO的原则顺序执行, 但是如果我们设置了任务的优先级, 那么系统就会给优先级高的优先分配资源. </p>
+</code></pre><h3 id="GCD-线程间的通讯"><a href="#GCD-线程间的通讯" class="headerlink" title="GCD 线程间的通讯"></a>GCD 线程间的通讯</h3><h3 id="GCD等待-dispatch-group-wait"><a href="#GCD等待-dispatch-group-wait" class="headerlink" title="GCD等待(dispatch_group_wait)"></a>GCD等待(dispatch_group_wait)</h3><h3 id="GCD重复执行同一个任务-dispatch-apply"><a href="#GCD重复执行同一个任务-dispatch-apply" class="headerlink" title="GCD重复执行同一个任务(dispatch_apply)"></a>GCD重复执行同一个任务(dispatch_apply)</h3><h3 id="GCD设置优先级-dispatch-set-target-queue"><a href="#GCD设置优先级-dispatch-set-target-queue" class="headerlink" title="GCD设置优先级(dispatch_set_target_queue)"></a>GCD设置优先级(dispatch_set_target_queue)</h3><h3 id="GCD栅栏-dispatch-barrier-async"><a href="#GCD栅栏-dispatch-barrier-async" class="headerlink" title="GCD栅栏(dispatch_barrier_async)"></a>GCD栅栏(dispatch_barrier_async)</h3><h3 id="GCD信号量-dispatch-semaphore-t"><a href="#GCD信号量-dispatch-semaphore-t" class="headerlink" title="GCD信号量(dispatch_semaphore_t)"></a>GCD信号量(dispatch_semaphore_t)</h3><h3 id="NSOperation的优先级"><a href="#NSOperation的优先级" class="headerlink" title="NSOperation的优先级"></a>NSOperation的优先级</h3><p>NSOperationQueue中NSOperation对象的执行方式是按照FIFO的原则顺序执行, 但是如果我们设置了任务的优先级, 那么系统就会给优先级高的优先分配资源. </p>
 <p>优先级一共有这几种, 从高到低依次排列. </p>
 <pre><code>typedef NS_ENUM(NSInteger, NSOperationQueuePriority) {
     NSOperationQueuePriorityVeryLow = -8L,
