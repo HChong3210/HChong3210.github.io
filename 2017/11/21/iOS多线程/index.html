@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-26T15:47:16.473Z">
+<meta property="og:updated_time" content="2017-11-26T16:17:46.532Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
@@ -168,8 +168,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作"><span class="toc-text">GCD延时操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例"><span class="toc-text">GCD单例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation"><span class="toc-text">NSOperation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a></li></ol></li></ol>
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作"><span class="toc-text">GCD延时操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例"><span class="toc-text">GCD单例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a></li></ol></li></ol>
   </div>
 
 
@@ -774,7 +774,53 @@ static id _instance;
     return _instance;
 }
 @end
-</code></pre><h3 id="NSOperation"><a href="#NSOperation" class="headerlink" title="NSOperation"></a>NSOperation</h3><h2 id="常见使用案列分析"><a href="#常见使用案列分析" class="headerlink" title="常见使用案列分析"></a>常见使用案列分析</h2><hr>
+</code></pre><h3 id="NSOperation的优先级"><a href="#NSOperation的优先级" class="headerlink" title="NSOperation的优先级"></a>NSOperation的优先级</h3><p>NSOperationQueue中NSOperation对象的执行方式是按照FIFO的原则顺序执行, 但是如果我们设置了任务的优先级, 那么系统就会给优先级高的优先分配资源. </p>
+<p>优先级一共有这几种, 从高到低依次排列. </p>
+<pre><code>typedef NS_ENUM(NSInteger, NSOperationQueuePriority) {
+    NSOperationQueuePriorityVeryLow = -8L,
+    NSOperationQueuePriorityLow = -4L,
+    NSOperationQueuePriorityNormal = 0,
+    NSOperationQueuePriorityHigh = 4,
+    NSOperationQueuePriorityVeryHigh = 8
+};
+</code></pre><p>示例代码如下, 三个任务被添加到队列中去, 这三个任务分别在三个线程, 互不干扰, 类似于GCD的异步并行模式, 如果我们设置<code>invocationOper.queuePriority = NSOperationQueuePriorityVeryLow</code>理论上, <code>invocationOper</code>任务会在最后执行, 但是我们发现并没有, 那是因为我们没有设置最大并发数的原因, 我猜测系统可能是做了某些限制, 虽然是新开了线程, 但是由于最大并发数小于等于1实际还是按照FIFO顺序执行, <strong>所以注意一定要设置最大并发数</strong>.</p>
+<pre><code>//把注释打开就可以看到想要的效果
+- (void)NSOperationQueueRun {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    //queue.maxConcurrentOperationCount = 3;
+    NSInvocationOperation *invocationOper = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(invocationOperSel) object:nil];
+    //invocationOper.queuePriority = NSOperationQueuePriorityVeryLow;
+    [queue addOperation:invocationOper];
+    NSBlockOperation *blockOper = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@&quot;NSBlockOperationRun_%@&quot;, [NSThread currentThread]);
+    }];
+    [queue addOperation:blockOper];
+    [queue addOperationWithBlock:^{
+        NSLog(@&quot;QUEUEBlockOperationRun_%@&quot;, [NSThread currentThread]);
+    }];
+}
+
+- (void)invocationOperSel {
+    NSLog(@&quot;NSInvocationOperationRun_%@&quot;, [NSThread currentThread]);
+}
+</code></pre><h3 id="NSOperation的依赖关系"><a href="#NSOperation的依赖关系" class="headerlink" title="NSOperation的依赖关系"></a>NSOperation的依赖关系</h3><p>首先我们创建一个队列, 分别创建要执行的任务, <strong>在把要执行的任务添加到队列中去之前, 通过<code>addDependency</code>来建立任务间的依赖关系</strong>. 如果我们没有设置依赖的话, 如果设置的并发数大于1,  那么<code>blockOper_1</code>和<code>`blockOper_2</code>的执行顺序是随机的. 可是当我们执行<code>[blockOper_1 addDependency:blockOper_2]</code>时, 就给两个任务添加了依赖关系, <code>blockOper_1</code>永远只会在<code>blockOper_2</code>后执行. 即使我们给<code>blockOper_1</code>设置了最高的优先级, 因为<strong>依赖的优先级要高于<code>queuePriority</code></strong>. </p>
+<pre><code>- (void)NSOperationQueueRun2 {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+//    queue.maxConcurrentOperationCount = 2;
+    NSBlockOperation *blockOper_1 = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@&quot;blockOper_1_%@_%@&quot;,@(1),[NSThread currentThread]);
+    }];
+
+    NSBlockOperation *blockOper_2 = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@&quot;blockOper_2_%@_%@&quot;,@(2),[NSThread currentThread]);
+    }];
+
+//    blockOper_1.queuePriority = NSOperationQueuePriorityVeryHigh;
+    [blockOper_1 addDependency:blockOper_2];
+    [queue addOperation:blockOper_1];
+    [queue addOperation:blockOper_2];
+}
+</code></pre><h2 id="常见使用案列分析"><a href="#常见使用案列分析" class="headerlink" title="常见使用案列分析"></a>常见使用案列分析</h2><hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程, 你看我就够了</a></p>
 <p>2.<a href="https://bestswifter.com/multithreadconclusion/" target="_blank" rel="external">iOS多线程编程总结</a></p>
@@ -805,7 +851,7 @@ static id _instance;
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
