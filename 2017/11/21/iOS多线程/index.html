@@ -34,7 +34,7 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
-<meta property="og:updated_time" content="2017-11-27T15:46:56.109Z">
+<meta property="og:updated_time" content="2017-11-28T15:15:58.413Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
@@ -168,8 +168,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成-Dispatch-Group"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成(Dispatch Group)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作-dispatch-after"><span class="toc-text">GCD延时操作(dispatch_after)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例-dispatch-once"><span class="toc-text">GCD单例(dispatch_once)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-线程间的通讯"><span class="toc-text">GCD 线程间的通讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD重复执行同一个任务-dispatch-apply"><span class="toc-text">GCD重复执行同一个任务(dispatch_apply)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD设置优先级-dispatch-set-target-queue"><span class="toc-text">GCD设置优先级(dispatch_set_target_queue)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD栅栏-dispatch-barrier-async"><span class="toc-text">GCD栅栏(dispatch_barrier_async)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD信号量-dispatch-semaphore-t"><span class="toc-text">GCD信号量(dispatch_semaphore_t)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#案例一"><span class="toc-text">案例一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例二"><span class="toc-text">案例二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例三"><span class="toc-text">案例三</span></a></li></ol></li></ol></li></ol>
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成-Dispatch-Group"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成(Dispatch Group)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作-dispatch-after"><span class="toc-text">GCD延时操作(dispatch_after)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例-dispatch-once"><span class="toc-text">GCD单例(dispatch_once)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-线程间的通讯"><span class="toc-text">GCD 线程间的通讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD重复执行同一个任务-dispatch-apply"><span class="toc-text">GCD重复执行同一个任务(dispatch_apply)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD设置优先级-dispatch-set-target-queue"><span class="toc-text">GCD设置优先级(dispatch_set_target_queue)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD栅栏-dispatch-barrier-async"><span class="toc-text">GCD栅栏(dispatch_barrier_async)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD信号量-dispatch-semaphore-t"><span class="toc-text">GCD信号量(dispatch_semaphore_t)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD定时器"><span class="toc-text">GCD定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#案例一"><span class="toc-text">案例一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例二"><span class="toc-text">案例二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例三"><span class="toc-text">案例三</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -875,6 +875,31 @@ static id _instance;
         });
     }
 }
+</code></pre><h3 id="GCD定时器"><a href="#GCD定时器" class="headerlink" title="GCD定时器"></a>GCD定时器</h3><p>GCD实现定时器主要用到<code>dispatch_source_t</code>函数, 该函数实际有多种Type, <code>DISPATCH_SOURCE_TYPE_TIMER</code>是定时器相关的任务, 还有其他类型的处理事件类型. </p>
+<pre><code>- (void)timerDemo {
+    NSLog(@&quot;%@&quot;, [NSThread currentThread]);
+    //指定DISPATCH_SOURCE_TYPE_TIMER类型, 作成Dispatch Source
+
+    //在定时器经过指定时间, 把任务追加到main queue
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+
+    //定时器的相关设置, 将定时器设置为5s后, 不指定为重复, 允许延迟1s
+    dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, 5ull * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, 1ull * NSEC_PER_SEC);
+
+    //指定定时器指定时间内执行的处理
+    dispatch_source_set_event_handler(timer, ^{
+        NSLog(@&quot;wake up&quot;);
+        dispatch_source_cancel(timer);
+    });
+
+    //取消定时器时的处理
+    dispatch_source_set_cancel_handler(timer, ^{
+        NSLog(@&quot;canceled&quot;);
+    });
+
+    //定时器启动
+    dispatch_resume(timer);
+}
 </code></pre><h3 id="NSOperation的优先级"><a href="#NSOperation的优先级" class="headerlink" title="NSOperation的优先级"></a>NSOperation的优先级</h3><p>NSOperationQueue中NSOperation对象的执行方式是按照FIFO的原则顺序执行, 但是如果我们设置了任务的优先级, 那么系统就会给优先级高的优先分配资源. </p>
 <p>优先级一共有这几种, 从高到低依次排列. </p>
 <pre><code>typedef NS_ENUM(NSInteger, NSOperationQueuePriority) {
@@ -970,7 +995,7 @@ static id _instance;
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">

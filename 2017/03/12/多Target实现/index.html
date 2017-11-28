@@ -22,11 +22,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="自动化打包,Target," />
+    <meta name="keywords" content="Target,自动化打包," />
   
 
   <meta name="description" content="多渠道包和多环境包的自动化实现在App的开发过程中, 肯定会有很多后台环境的区分. 例如开发时, 我们用的是开发环境. 测试时使用的是测试环境. 在预发布之前肯定要有个缓冲的环境, 也就是预发布环境. 最后还有一个线上的环境, 也称为生产环境. 那么这么多环境, 问题就来了, 该怎么在各个环境之间无缝切换呢?   首先我们会想到在代码中建一个单独的类, 把用到的所有服务按照环境列一个遍, 每次需要">
-<meta name="keywords" content="自动化打包,Target">
+<meta name="keywords" content="Target,自动化打包">
 <meta property="og:type" content="article">
 <meta property="og:title" content="多渠道包和多环境包的自动化实现">
 <meta property="og:url" content="http://hchong.net/2017/03/12/多Target实现/index.html">
@@ -175,7 +175,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#多渠道包和多环境包的自动化实现"><span class="toc-text">多渠道包和多环境包的自动化实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#打包脚本"><span class="toc-text">打包脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内测分发平台"><span class="toc-text">内测分发平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#APP配置多个环境变量"><span class="toc-text">APP配置多个环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案三"><span class="toc-text">方案三</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案四"><span class="toc-text">方案四</span></a></li></ol></li></ol>
   </div>
 
@@ -355,7 +355,7 @@ NSLog(@&quot;----------%@&quot;, HOST2);
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
