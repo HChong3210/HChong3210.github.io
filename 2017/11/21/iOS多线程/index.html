@@ -34,8 +34,12 @@
 <meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
+<meta property="og:image" content="http://img.souche.com/f2e/5b1729532683ad164c061958d5248a66.png">
+<meta property="og:image" content="http://img.souche.com/f2e/27086c860f921209238d3f60c2f8722c.png">
 <meta property="og:image" content="http://img.souche.com/f2e/9c13eaeac28f7fe7105af2feb878d5ef.png">
-<meta property="og:updated_time" content="2017-11-28T15:52:05.007Z">
+<meta property="og:image" content="http://img.souche.com/f2e/43a48f9de1c0bb336215543157ad875b.png">
+<meta property="og:image" content="http://img.souche.com/f2e/0d108cba7a737b62e2f5e1be402bc5d0.png">
+<meta property="og:updated_time" content="2017-11-28T16:00:38.389Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
 <meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
@@ -169,7 +173,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成-Dispatch-Group"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成(Dispatch Group)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作-dispatch-after"><span class="toc-text">GCD延时操作(dispatch_after)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例-dispatch-once"><span class="toc-text">GCD单例(dispatch_once)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-线程间的通讯"><span class="toc-text">GCD 线程间的通讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD重复执行同一个任务-dispatch-apply"><span class="toc-text">GCD重复执行同一个任务(dispatch_apply)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD设置优先级-dispatch-set-target-queue"><span class="toc-text">GCD设置优先级(dispatch_set_target_queue)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD栅栏-dispatch-barrier-async"><span class="toc-text">GCD栅栏(dispatch_barrier_async)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD信号量-dispatch-semaphore-t"><span class="toc-text">GCD信号量(dispatch_semaphore_t)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD定时器"><span class="toc-text">GCD定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#案例一"><span class="toc-text">案例一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例二"><span class="toc-text">案例二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例三"><span class="toc-text">案例三</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例四"><span class="toc-text">案例四</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例五"><span class="toc-text">案例五</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -955,6 +959,7 @@ static id _instance;
     NSLog(@&quot;任务二 - %@&quot;, [NSThread currentThread]);
 }
 </code></pre><p>以上<code>- (void)case1</code>默认在当前线程(主线程)执行,  首先执行”任务一”. 然后<code>dispatch_sync</code>阻塞当前线程(主线程), 由于主队列是串行队列, 任务不能并发执行, 同时只能有一个任务在执行. 又因为<strong>“同步任务”后入列, 按照FIFO原则, 必须等到<code>- (void)case1</code>执行完毕才能执行</strong>, 但是<code>- (void)case1</code>中的”任务二”又在等着”同步任务”执行完毕才能执行, 这样就造成同一队列中的两个任务相互等待, 造成死锁. </p>
+<p><img src="http://img.souche.com/f2e/5b1729532683ad164c061958d5248a66.png" alt="案例1"></p>
 <p>有两种解决思路, 一是为当前队列扩容, 让它变成并行队列, 就不会造成阻塞. 第二种解决思路是把同步任务添加到一个新的自定义串行队列中去, 两个队列之间不存在阻塞就避免了死锁问题. </p>
 <h3 id="案例二"><a href="#案例二" class="headerlink" title="案例二"></a>案例二</h3><pre><code>- (void)case2 {
     NSLog(@&quot;1&quot;);
@@ -965,6 +970,7 @@ static id _instance;
     NSLog(@&quot;3&quot;);
 }
 </code></pre><p>打印顺序一定为1, 2, 3. 2新开队列, 不会造成死锁. <code>case2</code>和新开的block任务之间没有队列的约束, 但是由于是同步任务,阻塞线程, 所以block先执行, 执行完毕后再回到<code>case2</code>, 接着执行.</p>
+<p><img src="http://img.souche.com/f2e/27086c860f921209238d3f60c2f8722c.png" alt="案例2"></p>
 <h3 id="案例三"><a href="#案例三" class="headerlink" title="案例三"></a>案例三</h3><pre><code>- (void)case3 {
     dispatch_queue_t queue = dispatch_queue_create(&quot;com.demo.serialQueue&quot;, DISPATCH_QUEUE_SERIAL);
     NSLog(@&quot;1&quot;); // 任务1
@@ -977,8 +983,8 @@ static id _instance;
     });
     NSLog(@&quot;5&quot;); // 任务5
 }
-</code></pre><p><img src="http://img.souche.com/f2e/9c13eaeac28f7fe7105af2feb878d5ef.png" alt="案例三图片"></p>
-<p>控制台输出1, 5, 2. (5, 2的顺序不一定). 可以肯定, 使用的是自定义串行队列. 首先执行任务1, 接下来有一个异步任务, 新开辟线程(将任务2, 同步线程, 任务4加入新线程). 因为是异步线程, 主线程中的任务5不用等待, 所以 2 和 5 的输出顺序不定. 任务2执行完后, 遇到同步任务, 因为是在串行队列, 所以会阻塞当前线程, 任务3执行完后才能执行任务4. 但是任务4比任务3早加入队列, 根据FIFO原则, 任务3要等待任务4执行完后才能执行. 任务3和任务4相互等待造成死锁. </p>
+</code></pre><p>控制台输出1, 5, 2. (5, 2的顺序不一定). 可以肯定, 使用的是自定义串行队列. 首先执行任务1, 接下来有一个异步任务, 新开辟线程(将任务2, 同步线程, 任务4加入新线程). 因为是异步线程, 主线程中的任务5不用等待, 所以 2 和 5 的输出顺序不定. 任务2执行完后, 遇到同步任务, 因为是在串行队列, 所以会阻塞当前线程, 任务3执行完后才能执行任务4. 但是任务4比任务3早加入队列, 根据FIFO原则, 任务3要等待任务4执行完后才能执行. 任务3和任务4相互等待造成死锁. </p>
+<p><img src="http://img.souche.com/f2e/9c13eaeac28f7fe7105af2feb878d5ef.png" alt="案例三图片"></p>
 <h3 id="案例四"><a href="#案例四" class="headerlink" title="案例四"></a>案例四</h3><pre><code>- (void)case4 {
     NSLog(@&quot;1&quot;); // 任务1
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -992,6 +998,7 @@ static id _instance;
 }
 </code></pre><p>打印结果是: 1, 5, 2, 3, 4.(2, 5的顺序不定). 首先在主线程中有三个任务, 分别是任务1, 并行队列的异步任务, 任务5. 并行队列的异步任务中又有三个任务, 分别是任务2, 异步任务, 任务4.  </p>
 <p>所以先打印1, 然后把异步任务加入全部并行队列, 由于是异步任务新开辟线程, 不阻塞主线程, 5不用等待. 所以2, 5顺序不定. 然后再分析并行队列中的异步任务, 任务2执行后遇到同步任务, 同步任务被加入到主线程(因为前面已经被加过3个任务, 所以该任务在任务5后面). 因为是同步, 阻塞主线程, 所以4一定在3后面. </p>
+<p><img src="http://img.souche.com/f2e/43a48f9de1c0bb336215543157ad875b.png" alt="案例四"></p>
 <h3 id="案例五"><a href="#案例五" class="headerlink" title="案例五"></a>案例五</h3><pre><code>- (void)case5 {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         NSLog(@&quot;1&quot;); // 任务1
@@ -1006,7 +1013,8 @@ static id _instance;
     NSLog(@&quot;5&quot;); // 任务5
 }
 </code></pre><p>打印结果是: 1, 4(顺序不定). 首先主线程中有四个任务, 分别是全局并行队列的异步任务, 任务4, 死循环, 任务5. 全局并行队列的异步任务中又有三个任务, 分别是任务1, 主线程的同步任务(任务2), 任务3. </p>
-<p>由于是异步任务, 不阻塞主线程, 所以全局并行队列的异步任务执行顺序和任务4不定, 全局并行队列的异步任务又是先执行任务1, 所以任务1和任务4的顺序不定. 当任务4执行完后, 进入死循环, 主线程被阻塞. 由于同步任务(任务2)是被加在主线程中, 并且是在任务5后面被加入根据FIFO, 任务2在5后执行, 5在死循环后执行, 此处死锁. 即使没有死循环, 任务2和任务3本身也在主线程中相互等待, 所以公有两处死锁. </p>
+<p>由于是异步任务, 不阻塞主线程, 所以全局并行队列的异步任务执行顺序和任务4不定, 全局并行队列的异步任务又是先执行任务1, 所以任务1和任务4的顺序不定. 当任务4执行完后, 进入死循环, 主线程被阻塞. 由于同步任务(任务2)是被加在主线程中, 但是此时主线程已被阻塞, 所以2不会被执行. 任务3又是在任务2后被加入队列, 任务2是同步任务, 所以任务3要等待任务2完成才执行. 所以任务2, 任务3都不会执行. 任务5在死循环后执行, 所以任务5永远不会被执行. 如果没有死循环, 任务2肯定在任务后后面, 任务3肯定在任务2后面. </p>
+<p><img src="http://img.souche.com/f2e/0d108cba7a737b62e2f5e1be402bc5d0.png" alt="案例五"></p>
 <hr>
 <p>参考资料:</p>
 <p>1.<a href="http://www.cocoachina.com/ios/20150731/12819.html" target="_blank" rel="external">关于iOS多线程, 你看我就够了</a></p>
@@ -1038,7 +1046,7 @@ static id _instance;
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
