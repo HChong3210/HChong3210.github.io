@@ -25,7 +25,7 @@
     <meta name="keywords" content="基础知识,Target," />
   
 
-  <meta name="description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下:   A workspace is an Xcode document that groups projects and other documents so you can work on them together. A worksp">
+  <meta name="description" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系Xcode Workspace官方文档如下:   A workspace is an Xcode document that groups projects and other documents so">
 <meta name="keywords" content="基础知识,Target">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xcode中的Workspace, Scheme, Project, Target和Build Settings的关系">
@@ -273,14 +273,14 @@
 <p>build setting 中包含了 product 生成过程中所需的参数信息。你可以在 project-level 和 target-level 层指定 build settings。project-level 的 build settings 适用于 project 中的所有targets，但是当 target-level 的 build settings 重写了 project-level 的 build settings，以 target-level 中的 build settings 中的值为准</p>
 <p>一个 build configaration 指定了一套 build settings 用于生成某一 target 的 product，例如，在 Xcode 创建项目时默认就有两套独立的 build configarations, 分别用于生成 debug 和 release 模式下的 product。</p>
 <p>除了创建工程时生成的默认 build settings，你也可以自定义 project-level 或者 target-level 的 build settings.</p>
-<p>关于继承关系，<a href="https://pewpewthespells.com/blog/xcconfig_guide.html#BuildSettingInheritance" target="_blank" rel="external">The Unofficial Guide to xcconfig files</a> 这里也有详细的说明，强烈建议阅读。</p>
+<p>关于继承关系，<a href="https://pewpewthespells.com/blog/xcconfig_guide.html#BuildSettingInheritance" target="_blank" rel="noopener">The Unofficial Guide to xcconfig files</a> 这里也有详细的说明，强烈建议阅读。</p>
 <p>动态环境配置就是使用自定义的 build settings 来实现的.</p>
 <hr>
 <p>参考资料:</p>
-<p>1.<a href="http://liumh.com/2016/05/22/use-xcconfig-config-specific-variable/" target="_blank" rel="external">Xcode使用xcconfig文件配置环境</a>.<br>​<br>2.<a href="https://developer.apple.com/library/content/featuredarticles/XcodeConcepts/Concept-Targets.html" target="_blank" rel="external">Apple官方文档</a>.</p>
-<p>3.<a href="https://xiuchundao.me/post/xcode-scheme-and-build-configuration" target="_blank" rel="external">Xcode中的Scheme和Build Configuration</a>.</p>
-<p>4.<a href="http://www.jianshu.com/p/1f312abafeff" target="_blank" rel="external">Xcode workSpace 多个project联编</a></p>
-<p>5.<a href="https://pewpewthespells.com/blog/xcconfig_guide.html#BuildSettingInheritance" target="_blank" rel="external">The Unofficial Guide to xcconfig files</a></p>
+<p>1.<a href="http://liumh.com/2016/05/22/use-xcconfig-config-specific-variable/" target="_blank" rel="noopener">Xcode使用xcconfig文件配置环境</a>.<br>​<br>2.<a href="https://developer.apple.com/library/content/featuredarticles/XcodeConcepts/Concept-Targets.html" target="_blank" rel="noopener">Apple官方文档</a>.</p>
+<p>3.<a href="https://xiuchundao.me/post/xcode-scheme-and-build-configuration" target="_blank" rel="noopener">Xcode中的Scheme和Build Configuration</a>.</p>
+<p>4.<a href="http://www.jianshu.com/p/1f312abafeff" target="_blank" rel="noopener">Xcode workSpace 多个project联编</a></p>
+<p>5.<a href="https://pewpewthespells.com/blog/xcconfig_guide.html#BuildSettingInheritance" target="_blank" rel="noopener">The Unofficial Guide to xcconfig files</a></p>
 
     
   </div>

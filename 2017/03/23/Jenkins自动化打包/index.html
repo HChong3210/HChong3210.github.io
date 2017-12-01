@@ -25,7 +25,7 @@
     <meta name="keywords" content="自动化打包,Jenkins,持续集成," />
   
 
-  <meta name="description" content="使用Jenkins实现持续集成什么是持续集成, 持续集成是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 常见的持续集成的工具有Jenkins  Travis  Hudson  Circle. 然而好多我并没有实践过, 😂. 这里有一篇文章">
+  <meta name="description" content="使用Jenkins实现持续集成什么是持续集成, 持续集成是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。 常见的持续集成的工具有Jenkins  Travis  ">
 <meta name="keywords" content="自动化打包,Jenkins,持续集成">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用Jenkins实现持续集成">
@@ -239,21 +239,21 @@
   <div class="article-content">
     
       <h1 id="使用Jenkins实现持续集成"><a href="#使用Jenkins实现持续集成" class="headerlink" title="使用Jenkins实现持续集成"></a>使用Jenkins实现持续集成</h1><p>什么是持续集成, 持续集成是一种软件开发实践，即团队开发成员经常集成它们的工作，通过每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括编译，发布，自动化测试）来验证，从而尽早地发现集成错误。</p>
-<p>常见的持续集成的工具有<a href="http://jenkins-ci.org/" target="_blank" rel="external">Jenkins</a>  <a href="https://travis-ci.com/" target="_blank" rel="external">Travis</a>  <a href="http://hudson-ci.org/" target="_blank" rel="external">Hudson</a>  <a href="https://circleci.com/" target="_blank" rel="external">Circle</a>. 然而好多我并没有实践过, 😂. <a href="http://www.infoq.com/cn/articles/ios-code-server-jenkins-travis-fastlane" target="_blank" rel="external">这里</a>有一篇文章, 对比讲解了主流iOS持续化集成方案, 包括了Xcode Server.</p>
-<p>Code review, 单元测试, 打包与分发, 这些构成了一个APP开发生命周期. 所以一个完整持续化集成应该包含以上的而全部信息, 这里我们主要讲解一下打包与分发的持续化集成方案. 关于我们为什么选择Jenkins, 而不使用其他的持续化方案, <a href="http://www.infoq.com/cn/articles/ios-code-server-jenkins-travis-fastlane" target="_blank" rel="external">这篇文章</a>已经讲解的很清楚了. 下面就跟随我一步步的搭建Jenkins, 实现一个简单但强大的持续化集成方案. 本文均以Jenkins2.35为例.</p>
+<p>常见的持续集成的工具有<a href="http://jenkins-ci.org/" target="_blank" rel="noopener">Jenkins</a>  <a href="https://travis-ci.com/" target="_blank" rel="noopener">Travis</a>  <a href="http://hudson-ci.org/" target="_blank" rel="noopener">Hudson</a>  <a href="https://circleci.com/" target="_blank" rel="noopener">Circle</a>. 然而好多我并没有实践过, 😂. <a href="http://www.infoq.com/cn/articles/ios-code-server-jenkins-travis-fastlane" target="_blank" rel="noopener">这里</a>有一篇文章, 对比讲解了主流iOS持续化集成方案, 包括了Xcode Server.</p>
+<p>Code review, 单元测试, 打包与分发, 这些构成了一个APP开发生命周期. 所以一个完整持续化集成应该包含以上的而全部信息, 这里我们主要讲解一下打包与分发的持续化集成方案. 关于我们为什么选择Jenkins, 而不使用其他的持续化方案, <a href="http://www.infoq.com/cn/articles/ios-code-server-jenkins-travis-fastlane" target="_blank" rel="noopener">这篇文章</a>已经讲解的很清楚了. 下面就跟随我一步步的搭建Jenkins, 实现一个简单但强大的持续化集成方案. 本文均以Jenkins2.35为例.</p>
 <h2 id="安装Jenkins"><a href="#安装Jenkins" class="headerlink" title="安装Jenkins"></a>安装Jenkins</h2><p>首先, 我们要安装Jenkins. 安装Jenkins一般有两种方式. </p>
-<p>第一种我们可以从<a href="https://jenkins.io/" target="_blank" rel="external">官网</a>上下载最新的pkg安装包。</p>
+<p>第一种我们可以从<a href="https://jenkins.io/" target="_blank" rel="noopener">官网</a>上下载最新的pkg安装包。</p>
 <p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fh5vhnmh9bj30h80c7dgr.jpg" alt="安装步骤1"></p>
 <p>一路点击继续, 直到安装成功为止.</p>
 <p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fh5vikplwxj30hb0c5q35.jpg" alt="安装完成"></p>
 <p>第二种方式也可以下载<code>brew install jenkins</code>, 切换到切换到 <code>cd /usr/local/Cellar/jenkins/版本号/libexec/jenkins.war</code>,  然后运行Java -jar jenkins.war，进行安装.<br>注意: 如果brew无效要先安装homebrew, <code>ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</code></p>
-<p>安装完成后, 重启电脑, 你会发现多了一个Jenkins的用户, 但是他的登录密码我们并不知道. 我们应该打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 此时可以看到Jenkins的初始界面. </p>
+<p>安装完成后, 重启电脑, 你会发现多了一个Jenkins的用户, 但是他的登录密码我们并不知道. 我们应该打开<a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a>, 此时可以看到Jenkins的初始界面. </p>
 <p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fh5vod9epvj30yg0jet93.jpg" alt="Jenkins初始界面"><br>注意, 由于Jenkins是由Java开发的, 所以Jenkins的运行必须是在Java环境下, 如果你打开界面为空白的话, 那就说明你需要安装Java环境了.</p>
 <p>按照提示，找到/Users/Shared/Jenkins/Home/ 这个目录, 由于非Jenkins用户没有查看权限, 所以需要我们右键 -&gt; 显示简介, 给这个文件夹赋予读写权限. 按照提示找到<em>initialAdminPassword</em>文件, 复制出密码，就可以填到网页上去重置密码了.</p>
 <p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fh5vsrxh73j30yg0je0t5.jpg" alt="重置密码"></p>
 <p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fh5vt9bk89j30yg0jemxk.jpg" alt="开始安装"></p>
 <p>然后一路安装下去, 输入用户名，密码，邮件这些，就算安装完成了。</p>
-<h2 id="Jenkins插件配置-amp-系统设置"><a href="#Jenkins插件配置-amp-系统设置" class="headerlink" title="Jenkins插件配置&amp;系统设置"></a>Jenkins插件配置&amp;系统设置</h2><p>打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>页面, 我们需要安装一些辅助插件, 选择<em>系统管理</em> -&gt; <em>管理插件</em>. 下面我列一下我安装到的一些常用的插件: </p>
+<h2 id="Jenkins插件配置-amp-系统设置"><a href="#Jenkins插件配置-amp-系统设置" class="headerlink" title="Jenkins插件配置&amp;系统设置"></a>Jenkins插件配置&amp;系统设置</h2><p>打开<a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a>页面, 我们需要安装一些辅助插件, 选择<em>系统管理</em> -&gt; <em>管理插件</em>. 下面我列一下我安装到的一些常用的插件: </p>
 <ul>
 <li><p>GitLab Plugin, Gitlab Hook Plugin. 用于连接到GitLab, 如果你的源码在Gitlab上托管, 这连个插件必须要安装.</p>
 </li>
@@ -268,14 +268,14 @@
 <li><p>Email Extension Plugin. 用于发邮件, 可选.</p>
 <h2 id="Jenkins打包配置准备工作"><a href="#Jenkins打包配置准备工作" class="headerlink" title="Jenkins打包配置准备工作"></a>Jenkins打包配置准备工作</h2></li>
 </ul>
-<p>首先, 我们需要明确在这一步我们的目的: 把指定代码的指定分支打包为签名过的IPA包, 并且生成一个可供下载的链接. 那么明确了我们的目的, 接下来就一步一步的来实现它. 打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>页面, 接下来我们开始新建一个打包项目. 点击左侧工具栏<em>新建</em>, 选择<em>构建一个自由风格的软件项目</em>, 注意这里最好使用英文, 不要出现中文和特殊字符.</p>
+<p>首先, 我们需要明确在这一步我们的目的: 把指定代码的指定分支打包为签名过的IPA包, 并且生成一个可供下载的链接. 那么明确了我们的目的, 接下来就一步一步的来实现它. 打开<a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a>页面, 接下来我们开始新建一个打包项目. 点击左侧工具栏<em>新建</em>, 选择<em>构建一个自由风格的软件项目</em>, 注意这里最好使用英文, 不要出现中文和特殊字符.</p>
 <p>进入项目配置页面, 接下来我将从<em>General</em>, <em>源码管理</em>, <em>构建触发器</em>, <em>构建环境</em>, <em>构建</em>, 和<em>构建后操作</em>几个方面来配置打包项目.</p>
 <p>在项目配置之前, 我们需要先配置一些其他全局的变量, 这些变量在项目的配置中会使用到.</p>
 <h3 id="gitlab代码地址配置"><a href="#gitlab代码地址配置" class="headerlink" title="gitlab代码地址配置"></a>gitlab代码地址配置</h3><p>Jenkins系统管理 -&gt; 系统设置 -&gt; Gitlab选项, 因为我们的代码托管在gitlab上面, 所以在这里需要配置相关信息. 点击<em>增加</em>. 填写相关信息.<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fh93xkbelyj31ei0qk75f.jpg" alt="gitlab地址配置"></p>
 <p>注: 这里会报一个<em>API Token for Gitlab access required</em>的错误, 可以暂时忽略, 是因为gitlab一般都是私有的仓库, Jenkins没有连接的权限导致的.</p>
-<h3 id="添加与gitlab连接的证书"><a href="#添加与gitlab连接的证书" class="headerlink" title="添加与gitlab连接的证书"></a>添加与gitlab连接的证书</h3><p>Jenkins -&gt; Credentials -&gt; Add Credentials, <a href="http://localhost:8080/credentials/store/system/domain/_/newCredentials" target="_blank" rel="external">http://localhost:8080/credentials/store/system/domain/_/newCredentials</a>增加一个新的证书, 用来连接gitlab. </p>
+<h3 id="添加与gitlab连接的证书"><a href="#添加与gitlab连接的证书" class="headerlink" title="添加与gitlab连接的证书"></a>添加与gitlab连接的证书</h3><p>Jenkins -&gt; Credentials -&gt; Add Credentials, <a href="http://localhost:8080/credentials/store/system/domain/_/newCredentials" target="_blank" rel="noopener">http://localhost:8080/credentials/store/system/domain/_/newCredentials</a>增加一个新的证书, 用来连接gitlab. </p>
 <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fh94ryjjgvj31kw0qngml.jpg" alt="连接gitlab的证书"></p>
-<p><em>kind</em> , <em>Scope</em> 和 <em>Private Key</em> 就按照如图所示选择好. <em>UserName</em> 表示这个证书的名字, <em>ID</em> 自动生成, 用来标记这个证书. <em>Description</em>是关于这个证书的描述. <em>key</em> 那里填写SSH的Private Key, <em>Passphrase</em> 那里填写生成SSH时填写的密码.  <a href="https://git-scm.com/book/zh/v1/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-%E7%94%9F%E6%88%90-SSH-%E5%85%AC%E9%92%A5" target="_blank" rel="external">关于SSH的申请</a>.</p>
+<p><em>kind</em> , <em>Scope</em> 和 <em>Private Key</em> 就按照如图所示选择好. <em>UserName</em> 表示这个证书的名字, <em>ID</em> 自动生成, 用来标记这个证书. <em>Description</em>是关于这个证书的描述. <em>key</em> 那里填写SSH的Private Key, <em>Passphrase</em> 那里填写生成SSH时填写的密码.  <a href="https://git-scm.com/book/zh/v1/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-%E7%94%9F%E6%88%90-SSH-%E5%85%AC%E9%92%A5" target="_blank" rel="noopener">关于SSH的申请</a>.</p>
 <p>注意: 这里记得要在你的gitlab的Profile Settings -&gt; SSH Keys中添加上一步生成的Public Key, </p>
 <h3 id="添加钥匙串和描述文件"><a href="#添加钥匙串和描述文件" class="headerlink" title="添加钥匙串和描述文件"></a>添加钥匙串和描述文件</h3><p>在Jenkins -&gt; 系统管理 -&gt; KeyChain and Provisioning Profiles Management 中添加 keychains 和 Provisioning Profile文件.<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fha7tvmt2uj30yg08ljrq.jpg" alt="添加钥匙串和描述文件"></p>
 <p>分别上传keychains 和 Provisioning Profile.</p>
@@ -406,11 +406,11 @@ fi
 <h3 id="证书配置文件没有找到"><a href="#证书配置文件没有找到" class="headerlink" title="证书配置文件没有找到"></a>证书配置文件没有找到</h3><p>No iOS profile matching ‘xxxxxx/xxxxxxx’ found:Xcode couldn’t find a profile<br>matching ‘xxxxxx/xxxxxxx’.<br>Install the profile (by dragging and dropping it onto Xcode’s dock item)<br>or select a different one in the General tab of the target editor.<br>Code signing is required for product type ‘Application’ in SDK ‘iOS 10.3’ </p>
 <p>是因为Archive时没有找到profile导致的. 解决办法是, 把系统的<code>/Users/用户名/Library/MobileDevice/Provisioning Profiles</code>整个Provisioning Profiles文件夹复制到<code>/Users/Shared/Jenkins/Library/MobileDevice</code>目录下, 并且在Jenkins -&gt; Keychains and Provisioning Profiles Management 的Provisioning Profiles Directory Path中, 设置好profile的存放目录.</p>
 <h3 id="Command-usr-bin-codesign-failed-with-exit-code-1"><a href="#Command-usr-bin-codesign-failed-with-exit-code-1" class="headerlink" title="Command/usr/bin/codesign failed with exit code 1"></a>Command/usr/bin/codesign failed with exit code 1</h3><h2 id="这个是由于没有给钥匙串开锁权限导致-编译之前添加-security-unlock-keychain-p-quot-你的密码-quot-quot-path-to-keychain-login-keychain-quot-解决"><a href="#这个是由于没有给钥匙串开锁权限导致-编译之前添加-security-unlock-keychain-p-quot-你的密码-quot-quot-path-to-keychain-login-keychain-quot-解决" class="headerlink" title="这个是由于没有给钥匙串开锁权限导致, 编译之前添加 security unlock-keychain -p &quot;你的密码&quot; &quot;path to keychain/login.keychain&quot;解决."></a>这个是由于没有给钥匙串开锁权限导致, 编译之前添加 <code>security unlock-keychain -p &quot;你的密码&quot; &quot;path to keychain/login.keychain&quot;</code>解决.</h2><h2 id="待解决"><a href="#待解决" class="headerlink" title="待解决"></a>待解决</h2><p>使用Tomcat, 把Jenkins发布出去, 这个是下一步要解决的问题.<br>参考文章:</p>
-<p>1.<a href="https://runningyoung.github.io/2016/04/01/2016-04-05-jenkins2/" target="_blank" rel="external">iOS持续集成：jenkins+gitlab+蒲公英+邮件通知(Part 2)</a></p>
-<p>2.<a href="http://www.jianshu.com/p/c69deb29720d" target="_blank" rel="external">一步一步构建iOS持续集成:Jenkins+GitLab+蒲公英+FTP</a></p>
-<p>3.<a href="http://www.jianshu.com/p/e19c8327b167" target="_blank" rel="external">Jenkins/git/KeyChains &amp; Provisioning, 记录CI中的一些坑</a></p>
-<p>4.<a href="http://www.jianshu.com/p/e19c8327b167" target="_blank" rel="external">使用 Jenkins 持续集成 iOS 项目时碰到的一些问题</a></p>
-<p>5.<a href="http://www.jianshu.com/p/41ecb06ae95f" target="_blank" rel="external">手把手教你利用Jenkins持续集成iOS项目</a></p>
+<p>1.<a href="https://runningyoung.github.io/2016/04/01/2016-04-05-jenkins2/" target="_blank" rel="noopener">iOS持续集成：jenkins+gitlab+蒲公英+邮件通知(Part 2)</a></p>
+<p>2.<a href="http://www.jianshu.com/p/c69deb29720d" target="_blank" rel="noopener">一步一步构建iOS持续集成:Jenkins+GitLab+蒲公英+FTP</a></p>
+<p>3.<a href="http://www.jianshu.com/p/e19c8327b167" target="_blank" rel="noopener">Jenkins/git/KeyChains &amp; Provisioning, 记录CI中的一些坑</a></p>
+<p>4.<a href="http://www.jianshu.com/p/e19c8327b167" target="_blank" rel="noopener">使用 Jenkins 持续集成 iOS 项目时碰到的一些问题</a></p>
+<p>5.<a href="http://www.jianshu.com/p/41ecb06ae95f" target="_blank" rel="noopener">手把手教你利用Jenkins持续集成iOS项目</a></p>
 
     
   </div>

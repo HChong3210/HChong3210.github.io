@@ -25,7 +25,7 @@
     <meta name="keywords" content="基础知识,面试题,UIView," />
   
 
-  <meta name="description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上就是对一些显示文本内容的控件进行高度计算, 然后根据子视图的约束, 布局来得到父">
+  <meta name="description" content="UIView系列之—iOS的动态高度UIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 不论是UITableViewCell的高度也好, 或者是一个输入框也好, 都会用到动态布局. 实际上">
 <meta name="keywords" content="基础知识,面试题,UIView">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UIView系列之---iOS的动态高度">
@@ -333,7 +333,7 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 </li>
 </ol>
 <h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><p>对于使用auto layout机制布局的view, auto layout system会在布局过程中综合各种约束的考虑为之设置一个size, 在布局完成后, 该size的值即为view.frame.size的值; 这包含的另外一层意思, 即在布局完成前, 我们是不能通过view.frame.size准确获取view的size的. 但有时候, 我们需要在auto layout system对view完成布局前就知道它的size, <code>systemLayoutSizeFittingSize:</code>方法正是能够满足这种要求的API. <code>systemLayoutSizeFittingSize:</code>方法会根据其constraints返回一个合适的size值. </p>
-<p>在这里看一下比较知名的cell高度计算库<a href="https://github.com/forkingdog/UITableView-FDTemplateLayoutCell" target="_blank" rel="external">UITableView-FDTemplateLayoutCell</a>的核心高度计算方法, 大体上和我们所使用的方法差不多. Auto layout mode using <code>-systemLayoutSizeFittingSize:</code>, Frame layout mode using <code>-sizeThatFits:</code>. </p>
+<p>在这里看一下比较知名的cell高度计算库<a href="https://github.com/forkingdog/UITableView-FDTemplateLayoutCell" target="_blank" rel="noopener">UITableView-FDTemplateLayoutCell</a>的核心高度计算方法, 大体上和我们所使用的方法差不多. Auto layout mode using <code>-systemLayoutSizeFittingSize:</code>, Frame layout mode using <code>-sizeThatFits:</code>. </p>
 <pre><code>- (CGFloat)fd_systemFittingHeightForConfiguratedCell:(UITableViewCell *)cell {
     CGFloat contentViewWidth = CGRectGetWidth(self.frame);
 
@@ -405,13 +405,13 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 
     return fittingHeight;
 }
-</code></pre><p><a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="external">这篇文章</a>也有一些常见cell布局的高度计算方法, 可以参考下.</p>
+</code></pre><p><a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="noopener">这篇文章</a>也有一些常见cell布局的高度计算方法, 可以参考下.</p>
 <hr>
 <p>参考资料:</p>
-<p>1.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="external">深入理解Auto Layout</a>.</p>
-<p>2.<a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="external">动态计算UITableViewCell高度</a></p>
-<p>3.<a href="http://blog.sunnyxx.com/2015/05/17/cell-height-calculation/" target="_blank" rel="external">优化UITableViewCell高度计算的那些事</a></p>
-<p>4.<a href="http://sylenthwave.github.io/2016/01/02/iOS%E5%8A%A8%E6%80%81%E5%8F%98%E9%AB%98%E6%80%BB%E7%BB%93/" target="_blank" rel="external">iOS动态变高总结</a></p>
+<p>1.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="noopener">深入理解Auto Layout</a>.</p>
+<p>2.<a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="noopener">动态计算UITableViewCell高度</a></p>
+<p>3.<a href="http://blog.sunnyxx.com/2015/05/17/cell-height-calculation/" target="_blank" rel="noopener">优化UITableViewCell高度计算的那些事</a></p>
+<p>4.<a href="http://sylenthwave.github.io/2016/01/02/iOS%E5%8A%A8%E6%80%81%E5%8F%98%E9%AB%98%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">iOS动态变高总结</a></p>
 
     
   </div>

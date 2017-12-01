@@ -25,7 +25,7 @@
     <meta name="keywords" content="解决方案,AOP,统计打点," />
   
 
-  <meta name="description" content="统计打点的AOP实现每一个App, 必然会有大量的分析数据来统计用户行为. 而这些统计对应在客户端就是, 统计打点, 又称埋点.关于埋点的本质, 我理解的就是用户出发一个行为后, 调用一个特定的接口. 服务端拿到我们的请求后, 根据客户端传的参数也就是事件ID来区分是什么操作(注意, 这里的事件ID是具有唯一性的, 不同的ID对应用户不同的操作). 有时也可能会需要其他的信息, 比如操作人的ID等">
+  <meta name="description" content="统计打点的AOP实现每一个App, 必然会有大量的分析数据来统计用户行为. 而这些统计对应在客户端就是, 统计打点, 又称埋点.关于埋点的本质, 我理解的就是用户出发一个行为后, 调用一个特定的接口. 服务端拿到我们的请求后, 根据客户端传的参数也就是事件ID来区分是什么操作(注意, 这里的事件ID是具有唯一性的, 不">
 <meta name="keywords" content="解决方案,AOP,统计打点">
 <meta property="og:type" content="article">
 <meta property="og:title" content="统计打点的AOP实现">
@@ -224,7 +224,7 @@
 <blockquote>
 <p>AOP为Aspect Oriented Programming的缩写，意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP与OOP是面向不同领域的两种设计思想。<br>OOP（面向对象编程）针对业务处理过程的实体及其属性和行为进行抽象封装，以获得更加清晰高效的逻辑单元划分。<br>AOP则是针对业务处理过程中的切面进行提取，它所面对的是处理过程中的某个步骤或阶段，以获得逻辑过程中各部分之间低耦合性的隔离效果。<br>AOP可以用在日志记录，性能统计，安全控制，事务处理，异常处理等等，本篇文章主要讲的是埋点也就是日志记录</p>
 </blockquote>
-<p>在Objective-C中使用AOP主要指的是使用Objective-C的Runtime特性, 给指定的方法添加自定义代码. 有很多方式来实现AOP, MethodSwizzling只是其中之一.而又有一些第三方库, 将Runtime进行了很好地封装, 让我们不用了解Runtime的知识, 就能很好地使用AOP.<br>我们主要使用的是<a href="https://github.com/steipete/Aspects" target="_blank" rel="external">Aspects</a>这个第三方库, 关于Aspects的内部实现, 可以参考这篇博文<a href="http://www.jianshu.com/p/dc9dca24d5de" target="_blank" rel="external">iOS 如何实现Aspect Oriented Programming</a>.<br>由以上的解释, 可以基本了解, 我们主要是通过Aspect来Hook对应事件的方法, 传递事件唯一的ID给服务端来标记此事件响应过一次.所以, 我们的代码大致应该是这样.<br>首先有一个类用来记录埋点事件ID和需要Hook的类和方法, 并且将他们一一对应.</p>
+<p>在Objective-C中使用AOP主要指的是使用Objective-C的Runtime特性, 给指定的方法添加自定义代码. 有很多方式来实现AOP, MethodSwizzling只是其中之一.而又有一些第三方库, 将Runtime进行了很好地封装, 让我们不用了解Runtime的知识, 就能很好地使用AOP.<br>我们主要使用的是<a href="https://github.com/steipete/Aspects" target="_blank" rel="noopener">Aspects</a>这个第三方库, 关于Aspects的内部实现, 可以参考这篇博文<a href="http://www.jianshu.com/p/dc9dca24d5de" target="_blank" rel="noopener">iOS 如何实现Aspect Oriented Programming</a>.<br>由以上的解释, 可以基本了解, 我们主要是通过Aspect来Hook对应事件的方法, 传递事件唯一的ID给服务端来标记此事件响应过一次.所以, 我们的代码大致应该是这样.<br>首先有一个类用来记录埋点事件ID和需要Hook的类和方法, 并且将他们一一对应.</p>
 <p>根据记录埋点事件的复杂程度, 我们大致可以将埋点分为简单埋点和复杂埋点两种:</p>
 <ol>
 <li>简单埋点: 只用记录某个操作事件响应次数</li>
@@ -392,12 +392,12 @@ kIsLightEvent:@(NO)}
     NSError *error;
     [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:block error:&amp;error];
 }
-</code></pre><p><a href="https://github.com/HChong3210/AOPTrack" target="_blank" rel="external">Demo</a><br>参考资料: </p>
+</code></pre><p><a href="https://github.com/HChong3210/AOPTrack" target="_blank" rel="noopener">Demo</a><br>参考资料: </p>
 <ol>
-<li><a href="http://www.jianshu.com/p/dc9dca24d5de" target="_blank" rel="external">iOS 如何实现Aspect Oriented Programming</a></li>
-<li><a href="http://www.vienta.me/2016/09/21/AOP%E5%9C%A8iOS%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%80%E7%BB%9F%E8%AE%A1%E5%9F%8B%E7%82%B9/" target="_blank" rel="external">AOP在iOS中的实践——统计埋点</a></li>
-<li><a href="http://www.cocoachina.com/ios/20160421/15912.html" target="_blank" rel="external">可复用且高度解耦的iOS用户统计实现</a></li>
-<li><a href="http://www.cocoachina.com/ios/20150120/10959.html" target="_blank" rel="external">Method Swizzling和AOP(面向切面编程)实践</a></li>
+<li><a href="http://www.jianshu.com/p/dc9dca24d5de" target="_blank" rel="noopener">iOS 如何实现Aspect Oriented Programming</a></li>
+<li><a href="http://www.vienta.me/2016/09/21/AOP%E5%9C%A8iOS%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%80%E7%BB%9F%E8%AE%A1%E5%9F%8B%E7%82%B9/" target="_blank" rel="noopener">AOP在iOS中的实践——统计埋点</a></li>
+<li><a href="http://www.cocoachina.com/ios/20160421/15912.html" target="_blank" rel="noopener">可复用且高度解耦的iOS用户统计实现</a></li>
+<li><a href="http://www.cocoachina.com/ios/20150120/10959.html" target="_blank" rel="noopener">Method Swizzling和AOP(面向切面编程)实践</a></li>
 </ol>
 
     

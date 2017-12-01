@@ -25,7 +25,7 @@
     <meta name="keywords" content="基础知识,模块化," />
   
 
-  <meta name="description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
+  <meta name="description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎">
 <meta name="keywords" content="基础知识,模块化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cocoapods实践">
@@ -221,7 +221,7 @@
   <div class="article-content">
     
       <h1 id="Cocoapods实践"><a href="#Cocoapods实践" class="headerlink" title="Cocoapods实践"></a>Cocoapods实践</h1><p>Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理. </p>
-<h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一<code>Podfile</code>. Podfile 是一个文件，用于定义项目所需要使用的第三方库。该文件支持高度自定义，你可以根据个人喜好对其做出定制。<a href="https://guides.cocoapods.org/syntax/Podfile.html" target="_blank" rel="external">查看更多官方介绍</a>. </p>
+<h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一<code>Podfile</code>. Podfile 是一个文件，用于定义项目所需要使用的第三方库。该文件支持高度自定义，你可以根据个人喜好对其做出定制。<a href="https://guides.cocoapods.org/syntax/Podfile.html" target="_blank" rel="noopener">查看更多官方介绍</a>. </p>
 <h3 id="Podfile"><a href="#Podfile" class="headerlink" title="Podfile"></a>Podfile</h3><p>下面是一个🌰, 我们来挨个分析下他们背后都代表着什么.</p>
 <pre><code class="Ruby">source &#39;http://source.git&#39;
 platform :ios, &#39;8.0&#39;
@@ -368,7 +368,7 @@ Sending stats
 </ul>
 </li>
 </ol>
-<h3 id="pod-install-vs-pod-update"><a href="#pod-install-vs-pod-update" class="headerlink" title="pod install vs pod update"></a>pod install vs pod update</h3><p>引用官方的文档<a href="https://guides.cocoapods.org/using/pod-install-vs-update.html" target="_blank" rel="external">https://guides.cocoapods.org/using/pod-install-vs-update.html</a>来说明一下二者的区别, 以及使用场景.</p>
+<h3 id="pod-install-vs-pod-update"><a href="#pod-install-vs-pod-update" class="headerlink" title="pod install vs pod update"></a>pod install vs pod update</h3><p>引用官方的文档<a href="https://guides.cocoapods.org/using/pod-install-vs-update.html" target="_blank" rel="noopener">https://guides.cocoapods.org/using/pod-install-vs-update.html</a>来说明一下二者的区别, 以及使用场景.</p>
 <p>You will only use pod update when you want to update the version of a specific pod (or all the pods).</p>
 <ul>
 <li><code>pod install</code>主要用在第一次安装pods时, 如果后面你新增, 修改, 删除你的<code>Podfile</code>文件时也可以使用该命令. 每次执行<code>pod install</code>命令会把每一个安装的pod的版本写进<code>Podfile.lock</code>文件中, 来记录和lock这些已经安装Pod的版本. 当执行<code>Pod install</code>. 如果是新增Pod, 那么会搜索与Podfile中描述的匹配的版本; 如果已经存在, 他会下载<code>Podfile.lock</code>文件中明确的版本, 但不会去检查有没有可用的最新版本.</li>
@@ -430,11 +430,11 @@ $ git push origin master     #提交到远端仓库
 <li>当我们要使用<code>Pod</code>中的资源时, 以图片为例, 我们通过<code>[UIImage imageWithName:@&quot;xxx.png&quot;]</code>是取不到Pod中的图片的, 因为<code>imageWithName:</code>方法默认是从<code>mainBundle</code>中来取的, 而Pod不属于<code>mainBundle</code>的范畴, 我们需要先根据<code>class</code>来拿到当前类所在的<code>bundle</code>, 再取该<code>Bundle</code>中的资源.</li>
 <li>每次在Pod文件夹中添加新的文件或者资源时, 都需要在根目录的Example目录下执行<code>pod update</code>命令来重新建立索引.</li>
 </ol>
-<h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p>关于<code>Podspec</code>文件<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">官方</a>是这样描述的:</p>
+<h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p>关于<code>Podspec</code>文件<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="noopener">官方</a>是这样描述的:</p>
 <blockquote>
 <p>A specification describes a version of Pod library. It includes details about where the source should be fetched from, what files to use, the build settings to apply, and other general metadata such as its name, version, and description.</p>
 </blockquote>
-<p><code>pod lib create XXX</code>创建出来的Pod, 初始时的<code>Podspec</code>文件包含了各种信息, 详细的说明我们可以看<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">官方文档</a>, 这里贴上最基础的用法代码:</p>
+<p><code>pod lib create XXX</code>创建出来的Pod, 初始时的<code>Podspec</code>文件包含了各种信息, 详细的说明我们可以看<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="noopener">官方文档</a>, 这里贴上最基础的用法代码:</p>
 <pre><code>Pod::Spec.new do |s|
   s.name             = &#39;HCPods&#39;
   #Pod的版本
@@ -489,7 +489,7 @@ git push origin master —tags
 </code></pre><p>我们也可以在各个子Pod中分别设置他们的资源路径, 对外暴露的header路径, 以及dependency.</p>
 <p>我们在外面引用该Pod的时候就可以使用<code>pod [Pod/子Pod]</code>的方式来只引用一个子Pod. </p>
 <h2 id="cocoapods的相关知识"><a href="#cocoapods的相关知识" class="headerlink" title="cocoapods的相关知识"></a>cocoapods的相关知识</h2><p>这里是CocoaPods的其他相关知识, 做一个备忘.</p>
-<h3 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h3><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
+<h3 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h3><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="noopener">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
 <ul>
 <li>= 0.1 Version 0.1.</li>
 <li>0.1 Any version higher than 0.1.</li>
@@ -506,19 +506,19 @@ git push origin master —tags
 <li>pod ‘QueryKit/Attribute’</li>
 <li>pod ‘QueryKit’, :subspecs =&gt; [‘Attribute’, ‘QuerySet’]</li>
 <li>pod ‘AFNetworking’, :path =&gt; ‘~/Documents/AFNetworking’</li>
-<li>pod ‘AFNetworking’, :git =&gt; ‘<a href="https://github.com/gowalla/AFNetworking.git" target="_blank" rel="external">https://github.com/gowalla/AFNetworking.git</a>‘</li>
-<li>pod ‘JSONKit’, :podspec =&gt; ‘<a href="https://example.com/JSONKit.podspec" target="_blank" rel="external">https://example.com/JSONKit.podspec</a>‘</li>
+<li>pod ‘AFNetworking’, :git =&gt; ‘<a href="https://github.com/gowalla/AFNetworking.git" target="_blank" rel="noopener">https://github.com/gowalla/AFNetworking.git</a>‘</li>
+<li>pod ‘JSONKit’, :podspec =&gt; ‘<a href="https://example.com/JSONKit.podspec" target="_blank" rel="noopener">https://example.com/JSONKit.podspec</a>‘</li>
 </ul>
 <hr>
-<p>参考文章:<br>1.<a href="https://swiftcafe.io/2015/10/25/swift-daily-carthage-package/" target="_blank" rel="external">Carthage 包管理工具，另一种敏捷轻快的 iOS &amp; MAC 开发体验</a>.</p>
-<p>2.<a href="https://bestswifter.com/cocoapods/" target="_blank" rel="external">细聊Cocoapods与Xcode工程配置</a>.</p>
-<p>3.<a href="http://guides.cocoapods.org/making/using-pod-lib-create.html" target="_blank" rel="external">Cocoapods官方文档</a>.</p>
-<p>4.<a href="http://blog.wtlucky.com/blog/2015/02/26/create-private-podspec/" target="_blank" rel="external">使用Cocoapods创建私有podspec</a></p>
-<p>5.<a href="http://draveness.me/cocoapods.html" target="_blank" rel="external">CocoaPods 都做了什么？</a></p>
-<p>6.<a href="http://www.jianshu.com/p/d6a592d6fced" target="_blank" rel="external">使用私有Cocoapods仓库中引用.a库</a></p>
-<p>7.<a href="https://objccn.io/issue-6-4/" target="_blank" rel="external">深入理解CocoaPods</a></p>
-<p>8.<a href="https://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">podspec官方文档</a></p>
-<p>9.<a href="https://guides.cocoapods.org/syntax/Podfile.html" target="_blank" rel="external">Podfile官方文档</a></p>
+<p>参考文章:<br>1.<a href="https://swiftcafe.io/2015/10/25/swift-daily-carthage-package/" target="_blank" rel="noopener">Carthage 包管理工具，另一种敏捷轻快的 iOS &amp; MAC 开发体验</a>.</p>
+<p>2.<a href="https://bestswifter.com/cocoapods/" target="_blank" rel="noopener">细聊Cocoapods与Xcode工程配置</a>.</p>
+<p>3.<a href="http://guides.cocoapods.org/making/using-pod-lib-create.html" target="_blank" rel="noopener">Cocoapods官方文档</a>.</p>
+<p>4.<a href="http://blog.wtlucky.com/blog/2015/02/26/create-private-podspec/" target="_blank" rel="noopener">使用Cocoapods创建私有podspec</a></p>
+<p>5.<a href="http://draveness.me/cocoapods.html" target="_blank" rel="noopener">CocoaPods 都做了什么？</a></p>
+<p>6.<a href="http://www.jianshu.com/p/d6a592d6fced" target="_blank" rel="noopener">使用私有Cocoapods仓库中引用.a库</a></p>
+<p>7.<a href="https://objccn.io/issue-6-4/" target="_blank" rel="noopener">深入理解CocoaPods</a></p>
+<p>8.<a href="https://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="noopener">podspec官方文档</a></p>
+<p>9.<a href="https://guides.cocoapods.org/syntax/Podfile.html" target="_blank" rel="noopener">Podfile官方文档</a></p>
 
     
   </div>

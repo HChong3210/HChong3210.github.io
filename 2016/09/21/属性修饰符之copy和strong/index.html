@@ -25,7 +25,7 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
+  <meta name="description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="属性修饰符之copy和strong">
@@ -416,10 +416,10 @@ person.nameStrong = testString;
 <p>这里还有一个性能问题，即在源字符串是<code>NSMutableString</code>，strong是单纯的增加对象的引用计数，而copy操作是执行了一次深拷贝，所以性能上会有所差异。而如果源字符串是<code>NSString</code>时，则没有这个问题。</p>
 <p>综上可以发现, 如果property是<code>NSString</code>或者<code>NSArray</code>及其子类的时候，最好选择使用copy属性修饰。为什么呢？这是为了防止赋值给它的是可变的数据，如果可变的数据发生了变化，那么该property也会发生变化。</p>
 <p>参考文档:</p>
-<p>1.<a href="http://www.fanliugen.com/?p=278" target="_blank" rel="external">copy与mutableCopy</a></p>
-<p>2.<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html#//apple_ref/doc/uid/TP40010162-SW3" target="_blank" rel="external">Copying Collections</a></p>
-<p>3.<a href="http://www.jianshu.com/p/e6a7cdcc705d" target="_blank" rel="external">iOS浅谈: 深.浅拷贝与copy.strong</a></p>
-<p>4.<a href="http://www.cocoachina.com/ios/20150512/11805.html" target="_blank" rel="external">NSString属性什么时候用copy，什么时候用strong?</a></p>
+<p>1.<a href="http://www.fanliugen.com/?p=278" target="_blank" rel="noopener">copy与mutableCopy</a></p>
+<p>2.<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html#//apple_ref/doc/uid/TP40010162-SW3" target="_blank" rel="noopener">Copying Collections</a></p>
+<p>3.<a href="http://www.jianshu.com/p/e6a7cdcc705d" target="_blank" rel="noopener">iOS浅谈: 深.浅拷贝与copy.strong</a></p>
+<p>4.<a href="http://www.cocoachina.com/ios/20150512/11805.html" target="_blank" rel="noopener">NSString属性什么时候用copy，什么时候用strong?</a></p>
 
     
   </div>

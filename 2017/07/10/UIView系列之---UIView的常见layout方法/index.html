@@ -25,7 +25,7 @@
     <meta name="keywords" content="基础知识,面试题,UIView," />
   
 
-  <meta name="description" content="UIView系列之—UIView的常见layout方法 init &amp;amp; initWithFrame   init 和 initWithFrame方法, 实际上都会调用initWithFrame方法来完成初始化, 不同的是在init方法内部获取到的self.frame是CGRectZero, 在initWithFrame中获取到的self.frame就是初始化时, 传入的frame的大小. 不">
+  <meta name="description" content="UIView系列之—UIView的常见layout方法 init &amp;amp; initWithFrame   init 和 initWithFrame方法, 实际上都会调用initWithFrame方法来完成初始化, 不同的是在init方法内部获取到的self.frame是CGRectZero, 在initWi">
 <meta name="keywords" content="基础知识,面试题,UIView">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UIView系列之---UIView的常见layout方法">
@@ -228,7 +228,7 @@
 </li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622482-layoutsubviews?language=objc" target="_blank" rel="external">官方文档</a><br>Lays out subviews.<br>The default implementation of this method does nothing on iOS 5.1 and earlier. Otherwise, the default implementation uses any constraints you have set to determine the size and position of any subviews.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622482-layoutsubviews?language=objc" target="_blank" rel="noopener">官方文档</a><br>Lays out subviews.<br>The default implementation of this method does nothing on iOS 5.1 and earlier. Otherwise, the default implementation uses any constraints you have set to determine the size and position of any subviews.</p>
 <p>Subclasses can override this method as needed to perform more precise layout of their subviews. You should override this method only if the autoresizing and constraint-based behaviors of the subviews do not offer the behavior you want. You can use your implementation to set the frame rectangles of your subviews directly.</p>
 <p>You should not call this method directly. If you want to force a layout update, call the setNeedsLayout method instead to do so prior to the next drawing update. If you want to update the layout of your views immediately, call the layoutIfNeeded method.</p>
 </blockquote>
@@ -237,7 +237,7 @@
 <li><span id="setNeedsLayout">setNeedsLayout</span></li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622601-setneedslayout?language=objc" target="_blank" rel="external">官方文档</a><br>Invalidates the current layout of the receiver and triggers a layout update during the next update cycle.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622601-setneedslayout?language=objc" target="_blank" rel="noopener">官方文档</a><br>Invalidates the current layout of the receiver and triggers a layout update during the next update cycle.</p>
 <p>Call this method on your application’s main thread when you want to adjust the layout of a view’s subviews. This method makes a note of the request and returns immediately. Because this method does not force an immediate update, but instead waits for the next update cycle, you can use it to invalidate the layout of multiple views before any of those views are updated. This behavior allows you to consolidate all of your layout updates to one update cycle, which is usually better for performance.</p>
 </blockquote>
 <p>翻译成人话大概就是: 如果一个layer的sublayer布局发生了改变需要更新布局, 我们通过调用<code>setNeedsLayout</code>方法来标记这个layer. 或者当layer的bounds发生变化或者layer上进行了add或者remove sublayer操作, 系统会自动调用<code>setNeedsLayout</code>方法. 这些被标记需要更新布局的layer会在下一个视图绘制周期(iOS屏幕刷新频率为60HZ, 因此下一个视图绘制周期是1/60s后)触发layoutSubviews完成子视图布局更新.</p>
@@ -246,7 +246,7 @@
 <li><span id="layoutIfNeeded">layoutIfNeeded</span></li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622507-layoutifneeded?language=objc" target="_blank" rel="external">官方文档</a><br>Lays out the subviews immediately.<br>Use this method to force the layout of subviews before drawing. Using the view that receives the message as the root view, this method lays out the view subtree starting at the root.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622507-layoutifneeded?language=objc" target="_blank" rel="noopener">官方文档</a><br>Lays out the subviews immediately.<br>Use this method to force the layout of subviews before drawing. Using the view that receives the message as the root view, this method lays out the view subtree starting at the root.</p>
 </blockquote>
 <p>翻译成人话大概就是: 在下一次绘图周期开始之前使用此方法强制进行子视图的布局更新. 此方法会将receiver作为根视图, 然后从根视图开始遍历根视图的subview链, 判断super layer是否被标记需要更新布局, 直到找到一个super layer没有标记更新布局为止, 然后系统会向所有这些被标记需要更新布局的layer发送<code>layoutSublayers</code>消息. <code>layoutSublayers</code>是<code>setNeedsLayout</code>的一个辅助方法, 调用该方法就意味着不会等到下个绘制周期, 而是立马触发<code>layoutSubviews</code>方法, 完成子视图的布局. </p>
 <p>但是需要注意只有当系统检测到某个view被<code>setNeedsLayout</code>标记之后才会立即触发<code>layoutSubviews</code>, 如果没有检测到<code>setNeedsLayout</code>标记就不会触发<code>layoutSubviews</code>, 所以如果想要立即刷新某个视图的子视图布局, 需要先让该视图调用<code>setNeedsLayout</code>方法标记一下, 然后再调用<code>layoutIfNeeded</code>. 另外所有的视图在第一次显示之前都是默认有<code>setNeedsLayout</code>标记的, 所以视图第一次显示的时候就可以直接调用<code>layoutIfNeeded</code>. 但是当第一次显示完成后, 如果还想要调用<code>layoutIfNeeded</code>就必须先使用<code>setNeedsLayout</code>标记一下. </p>
@@ -254,7 +254,7 @@
 <li>setNeedsDisplay</li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622437-setneedsdisplay?language=objc" target="_blank" rel="external">官方文档</a><br>Marks the receiver’s entire bounds rectangle as needing to be redrawn.<br>You can use this method or the <code>setNeedsDisplayInRect:</code> to notify the system that your view’s contents need to be redrawn. This method makes a note of the request and returns immediately. The view is not actually redrawn until the next drawing cycle, at which point all invalidated views are updated.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622437-setneedsdisplay?language=objc" target="_blank" rel="noopener">官方文档</a><br>Marks the receiver’s entire bounds rectangle as needing to be redrawn.<br>You can use this method or the <code>setNeedsDisplayInRect:</code> to notify the system that your view’s contents need to be redrawn. This method makes a note of the request and returns immediately. The view is not actually redrawn until the next drawing cycle, at which point all invalidated views are updated.</p>
 <p>其他说明:<br>You should only be calling setNeedsDisplay if you override drawRect in a subclass of UIView which is basically a custom view drawing something on the screen, like lines, images, or shapes like a rectangle.</p>
 </blockquote>
 <p>如果我们在自定义的UIView中, 重写了<code>drawRect:</code>方法在屏幕上绘制一些东西, 那就需要在合适的地方调用<code>setNeedsDisplay</code>来标记当前视图, 系统会在下一个绘制周期时触发<code>drawRect:</code>方法. <a href="#drawRect">系统触发drawRect:的条件</a>.</p>
@@ -263,7 +263,7 @@
 <li>drawRect</li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622529-drawrect" target="_blank" rel="external">官方文档</a><br>Draws the receiver’s image within the passed-in rectangle</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622529-drawrect" target="_blank" rel="noopener">官方文档</a><br>Draws the receiver’s image within the passed-in rectangle</p>
 <p>The default implementation of this method does nothing. Subclasses that use technologies such as Core Graphics and UIKit to draw their view’s content should override this method and implement their drawing code there. You do not need to override this method if your view sets its content in other ways. For example, you do not need to override this method if your view just displays a background color or if your view sets its content directly using the underlying layer object.</p>
 <p>This method is called when a view is first displayed or when an event occurs that invalidates a visible part of the view. You should never call this method directly yourself. To invalidate part of your view, and thus cause that portion to be redrawn, call the <code>setNeedsDisplay</code> or <code>setNeedsDisplayInRect:</code> method instead.</p>
 </blockquote>
@@ -283,12 +283,12 @@
 <li><p>若要实时画图, 如果使用 gestureRecognizer 来刷新屏幕, 需要判断并转化 point 的坐标; 使用 touchbegan 等方法, 只需调用 setNeedsDisplay 实时刷新屏幕.</p>
 </li>
 </ol>
-<p>这里有一篇<a href="http://bihongbo.com/2016/01/03/memoryGhostdrawRect/" target="_blank" rel="external">使用drawRect:实现绘制画板功能的内存优化</a>的文章.</p>
+<p>这里有一篇<a href="http://bihongbo.com/2016/01/03/memoryGhostdrawRect/" target="_blank" rel="noopener">使用drawRect:实现绘制画板功能的内存优化</a>的文章.</p>
 <ul>
 <li>sizeToFit</li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622630-sizetofit?language=objc" target="_blank" rel="external">官方文档</a><br>Resizes and moves the receiver view so it just encloses its subviews.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622630-sizetofit?language=objc" target="_blank" rel="noopener">官方文档</a><br>Resizes and moves the receiver view so it just encloses its subviews.</p>
 <p>Call this method when you want to resize the current view so that it uses the most appropriate amount of space. Specific UIKit views resize themselves according to their own internal needs. In some cases, if a view does not have a superview, it may size itself to the screen bounds. Thus, if you want a given view to size itself to its parent view, you should add it to the parent view before calling this method.<br>You should not override this method. If you want to change the default sizing information for your view, override the sizeThatFits: instead. That method performs any needed calculations and returns them to this method, which then makes the change.</p>
 </blockquote>
 <p>当我们想要resize当前View以便获取他合适的大小时, 我们需要调用该方法. 尤其是<code>UIKit</code>的<code>View</code>视图是根据内部需要进行尺寸调整时. 在某些情况下, 如果当前View没有父视图, 他会根据屏幕的bounds来resize自身大小. 如果你想让一个View根据父视图来调整大小, 必须将该View添加到父视图中.</p>
@@ -297,7 +297,7 @@
 <li><span id="sizeThatFits">sizeThatFits</span></li>
 </ul>
 <blockquote>
-<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622625-sizethatfits?language=objc" target="_blank" rel="external">官方文档</a><br>Asks the view to calculate and return the size that best fits the specified size.</p>
+<p><a href="https://developer.apple.com/documentation/uikit/uiview/1622625-sizethatfits?language=objc" target="_blank" rel="noopener">官方文档</a><br>Asks the view to calculate and return the size that best fits the specified size.</p>
 <p>Parameters<br>size<br>The size for which the view should calculate its best-fitting size.</p>
 <p>Return Value<br>A new size that fits the receiver’s subviews.</p>
 <p>Discussion<br>The default implementation of this method returns the existing size of the view. Subclasses can override this method to return a custom value based on the desired layout of any subviews. For example, a UISwitch object returns a fixed size value that represents the standard size of a switch view, and a UIImageView object returns the size of the image it is currently displaying.<br>This method does not resize the receiver.</p>
@@ -330,11 +330,11 @@
 </ol>
 <hr>
 <p>参考资料:</p>
-<p>1.<a href="http://www.jianshu.com/p/087529c83747" target="_blank" rel="external">Core Animation 之 CALayer</a></p>
-<p>2.<a href="http://www.jianshu.com/p/3282c93c1a61" target="_blank" rel="external">UIView几个layout方法的理解</a></p>
-<p>3.<a href="http://www.jianshu.com/p/b3bb9b08e3da" target="_blank" rel="external">UIView布局深入理解</a></p>
-<p>4.<a href="http://www.jianshu.com/p/eb2c4bb4e3f1" target="_blank" rel="external">UIViewLayout的几个方法</a></p>
-<p>5.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="external">深入理解Auto Layout 第一弹</a></p>
+<p>1.<a href="http://www.jianshu.com/p/087529c83747" target="_blank" rel="noopener">Core Animation 之 CALayer</a></p>
+<p>2.<a href="http://www.jianshu.com/p/3282c93c1a61" target="_blank" rel="noopener">UIView几个layout方法的理解</a></p>
+<p>3.<a href="http://www.jianshu.com/p/b3bb9b08e3da" target="_blank" rel="noopener">UIView布局深入理解</a></p>
+<p>4.<a href="http://www.jianshu.com/p/eb2c4bb4e3f1" target="_blank" rel="noopener">UIViewLayout的几个方法</a></p>
+<p>5.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="noopener">深入理解Auto Layout 第一弹</a></p>
 
     
   </div>
