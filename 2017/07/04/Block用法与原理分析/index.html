@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Block用法及分析Block的默认格式是这样的: 返回值类型 (^Block变量名)(形参列表) = ^返回值类型 (形参列表){ 内容 }. 后面的返回值类型和形参列表可以省略.  Block用一句话来形容就是带有自动变量(局部变量)的匿名函数. 他可以嵌套定义, 定义Block方法和定义函数方法类似, Block可以定义在方法内部和外部, 必须调用Block, 才会执行{}内部的方法. 本质">
 <meta property="og:locale" content="zh-zh-Hans">
-<meta property="og:updated_time" content="2017-12-12T15:45:53.304Z">
+<meta property="og:updated_time" content="2017-12-14T15:55:07.663Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Block用法与原理分析">
 <meta name="twitter:description" content="Block用法及分析Block的默认格式是这样的: 返回值类型 (^Block变量名)(形参列表) = ^返回值类型 (形参列表){ 内容 }. 后面的返回值类型和形参列表可以省略.  Block用一句话来形容就是带有自动变量(局部变量)的匿名函数. 他可以嵌套定义, 定义Block方法和定义函数方法类似, Block可以定义在方法内部和外部, 必须调用Block, 才会执行{}内部的方法. 本质">
@@ -166,7 +166,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
+    <strong class="toc-title">Posts List</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Block用法及分析"><span class="toc-text">Block用法及分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方法"><span class="toc-text">常见的使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#作为变量的用法"><span class="toc-text">作为变量的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为属性的用法"><span class="toc-text">作为属性的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为函数参数的用法"><span class="toc-text">作为函数参数的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为OC中的方法参数"><span class="toc-text">作为OC中的方法参数</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -262,7 +262,27 @@ sum = ^int(int a, int b) {
 };
 int count = sum(2, 3);
     NSLog(@&quot;%d&quot;, count);
-</code></pre><h3 id="作为属性的用法"><a href="#作为属性的用法" class="headerlink" title="作为属性的用法"></a>作为属性的用法</h3><h3 id="作为函数参数的用法"><a href="#作为函数参数的用法" class="headerlink" title="作为函数参数的用法"></a>作为函数参数的用法</h3><h3 id="作为OC中的方法参数"><a href="#作为OC中的方法参数" class="headerlink" title="作为OC中的方法参数"></a>作为OC中的方法参数</h3><hr>
+</code></pre><h3 id="作为属性的用法"><a href="#作为属性的用法" class="headerlink" title="作为属性的用法"></a>作为属性的用法</h3><p>block作为属性, 可以存在在找那个类的声明周期中, 这样就可以全局的使用, 也比较常用.</p>
+<pre><code>1. 定义一个block属性
+@property (nonatomic, copy) int (^sum)(int a, int b);
+
+也可以使用`typedefBlock`的方式来定义(推荐)
+typedef int(^Sum)(int, int);
+
+@property (nonatomic, copy) Sum sum;
+
+
+2. 然后在合适的地方写该属性(block)的实现, 
+self.sum = ^int(int a, int b) {
+    return a + b;
+};
+
+3. 最后是block的调用
+int count = self.sum(3, 4);
+NSLog(@&quot;%d&quot;, count);
+</code></pre><h3 id="作为函数参数的用法"><a href="#作为函数参数的用法" class="headerlink" title="作为函数参数的用法"></a>作为函数参数的用法</h3><p>block作为函数参数的用法也是较常见的, 例如网络请求方法中, 会把网络请求结果处理的代码在block中, 等请求到数据的时候直接调用.</p>
+<p>block的定义也可以分为两种情况, 一种是使用了<code>typedefBlock</code>来定义, 一种是直接定义, 下面例子会给出代码示例. 假设有个下载的网络请求, 会有成功和失败的代码处理被我们封装在block里面, 作为参数在外面被调用.</p>
+<h3 id="作为OC中的方法参数"><a href="#作为OC中的方法参数" class="headerlink" title="作为OC中的方法参数"></a>作为OC中的方法参数</h3><hr>
 <p>参考资料: </p>
 <p>1.<a href="https://halfrost.com/ios_block/" target="_blank" rel="noopener">深入研究 Block 捕获外部变量和 __block 实现原理</a></p>
 <p>2.<a href="http://www.jianshu.com/p/51d04b7639f1" target="_blank" rel="noopener">Block技巧与底层解析</a></p>
@@ -290,7 +310,7 @@ int count = sum(2, 3);
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">关闭</span>
+      <span id="close" class="btn-close">Close</span>
     </div>
     <hr>
     <div class="modal-body">
