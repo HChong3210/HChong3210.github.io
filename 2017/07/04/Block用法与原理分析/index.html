@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Block用法及分析Block的默认格式是这样的: 返回值类型 (^Block变量名)(形参列表) = ^返回值类型 (形参列表){ 内容 }. 后面的返回值类型和形参列表可以省略.  Block用一句话来形容就是带有自动变量(局部变量)的匿名函数. 他可以嵌套定义, 定义Block方法和定义函数方法类似, Block可以定义在方法内部和外部, 必须调用Block, 才会执行{}内部的方法. 本质">
 <meta property="og:locale" content="zh-zh-Hans">
-<meta property="og:updated_time" content="2017-12-18T15:51:12.397Z">
+<meta property="og:updated_time" content="2017-12-19T15:59:43.897Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Block用法与原理分析">
 <meta name="twitter:description" content="Block用法及分析Block的默认格式是这样的: 返回值类型 (^Block变量名)(形参列表) = ^返回值类型 (形参列表){ 内容 }. 后面的返回值类型和形参列表可以省略.  Block用一句话来形容就是带有自动变量(局部变量)的匿名函数. 他可以嵌套定义, 定义Block方法和定义函数方法类似, Block可以定义在方法内部和外部, 必须调用Block, 才会执行{}内部的方法. 本质">
@@ -167,7 +167,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Block用法及分析"><span class="toc-text">Block用法及分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方法"><span class="toc-text">常见的使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#作为变量的用法"><span class="toc-text">作为变量的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为属性的用法"><span class="toc-text">作为属性的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为函数-方法-参数的用法"><span class="toc-text">作为函数(方法)参数的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为返回值的用法"><span class="toc-text">作为返回值的用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#捕获外部变量"><span class="toc-text">捕获外部变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#循环引用"><span class="toc-text">循环引用</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Block用法及分析"><span class="toc-text">Block用法及分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方法"><span class="toc-text">常见的使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#作为变量的用法"><span class="toc-text">作为变量的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为属性的用法"><span class="toc-text">作为属性的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为函数-方法-参数的用法"><span class="toc-text">作为函数(方法)参数的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作为返回值的用法"><span class="toc-text">作为返回值的用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#捕获外部变量"><span class="toc-text">捕获外部变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#block的类型"><span class="toc-text">block的类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#block几种关键字的用法"><span class="toc-text">block几种关键字的用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#循环引用"><span class="toc-text">循环引用</span></a></li></ol></li></ol>
   </div>
 
 
@@ -283,7 +283,8 @@ NSLog(@&quot;%d&quot;, count);
 </code></pre><h3 id="作为函数-方法-参数的用法"><a href="#作为函数-方法-参数的用法" class="headerlink" title="作为函数(方法)参数的用法"></a>作为函数(方法)参数的用法</h3><p>在这里C和OC的还略有不同. </p>
 <p>block作为函数参数的用法也是较常见的, 例如网络请求方法中, 会把网络请求结果处理的代码在block中, 等请求到数据的时候直接调用.</p>
 <p>block的定义也可以分为两种情况, 一种是使用了<code>typedefBlock</code>来定义, 一种是直接定义, 下面例子会给出代码示例. 假设有个下载的网络请求, 会有成功和失败的代码处理被我们封装在block里面, 作为参数在外面被调用.</p>
-<pre><code>//.h文件
+<pre><code>
+//.h文件
 #import &lt;Foundation/Foundation.h&gt;
 typedef void(^SuccessBlock)(id obj);
 typedef void(^FailBlock)(id obj);
@@ -360,9 +361,52 @@ iprint(^{
 
 //调用方式如下
 NSLog(@&quot;%@&quot;, self.nameBlock(@&quot;block作为返回值&quot;));
-</code></pre><h2 id="捕获外部变量"><a href="#捕获外部变量" class="headerlink" title="捕获外部变量"></a>捕获外部变量</h2><p>C语言中的变量一共有五种: 自动变量, 函数参数, 静态变量, 静态全局变量, 全局变量. 要研究外部变量的捕获就去除掉函数参数这一项. 下面逐一分析. </p>
-<p>### </p>
-<h2 id="循环引用"><a href="#循环引用" class="headerlink" title="循环引用"></a>循环引用</h2><hr>
+</code></pre><h2 id="捕获外部变量"><a href="#捕获外部变量" class="headerlink" title="捕获外部变量"></a>捕获外部变量</h2><p>C语言中的变量一共有五种: 自动变量, 函数参数, 静态局部变量, 静态全局变量, 全局变量. 要研究外部变量的捕获就去除掉函数参数这一项. 下面逐一分析.</p>
+<pre><code>static int staticGlobalInt = 0;//静态全局变量
+int globalInt;//全局变量
+
+//测试Block的变量捕获
+- (void)variableTest {
+    static int staticInt = 0;//静态局部变量
+    __block int intNumber = 0;//局部变量
+    globalInt = 0;//全局变量
+    staticGlobalInt = 0;//静态全局变量
+
+    NSLog(@&quot;初始化时---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);
+
+    void(^addTest)() = ^(){
+        staticGlobalInt++;
+        globalInt++;
+        staticInt++;
+        intNumber++;
+        NSLog(@&quot;在block中---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);
+    };
+    NSLog(@&quot;在block调用结束后---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);
+    addTest();
+}
+</code></pre><p>在这里, 如果不加__block的话, 局部变量在block内部使用是会报错的, 原因后面讲. 这里先来说一下结果, 打印的结果是:</p>
+<pre><code>
+初始化时---静态全局变量:0, 全局变量:0, 静态局部变量:0, 局部变量:0
+在block调用结束后---静态全局变量:0, 全局变量:0, 静态局部变量:0, 局部变量:0
+在block中---静态全局变量:1, 全局变量:1, 静态局部变量:1, 局部变量:1
+</code></pre><p>可以发现结果都变了, 但是内部实现实际上不同的.</p>
+<ul>
+<li>静态全局变量和静态局部变量, 由于他们是存储在全局区(数据区), 作用域的范围是整个程序的生命周期, 只要程序在运行, 就可以访问到. 所以block直接访问了对应的变量, 而没有把他们copy到block中去</li>
+<li>静态局部变量也是存储在全局区(数据区), 程序在运行就可以访问的到, 但是他的作用范围仅限于定义他的函数中. 系统是把内存地址传递给block, 所以在block也可以直接修改他的的值.</li>
+<li>局部变量, </li>
+</ul>
+<p>Block捕获外部变量仅仅只捕获Block闭包里面会用到的值，其他用不到的值，它并不会去捕获</p>
+<h2 id="block的类型"><a href="#block的类型" class="headerlink" title="block的类型"></a>block的类型</h2><p>通过之前的源码分析可以看出, Block结构体中是有一个isa指针的, 这也就说明Block实际也是一个OC的对象. 在OC中一般Block分为三种: </p>
+<ul>
+<li><p><code>_NSConcreteStackBlock</code>, 该类对象的存储域在栈上面. 只用到外部局部变量, 成员属性变量, 且没有强指针引用的block都是StackBlock.  StackBlock的生命周期由系统控制的. 由于存储在栈上面, 一旦返回之后, 就被系统销毁了. 该类型的block不持有对象.</p>
+</li>
+<li><p><code>_NSConcreteGlobalBlock</code>, 与global变量一样, 该类对象的存储域在数据区(全局区). 一般情况下, 没有用到外界变量或只用到全局变量, 静态变量的block为_NSConcreteGlobalBlock. 由于存储在数据区(全局区), 所以生命周期从创建到应用程序结束. 该类型的block不持有对象, 因为要么不引用外部变量, 要么使用的是全局变量或者静态变量.</p>
+</li>
+<li><p><code>_NSConcreteMallocBlock</code>, 该类对象设置在由malloc函数分配的内存块(堆)中. 有强指针引用或copy修饰的成员属性引用的block会被复制一份到堆中成为MallocBlock, 没有强指针引用即销毁, 生命周期由程序员控制.</p>
+</li>
+</ul>
+<p>需要注意, 由于<code>_NSConcreteStackBlock</code>所属的变量域一旦结束, 那么该Block就会被销毁. 在ARC环境下, 编译器会自动的判断, 把Block自动的从栈copy到堆. </p>
+<h2 id="block几种关键字的用法"><a href="#block几种关键字的用法" class="headerlink" title="block几种关键字的用法"></a>block几种关键字的用法</h2><h2 id="循环引用"><a href="#循环引用" class="headerlink" title="循环引用"></a>循环引用</h2><hr>
 <p>参考资料: </p>
 <p>1.<a href="https://halfrost.com/ios_block/" target="_blank" rel="noopener">深入研究 Block 捕获外部变量和 __block 实现原理</a></p>
 <p>2.<a href="http://www.jianshu.com/p/51d04b7639f1" target="_blank" rel="noopener">Block技巧与底层解析</a></p>
