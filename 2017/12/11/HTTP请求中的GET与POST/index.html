@@ -22,20 +22,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+    <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="这是一个描述">
+  <meta name="description" content="HTTP请求中的GET与POSTGET和POST是网络请求到的两种基本方式, GET把参数包含在URL中, POST通过request body传递参数.  GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache, 而POST">
+<meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HTTP请求中的GET与POST">
 <meta property="og:url" content="http://hchong.net/2017/12/11/HTTP请求中的GET与POST/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这是一个描述">
+<meta property="og:description" content="HTTP请求中的GET与POSTGET和POST是网络请求到的两种基本方式, GET把参数包含在URL中, POST通过request body传递参数.  GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache, 而POST不会, 除非手动设置.GET请求只能进行url编码, 而POST支持多种编码方式">
 <meta property="og:locale" content="zh-zh-Hans">
-<meta property="og:updated_time" content="2017-12-11T15:27:30.475Z">
+<meta property="og:updated_time" content="2017-12-20T14:10:44.386Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HTTP请求中的GET与POST">
-<meta name="twitter:description" content="这是一个描述">
+<meta name="twitter:description" content="HTTP请求中的GET与POSTGET和POST是网络请求到的两种基本方式, GET把参数包含在URL中, POST通过request body传递参数.  GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache, 而POST不会, 除非手动设置.GET请求只能进行url编码, 而POST支持多种编码方式">
 
   
 
@@ -164,6 +165,11 @@
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts List</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP请求中的GET与POST"><span class="toc-text">HTTP请求中的GET与POST</span></a></li></ol>
+  </div>
+
 
 
 <div class="content content-post CENTER">
@@ -185,6 +191,11 @@
       
 
       
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
 
 
       
@@ -209,7 +220,12 @@
 
   <div class="article-content">
     
-      
+      <h1 id="HTTP请求中的GET与POST"><a href="#HTTP请求中的GET与POST" class="headerlink" title="HTTP请求中的GET与POST"></a>HTTP请求中的GET与POST</h1><p>GET和POST是网络请求到的两种基本方式, GET把参数包含在URL中, POST通过request body传递参数. </p>
+<p>GET在浏览器回退时是无害, 而POST会再次提交请求.<br>GET产生的URL地址可以保存为书签, 而POST不可以.<br>GET请求会被浏览器主动cache, 而POST不会, 除非手动设置.<br>GET请求只能进行url编码, 而POST支持多种编码方式.<br>GET请求参数会被完整保留在浏览器历史记录里, 而POST中的参数不会被保留.<br>GET请求在URL中传送的参数是有长度限制的, 而POST没有.<br>对参数的数据类型, GET只接受ASCII字符, 而POST没有限制.<br>GET比POST更不安全, 因为参数直接暴露在URL上, 所以不能用来传递敏感信息.<br>GET参数通过URL传递, POST放在Request body中.</p>
+<p>GET和POST都是HTTP协议中的两种发送请求的方法.HTTP是基于TCP/IP的关于数据如何在万维网中如何通信的协议.</p>
+<p>HTTP的底层是TCP/IP, 所以GET和POST的底层也是TCP/IP. 也就是说, GET/POST都是TCP链接. GET和POST能做的事情是一样一样的. 你要给GET加上request body, 给POST带上url参数, 技术上是完全行的通的.</p>
+<p>GET产生一个TCP数据包. POST产生两个TCP数据包.对于GET方式的请求, 浏览器会把http header和data一并发送出去, 服务器响应200(返回数据). 而对于POST, 浏览器先发送header, 服务器响应100 continue, 浏览器再发送data, 服务器响应200 ok(返回数据).</p>
+
     
   </div>
 </article>
