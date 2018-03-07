@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/05/24/Cocoapods实践/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Cocoapods实践Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理.  Cocoapods的实现原理cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一Podfile. P">
-<meta property="og:locale" content="zh-zh-Hans">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2018-03-07T02:54:56.675Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cocoapods实践">
@@ -155,8 +155,8 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install"><span class="toc-text">pod install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-install-vs-pod-update"><span class="toc-text">pod install vs pod update</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用CocoaPods创建私有Pod"><span class="toc-text">使用CocoaPods创建私有Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个Spec-Repo"><span class="toc-text">创建一个Spec Repo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建Pod工程文件"><span class="toc-text">创建Pod工程文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Pod文件"><span class="toc-text">编辑Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑Podspec文件"><span class="toc-text">编辑Podspec文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Pod文件"><span class="toc-text">提交Pod文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交Podspec文件"><span class="toc-text">提交Podspec文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#subspec的使用"><span class="toc-text">subspec的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cocoapods的相关知识"><span class="toc-text">cocoapods的相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol></li></ol>
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cocoapods实践"><span class="toc-text">Cocoapods实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cocoapods的实现原理"><span class="toc-text">Cocoapods的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Podfile"><span class="toc-text">Podfile</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#在根目录下"><span class="toc-text">在根目录下</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#cocoapods的相关知识"><span class="toc-text">cocoapods的相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod的版本说明"><span class="toc-text">Pod的版本说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见Pod依赖的几种写法"><span class="toc-text">常见Pod依赖的几种写法</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -212,270 +212,132 @@
       <h1 id="Cocoapods实践"><a href="#Cocoapods实践" class="headerlink" title="Cocoapods实践"></a>Cocoapods实践</h1><p>Cocoapods是一个基于Ruby的包管理工具, 类似的还有Carthage. Cocoapods的安装在这里不在详述, 请自行百度, 在这里着重讲一下如何使用Cocoapods制作私有包, 以及Cocoapods的实现原理. </p>
 <h2 id="Cocoapods的实现原理"><a href="#Cocoapods的实现原理" class="headerlink" title="Cocoapods的实现原理"></a>Cocoapods的实现原理</h2><p>cocoapods安装成功后, 我们怎么来使用它呢. 这里就要用到cocoapods的核心文件之一<code>Podfile</code>. Podfile 是一个文件，用于定义项目所需要使用的第三方库。该文件支持高度自定义，你可以根据个人喜好对其做出定制。<a href="https://guides.cocoapods.org/syntax/Podfile.html" target="_blank" rel="noopener">查看更多官方介绍</a>. </p>
 <h3 id="Podfile"><a href="#Podfile" class="headerlink" title="Podfile"></a>Podfile</h3><p>下面是一个🌰, 我们来挨个分析下他们背后都代表着什么.</p>
-<pre><code class="Ruby">source &#39;http://source.git&#39;
-platform :ios, &#39;8.0&#39;
+<figure class="highlight ruby"><table><tr><td class="code"><pre><div class="line">source <span class="string">'http://source.git'</span></div><div class="line">platform <span class="symbol">:ios</span>, <span class="string">'8.0'</span></div><div class="line"></div><div class="line">target <span class="string">'Demo'</span> <span class="keyword">do</span></div><div class="line">    pod <span class="string">'AFNetworking'</span></div><div class="line">    pod <span class="string">'SDWebImage'</span></div><div class="line">    pod <span class="string">'Masonry'</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="string">``</span><span class="string">` </span></div><div class="line"></div><div class="line">`source<span class="string">`: Specifies the location of specs. spec的地址.</span></div><div class="line"></div><div class="line">`platform<span class="string">`: Specifies the platform for which a static library should be built. 指定构建静态库的平台.</span></div><div class="line"></div><div class="line">`target<span class="string">`: Defines a CocoaPods target and scopes dependencies defined within the given block. A target should correspond to an Xcode target. By default the target includes the dependencies defined outside of the block, unless instructed not to inherit them. 定义了CocoaPods在指定target的依赖, 此处的Target应该与Xcode目标相对应。默认情况下，除非表明不继承它们, 否则Target包括在块外部定义的依赖项.</span></div><div class="line"></div><div class="line">`pod<span class="string">`: A dependency requirement is defined by the name of the Pod and optionally a list of version requirements. 一个依赖项需求是由Pod的名称和可选的版本需求列表所定义的.</span></div><div class="line"></div><div class="line">当你写完`Podfile<span class="string">`之后, 就需要执行Pod的命令`</span>pod install<span class="string">`, 来按照`</span>Podfile<span class="string">`中的配置来配置我么你的工程</span></div><div class="line"></div><div class="line">### pod install</div><div class="line"></div><div class="line">当运行 `pod install<span class="string">` 命令时会引发许多操作。要想深入了解这个命令执行的详细内容，可以在这个命令后面加上 `</span>--verbose<span class="string">`来查看详细内容。现在运行这个命令 `</span>pod install --verbose<span class="string">`，可以看到类似如下的内容:</span></div></pre></td></tr></table></figure>
+<p>  Preparing</p>
+<p>Analyzing dependencies</p>
+<p>Inspecting targets to integrate<br>  Using <code>ARCHS</code> setting to build architectures of target <code>Pods-XXX</code>: (``)</p>
+<p>Resolving dependencies of <code>Podfile</code></p>
+<p>Comparing resolved specification to the sandbox manifest<br>  A AFNetworking<br>  A Masonry<br>  A SDWebImage</p>
+<p>Downloading dependencies</p>
+<p>-&gt; Installing AFNetworking (3.1.0)</p>
+<blockquote>
+<p>Git download<br>Git download<br>     $ /usr/bin/git clone <a href="https://github.com/AFNetworking/AFNetworking.git" target="_blank" rel="noopener">https://github.com/AFNetworking/AFNetworking.git</a><br>     /var/folders/qy/tmvltypx4w954cx9hsfz0vn40000gn/T/d20170813-81556-1sx4ds8<br>     –template= –single-branch –depth 1 –branch 3.1.0<br>     Cloning into ‘/var/folders/qy/tmvltypx4w954cx9hsfz0vn40000gn/T/d20170813-81556-1sx4ds8’…<br>     Note: checking out ‘88f13053b1d1f20bf657f5c36459b87a5d317ad7’.</p>
+</blockquote>
+<pre><code>You are in &apos;detached HEAD&apos; state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
 
-target &#39;Demo&#39; do
-    pod &#39;AFNetworking&#39;
-    pod &#39;SDWebImage&#39;
-    pod &#39;Masonry&#39;
-end
-</code></pre>
-<p><code>source</code>: Specifies the location of specs. spec的地址.</p>
-<p><code>platform</code>: Specifies the platform for which a static library should be built. 指定构建静态库的平台.</p>
-<p><code>target</code>: Defines a CocoaPods target and scopes dependencies defined within the given block. A target should correspond to an Xcode target. By default the target includes the dependencies defined outside of the block, unless instructed not to inherit them. 定义了CocoaPods在指定target的依赖, 此处的Target应该与Xcode目标相对应。默认情况下，除非表明不继承它们, 否则Target包括在块外部定义的依赖项.</p>
-<p><code>pod</code>: A dependency requirement is defined by the name of the Pod and optionally a list of version requirements. 一个依赖项需求是由Pod的名称和可选的版本需求列表所定义的.</p>
-<p>当你写完<code>Podfile</code>之后, 就需要执行Pod的命令<code>pod install</code>, 来按照<code>Podfile</code>中的配置来配置我么你的工程</p>
-<h3 id="pod-install"><a href="#pod-install" class="headerlink" title="pod install"></a>pod install</h3><p>当运行 <code>pod install</code> 命令时会引发许多操作。要想深入了解这个命令执行的详细内容，可以在这个命令后面加上 <code>--verbose</code>来查看详细内容。现在运行这个命令 <code>pod install --verbose</code>，可以看到类似如下的内容:</p>
-<pre><code>  Preparing
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
 
-Analyzing dependencies
+  git checkout -b &lt;new-branch-name&gt;
 
-Inspecting targets to integrate
-  Using `ARCHS` setting to build architectures of target `Pods-XXX`: (``)
-
-Resolving dependencies of `Podfile`
-
-Comparing resolved specification to the sandbox manifest
-  A AFNetworking
-  A Masonry
-  A SDWebImage
-
-Downloading dependencies
-
--&gt; Installing AFNetworking (3.1.0)
- &gt; Git download
- &gt; Git download
-     $ /usr/bin/git clone https://github.com/AFNetworking/AFNetworking.git
-     /var/folders/qy/tmvltypx4w954cx9hsfz0vn40000gn/T/d20170813-81556-1sx4ds8
-     --template= --single-branch --depth 1 --branch 3.1.0
-     Cloning into &#39;/var/folders/qy/tmvltypx4w954cx9hsfz0vn40000gn/T/d20170813-81556-1sx4ds8&#39;...
-     Note: checking out &#39;88f13053b1d1f20bf657f5c36459b87a5d317ad7&#39;.
-
-     You are in &#39;detached HEAD&#39; state. You can look around, make experimental
-     changes and commit them, and you can discard any commits you make in this
-     state without impacting any branches by performing another checkout.
-
-     If you want to create a new branch to retain commits you create, you may
-     do so (now or later) by using -b with the checkout command again. Example:
-
-       git checkout -b &lt;new-branch-name&gt;
-
-     $ /usr/bin/git -C
-     /var/folders/qy/tmvltypx4w954cx9hsfz0vn40000gn/T/d20170813-81556-1sx4ds8
-     submodule update --init --recursive
-  &gt; Copying AFNetworking from
-  `/Users/hc/Library/Caches/CocoaPods/Pods/Release/AFNetworking/3.1.0-5e0e1` to
-  `Pods/AFNetworking`
-
--&gt; Installing Masonry (1.0.2)
-  &gt; Copying Masonry from
-  `/Users/hc/Library/Caches/CocoaPods/Pods/Release/Masonry/1.0.2-7c429` to
-  `Pods/Masonry`
-
--&gt; Installing SDWebImage (4.1.0)
-  &gt; Copying SDWebImage from
-  `/Users/hc/Library/Caches/CocoaPods/Pods/Release/SDWebImage/4.1.0-0e435` to
-  `Pods/SDWebImage`
-  - Running pre install hooks
-
-Generating Pods project
-  - Creating Pods project
-  - Adding source files to Pods project
-  - Adding frameworks to Pods project
-  - Adding libraries to Pods project
-  - Adding resources to Pods project
-  - Linking headers
-  - Installing targets
-    - Installing target `AFNetworking` iOS 8.0
-      - Generating Info.plist file at `Pods/Target Support
-      Files/AFNetworking/Info.plist`
-      - Generating module map file at `Pods/Target Support
-      Files/AFNetworking/AFNetworking.modulemap`
-      - Generating umbrella header at `Pods/Target Support
-      Files/AFNetworking/AFNetworking-umbrella.h`
-    - Installing target `Masonry` iOS 8.0
-      - Generating Info.plist file at `Pods/Target Support
-      Files/Masonry/Info.plist`
-      - Generating module map file at `Pods/Target Support
-      Files/Masonry/Masonry.modulemap`
-      - Generating umbrella header at `Pods/Target Support
-      Files/Masonry/Masonry-umbrella.h`
-    - Installing target `SDWebImage` iOS 8.0
-      - Generating Info.plist file at `Pods/Target Support
-      Files/SDWebImage/Info.plist`
-      - Generating module map file at `Pods/Target Support
-      Files/SDWebImage/SDWebImage.modulemap`
-      - Generating umbrella header at `Pods/Target Support
-      Files/SDWebImage/SDWebImage-umbrella.h`
-    - Installing target `Pods-CarMall` iOS 8.0
-      - Generating Info.plist file at `Pods/Target Support
-      Files/Pods-CarMall/Info.plist`
-      - Generating module map file at `Pods/Target Support
-      Files/Pods-CarMall/Pods-CarMall.modulemap`
-      - Generating umbrella header at `Pods/Target Support
-      Files/Pods-CarMall/Pods-CarMall-umbrella.h`
-  - Running post install hooks
-  - Writing Xcode project file to `Pods/Pods.xcodeproj`
-    - Generating deterministic UUIDs
-  - Writing Lockfile in `Podfile.lock`
-  - Writing Manifest in `Pods/Manifest.lock`
-
-Integrating client project
-
-[!] Please close any current Xcode sessions and use `CarMall.xcworkspace` for this project from now on.
-
-Integrating target `Pods-CarMall` (`CarMall.xcodeproj` project)
-  - Running post install hooks
-    - cocoapods-stats from
-    `/Users/hc/.rvm/gems/ruby-2.4.1/gems/cocoapods-stats-1.0.0/lib/cocoapods_plugin.rb`
-
-Sending stats
-      - AFNetworking, 3.1.0
-      - Masonry, 1.0.2
-      - SDWebImage, 4.1.0
-
--&gt; Pod installation complete! There are 3 dependencies from the Podfile and 3 total pods installed.
-</code></pre><p>先看我们工程的变化, 可以发现工程里面多了三个文件, 一个<code>XXX.xcworkspace</code>文件, 一个<code>Podfile.lock</code>文件, 还有一个<code>Pods</code>文件夹. 我们在通过终端输出的命令来分析, 为什么会生成这几个文件, 以及他们的作用.</p>
-<ol>
-<li>Analyzing dependencies. 弄清楚声明了哪些第三方库.在加载 <code>podspecs</code> 过程中，<code>CocoaPods</code> 就建立了包括版本信息在内的所有的第三方库的列表。<code>Podspecs</code> 被存储在本地路径 <code>~/.cocoapods</code> 中.</li>
-<li>Inspecting targets to integrate. 检查目标集成.</li>
-<li>Resolving dependencies of <code>Podfile</code> 和 Comparing resolved specification to the sandbox manifest. 分析<code>Podfile</code>文件的依赖和将已经解析的Pod与缓存过的Pod进行比对, 是添加还是删除, 还是更新.</li>
-<li>Downloading dependencies. 根据第三部的分析结果来下载依赖到<code>Pods</code>文件夹下面.</li>
-<li>Generating Pods project. 生成Pods的工程. 这一步还包含了许多其他的步骤.<ul>
+$ /usr/bin/git -C
+/var/folders/qy/tmvltypx4w954cx9hsfz0vn40000gn/T/d20170813-81556-1sx4ds8
+submodule update --init --recursive
+</code></pre><blockquote>
+<p>Copying AFNetworking from<br>  <code>/Users/hc/Library/Caches/CocoaPods/Pods/Release/AFNetworking/3.1.0-5e0e1</code> to<br>  <code>Pods/AFNetworking</code></p>
+</blockquote>
+<p>-&gt; Installing Masonry (1.0.2)</p>
+<blockquote>
+<p>Copying Masonry from<br>  <code>/Users/hc/Library/Caches/CocoaPods/Pods/Release/Masonry/1.0.2-7c429</code> to<br>  <code>Pods/Masonry</code></p>
+</blockquote>
+<p>-&gt; Installing SDWebImage (4.1.0)</p>
+<blockquote>
+<p>Copying SDWebImage from<br>  <code>/Users/hc/Library/Caches/CocoaPods/Pods/Release/SDWebImage/4.1.0-0e435</code> to<br>  <code>Pods/SDWebImage</code></p>
+<ul>
+<li>Running pre install hooks</li>
+</ul>
+</blockquote>
+<p>Generating Pods project</p>
+<ul>
 <li>Creating Pods project</li>
 <li>Adding source files to Pods project</li>
 <li>Adding frameworks to Pods project</li>
 <li>Adding libraries to Pods project</li>
 <li>Adding resources to Pods project</li>
 <li>Linking headers</li>
-<li>Installing targets</li>
-<li>Running post install hooks</li>
-<li>Writing Xcode project file to <code>Pods/Pods.xcodeproj</code> 如果检测到改动时，CocoaPods 会利用 Xcodeproj gem 组件对 Pods.xcodeproj 进行更新。如果该文件不存在，则用默认配置生成。否则，会将已有的配置项加载至内存中.</li>
-<li>Writing Lockfile in <code>Podfile.lock</code>. 记录各个Pod的版本号和之家你的依赖关系.</li>
-<li>Writing Manifest in <code>Pods/Manifest.lock</code></li>
+<li>Installing targets<ul>
+<li>Installing target <code>AFNetworking</code> iOS 8.0<ul>
+<li>Generating Info.plist file at <code>Pods/Target Support
+Files/AFNetworking/Info.plist</code></li>
+<li>Generating module map file at <code>Pods/Target Support
+Files/AFNetworking/AFNetworking.modulemap</code></li>
+<li>Generating umbrella header at <code>Pods/Target Support
+Files/AFNetworking/AFNetworking-umbrella.h</code></li>
 </ul>
 </li>
-</ol>
-<h3 id="pod-install-vs-pod-update"><a href="#pod-install-vs-pod-update" class="headerlink" title="pod install vs pod update"></a>pod install vs pod update</h3><p>引用官方的文档<a href="https://guides.cocoapods.org/using/pod-install-vs-update.html" target="_blank" rel="noopener">https://guides.cocoapods.org/using/pod-install-vs-update.html</a>来说明一下二者的区别, 以及使用场景.</p>
-<p>You will only use pod update when you want to update the version of a specific pod (or all the pods).</p>
-<ul>
-<li><code>pod install</code>主要用在第一次安装pods时, 如果后面你新增, 修改, 删除你的<code>Podfile</code>文件时也可以使用该命令. 每次执行<code>pod install</code>命令会把每一个安装的pod的版本写进<code>Podfile.lock</code>文件中, 来记录和lock这些已经安装Pod的版本. 当执行<code>Pod install</code>. 如果是新增Pod, 那么会搜索与Podfile中描述的匹配的版本; 如果已经存在, 他会下载<code>Podfile.lock</code>文件中明确的版本, 但不会去检查有没有可用的最新版本.</li>
-<li><code>pod update</code>会不关注<code>Podfile.lock</code>中的版本而直接更新到符合<code>Podfile</code>中定义的最新版本.</li>
+<li>Installing target <code>Masonry</code> iOS 8.0<ul>
+<li>Generating Info.plist file at <code>Pods/Target Support
+Files/Masonry/Info.plist</code></li>
+<li>Generating module map file at <code>Pods/Target Support
+Files/Masonry/Masonry.modulemap</code></li>
+<li>Generating umbrella header at <code>Pods/Target Support
+Files/Masonry/Masonry-umbrella.h</code></li>
 </ul>
-<h2 id="使用CocoaPods创建私有Pod"><a href="#使用CocoaPods创建私有Pod" class="headerlink" title="使用CocoaPods创建私有Pod"></a>使用CocoaPods创建私有Pod</h2><p>上面我们已经介绍过如何使用CocoaPods了, 下面要讲解的就是如何创建Pod来供别人使用. 在创建私有Pod之前我们需要两个git地址:</p>
-<ul>
-<li>用来保存Spec Repo的内容的Git地址</li>
-<li>用来保存具体Pod内容的Git地址</li>
+</li>
+<li>Installing target <code>SDWebImage</code> iOS 8.0<ul>
+<li>Generating Info.plist file at <code>Pods/Target Support
+Files/SDWebImage/Info.plist</code></li>
+<li>Generating module map file at <code>Pods/Target Support
+Files/SDWebImage/SDWebImage.modulemap</code></li>
+<li>Generating umbrella header at <code>Pods/Target Support
+Files/SDWebImage/SDWebImage-umbrella.h</code></li>
 </ul>
-<h3 id="创建一个Spec-Repo"><a href="#创建一个Spec-Repo" class="headerlink" title="创建一个Spec Repo"></a>创建一个Spec Repo</h3><p>在这一步, 我们主要创建第一个Git地址, 并且关联到本地.</p>
-<p><code>Spec Repo</code>是所有的Pods的一个索引，就是一个容器，所有公开的Pods都在这个里面，他实际是一个Git仓库remote端. 在GitHub上，但是当你使用了Cocoapods后他会被clone到本地的~/.cocoapods/repos目录下，可以进入到这个目录看到master文件夹就是这个官方的Spec Repo了。这个master目录的结构是这个样子的:</p>
-<pre><code>.
-├── Specs
-    └── [SPEC_NAME]
-        └── [VERSION]
-            └── [SPEC_NAME].podspec
-</code></pre><p>如果你要创建私有Pod, 那么你的<code>Spec Repo</code>的远端地址就必须是私有的. 反之如果你要创建一个公有的Pod, 那么就可以使用GitHub来托管你的代码. 当你创建好远端的仓库之后, 执行<code>pod repo add [Spec Repo的仓库名] [Spec Repo的git地址]</code>来把远端的仓库clone到本地. 注意, 这里<code>[Spec Repo的仓库名]</code>不一定是远端Git仓库的名字, 而是clone到本地后, 本地文件加的名字, 但是这个名字会在后面提交<code>PodSpec</code>文件时用到.</p>
-<h3 id="创建Pod工程文件"><a href="#创建Pod工程文件" class="headerlink" title="创建Pod工程文件"></a>创建Pod工程文件</h3><p>我们在你需要创建Pod的目录下使用<code>pod lib create [Pod名称]</code>来创建对应的Pod模板.  实际上该命令行隐藏了默认参数, 参数补全后应该是<code>pod lib create ProjectName --template-url=https://github.com/CocoaPods/pod-template.git</code>. </p>
-<p>接下来会问你四个问题:</p>
-<ol>
-<li>What language do you want to use?? [ Swift / ObjC ]. 使用什么语言</li>
-<li>Would you like to include a demo application with your library?. 是否需要一个例子工程, 一般选择YES</li>
-<li>Which testing frameworks will you use? [ Specta / Kiwi / None ]. 选择一个测试框架</li>
-<li>Would you like to do view based testing? [ Yes / No ]. 是否基于View测试</li>
-<li>What is your class prefix?. 类的前缀</li>
-</ol>
-<p>根据自己的实际需要来选择后, 就会自动执行<code>Pod install</code>命令来创建项目并且生成依赖. 这是这个Pod的没目录结构应该是这样的:</p>
-<pre><code>  MyLib
-  ├── .travis.yml
-  ├── _Pods.xcproject
-  ├── Example
-  │   ├── MyLib
-  │   ├── MyLib.xcodeproj
-  │   ├── MyLib.xcworkspace
-  │   ├── Podfile
-  │   ├── Podfile.lock
-  │   ├── Pods
-  │   └── Tests
-  ├── LICENSE
-  ├── MyLib.podspec
-  ├── Pod
-  │   ├── Assets
-  │   └── Classes
-  │     └── RemoveMe.[swift/m]
-  └── README.md
-</code></pre><p>接下来, 我们需要创建第二个Git地址, 用来保存Pod的实现代码. 我们进入到Pod文件夹的根目录下, 使用如下代码来关联Pod到远端仓库:</p>
-<pre><code>$ git add .
-$ git commit -s -m &quot;Initial Commit of Library&quot;
-$ git remote add origin [Pod的远端地址]           #添加远端仓库
-$ git push origin master     #提交到远端仓库
-</code></pre><h3 id="编辑Pod文件"><a href="#编辑Pod文件" class="headerlink" title="编辑Pod文件"></a>编辑Pod文件</h3><p>Pod文件就是这个Pod要实现功能的具体逻辑, 在主工程根目录下面有一个和Pod同名的文件夹, 里面有两个子文件夹. 一个是<code>Assets</code>, 一个是<code>Classes</code>.</p>
-<ul>
-<li>Assets文件主要用来存放资源文件, 例如图片资源和XIB文件.</li>
-<li>Classes则存放主要的功能代码, 类.</li>
+</li>
+<li>Installing target <code>Pods-CarMall</code> iOS 8.0<ul>
+<li>Generating Info.plist file at <code>Pods/Target Support
+Files/Pods-CarMall/Info.plist</code></li>
+<li>Generating module map file at <code>Pods/Target Support
+Files/Pods-CarMall/Pods-CarMall.modulemap</code></li>
+<li>Generating umbrella header at <code>Pods/Target Support
+Files/Pods-CarMall/Pods-CarMall-umbrella.h</code></li>
 </ul>
-<p>在这里需要注意两个地方:</p>
-<ol>
-<li>当我们要使用<code>Pod</code>中的资源时, 以图片为例, 我们通过<code>[UIImage imageWithName:@&quot;xxx.png&quot;]</code>是取不到Pod中的图片的, 因为<code>imageWithName:</code>方法默认是从<code>mainBundle</code>中来取的, 而Pod不属于<code>mainBundle</code>的范畴, 我们需要先根据<code>class</code>来拿到当前类所在的<code>bundle</code>, 再取该<code>Bundle</code>中的资源.</li>
-<li>每次在Pod文件夹中添加新的文件或者资源时, 都需要在根目录的Example目录下执行<code>pod update</code>命令来重新建立索引.</li>
-</ol>
-<h3 id="编辑Podspec文件"><a href="#编辑Podspec文件" class="headerlink" title="编辑Podspec文件"></a>编辑Podspec文件</h3><p>关于<code>Podspec</code>文件<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="noopener">官方</a>是这样描述的:</p>
-<blockquote>
-<p>A specification describes a version of Pod library. It includes details about where the source should be fetched from, what files to use, the build settings to apply, and other general metadata such as its name, version, and description.</p>
-</blockquote>
-<p><code>pod lib create XXX</code>创建出来的Pod, 初始时的<code>Podspec</code>文件包含了各种信息, 详细的说明我们可以看<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="noopener">官方文档</a>, 这里贴上最基础的用法代码:</p>
-<pre><code>Pod::Spec.new do |s|
-  s.name             = &#39;HCPods&#39;
-  #Pod的版本
-  s.version          = &#39;0.1.0&#39;
-  s.summary          = &#39;你在搜索时会呈现&#39;
-
-  s.description      = &lt;&lt;-DESC
-    这里是关于你Pod功能的描述
-                       DESC
-
-  s.homepage         = &#39;https://github.com/HChong3210/HCPods&#39;
-  s.license          = { :type =&gt; &#39;MIT&#39;, :file =&gt; &#39;LICENSE&#39; }
-  s.author           = { &#39;HChong3210&#39; =&gt; &#39;hchong7557@gmail.com&#39; }
-  #Pod的远端仓库地址
-  s.source           = { :git =&gt; &#39;https://github.com/HChong3210/HCPods.git&#39;, :tag =&gt; s.version.to_s }
-
-    #Pod支持的最低版本
-  s.ios.deployment_target = &#39;8.0&#39;
-    #Pod源文件的位置
-  s.source_files = &#39;HCPods/Classes/**/*&#39;
-  #Pod中资源文件的位置
-  s.resource_bundles = {
-    &#39;DFCForms&#39; =&gt; [&#39;HCPods/Assets/*.{png,xib,plist}&#39;]
-  }
-  #对外公开的类
-  s.public_header_files = &#39;DFCForms/Classes/**/*.h&#39;
-
-  #Pod中用到的第三方库
-  s.frameworks = &#39;UIKit&#39;
-  s.dependency &#39;AFNetworking&#39;, &#39;~&gt; 2.3&#39;
-  s.dependency &#39;SDWebImage&#39;
-
-end
-</code></pre><h3 id="提交Pod文件"><a href="#提交Pod文件" class="headerlink" title="提交Pod文件"></a>提交Pod文件</h3><p>Pod文件编辑好后, 我们要把代码提交到远端服务器, 我们就使用正常的方式来提交代码, 并且给代码打上Tag, <em> 注意, 这里的Tag必须和<code>Podspec</code>文件中的Pod版本号一致 </em>, 因为Podspec会根据Tag从远端来找相应的代码, 否则会出现版本和代码不匹配的现象.</p>
-<p>如果不使用Sourcetree这样的GUI工具, 可以参考下面的Git代码:</p>
-<pre><code># 在根目录下
-git status
-git add .
-git tag -m &#39;备注&#39; 版本号
-git commit -s -m &#39;备注&#39; 
-git push origin master —tags
-</code></pre><h3 id="提交Podspec文件"><a href="#提交Podspec文件" class="headerlink" title="提交Podspec文件"></a>提交Podspec文件</h3><p>提交完Pod文件后, 我们只用把<code>Podspec</code>文件也提交上去, 这样就可以在Cocoapods中简历起来索引, 找到自己的Pod了. </p>
-<p>在提交之前我们可以在根目录下使用<code>pod lib lint</code>命令来验证是否编译通过. 也可以直接提交<code>pod repo push [你clone到本地的Spec Repo的仓库名] [Pod名称].podspec      --use-libraries --allow-warnings --sources=&#39;[Podspec远端地址],https://github.com/CocoaPods/Specs&#39; --verbose</code></p>
-<h3 id="subspec的使用"><a href="#subspec的使用" class="headerlink" title="subspec的使用"></a>subspec的使用</h3><p>有时一个Pod太大了, 而我们又用不到全部的内容, 这时我们就可以使用subspec来解决这个问题. 我们可以在Pod文件夹中, 使用文件夹来分割各个子Pod, 然后在<code>Podspec</code>文件中这样设置:</p>
-<pre><code>  s.subspec &#39;[子Pod名称]&#39; do |pod1|
-      pod1.source_files = &#39;SCCQRCode/Classes/[子文件夹名]/**/*&#39;
-  end
-
-  s.subspec &#39;[子Pod名称]&#39; do |pod2|
-            pod2.source_files = &#39;SCCQRCode/Classes/[子文件夹名]/**/*&#39;
-  end
-</code></pre><p>我们也可以在各个子Pod中分别设置他们的资源路径, 对外暴露的header路径, 以及dependency.</p>
+</li>
+</ul>
+</li>
+<li>Running post install hooks</li>
+<li>Writing Xcode project file to <code>Pods/Pods.xcodeproj</code><ul>
+<li>Generating deterministic UUIDs</li>
+</ul>
+</li>
+<li>Writing Lockfile in <code>Podfile.lock</code></li>
+<li>Writing Manifest in <code>Pods/Manifest.lock</code></li>
+</ul>
+<p>Integrating client project</p>
+<p>[!] Please close any current Xcode sessions and use <code>CarMall.xcworkspace</code> for this project from now on.</p>
+<p>Integrating target <code>Pods-CarMall</code> (<code>CarMall.xcodeproj</code> project)</p>
+<ul>
+<li>Running post install hooks<ul>
+<li>cocoapods-stats from<br><code>/Users/hc/.rvm/gems/ruby-2.4.1/gems/cocoapods-stats-1.0.0/lib/cocoapods_plugin.rb</code></li>
+</ul>
+</li>
+</ul>
+<p>Sending stats</p>
+<pre><code>- AFNetworking, 3.1.0
+- Masonry, 1.0.2
+- SDWebImage, 4.1.0
+</code></pre><p>-&gt; Pod installation complete! There are 3 dependencies from the Podfile and 3 total pods installed.<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">先看我们工程的变化, 可以发现工程里面多了三个文件, 一个`XXX.xcworkspace`文件, 一个`Podfile.lock`文件, 还有一个`Pods`文件夹. 我们在通过终端输出的命令来分析, 为什么会生成这几个文件, 以及他们的作用.</div><div class="line"></div><div class="line">1. Analyzing dependencies. 弄清楚声明了哪些第三方库.在加载 `podspecs` 过程中，`CocoaPods` 就建立了包括版本信息在内的所有的第三方库的列表。`Podspecs` 被存储在本地路径 `~/.cocoapods` 中.</div><div class="line">2. Inspecting targets to integrate. 检查目标集成.</div><div class="line">3. Resolving dependencies of `Podfile` 和 Comparing resolved specification to the sandbox manifest. 分析`Podfile`文件的依赖和将已经解析的Pod与缓存过的Pod进行比对, 是添加还是删除, 还是更新.</div><div class="line">4. Downloading dependencies. 根据第三部的分析结果来下载依赖到`Pods`文件夹下面.</div><div class="line">5. Generating Pods project. 生成Pods的工程. 这一步还包含了许多其他的步骤.</div><div class="line">	* Creating Pods project</div><div class="line">	* Adding source files to Pods project</div><div class="line">	* Adding frameworks to Pods project</div><div class="line">	* Adding libraries to Pods project</div><div class="line">	* Adding resources to Pods project</div><div class="line">	* Linking headers</div><div class="line">	* Installing targets</div><div class="line">	* Running post install hooks</div><div class="line">	* Writing Xcode project file to `Pods/Pods.xcodeproj` 如果检测到改动时，CocoaPods 会利用 Xcodeproj gem 组件对 Pods.xcodeproj 进行更新。如果该文件不存在，则用默认配置生成。否则，会将已有的配置项加载至内存中.</div><div class="line">	* Writing Lockfile in `Podfile.lock`. 记录各个Pod的版本号和之家你的依赖关系.</div><div class="line">	* Writing Manifest in `Pods/Manifest.lock`</div><div class="line">  </div><div class="line"></div><div class="line">### pod install vs pod update</div><div class="line"></div><div class="line">引用官方的文档[https://guides.cocoapods.org/using/pod-install-vs-update.html](https://guides.cocoapods.org/using/pod-install-vs-update.html)来说明一下二者的区别, 以及使用场景.</div><div class="line"></div><div class="line">You will only use pod update when you want to update the version of a specific pod (or all the pods).</div><div class="line"></div><div class="line">* `pod install`主要用在第一次安装pods时, 如果后面你新增, 修改, 删除你的`Podfile`文件时也可以使用该命令. 每次执行`pod install`命令会把每一个安装的pod的版本写进`Podfile.lock`文件中, 来记录和lock这些已经安装Pod的版本. 当执行`Pod install`. 如果是新增Pod, 那么会搜索与Podfile中描述的匹配的版本; 如果已经存在, 他会下载`Podfile.lock`文件中明确的版本, 但不会去检查有没有可用的最新版本.</div><div class="line">* `pod update`会不关注`Podfile.lock`中的版本而直接更新到符合`Podfile`中定义的最新版本.</div><div class="line"></div><div class="line">## 使用CocoaPods创建私有Pod</div><div class="line"></div><div class="line">上面我们已经介绍过如何使用CocoaPods了, 下面要讲解的就是如何创建Pod来供别人使用. 在创建私有Pod之前我们需要两个git地址:</div><div class="line"></div><div class="line">* 用来保存Spec Repo的内容的Git地址</div><div class="line">* 用来保存具体Pod内容的Git地址</div><div class="line"></div><div class="line">### 创建一个Spec Repo</div><div class="line"></div><div class="line">在这一步, 我们主要创建第一个Git地址, 并且关联到本地.</div><div class="line"></div><div class="line">`Spec Repo`是所有的Pods的一个索引，就是一个容器，所有公开的Pods都在这个里面，他实际是一个Git仓库remote端. 在GitHub上，但是当你使用了Cocoapods后他会被clone到本地的~/.cocoapods/repos目录下，可以进入到这个目录看到master文件夹就是这个官方的Spec Repo了。这个master目录的结构是这个样子的:</div></pre></td></tr></table></figure></p>
+<p>.<br>├── Specs<br>    └── [SPEC_NAME]<br>        └── [VERSION]<br>            └── [SPEC_NAME].podspec<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">如果你要创建私有Pod, 那么你的`Spec Repo`的远端地址就必须是私有的. 反之如果你要创建一个公有的Pod, 那么就可以使用GitHub来托管你的代码. 当你创建好远端的仓库之后, 执行`pod repo add [Spec Repo的仓库名] [Spec Repo的git地址]`来把远端的仓库clone到本地. 注意, 这里`[Spec Repo的仓库名]`不一定是远端Git仓库的名字, 而是clone到本地后, 本地文件加的名字, 但是这个名字会在后面提交`PodSpec`文件时用到.</div><div class="line"></div><div class="line">### 创建Pod工程文件</div><div class="line"></div><div class="line">我们在你需要创建Pod的目录下使用`pod lib create [Pod名称]`来创建对应的Pod模板.  实际上该命令行隐藏了默认参数, 参数补全后应该是`pod lib create ProjectName --template-url=https://github.com/CocoaPods/pod-template.git`. </div><div class="line"></div><div class="line">接下来会问你四个问题:</div><div class="line">1. What language do you want to use?? [ Swift / ObjC ]. 使用什么语言</div><div class="line">2. Would you like to include a demo application with your library?. 是否需要一个例子工程, 一般选择YES</div><div class="line">3. Which testing frameworks will you use? [ Specta / Kiwi / None ]. 选择一个测试框架</div><div class="line">4. Would you like to do view based testing? [ Yes / No ]. 是否基于View测试</div><div class="line">5. What is your class prefix?. 类的前缀</div><div class="line"></div><div class="line">根据自己的实际需要来选择后, 就会自动执行`Pod install`命令来创建项目并且生成依赖. 这是这个Pod的没目录结构应该是这样的:</div></pre></td></tr></table></figure></p>
+<p>  MyLib<br>  ├── .travis.yml<br>  ├── _Pods.xcproject<br>  ├── Example<br>  │   ├── MyLib<br>  │   ├── MyLib.xcodeproj<br>  │   ├── MyLib.xcworkspace<br>  │   ├── Podfile<br>  │   ├── Podfile.lock<br>  │   ├── Pods<br>  │   └── Tests<br>  ├── LICENSE<br>  ├── MyLib.podspec<br>  ├── Pod<br>  │   ├── Assets<br>  │   └── Classes<br>  │     └── RemoveMe.[swift/m]<br>  └── README.md<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">接下来, 我们需要创建第二个Git地址, 用来保存Pod的实现代码. 我们进入到Pod文件夹的根目录下, 使用如下代码来关联Pod到远端仓库:</div></pre></td></tr></table></figure></p>
+<p>$ git add .<br>$ git commit -s -m “Initial Commit of Library”<br>$ git remote add origin [Pod的远端地址]           #添加远端仓库<br>$ git push origin master     #提交到远端仓库<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">### 编辑Pod文件</div><div class="line"></div><div class="line">Pod文件就是这个Pod要实现功能的具体逻辑, 在主工程根目录下面有一个和Pod同名的文件夹, 里面有两个子文件夹. 一个是`Assets`, 一个是`Classes`.</div><div class="line"></div><div class="line">* Assets文件主要用来存放资源文件, 例如图片资源和XIB文件.</div><div class="line">* Classes则存放主要的功能代码, 类.</div><div class="line"></div><div class="line">在这里需要注意两个地方:</div><div class="line">1. 当我们要使用`Pod`中的资源时, 以图片为例, 我们通过`[UIImage imageWithName:@&quot;xxx.png&quot;]`是取不到Pod中的图片的, 因为`imageWithName:`方法默认是从`mainBundle`中来取的, 而Pod不属于`mainBundle`的范畴, 我们需要先根据`class`来拿到当前类所在的`bundle`, 再取该`Bundle`中的资源.</div><div class="line">2. 每次在Pod文件夹中添加新的文件或者资源时, 都需要在根目录的Example目录下执行`pod update`命令来重新建立索引.</div><div class="line"></div><div class="line">### 编辑Podspec文件</div><div class="line"></div><div class="line">关于`Podspec`文件[官方](http://guides.cocoapods.org/syntax/podspec.html)是这样描述的:</div><div class="line"></div><div class="line">&gt; A specification describes a version of Pod library. It includes details about where the source should be fetched from, what files to use, the build settings to apply, and other general metadata such as its name, version, and description.</div><div class="line"></div><div class="line">`pod lib create XXX`创建出来的Pod, 初始时的`Podspec`文件包含了各种信息, 详细的说明我们可以看[官方文档](http://guides.cocoapods.org/syntax/podspec.html), 这里贴上最基础的用法代码:</div></pre></td></tr></table></figure></p>
+<p>Pod::Spec.new do |s|<br>  s.name             = ‘HCPods’</p>
+<p>  #Pod的版本<br>  s.version          = ‘0.1.0’<br>  s.summary          = ‘你在搜索时会呈现’</p>
+<p>  s.description      = &lt;&lt;-DESC<br>    这里是关于你Pod功能的描述<br>                       DESC</p>
+<p>  s.homepage         = ‘<a href="https://github.com/HChong3210/HCPods" target="_blank" rel="noopener">https://github.com/HChong3210/HCPods</a>‘<br>  s.license          = { :type =&gt; ‘MIT’, :file =&gt; ‘LICENSE’ }<br>  s.author           = { ‘HChong3210’ =&gt; ‘hchong7557@gmail.com’ }</p>
+<p>  #Pod的远端仓库地址<br>  s.source           = { :git =&gt; ‘<a href="https://github.com/HChong3210/HCPods.git" target="_blank" rel="noopener">https://github.com/HChong3210/HCPods.git</a>‘, :tag =&gt; s.version.to_s }</p>
+<pre><code>#Pod支持的最低版本
+</code></pre><p>  s.ios.deployment_target = ‘8.0’</p>
+<pre><code>#Pod源文件的位置
+</code></pre><p>  s.source_files = ‘HCPods/Classes/<em>*/</em>‘</p>
+<p>  #Pod中资源文件的位置<br>  s.resource_bundles = {<br>    ‘DFCForms’ =&gt; [‘HCPods/Assets/*.{png,xib,plist}’]<br>  }</p>
+<p>  #对外公开的类<br>  s.public_header_files = ‘DFCForms/Classes/<em>*/</em>.h’</p>
+<p>  #Pod中用到的第三方库<br>  s.frameworks = ‘UIKit’<br>  s.dependency ‘AFNetworking’, ‘~&gt; 2.3’<br>  s.dependency ‘SDWebImage’</p>
+<p>end<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">### 提交Pod文件</div><div class="line"></div><div class="line">Pod文件编辑好后, 我们要把代码提交到远端服务器, 我们就使用正常的方式来提交代码, 并且给代码打上Tag, * 注意, 这里的Tag必须和`Podspec`文件中的Pod版本号一致 *, 因为Podspec会根据Tag从远端来找相应的代码, 否则会出现版本和代码不匹配的现象.</div><div class="line"></div><div class="line">如果不使用Sourcetree这样的GUI工具, 可以参考下面的Git代码:</div></pre></td></tr></table></figure></p>
+<h1 id="在根目录下"><a href="#在根目录下" class="headerlink" title="在根目录下"></a>在根目录下</h1><p>git status<br>git add .<br>git tag -m ‘备注’ 版本号<br>git commit -s -m ‘备注’<br>git push origin master —tags<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">### 提交Podspec文件</div><div class="line"></div><div class="line">提交完Pod文件后, 我们只用把`Podspec`文件也提交上去, 这样就可以在Cocoapods中简历起来索引, 找到自己的Pod了. </div><div class="line"></div><div class="line">在提交之前我们可以在根目录下使用`pod lib lint`命令来验证是否编译通过. 也可以直接提交`pod repo push [你clone到本地的Spec Repo的仓库名] [Pod名称].podspec      --use-libraries --allow-warnings --sources=&apos;[Podspec远端地址],https://github.com/CocoaPods/Specs&apos; --verbose`</div><div class="line"></div><div class="line">### subspec的使用</div><div class="line"></div><div class="line">有时一个Pod太大了, 而我们又用不到全部的内容, 这时我们就可以使用subspec来解决这个问题. 我们可以在Pod文件夹中, 使用文件夹来分割各个子Pod, 然后在`Podspec`文件中这样设置:</div></pre></td></tr></table></figure></p>
+<p>  s.subspec ‘[子Pod名称]’ do |pod1|<br>      pod1.source_files = ‘SCCQRCode/Classes/[子文件夹名]/<em>*/</em>‘<br>  end</p>
+<p>  s.subspec ‘[子Pod名称]’ do |pod2|<br>            pod2.source_files = ‘SCCQRCode/Classes/[子文件夹名]/<em>*/</em>‘<br>  end<br>```</p>
+<p>我们也可以在各个子Pod中分别设置他们的资源路径, 对外暴露的header路径, 以及dependency.</p>
 <p>我们在外面引用该Pod的时候就可以使用<code>pod [Pod/子Pod]</code>的方式来只引用一个子Pod. </p>
 <h2 id="cocoapods的相关知识"><a href="#cocoapods的相关知识" class="headerlink" title="cocoapods的相关知识"></a>cocoapods的相关知识</h2><p>这里是CocoaPods的其他相关知识, 做一个备忘.</p>
 <h3 id="Pod的版本说明"><a href="#Pod的版本说明" class="headerlink" title="Pod的版本说明"></a>Pod的版本说明</h3><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="noopener">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>
@@ -526,7 +388,7 @@ git push origin master —tags
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">

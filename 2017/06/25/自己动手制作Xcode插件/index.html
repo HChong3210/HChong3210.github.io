@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/06/25/自己动手制作Xcode插件/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="自己动手制作Xcode插件Xcode8以后, 以前的插件都不能用了. 网上虽然也有方法来解决这个问题, 但是稍显复杂, 这里我们采用曲线救国的方式, 使用Apple官方推荐的方式Xcode Source Editor Extension来自己制作插件. Extension的方式开发的插件, 可以独立上架AppStore, 并且是独立于Xcode工程独立运行的. 但是没有UI交互, 不能在后台运行并">
-<meta property="og:locale" content="zh-zh-Hans">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fgyotdiqdbj312w0q03zl.jpg">
 <meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fgz0hh71w6j30ht0ccdgm.jpg">
 <meta property="og:updated_time" content="2017-06-28T14:43:20.000Z">
@@ -158,7 +158,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#自己动手制作Xcode插件"><span class="toc-text">自己动手制作Xcode插件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#新建插件制作工程"><span class="toc-text">新建插件制作工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工程环境和参数介绍"><span class="toc-text">工程环境和参数介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#核心代码"><span class="toc-text">核心代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插件使用"><span class="toc-text">插件使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础用法"><span class="toc-text">基础用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进阶用法"><span class="toc-text">进阶用法</span></a></li></ol></li></ol></li></ol>
   </div>
 
@@ -228,47 +228,14 @@
 <li><code>- (NSArray &lt;NSDictionary &lt;XCSourceEditorCommandDefinitionKey, id&gt; *&gt; *)commandDefinitions{}</code>. 返回字典类型的数组, 可以为每个插件重写名字、标识符和自定义类名等信息，和<code>Info.plist</code>文件中对应的<code>XCSourceEditorCommandName</code>、<code>XCSourceEditorCommandIdentifier</code>和<code>XCSourceEditorCommandClassName</code>等信息一致.</li>
 </ul>
 <p><code>SourceEditorCommand.m</code>中只有一个方法:</p>
-<pre><code>- (void)performCommandWithInvocation:(XCSourceEditorCommandInvocation *)invocation completionHandler:(void (^)(NSError * _Nullable nilOrError))completionHandler
-{
-    // Implement your command here, invoking the completion handler when done. Pass it nil on success, and an NSError on failure.
-
-    completionHandler(nil);
-}
-</code></pre><p>关于插件的核心逻辑代码, 就是在这个方法里面实现. <code>XCSourceEditorCommandInvocation</code>类包含了所有的信息.可以通过他的各种属性来拿到原工程中的各种数据, 主要用到的有:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)performCommandWithInvocation:(XCSourceEditorCommandInvocation *)invocation completionHandler:(void (^)(NSError * _Nullable nilOrError))completionHandler</div><div class="line">&#123;</div><div class="line">    // Implement your command here, invoking the completion handler when done. Pass it nil on success, and an NSError on failure.</div><div class="line">    </div><div class="line">    completionHandler(nil);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>关于插件的核心逻辑代码, 就是在这个方法里面实现. <code>XCSourceEditorCommandInvocation</code>类包含了所有的信息.可以通过他的各种属性来拿到原工程中的各种数据, 主要用到的有:</p>
 <ul>
 <li><code>invocation.buffer.lines</code>是一个数组, 包含了使用插件的工程的页面的每一行代码, 艺术组的形式存在. </li>
 <li><code>invocation.buffer.selections</code>是一个数组, 数组的内容是<code>XCSourceTextRange</code>. <code>XCSourceTextRange</code>包含了两个结构体, 用于标记原工程中选中部分的代码的位置信息.<h2 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h2></li>
 </ul>
-<p>此处以自动导入头文件的插件为例. 主要思路是遍历类的所有行, 拿到选中的内容, 判断是否被import过, 没有的话, 在合适位置插入<code>#import</code>;</p>
-<pre><code>- (void)performCommandWithInvocation:(XCSourceEditorCommandInvocation *)invocation completionHandler:(void (^)(NSError * _Nullable nilOrError))completionHandler
-{
-    XCSourceTextRange *range = [invocation.buffer.selections firstObject];
-
-    NSString *selectedLines = [invocation.buffer.lines objectAtIndex:range.start.line];
-    NSString *selection = [selectedLines substringWithRange:NSMakeRange(range.start.column, range.end.column - range.start.column)];
-
-    for (NSInteger i = 0; i &lt; invocation.buffer.lines.count - 1; i++) {
-        NSString *importString = [invocation.buffer.lines objectAtIndex:i];
-        if ([importString containsString:@&quot;@interface&quot;]) {
-            self.startLineNumber = i;
-            break;
-        }
-    }
-
-    BOOL isImported = NO;
-    for (NSInteger i = 0; i &lt;= self.startLineNumber ; i++) {
-        NSString *importString = [invocation.buffer.lines objectAtIndex:i];
-        if ([importString containsString:[NSString stringWithFormat:@&quot;%@.h&quot;, selection]]) {
-            isImported = YES;
-            break;
-        }
-    }
-    if (isImported == NO) {
-        [invocation.buffer.lines insertObject:[NSString stringWithFormat:@&quot;#import \&quot;%@.h\&quot;&quot;, selection] atIndex:self.startLineNumber - 1];
-    }
-    completionHandler(nil);
-}
-</code></pre><h2 id="插件使用"><a href="#插件使用" class="headerlink" title="插件使用"></a>插件使用</h2><h3 id="基础用法"><a href="#基础用法" class="headerlink" title="基础用法"></a>基础用法</h3><p>我们在插件工程中选中AutoImport的Scheme(新建的那个), <code>command + R</code>运行,这时会出现一个弹窗, 让你选择要运行的工程. 选中要运行的工程后, 正常打开. 在Editor的最下面可以看到我们运行的插件工程, 点击就可以运行插件了. 打断点和调试什么的和正常的Xcode项目一样.</p>
+<p>此处以自动导入头文件的插件为例. 主要思路是遍历类的所有行, 拿到选中的内容, 判断是否被import过, 没有的话, 在合适位置插入<code>#import</code>;<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)performCommandWithInvocation:(XCSourceEditorCommandInvocation *)invocation completionHandler:(void (^)(NSError * _Nullable nilOrError))completionHandler</div><div class="line">&#123;</div><div class="line">    XCSourceTextRange *range = [invocation.buffer.selections firstObject];</div><div class="line">    </div><div class="line">    NSString *selectedLines = [invocation.buffer.lines objectAtIndex:range.start.line];</div><div class="line">    NSString *selection = [selectedLines substringWithRange:NSMakeRange(range.start.column, range.end.column - range.start.column)];</div><div class="line">    </div><div class="line">    for (NSInteger i = 0; i &lt; invocation.buffer.lines.count - 1; i++) &#123;</div><div class="line">        NSString *importString = [invocation.buffer.lines objectAtIndex:i];</div><div class="line">        if ([importString containsString:@&quot;@interface&quot;]) &#123;</div><div class="line">            self.startLineNumber = i;</div><div class="line">            break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    BOOL isImported = NO;</div><div class="line">    for (NSInteger i = 0; i &lt;= self.startLineNumber ; i++) &#123;</div><div class="line">        NSString *importString = [invocation.buffer.lines objectAtIndex:i];</div><div class="line">        if ([importString containsString:[NSString stringWithFormat:@&quot;%@.h&quot;, selection]]) &#123;</div><div class="line">            isImported = YES;</div><div class="line">            break;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    if (isImported == NO) &#123;</div><div class="line">        [invocation.buffer.lines insertObject:[NSString stringWithFormat:@&quot;#import \&quot;%@.h\&quot;&quot;, selection] atIndex:self.startLineNumber - 1];</div><div class="line">    &#125;</div><div class="line">    completionHandler(nil);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="插件使用"><a href="#插件使用" class="headerlink" title="插件使用"></a>插件使用</h2><h3 id="基础用法"><a href="#基础用法" class="headerlink" title="基础用法"></a>基础用法</h3><p>我们在插件工程中选中AutoImport的Scheme(新建的那个), <code>command + R</code>运行,这时会出现一个弹窗, 让你选择要运行的工程. 选中要运行的工程后, 正常打开. 在Editor的最下面可以看到我们运行的插件工程, 点击就可以运行插件了. 打断点和调试什么的和正常的Xcode项目一样.</p>
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fgz0hh71w6j30ht0ccdgm.jpg" alt="插件运行调试"></p>
 <p>需要注意的是, 我们在插件工程中两个Target的Singing一定要保持一致, 并且不能为空. 否则在Xcode中看不到插件.</p>
 <h3 id="进阶用法"><a href="#进阶用法" class="headerlink" title="进阶用法"></a>进阶用法</h3><p>以上我们已经可以在自己电脑上调试和使用Xcode插件了, 那么怎么才能在其他电脑上也使用我们开发的插件呢?</p>
@@ -305,7 +272,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">

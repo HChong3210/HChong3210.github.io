@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/07/15/UIView系列之---如何写一个自定义View/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="UIView系列之—如何写一个自定义ViewUIView系列之—UIView和CALayerUIView系列之—UIView的常见layout方法UIView系列之—iOS的动态高度UIView系列之—如何写一个自定义View 这一篇和前面的实际是一个系列, 但是有不太一样, 也稍微偏架构和规范一些. 说一下在实际编程中的写法.  通用的自定义类的function归纳一个自定义类中的代码首先是有序">
-<meta property="og:locale" content="zh-zh-Hans">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-09-25T13:36:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UIView系列之---如何写一个自定义View">
@@ -155,7 +155,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UIView系列之—如何写一个自定义View"><span class="toc-text">UIView系列之—如何写一个自定义View</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通用的自定义类的function归纳"><span class="toc-text">通用的自定义类的function归纳</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组合代替继承"><span class="toc-text">组合代替继承</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UIView的写法"><span class="toc-text">UIView的写法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化必要的子view和变量"><span class="toc-text">初始化必要的子view和变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在合适的时机进行布局"><span class="toc-text">在合适的时机进行布局</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol></li></ol>
   </div>
 
@@ -212,21 +212,8 @@
       <h1 id="UIView系列之—如何写一个自定义View"><a href="#UIView系列之—如何写一个自定义View" class="headerlink" title="UIView系列之—如何写一个自定义View"></a>UIView系列之—如何写一个自定义View</h1><p><a href="http://hchong.net/2017/08/30/UIView%E7%B3%BB%E5%88%97%E4%B9%8B---UIView%E5%92%8CCALayer/">UIView系列之—UIView和CALayer</a><br><a href="http://hchong.net/2017/09/21/UIView%E7%B3%BB%E5%88%97%E4%B9%8B---UIView%E7%9A%84%E5%B8%B8%E8%A7%81layout%E6%96%B9%E6%B3%95/">UIView系列之—UIView的常见layout方法</a><br><a href="http://hchong.net/2017/09/24/UIView%E7%B3%BB%E5%88%97%E4%B9%8B---iOS%E7%9A%84%E5%8A%A8%E6%80%81%E9%AB%98%E5%BA%A6/">UIView系列之—iOS的动态高度</a><br><a href="http://hchong.net/2017/09/21/UIView%E7%B3%BB%E5%88%97%E4%B9%8B---%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%B8%AA%E8%87%AA%E5%AE%9A%E4%B9%89View/">UIView系列之—如何写一个自定义View</a></p>
 <p>这一篇和前面的实际是一个系列, 但是有不太一样, 也稍微偏架构和规范一些. 说一下在实际编程中的写法. </p>
 <h2 id="通用的自定义类的function归纳"><a href="#通用的自定义类的function归纳" class="headerlink" title="通用的自定义类的function归纳"></a>通用的自定义类的function归纳</h2><p>一个自定义类中的代码首先是有序的, 不管是<code>UIVIewControl</code>, <code>UIVIew</code>, 或者<code>NSObject</code>, 都应该把具有相同作用的function归纳为一个类, 我一般按照下面这样来分割代码, 这样看上去会比较有条理: </p>
-<pre><code>#pragma mark - LifeCycle
-这里面是一些类的生命周期的方法, 以及overWrite的父类的方法
-#pragma mark - UIConfig
-这里面是和当前类的UI相关的设置信息
-#pragma mark - HttpRequest
-当前类的网络请求部分
-#pragma mark - XXXDelegate
-当前类响应的代理事件
-#pragma mark - Action
-当前类的EventResponse事件
-#pragma mark - Private
-当前类中所用到的一些工具function, 不过一般不建议写在这里面, 我们应该按照模块新建一个专门的工具类来管理这些function
-#pragma mark - Getter, Setter
-当前类中用到的所有属性的Getter和Setter, 强烈推荐这么些, 这样可以把当前类的子控件的初始化放到Getter中去, 维护了代码的整洁度.
-</code></pre><p>除此之外, 上面这个顺序一般是按照使用者对这个类中所有function的关心程度来排序的, 例如对Lifecycle和UIConfig的关心程度就比Getter和Setter的程度高. 如果这个类还是特别长的话, 那就建议把代码在拆分为各个独立功能的category, 或者把尽量多的Private方法拆分为独立的工具类, 这样不管是对当前类的代码量, 或者后面可能会使用到这些PrivateFunction的人来说都是比较合理的做法. </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#pragma mark - LifeCycle</div><div class="line">这里面是一些类的生命周期的方法, 以及overWrite的父类的方法</div><div class="line">#pragma mark - UIConfig</div><div class="line">这里面是和当前类的UI相关的设置信息</div><div class="line">#pragma mark - HttpRequest</div><div class="line">当前类的网络请求部分</div><div class="line">#pragma mark - XXXDelegate</div><div class="line">当前类响应的代理事件</div><div class="line">#pragma mark - Action</div><div class="line">当前类的EventResponse事件</div><div class="line">#pragma mark - Private</div><div class="line">当前类中所用到的一些工具function, 不过一般不建议写在这里面, 我们应该按照模块新建一个专门的工具类来管理这些function</div><div class="line">#pragma mark - Getter, Setter</div><div class="line">当前类中用到的所有属性的Getter和Setter, 强烈推荐这么些, 这样可以把当前类的子控件的初始化放到Getter中去, 维护了代码的整洁度.</div></pre></td></tr></table></figure>
+<p>除此之外, 上面这个顺序一般是按照使用者对这个类中所有function的关心程度来排序的, 例如对Lifecycle和UIConfig的关心程度就比Getter和Setter的程度高. 如果这个类还是特别长的话, 那就建议把代码在拆分为各个独立功能的category, 或者把尽量多的Private方法拆分为独立的工具类, 这样不管是对当前类的代码量, 或者后面可能会使用到这些PrivateFunction的人来说都是比较合理的做法. </p>
 <h2 id="组合代替继承"><a href="#组合代替继承" class="headerlink" title="组合代替继承"></a>组合代替继承</h2><p>除此之外, 对于复杂类来说我们要尽量<em>使用组合来代替继承</em>. 例如当前有一个类实现了A功能, 业务发展我们要使用A+B功能, 我们可能会想到写一个A的子类A’, 在里面再加上B功能, 完美解决. 那么后面我们要再使用A+B+C功能, 那么我们可能会写一个A’的子类A’’, 在里面实现C的功能, 又完美实现. 那如果突然有一天, 产品经理突然说要实现A+C功能呢, 傻眼了, 一大坨代码怎么拆分. 所以正确的做法应该是, 我们新建三个类, 分别独立实现A, B, C的功能, 业务方要用哪个就自由组合, 假设后面再来了D, E, F我们也不怕, 我们只用像插件一样, 用到哪个组合哪个就好. </p>
 <h2 id="UIView的写法"><a href="#UIView的写法" class="headerlink" title="UIView的写法"></a>UIView的写法</h2><p>UIView作为直接展示给用户看的层面, 是最重要的部分. 我强烈推荐使用纯代码布局, 使用Frame或者Autolayout都可以. 使用Frame的话, 推荐使用<a href="https://github.com/casatwy/HandyAutoLayout" target="_blank" rel="noopener">这个项目</a>. 如果使用AutoLayout的话, <code>masonry</code>则是很不错的选择. </p>
 <p>objc构建一个对象使用的是两段式, 首先分配内存<code>alloc</code>然后<code>init</code>, 这样的好处就是将内存操作和初始化操作解耦合, 让我们能够在初始化的时候对对象做一些必要的操作. 这是个很好的思路, 我们在做很多事情的时候都可以使用这种两段式的思路. 比如布局一个UIView, 我们可以分成两部, <a href="#alloc">初始化必要的子view和变量</a>, <a href="#init">然后在合适的时机进行布局</a>. 一般来说我们的自定义类继承自UIView, 首先在initWithFrame:方法中将需要的子控件加入view中. 注意, 这里只是加入到view中, 并没有设置各个子控件的尺寸.</p>
@@ -269,7 +256,7 @@
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">

@@ -32,7 +32,7 @@
 <meta property="og:url" content="http://hchong.net/2017/05/17/Xcode自动化打包脚本/index.html">
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="Xcode自动化打包脚本自动化打包脚本是配合多渠道包和多环境包的自动化实现使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁. 打包的基本思路这里说一下打包脚本的基本实现思路:  需要传入的参数有Scheme(用来指定打哪个环境的包), 如果使用Fir来作为内测分发工具的话, 还需要传入Fir的">
-<meta property="og:locale" content="zh-zh-Hans">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-05-19T14:18:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Xcode自动化打包脚本">
@@ -155,7 +155,7 @@
 
 
   <div id="toc" class="toc-article">
-    <strong class="toc-title">Posts List</strong>
+    <strong class="toc-title">文章目录</strong>
     <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Xcode自动化打包脚本"><span class="toc-text">Xcode自动化打包脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#打包的基本思路"><span class="toc-text">打包的基本思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-text">遇到的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Xcode8-3后的plist文件"><span class="toc-text">Xcode8.3后的plist文件</span></a></li></ol></li></ol>
   </div>
 
@@ -223,69 +223,16 @@
 <li>shell脚本需要给权限<code>chomd 777 xx.sh</code>.</li>
 <li>Archive导出为IPA有时会报错<code>Code=14 &quot;No applicable devices found.&quot;</code>, 这个多少是Ruby的路径没有指定导致, 找了一大圈有两个解决方案:<ol>
 <li>通过<code>sudo gem install CFPropertyList</code>, <code>rvm list</code>, <code>rvm use system</code>来解决, Python或者Shell都可以使用这种方式.</li>
-<li>Shell下还有另外的解决方案, 在shell脚本前加入如下代码, 指定路径.<pre><code>[[ -s &quot;$HOME/.rvm/scripts/rvm&quot; ]] &amp;&amp; source &quot;$HOME/.rvm/scripts/rvm&quot;
-rvm use system
-xcodebuild &quot;$@&quot;
-</code></pre></li>
+<li>Shell下还有另外的解决方案, 在shell脚本前加入如下代码, 指定路径.<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">[[ -s &quot;$HOME/.rvm/scripts/rvm&quot; ]] &amp;&amp; source &quot;$HOME/.rvm/scripts/rvm&quot;</div><div class="line">rvm use system</div><div class="line">xcodebuild &quot;$@&quot;</div></pre></td></tr></table></figure>
+</li>
 </ol>
 </li>
 </ol>
 <h2 id="Xcode8-3后的plist文件"><a href="#Xcode8-3后的plist文件" class="headerlink" title="Xcode8.3后的plist文件"></a>Xcode8.3后的plist文件</h2><p>使用<code>xcodebuild -help</code> 可以查看Xcodebuild相关介绍</p>
-<pre><code>Available keys for -exportOptionsPlist:
-
-    compileBitcode : Bool
-
-        For non-App Store exports, should Xcode re-compile the app from bitcode? Defaults to YES.
-
-    embedOnDemandResourcesAssetPacksInBundle : Bool
-
-        For non-App Store exports, if the app uses On Demand Resources and this is YES, asset packs are embedded in the app bundle so that the app can be tested without a server to host asset packs. Defaults to YES unless onDemandResourcesAssetPacksBaseURL is specified.
-
-    iCloudContainerEnvironment
-
-        For non-App Store exports, if the app is using CloudKit, this configures the &quot;com.apple.developer.icloud-container-environment&quot; entitlement. Available options: Development and Production. Defaults to Development.
-
-    manifest : Dictionary
-
-        For non-App Store exports, users can download your app over the web by opening your distribution manifest file in a web browser. To generate a distribution manifest, the value of this key should be a dictionary with three sub-keys: appURL, displayImageURL, fullSizeImageURL. The additional sub-key assetPackManifestURL is required when using on demand resources.
-
-    method : String
-
-        Describes how Xcode should export the archive. Available options: app-store, ad-hoc, package, enterprise, development, and developer-id. The list of options varies based on the type of archive. Defaults to development.
-
-    onDemandResourcesAssetPacksBaseURL : String
-
-        For non-App Store exports, if the app uses On Demand Resources and embedOnDemandResourcesAssetPacksInBundle isn&#39;t YES, this should be a base URL specifying where asset packs are going to be hosted. This configures the app to download asset packs from the specified URL.
-
-    teamID : String
-
-        The Developer Portal team to use for this export. Defaults to the team used to build the archive.
-
-    thinning : String
-
-        For non-App Store exports, should Xcode thin the package for one or more device variants? Available options: &lt;none&gt; (Xcode produces a non-thinned universal app), &lt;thin-for-all-variants&gt; (Xcode produces a universal app and all available thinned variants), or a model identifier for a specific device (e.g. &quot;iPhone7,1&quot;). Defaults to &lt;none&gt;.
-
-    uploadBitcode : Bool
-
-        For App Store exports, should the package include bitcode? Defaults to YES.
-
-    uploadSymbols : Bool
-
-        For App Store exports, should the package include symbols? Defaults to YES.
-</code></pre><p>我们在工程中新建一个plist文件, 可以看出, 大部分是有默认值的, 所以我们不用每个选项都填, 只写一些必填的就可以. </p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
-&lt;plist version=&quot;1.0&quot;&gt;
-    &lt;dict&gt;
-        &lt;key&gt;method&lt;/key&gt;
-        &lt;string&gt;enterprise&lt;/string&gt;
-        &lt;key&gt;uploadSymbols&lt;/key&gt;
-        &lt;true/&gt;
-        &lt;key&gt;uploadBitcode&lt;/key&gt;
-        &lt;false/&gt;
-    &lt;/dict&gt;
-&lt;/plist&gt;
-</code></pre><hr>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Available keys for -exportOptionsPlist:</div><div class="line"></div><div class="line">	compileBitcode : Bool</div><div class="line"></div><div class="line">		For non-App Store exports, should Xcode re-compile the app from bitcode? Defaults to YES.</div><div class="line"></div><div class="line">	embedOnDemandResourcesAssetPacksInBundle : Bool</div><div class="line"></div><div class="line">		For non-App Store exports, if the app uses On Demand Resources and this is YES, asset packs are embedded in the app bundle so that the app can be tested without a server to host asset packs. Defaults to YES unless onDemandResourcesAssetPacksBaseURL is specified.</div><div class="line"></div><div class="line">	iCloudContainerEnvironment</div><div class="line"></div><div class="line">		For non-App Store exports, if the app is using CloudKit, this configures the &quot;com.apple.developer.icloud-container-environment&quot; entitlement. Available options: Development and Production. Defaults to Development.</div><div class="line"></div><div class="line">	manifest : Dictionary</div><div class="line"></div><div class="line">		For non-App Store exports, users can download your app over the web by opening your distribution manifest file in a web browser. To generate a distribution manifest, the value of this key should be a dictionary with three sub-keys: appURL, displayImageURL, fullSizeImageURL. The additional sub-key assetPackManifestURL is required when using on demand resources.</div><div class="line"></div><div class="line">	method : String</div><div class="line"></div><div class="line">		Describes how Xcode should export the archive. Available options: app-store, ad-hoc, package, enterprise, development, and developer-id. The list of options varies based on the type of archive. Defaults to development.</div><div class="line"></div><div class="line">	onDemandResourcesAssetPacksBaseURL : String</div><div class="line"></div><div class="line">		For non-App Store exports, if the app uses On Demand Resources and embedOnDemandResourcesAssetPacksInBundle isn&apos;t YES, this should be a base URL specifying where asset packs are going to be hosted. This configures the app to download asset packs from the specified URL.</div><div class="line"></div><div class="line">	teamID : String</div><div class="line"></div><div class="line">		The Developer Portal team to use for this export. Defaults to the team used to build the archive.</div><div class="line"></div><div class="line">	thinning : String</div><div class="line"></div><div class="line">		For non-App Store exports, should Xcode thin the package for one or more device variants? Available options: &lt;none&gt; (Xcode produces a non-thinned universal app), &lt;thin-for-all-variants&gt; (Xcode produces a universal app and all available thinned variants), or a model identifier for a specific device (e.g. &quot;iPhone7,1&quot;). Defaults to &lt;none&gt;.</div><div class="line"></div><div class="line">	uploadBitcode : Bool</div><div class="line"></div><div class="line">		For App Store exports, should the package include bitcode? Defaults to YES.</div><div class="line"></div><div class="line">	uploadSymbols : Bool</div><div class="line"></div><div class="line">		For App Store exports, should the package include symbols? Defaults to YES.</div></pre></td></tr></table></figure>
+<p>我们在工程中新建一个plist文件, 可以看出, 大部分是有默认值的, 所以我们不用每个选项都填, 只写一些必填的就可以. </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</div><div class="line">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</div><div class="line">&lt;plist version=&quot;1.0&quot;&gt;</div><div class="line">    &lt;dict&gt;</div><div class="line">        &lt;key&gt;method&lt;/key&gt;</div><div class="line">        &lt;string&gt;enterprise&lt;/string&gt;</div><div class="line">        &lt;key&gt;uploadSymbols&lt;/key&gt;</div><div class="line">        &lt;true/&gt;</div><div class="line">        &lt;key&gt;uploadBitcode&lt;/key&gt;</div><div class="line">        &lt;false/&gt;</div><div class="line">    &lt;/dict&gt;</div><div class="line">&lt;/plist&gt;</div></pre></td></tr></table></figure>
+<hr>
 <p><a href="https://github.com/HChong3210/buildScript.git" target="_blank" rel="noopener">附件下载</a></p>
 <hr>
 <p>参考文章:</p>
@@ -310,7 +257,7 @@ xcodebuild &quot;$@&quot;
   <span id="cover" class="cover hide"></span>
   <div id="modal-dialog" class="modal-dialog hide-dialog">
     <div class="modal-header">
-      <span id="close" class="btn-close">Close</span>
+      <span id="close" class="btn-close">关闭</span>
     </div>
     <hr>
     <div class="modal-body">
