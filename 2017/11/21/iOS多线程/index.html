@@ -25,13 +25,13 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线">
+  <meta name="description" content="首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS多线程">
 <meta property="og:url" content="http://hchong.net/2017/11/21/iOS多线程/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
+<meta property="og:description" content="首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器, 一组寄存器和栈),">
 <meta property="og:locale" content="zh-zh-Hans">
 <meta property="og:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
 <meta property="og:image" content="http://img.souche.com/f2e/5b1729532683ad164c061958d5248a66.png">
@@ -39,10 +39,10 @@
 <meta property="og:image" content="http://img.souche.com/f2e/9c13eaeac28f7fe7105af2feb878d5ef.png">
 <meta property="og:image" content="http://img.souche.com/f2e/43a48f9de1c0bb336215543157ad875b.png">
 <meta property="og:image" content="http://img.souche.com/f2e/0d108cba7a737b62e2f5e1be402bc5d0.png">
-<meta property="og:updated_time" content="2017-11-28T16:00:38.390Z">
+<meta property="og:updated_time" content="2018-03-07T07:59:07.054Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS多线程">
-<meta name="twitter:description" content="iOS开发多线程首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器,">
+<meta name="twitter:description" content="首先我们来搞清楚几个概念和他们之间的联系和区别:  多线程开发常用概念 进程和线程进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.​线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器, 一组寄存器和栈),">
 <meta name="twitter:image" content="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png">
 
   
@@ -135,17 +135,6 @@
         <li class="item-toolbox">
           <a
             class="ROUND_RECT"
-            href="/Wiki/"
-            rel="noopener noreferrer"
-            target="_self"
-            >
-            Wiki
-          </a>
-        </li>
-      
-        <li class="item-toolbox">
-          <a
-            class="ROUND_RECT"
             href="/about/"
             rel="noopener noreferrer"
             target="_self"
@@ -174,7 +163,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS开发多线程"><span class="toc-text">iOS开发多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成-Dispatch-Group"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成(Dispatch Group)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作-dispatch-after"><span class="toc-text">GCD延时操作(dispatch_after)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例-dispatch-once"><span class="toc-text">GCD单例(dispatch_once)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-线程间的通讯"><span class="toc-text">GCD 线程间的通讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD重复执行同一个任务-dispatch-apply"><span class="toc-text">GCD重复执行同一个任务(dispatch_apply)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD设置优先级-dispatch-set-target-queue"><span class="toc-text">GCD设置优先级(dispatch_set_target_queue)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD栅栏-dispatch-barrier-async"><span class="toc-text">GCD栅栏(dispatch_barrier_async)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD信号量-dispatch-semaphore-t"><span class="toc-text">GCD信号量(dispatch_semaphore_t)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD定时器"><span class="toc-text">GCD定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#案例一"><span class="toc-text">案例一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例二"><span class="toc-text">案例二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例三"><span class="toc-text">案例三</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例四"><span class="toc-text">案例四</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例五"><span class="toc-text">案例五</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程开发常用概念"><span class="toc-text">多线程开发常用概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程实现方案"><span class="toc-text">多线程实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pthresds"><span class="toc-text">Pthresds</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSThread"><span class="toc-text">NSThread</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation-amp-NSOperationQueue"><span class="toc-text">NSOperation & NSOperationQueue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见的使用方式"><span class="toc-text">常见的使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列中添加异步任务"><span class="toc-text">GCD向并行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向串行队列中添加异步任务"><span class="toc-text">GCD向串行队列中添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD向并行队列添加同步任务"><span class="toc-text">GCD向并行队列添加同步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-向串行队列添加异步任务"><span class="toc-text">GCD 向串行队列添加异步任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD监听并行队列中多个异步任务是否已经完成-Dispatch-Group"><span class="toc-text">GCD监听并行队列中多个异步任务是否已经完成(Dispatch Group)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD延时操作-dispatch-after"><span class="toc-text">GCD延时操作(dispatch_after)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD单例-dispatch-once"><span class="toc-text">GCD单例(dispatch_once)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD-线程间的通讯"><span class="toc-text">GCD 线程间的通讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD重复执行同一个任务-dispatch-apply"><span class="toc-text">GCD重复执行同一个任务(dispatch_apply)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD设置优先级-dispatch-set-target-queue"><span class="toc-text">GCD设置优先级(dispatch_set_target_queue)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD栅栏-dispatch-barrier-async"><span class="toc-text">GCD栅栏(dispatch_barrier_async)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD信号量-dispatch-semaphore-t"><span class="toc-text">GCD信号量(dispatch_semaphore_t)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD定时器"><span class="toc-text">GCD定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的优先级"><span class="toc-text">NSOperation的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation的依赖关系"><span class="toc-text">NSOperation的依赖关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见使用案列分析"><span class="toc-text">常见使用案列分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#案例一"><span class="toc-text">案例一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例二"><span class="toc-text">案例二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例三"><span class="toc-text">案例三</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例四"><span class="toc-text">案例四</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例五"><span class="toc-text">案例五</span></a></li></ol></li></ol>
   </div>
 
 
@@ -227,33 +216,28 @@
 
   <div class="article-content">
     
-      <h1 id="iOS开发多线程"><a href="#iOS开发多线程" class="headerlink" title="iOS开发多线程"></a>iOS开发多线程</h1><p>首先我们来搞清楚几个概念和他们之间的联系和区别: </p>
+      <p>首先我们来搞清楚几个概念和他们之间的联系和区别: </p>
 <h2 id="多线程开发常用概念"><a href="#多线程开发常用概念" class="headerlink" title="多线程开发常用概念"></a>多线程开发常用概念</h2><ol>
-<li><p>进程和线程</p>
-<p>进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.<br>​<br>线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器, 一组寄存器和栈), 但是它可与同属一个进程的其他的线程共享进程所拥有的全部资源. </p>
+<li><p>进程和线程<br>进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动, 进程是系统进行资源分配和调度的一个独立单位.<br>​<br>线程是进程的一个实体, 是CPU调度和分派(资源分配)的基本单位, 它是比进程更小的能独立运行的基本单位. 线程自己基本上不拥有系统资源, 只拥有一点在运行中必不可少的资源(如程序计数器, 一组寄存器和栈), 但是它可与同属一个进程的其他的线程共享进程所拥有的全部资源. </p>
 <p>一个线程可以创建和撤销另一个线程; 同一个进程中的多个线程之间可以并发执行. </p>
 <p>进程和线程的主要差别在于它们是不同的操作系统资源管理方式. 进程有独立的地址空间, 一个进程崩溃后, 在保护模式下不会对其它进程产生影响. 而线程只是一个进程中的不同执行路径. 线程有自己的堆栈和局部变量, 但线程之间没有单独的地址空间, 一个线程死掉就等于整个进程死掉, 所以多进程的程序要比多线程的程序健壮, 但在进程切换时, 耗费资源较大, 效率要差一些. 但对于一些要求同时进行并且又要共享某些变量的并发操作, 只能用线程, 不能用进程. </p>
 <ol>
-<li>简而言之, 一个程序至少有一个进程, 一个进程至少有一个线程.<ol>
+<li>简而言之, 一个程序至少有一个进程, 一个进程至少有一个线程.</li>
 <li>线程的划分尺度小于进程, 使得多线程程序的并发性高. </li>
 <li>另外, 进程在执行过程中拥有独立的内存单元, 而多个线程共享内存, 从而极大地提高了程序的运行效率. </li>
 <li>线程在执行过程中与进程还是有区别的. 每个独立的线程有一个程序运行的入口, 顺序执行序列和程序的出口. 但是线程不能够独立执行, 必须依存在应用程序中, 由应用程序提供多个线程执行控制. </li>
 <li>从逻辑角度来看, 多线程的意义在于一个应用程序中, 有多个执行部分可以同时执行. 但操作系统并没有将多个线程看做多个独立的应用, 来实现进程的调度和管理以及资源分配. 这就是进程和线程的重要区别.</li>
 </ol>
-</li>
-</ol>
 <p>打个比方, 多进程就好比同时执行多个程序. 比如同时运行QQ, 音乐播放器, 以及浏览器. 多线程就是同一时刻执行多个线程, 用浏览器一边下载, 一边听歌, 一边看视频, 一边看网页. 浏览器这个进程下有多个线程, 这些线程共享系统分配给浏览器这个进程的资源, 所以各个线程之间可很方便的通信, 一个线程死了, 不会影响其他线程的运行. 如果浏览器这个进程死了, 那么他下面的所有线程就都用不了了. 我们可以通过浏览器打开QQ这里就是进程间通信, 由于不同的进程系统资源不同, 所以进程间的通信不是很容易实现. 并且切换进程会有性能问题.</p>
 </li>
-<li><p>并发和并行</p>
-<p> 并发指能够让多个任务在逻辑上交织执行的程序设计, 但并发事件之间不一定要同一时刻发生. 并行指的是程序运行时的状态是物理上同时执行, 是指同时发生的两个并发事件, 具有并发的含义, 而并发则不一定并行. </p>
+<li><p>并发和并行<br> 并发指能够让多个任务在逻辑上交织执行的程序设计, 但并发事件之间不一定要同一时刻发生. 并行指的是程序运行时的状态是物理上同时执行, 是指同时发生的两个并发事件, 具有并发的含义, 而并发则不一定并行. </p>
 <p> 并发是一种现象, 面对这一现象, 我们首先创建多个线程. 真正加快程序运行速度的, 是并行技术. 也就是让多个CPU同时工作. 而多线程, 是为了让多个CPU同时工作成为可能. 并发设计让并发执行成为可能, 而并行是并发执行的一种模式.</p>
 <p> 并发和并行的区别就是一个人同时吃三个馒头和三个人同时吃三个馒头. 一个人同时吃三个馒头但是同一时间只能啃一个馒头, 三个人同时吃三个馒头, 三个馒头同一时间都会被啃.</p>
 <p> 下图反映了一个包含8个操作的任务在一个有两核心的CPU中创建四个线程运行的情况. 假设每个核心有两个线程, 那么每个CPU中两个线程会交替并发, 两个CPU之间的操作会并行运算. 就CPU1而言虽然实现了并发但是同一时间只有一个任务在进行, CPU只是快速的在任务之间切换, CPU1和CPU2整体来看是并行元算, 同一时间是有多个任务在进行. 单就一个CPU而言两个线程可以解决线程阻塞造成的不流畅问题, 其本身运行效率并没有提高. 多CPU的并行运算才真正解决了运行效率问题, 这也正是并发和并行的区别. </p>
 <p> <img src="http://img.souche.com/f2e/5d7717afde012bbfc557f26bc5eaffea.png" alt="并发和并行"></p>
 <p> 注意: 并行和串行是相对应的. 串行在物理层面上同一时刻只会有一个任务在进行.</p>
 </li>
-<li><p>同步和异步</p>
-<p> 同步在发出一个同步调用时, 在没有得到结果之前, 该调用就不返回. 多个任务情况下, 一个任务A执行结束, 才可以执行另一个任务B. 只存在一个线程. 异步在发出一个异步调用后, 调用者不会立刻得到结果, 该调用就返回了. 多个任务情况下, 一个任务A正在执行, 同时可以执行另一个任务B. 任务B不用等待任务A结束才执行. 存在多条线程. </p>
+<li><p>同步和异步<br>同步在发出一个同步调用时, 在没有得到结果之前, 该调用就不返回. 多个任务情况下, 一个任务A执行结束, 才可以执行另一个任务B. 只存在一个线程. 异步在发出一个异步调用后, 调用者不会立刻得到结果, 该调用就返回了. 多个任务情况下, 一个任务A正在执行, 同时可以执行另一个任务B. 任务B不用等待任务A结束才执行. 存在多条线程. </p>
 </li>
 </ol>
 <h2 id="多线程实现方案"><a href="#多线程实现方案" class="headerlink" title="多线程实现方案"></a>多线程实现方案</h2><p>在iOS开发中常见的多线程方案一共有4套, 分别是<code>Pthreads</code>, <code>NSThread</code>, <code>GCD</code>, <code>NSOperation &amp; NSOperationQueue</code>. 前两种不怎么常用, 这里就简单的介绍一下, 着重介绍后两种. </p>
@@ -389,8 +373,7 @@ void *threadTask(void *params) {
 </code></pre><h3 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h3><p>Grand Central Dispatch, 它是苹果为多核的并行运算提出的解决方案, 会自动合理地利用更多的CPU内核(比如双核、四核), 最重要的是它会自动管理线程的生命周期(创建线程、调度任务、销毁线程), 完全不需要我们管理, 我们只需要告诉干什么就行. 同时它使用的也是C语言, 不过由于使用了Block(Swift里叫做闭包), 使得使用起来更加方便, 而且灵活.</p>
 <p>了解GCD我们需要先了解两个概念, <strong><code>队列</code></strong>和<strong><code>任务</code></strong>.</p>
 <ol>
-<li><p>任务</p>
-<p> 要执行的操作或方法函数. 在GCD中指的就是block块, 在NSThread中指的是<code>performSelector:</code>中的方法. 加入任务时有两种形式: <code>同步任务(dispatch_sync)</code>和<code>异步任务(dispatch_async)</code>.</p>
+<li><p>任务<br>要执行的操作或方法函数. 在GCD中指的就是block块, 在NSThread中指的是<code>performSelector:</code>中的方法. 加入任务时有两种形式: <code>同步任务(dispatch_sync)</code>和<code>异步任务(dispatch_async)</code>.</p>
 <ol>
 <li>同步任务: 不会开启新的线程, 会阻塞当前线程. 完成需要做的任务后才会返回, 进行下一任务. 创建方式为:<pre><code>  //把右边的参数(任务)提交给左边的参数(队列)进行执行
   dispatch_sync(dispatch_queue_t queue, dispatch_block_t block);
@@ -401,35 +384,34 @@ void *threadTask(void *params) {
 </code></pre></li>
 </ol>
 </li>
-<li><p>队列</p>
-<p> 存放任务的集合, 我们要做的就是将任务添加到队列然后执行, GCD会自动将队列中的任务按先进先出的方式取出. 队列主要有的有<code>串行队列(Serial Dispatch Queue)</code>, <code>并行队列(Concurrent Dispatch Queue)</code>, <code>全局队列(Global Queue)</code>和<code>主队列(Main Queue)</code>.</p>
+<li><p>队列<br>存放任务的集合, 我们要做的就是将任务添加到队列然后执行, GCD会自动将队列中的任务按先进先出的方式取出. 队列主要有的有<code>串行队列(Serial Dispatch Queue)</code>, <code>并行队列(Concurrent Dispatch Queue)</code>, <code>全局队列(Global Queue)</code>和<code>主队列(Main Queue)</code>.</p>
 <ol>
 <li><p>串行队列: 任务依次执行, 同一时间队列中只有一个任务在执行, 每个任务只有在前一个任务执行完成后才能开始执行. 你不知道在一个Block(任务)执行结束到下一个Block(任务)开始执行之间的这段时间时间是多长, 这部分是由GCD控制. 创建方式为:</p>
-<pre><code>  //创建一个名为queue的串行队列
-  //第一个参数为队列名称
-  //第二个参数为队列类型, DISPATCH_QUEUE_SERIAL和NULL表示串行队列
-  dispatch_queue_t queue = dispatch_queue_create(&quot;com.private.SerialQueue&quot;, DISPATCH_QUEUE_SERIAL);
+<pre><code>    //创建一个名为queue的串行队列
+    //第一个参数为队列名称
+    //第二个参数为队列类型, DISPATCH_QUEUE_SERIAL和NULL表示串行队列
+    dispatch_queue_t queue = dispatch_queue_create(&quot;com.private.SerialQueue&quot;, DISPATCH_QUEUE_SERIAL);
 </code></pre></li>
 <li><p>并行队列: 任务并发执行, 唯一能保证的是, 这些任务会按照被添加的顺序开始执行. 但是任务可以以任何顺序完成, 你不知道在执行下一个任务是从什么时候开始, 或者说任意时刻有多个Block(任务)运行, 这个完全是取决于GCD. GCD默认已经提供了全局的并发队列, 供整个应用使用, 一般不需要手动创建创建方式为:</p>
-<pre><code>  //创建一个名为queue的并行队列
-  //第一个参数为队列名称
-  //第二个参数为队列类型, DISPATCH_QUEUE_CONCURRENT表示并行队列
-  dispatch_queue_t queue = dispatch_queue_create(&quot;com.private.ConcurrentQueue&quot;,DISPATCH_QUEUE_CONCURRENT);
+<pre><code>    //创建一个名为queue的并行队列
+    //第一个参数为队列名称
+    //第二个参数为队列类型, DISPATCH_QUEUE_CONCURRENT表示并行队列
+    dispatch_queue_t queue = dispatch_queue_create(&quot;com.private.ConcurrentQueue&quot;,DISPATCH_QUEUE_CONCURRENT);
 </code></pre></li>
 <li><p>全局队列: <strong>隶属于并行队列</strong>, 不要与 barrier 栅栏方法搭配使用, barrier 只有与自定义的并行队列一起使用, 才能让 barrier 达到我们所期望的栅栏功能. 与串行队列或者global队列 一起使用, barrier的表现会和dispatch_sync方法一样. 创建方式为:</p>
-<pre><code>  //获取系统全局队列, 并赋值给队列queue
-  //第一个参数表示优先级, 这里是新老优先级的对照Map
-*  - DISPATCH_QUEUE_PRIORITY_HIGH:         QOS_CLASS_USER_INITIATED//高
-*  - DISPATCH_QUEUE_PRIORITY_DEFAULT:      QOS_CLASS_DEFAULT//默认
-*  - DISPATCH_QUEUE_PRIORITY_LOW:          QOS_CLASS_UTILITY//低
-*  - DISPATCH_QUEUE_PRIORITY_BACKGROUND:   QOS_CLASS_BACKGROUND//后台
+<pre><code>    //获取系统全局队列, 并赋值给队列queue
+    //第一个参数表示优先级, 这里是新老优先级的对照Map
+  *  - DISPATCH_QUEUE_PRIORITY_HIGH:         QOS_CLASS_USER_INITIATED//高
+  *  - DISPATCH_QUEUE_PRIORITY_DEFAULT:      QOS_CLASS_DEFAULT//默认
+  *  - DISPATCH_QUEUE_PRIORITY_LOW:          QOS_CLASS_UTILITY//低
+  *  - DISPATCH_QUEUE_PRIORITY_BACKGROUND:   QOS_CLASS_BACKGROUND//后台
 
-//第二个参数是预留参数, 传0就好
-dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+  //第二个参数是预留参数, 传0就好
+  dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 </code></pre></li>
 <li><p>主队列: <strong>隶属于串行队列</strong>, 不能与sync同步方法搭配使用, 会造成死循环. 主队列是GCD自带的一种特殊的串行队列, 放在主队列中的任务, 都会放到主线程中执行. 创建方式为:</p>
-<pre><code>  //获取系统主队列, 并赋值给队列queue
-  dispatch_queue_t queue = dispatch_get_main_queue();
+<pre><code>    //获取系统主队列, 并赋值给队列queue
+    dispatch_queue_t queue = dispatch_get_main_queue();
 </code></pre></li>
 </ol>
 </li>
@@ -437,131 +419,115 @@ dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU
 <p>不管是串行队列(SerialQueue)还是并行队列(ConcurrencyQueue), 都是FIFO队列. 也就意味着, 任务一定是一个一个地, 按照先进先出的顺序来执行.</p>
 <h3 id="NSOperation-amp-NSOperationQueue"><a href="#NSOperation-amp-NSOperationQueue" class="headerlink" title="NSOperation &amp; NSOperationQueue"></a>NSOperation &amp; NSOperationQueue</h3><p><code>NSOperation</code> 是苹果公司对<code>GCD</code>的封装, 完全面向对象, 所以使用起来更好理解. 大家可以看到 <code>NSOperation</code>和<code>NSOperationQueue</code>分别对应<code>GCD</code>的<strong>任务</strong>和<strong>队列</strong>. 所以他的操作步骤和<code>GCD</code>类似: 首先将要执行的任务封装到一个<code>NSOperation</code>对象中. 然后将此任务添加到一个<code>NSOperationQueue</code>对象中, 然后系统就会自动在执行任务.</p>
 <ol>
-<li><p><code>NSOperation</code>主要有一下这些属性和方法. </p>
-<pre><code>  ​```
- @interface NSOperation : NSObject {
- @private
-     id _private;
-     int32_t _private1;
- #if __LP64__
-     int32_t _private1b;
- #endif
- }
+<li><code>NSOperation</code>主要有一下这些属性和方法.</li>
+</ol>
+<pre><code>@interface NSOperation : NSObject {
+@private
+ id _private;
+ int32_t _private1;
+#if __LP64__
+ int32_t _private1b;
+#endif
+}
 
- - (void)start;//启动任务 默认在当前线程执行
- - (void)main;//自定义NSOperation，写一个子类，重写这个方法，在这个方法里面添加需要执行的操作。
+- (void)start;//启动任务 默认在当前线程执行
+- (void)main;//自定义NSOperation，写一个子类，重写这个方法，在这个方法里面添加需要执行的操作。
 
- @property (readonly, getter=isCancelled) BOOL cancelled;//是否已经取消，只读
- - (void)cancel;//取消任务
+@property (readonly, getter=isCancelled) BOOL cancelled;//是否已经取消，只读
+- (void)cancel;//取消任务
 
- @property (readonly, getter=isExecuting) BOOL executing;//正在执行，只读
- @property (readonly, getter=isFinished) BOOL finished;//执行结束，只读
- @property (readonly, getter=isConcurrent) BOOL concurrent; // To be deprecated; use and override &#39;asynchronous&#39; below
- @property (readonly, getter=isAsynchronous) BOOL asynchronous NS_AVAILABLE(10_8, 7_0);//是否并发，只读
- @property (readonly, getter=isReady) BOOL ready;//准备执行
+@property (readonly, getter=isExecuting) BOOL executing;//正在执行，只读
+@property (readonly, getter=isFinished) BOOL finished;//执行结束，只读
+@property (readonly, getter=isConcurrent) BOOL concurrent; // To be deprecated; use and override &#39;asynchronous&#39; below
+@property (readonly, getter=isAsynchronous) BOOL asynchronous NS_AVAILABLE(10_8, 7_0);//是否并发，只读
+@property (readonly, getter=isReady) BOOL ready;//准备执行
 
- - (void)addDependency:(NSOperation *)op;//添加依赖
- - (void)removeDependency:(NSOperation *)op;//移除依赖
+- (void)addDependency:(NSOperation *)op;//添加依赖
+- (void)removeDependency:(NSOperation *)op;//移除依赖
 
- @property (readonly, copy) NSArray&lt;NSOperation *&gt; *dependencies;//所有依赖关系，只读
+@property (readonly, copy) NSArray&lt;NSOperation *&gt; *dependencies;//所有依赖关系，只读
 
- typedef NS_ENUM(NSInteger, NSOperationQueuePriority) {
-     NSOperationQueuePriorityVeryLow = -8L,
-     NSOperationQueuePriorityLow = -4L,
-     NSOperationQueuePriorityNormal = 0,
-     NSOperationQueuePriorityHigh = 4,
-     NSOperationQueuePriorityVeryHigh = 8
- };//系统提供的优先级关系枚举
+typedef NS_ENUM(NSInteger, NSOperationQueuePriority) {
+ NSOperationQueuePriorityVeryLow = -8L,
+ NSOperationQueuePriorityLow = -4L,
+ NSOperationQueuePriorityNormal = 0,
+ NSOperationQueuePriorityHigh = 4,
+ NSOperationQueuePriorityVeryHigh = 8
+};//系统提供的优先级关系枚举
 
- @property NSOperationQueuePriority queuePriority;//执行优先级
+@property NSOperationQueuePriority queuePriority;//执行优先级
 
- @property (nullable, copy) void (^completionBlock)(void) NS_AVAILABLE(10_6, 4_0);//任务执行完成之后的回调
+@property (nullable, copy) void (^completionBlock)(void) NS_AVAILABLE(10_6, 4_0);//任务执行完成之后的回调
 
- - (void)waitUntilFinished NS_AVAILABLE(10_6, 4_0);//阻塞当前线程，等到某个operation执行完毕。
+- (void)waitUntilFinished NS_AVAILABLE(10_6, 4_0);//阻塞当前线程，等到某个operation执行完毕。
 
- @property double threadPriority NS_DEPRECATED(10_6, 10_10, 4_0, 8_0);//已废弃，用qualityOfService替代。
+@property double threadPriority NS_DEPRECATED(10_6, 10_10, 4_0, 8_0);//已废弃，用qualityOfService替代。
 
- @property NSQualityOfService qualityOfService NS_AVAILABLE(10_10, 8_0);//服务质量，一个高质量的服务就意味着更多的资源得以提供来更快的完成操作。
+@property NSQualityOfService qualityOfService NS_AVAILABLE(10_10, 8_0);//服务质量，一个高质量的服务就意味着更多的资源得以提供来更快的完成操作。
 
- @property (nullable, copy) NSString *name NS_AVAILABLE(10_10, 8_0);//任务名称
+@property (nullable, copy) NSString *name NS_AVAILABLE(10_10, 8_0);//任务名称
 
- @end
- ​```
-</code></pre><p> 由于<code>NSOperation</code>是一个抽象基类, 不能直接使用, 在这里我么你一般使用<code>NSOperation</code>的两个子类<code>NSInvocationOperation</code>和<code>NSBlockOperation</code>, 或者<code>NSOperation的自定义子类</code>:</p>
-<pre><code> 1. `NSInvocationOperation`基于应用的一个target对象和selector来创建operation object. 如果你已经有现有的方法来执行需要的任务, 就可以使用这个类. 使用方式大致如下: 
-
- ```
- - (void)NSInvocationOperationRun {
-     NSInvocationOperation *invocationOper = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(invocationOperSel) object:nil];
-     [invocationOper start];
+@end
+</code></pre><p>由于<code>NSOperation</code>是一个抽象基类, 不能直接使用, 在这里我么你一般使用<code>NSOperation</code>的两个子类<code>NSInvocationOperation</code>和<code>NSBlockOperation</code>, 或者<code>NSOperation的自定义子类</code>:</p>
+<ol>
+<li><p><code>NSInvocationOperation</code>基于应用的一个target对象和selector来创建operation object. 如果你已经有现有的方法来执行需要的任务, 就可以使用这个类. 使用方式大致如下: </p>
+<pre><code> - (void)NSInvocationOperationRun {
+   NSInvocationOperation *invocationOper = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(invocationOperSel) object:nil];
+   [invocationOper start];
  }
  - (void)invocationOperSel {
-     NSLog(@&quot;NSInvocationOperationRun_%@&quot;, [NSThread currentThread]);
+   NSLog(@&quot;NSInvocationOperationRun_%@&quot;, [NSThread currentThread]);
  }
- ```
 </code></pre><p> 从打印结果可以看出, 该实现方式是同步顺序执行.</p>
-<pre><code> 2.  `NSBlockOperation`用来并发地执行一个或多个block对象. operation object使用**组**的语义来执行多个block对象，所有相关的 block 都执行完成之后, operation object才算完成. 使用方法如下
+</li>
+<li><p><code>NSBlockOperation</code>用来并发地执行一个或多个block对象. operation object使用<strong>组</strong>的语义来执行多个block对象，所有相关的 block 都执行完成之后, operation object才算完成. 使用方法如下:</p>
+<pre><code>//系统提供的API
+@interface NSBlockOperation : NSOperation {
+@private
+    id _private2;
+    void *_reserved2;
+}
 
-      ```
-      //系统提供的API
-      @interface NSBlockOperation : NSOperation {
-      @private
-          id _private2;
-          void *_reserved2;
-      }
++ (instancetype)blockOperationWithBlock:(void (^)(void))block;//在当前线程执行
 
-     + (instancetype)blockOperationWithBlock:(void (^)(void))block;//在当前线程执行
+- (void)addExecutionBlock:(void (^)(void))block;//新开线程执行
+@property (readonly, copy) NSArray&lt;void (^)(void)&gt; *executionBlocks;
 
-     - (void)addExecutionBlock:(void (^)(void))block;//新开线程执行
-     @property (readonly, copy) NSArray&lt;void (^)(void)&gt; *executionBlocks;
-
-     @end
-      ```
-
- 使用`NSBlockOperation`类方法创建任务, 从打印结果可以看出来该任务是在主线程执行的
-
-     ```
-     - (void)NSBlockOperationRun {
-         NSBlockOperation *blockOper = [NSBlockOperation blockOperationWithBlock:^{
-             NSLog(@&quot;NSBlockOperationRun_%@_%@&quot;, [NSOperationQueue currentQueue], [NSThread currentThread]);
-         }];
-         [blockOper start];
-     }
-     ```
-
- 使用`NBlockOperation`的实例方法创建任务, 从打印结果可以看出来, 第一个任务是在主线程执行, 其他任务均是新开的线程, 所有的任务是以异步并发的形式执行. 
-
-     ```
-     - (void)NSBlockOperationRun {
-         NSBlockOperation *blockOper = [NSBlockOperation blockOperationWithBlock:^{
-             NSLog(@&quot;NSBlockOperationRun_1_%@&quot;, [NSThread currentThread]);
-         }];
-         [blockOper addExecutionBlock:^{
-             NSLog(@&quot;NSBlockOperationRun_2_%@&quot;, [NSThread currentThread]);
-         }];
-         [blockOper addExecutionBlock:^{
-             NSLog(@&quot;NSBlockOperationRun_3_%@&quot;, [NSThread currentThread]);
-         }];
-         [blockOper addExecutionBlock:^{
-             NSLog(@&quot;NSBlockOperationRun_4_%@&quot;, [NSThread currentThread]);
-         }];
-         [blockOper start];
-     }
-     ```
-
- 3. `NSOperation的自定义子类`. 
-
-     ```        
-     在子类中重写父类的`-(void)main`函数, 在里面实现主要逻辑
-     ```
+@end
+</code></pre><p>使用<code>NSBlockOperation</code>类方法创建任务, 从打印结果可以看出来该任务是在主线程执行的</p>
+<pre><code> - (void)NSBlockOperationRun {
+ NSBlockOperation *blockOper = [NSBlockOperation blockOperationWithBlock:^{
+     NSLog(@&quot;NSBlockOperationRun_%@_%@&quot;, [NSOperationQueue currentQueue], [NSThread currentThread]);
+ }];
+ [blockOper start];
+ }
+</code></pre><p> 使用<code>NBlockOperation</code>的实例方法创建任务, 从打印结果可以看出来, 第一个任务是在主线程执行, 其他任务均是新开的线程, 所有的任务是以异步并发的形式执行. </p>
+<pre><code> - (void)NSBlockOperationRun {
+  NSBlockOperation *blockOper = [NSBlockOperation blockOperationWithBlock:^{
+      NSLog(@&quot;NSBlockOperationRun_1_%@&quot;, [NSThread currentThread]);
+  }];
+  [blockOper addExecutionBlock:^{
+      NSLog(@&quot;NSBlockOperationRun_2_%@&quot;, [NSThread currentThread]);
+  }];
+  [blockOper addExecutionBlock:^{
+      NSLog(@&quot;NSBlockOperationRun_3_%@&quot;, [NSThread currentThread]);
+  }];
+  [blockOper addExecutionBlock:^{
+      NSLog(@&quot;NSBlockOperationRun_4_%@&quot;, [NSThread currentThread]);
+  }];
+  [blockOper start];
+ }
+</code></pre></li>
+<li><p><code>NSOperation的自定义子类</code>. </p>
+<pre><code> 在子类中重写父类的`-(void)main`函数, 在里面实现主要逻辑
 </code></pre><p>  <code>NSBlockOperation</code>, <code>NSBlockOperationRun</code>或者<code>NSOperation的自定义子类</code>创建的operation object都可以使用<code>NSOperation</code>的所有属性, 意味着他们具有以下主要特性: </p>
-<ol>
+<ul>
 <li>多个任务之间可以使用有依赖关系</li>
 <li>可以获得Operation object任务执行完成之后的回调</li>
 <li>支持应用使用 KVO 通知来监控 operation 的执行状态</li>
 <li>可以通过operation优先级, 从而影响相对的执行顺序</li>
 <li>可以终止正在执行的任务</li>
-</ol>
+</ul>
 </li>
 <li><p><code>NSOperationQueue</code></p>
 <p> 类似于GCD中的队列, 只需要吧任务加入到<code>NSOperationQueue</code>中, 就会自动运行, 由系统通过最大并发数来控制是并行还是串行, 官方提供的API如下:</p>
@@ -1035,10 +1001,6 @@ static id _instance;
 
 
 
-  <a id="backTop" class="back-top">
-    <i class="icon-angle-up"></i>
-  </a>
-
 
 
 
@@ -1082,17 +1044,6 @@ static id _instance;
               target="_self"
               >
               标签
-            </a>
-          </li>
-        
-          <li class="item-toolbox">
-            <a
-              class="ROUND_RECT"
-              href="/Wiki/"
-              rel="noopener noreferrer"
-              target="_self"
-              >
-              Wiki
             </a>
           </li>
         
