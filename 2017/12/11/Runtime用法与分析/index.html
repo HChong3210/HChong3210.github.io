@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/23_15.png">
-<meta property="og:updated_time" content="2018-03-13T15:33:29.808Z">
+<meta property="og:updated_time" content="2018-03-13T15:34:23.397Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Runtime用法与分析">
 <meta name="twitter:description" content="Objective-C 是C的语言的超集, C是一门静态语言而Objective-C却是一门动态语言, 这个动态特性就是由基于Smalltalk消息传递特性的Runtime来提供的. 那么什么是Runtime, 官方的说法是这样的:  The Objective-C language defers as many decisions as it can from compile time and">
@@ -258,18 +258,7 @@
 <p><img src="https://ob6mci30g.qnssl.com/Blog/ArticleImage/23_15.png" alt="class_data_bits_t"></p>
 <p>上面这张图很好地说明了 class_data_bits_t 的作用. 详见<a href="https://github.com/Draveness/analyze/blob/master/contents/objc/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90%20ObjC%20%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%84.md#%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-objc-%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%84" target="_blank" rel="noopener">深入解析 ObjC 中方法的结构</a>. 大致说明一下就是, Objc的类的属性, 方法, 以及遵循的协议在obj 2.0的版本之后都放在 class_rw_t 中. class_ro_t 是一个指向常量的指针, 存储来编译器决定了的属性、方法和遵守协议. 在运行时发消息时, 会从 class_data_bits_t 调用 data 方法, 将结果从 class_rw_t 强制转换为 class_ro_t 指针. 最后调用 methodizeClass 方法, 把类里面的属性, 协议, 方法都加载进来.</p>
 <h2 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h2><h2 id="Runtime的常见用法"><a href="#Runtime的常见用法" class="headerlink" title="Runtime的常见用法"></a>Runtime的常见用法</h2><p>讲了那么多, 那么Runtime在实际应用中主要有哪些用法呢? 我们来看下面.</p>
-<h3 id="实现多继承Multiple-Inheritance"><a href="#实现多继承Multiple-Inheritance" class="headerlink" title="实现多继承Multiple Inheritance"></a>实现多继承Multiple Inheritance</h3><h3 id="Method-Swizzling"><a href="#Method-Swizzling" class="headerlink" title="Method Swizzling"></a>Method Swizzling</h3><h3 id="Isa-Swizzling"><a href="#Isa-Swizzling" class="headerlink" title="Isa Swizzling"></a>Isa Swizzling</h3><h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><h3 id="动态的增加方法"><a href="#动态的增加方法" class="headerlink" title="动态的增加方法"></a>动态的增加方法</h3><h3 id="动态关联对象"><a href="#动态关联对象" class="headerlink" title="动态关联对象"></a>动态关联对象</h3><h3 id="NSCoding的自动归档和自动解档"><a href="#NSCoding的自动归档和自动解档" class="headerlink" title="NSCoding的自动归档和自动解档"></a>NSCoding的自动归档和自动解档</h3><h3 id="字典和模型互相转换"><a href="#字典和模型互相转换" class="headerlink" title="字典和模型互相转换"></a>字典和模型互相转换</h3><ul>
-<li><p>每个Class都有一个isa指针指向一个唯一的Meta Class</p>
-</li>
-<li><p>每一个Meta Class的isa指针都指向最上层的Meta Class（图中的NSObject的Meta Class）</p>
-</li>
-<li><p>最上层的Meta Class的isa指针指向自己，形成一个回路</p>
-</li>
-<li><p>每一个Meta Class的super class指针指向它原本Class的 Super Class的Meta Class。但是最上层的Meta Class的 Super Class指向NSObject Class本身</p>
-</li>
-</ul>
-<p>最上层的NSObject Class的super class指向 nil</p>
-<hr>
+<h3 id="实现多继承Multiple-Inheritance"><a href="#实现多继承Multiple-Inheritance" class="headerlink" title="实现多继承Multiple Inheritance"></a>实现多继承Multiple Inheritance</h3><h3 id="Method-Swizzling"><a href="#Method-Swizzling" class="headerlink" title="Method Swizzling"></a>Method Swizzling</h3><h3 id="Isa-Swizzling"><a href="#Isa-Swizzling" class="headerlink" title="Isa Swizzling"></a>Isa Swizzling</h3><h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><h3 id="动态的增加方法"><a href="#动态的增加方法" class="headerlink" title="动态的增加方法"></a>动态的增加方法</h3><h3 id="动态关联对象"><a href="#动态关联对象" class="headerlink" title="动态关联对象"></a>动态关联对象</h3><h3 id="NSCoding的自动归档和自动解档"><a href="#NSCoding的自动归档和自动解档" class="headerlink" title="NSCoding的自动归档和自动解档"></a>NSCoding的自动归档和自动解档</h3><h3 id="字典和模型互相转换"><a href="#字典和模型互相转换" class="headerlink" title="字典和模型互相转换"></a>字典和模型互相转换</h3><hr>
 <p>参考资料:</p>
 
     
