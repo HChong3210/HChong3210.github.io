@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/23_15.png">
-<meta property="og:updated_time" content="2018-03-15T15:13:06.323Z">
+<meta property="og:updated_time" content="2018-03-16T15:56:49.959Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Runtime用法与分析">
 <meta name="twitter:description" content="Objective-C 是C的语言的超集, C是一门静态语言而Objective-C却是一门动态语言, 这个动态特性就是由基于Smalltalk消息传递特性的Runtime来提供的. 那么什么是Runtime, 官方的说法是这样的:  The Objective-C language defers as many decisions as it can from compile time and">
@@ -357,7 +357,8 @@
 <h3 id="Class与内存地址"><a href="#Class与内存地址" class="headerlink" title="Class与内存地址"></a>Class与内存地址</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@interface Student : NSObject</div><div class="line">@property (nonatomic, copy) NSString *name;</div><div class="line">- (void)speak;</div><div class="line">@end</div><div class="line">@implementation Student</div><div class="line">- (void)speak &#123;                            </div><div class="line">   NSLog(@&quot;my name&apos;s %@&quot;, self.name);</div><div class="line">&#125;</div><div class="line">@end</div><div class="line">@implementation ViewController</div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;  </div><div class="line">  [super viewDidLoad];</div><div class="line">  id cls = [Student class];</div><div class="line">  void *obj = &amp;cls;</div><div class="line">  [(__bridge id)obj speak];</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
 <p>如题, 先说结果: 程序可以正常运行, 结果如下, </p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">2018-03-15 22:45:52.486617+0800 HCRuntime[9838:786076] my name&apos;s &lt;ViewController: 0x7fc349d0a670&gt;</div></pre></td></tr></table></figure>
-<p>接下来我们分析一下都发生了什么. </p>
+<p>接下来我们分析一下都发生了什么. 首先, obj被转换成了一个指向<code>[Student class]</code>的指针, 然后使用<code>(__bridge id)</code>转换成了 objc_object 类型, 这时候实际上已经是一个Student类型的实例对象了, 所以可以正常调用speak方法. 那么调用speak方法会输出什么呢? 我们接下来分析.</p>
+<p>首先我们要知道, Objective-C中的对象是一个指向ClassO bject地址的变量，即 id obj = &amp;ClassObject, 而对象的实例变量 void *ivar = &amp;obj + offset(N). </p>
 <h2 id="Runtime的常见用法"><a href="#Runtime的常见用法" class="headerlink" title="Runtime的常见用法"></a>Runtime的常见用法</h2><p>讲了那么多, 下面看下Runtime在实际应用中主要有用法.</p>
 <h3 id="实现多继承Multiple-Inheritance"><a href="#实现多继承Multiple-Inheritance" class="headerlink" title="实现多继承Multiple Inheritance"></a>实现多继承Multiple Inheritance</h3><h3 id="Method-Swizzling"><a href="#Method-Swizzling" class="headerlink" title="Method Swizzling"></a>Method Swizzling</h3><h3 id="Isa-Swizzling"><a href="#Isa-Swizzling" class="headerlink" title="Isa Swizzling"></a>Isa Swizzling</h3><h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><h3 id="动态的增加方法"><a href="#动态的增加方法" class="headerlink" title="动态的增加方法"></a>动态的增加方法</h3><h3 id="动态关联对象"><a href="#动态关联对象" class="headerlink" title="动态关联对象"></a>动态关联对象</h3><h3 id="NSCoding的自动归档和自动解档"><a href="#NSCoding的自动归档和自动解档" class="headerlink" title="NSCoding的自动归档和自动解档"></a>NSCoding的自动归档和自动解档</h3><h3 id="字典和模型互相转换"><a href="#字典和模型互相转换" class="headerlink" title="字典和模型互相转换"></a>字典和模型互相转换</h3><hr>
 <p>参考资料:</p>
