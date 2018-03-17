@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/23_15.png">
-<meta property="og:updated_time" content="2018-03-17T15:56:50.133Z">
+<meta property="og:updated_time" content="2018-03-17T16:00:06.358Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Runtime用法与分析">
 <meta name="twitter:description" content="Objective-C 是C的语言的超集, C是一门静态语言而Objective-C却是一门动态语言, 这个动态特性就是由基于Smalltalk消息传递特性的Runtime来提供的. 那么什么是Runtime, 官方的说法是这样的:  The Objective-C language defers as many decisions as it can from compile time and">
@@ -383,6 +383,7 @@
 <li>Swizzling在<code>+load</code>中执行时, 不要调用<code>[super load]</code>. 如果是多继承, 并且对同一个方法都进行了Swizzling, 那么调用[super load]以后, 父类的Swizzling就失效了.</li>
 <li>在swizzling的过程中, 方法中的<code>[self xxx_viewWillAppear:animated]</code>已经被重新指定到UIViewController类的<code>-viewWillAppear:</code>中. 这时不会产生无限循环. 如果我们调用的是<code>[self viewWillAppear:animated]</code>, 因为<code>viewWillAppear:</code>被重定向到<code>xxx_viewWillAppear:</code>, 就会产生无限循环.</li>
 <li>如果要Swizzling类方法则要获取当前类的原类, 因为根据objc_msgSend, 实例方法我们从对象的isa也就是对象所在的类中开始找, 类方法则是从类的isa也就是类的原类中开始找. <code>object_getClass((id)self)</code> 与 <code>[self class]</code> 返回的结果类型都是 Class, 但前者为元类, 后者为其本身.</li>
+<li>我们也可以使用这个来做一些异常保护, 例如数组的越界问题, 我们可以Swizzling数组的<code>objectAtIndex:</code>方法, 在新方法中做一些异常处理, 来抛出一些异常信息, 方便我们定位问题.</li>
 </ol>
 <h3 id="Isa-Swizzling"><a href="#Isa-Swizzling" class="headerlink" title="Isa Swizzling"></a>Isa Swizzling</h3><h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><h3 id="动态的增加方法"><a href="#动态的增加方法" class="headerlink" title="动态的增加方法"></a>动态的增加方法</h3><h3 id="动态关联对象"><a href="#动态关联对象" class="headerlink" title="动态关联对象"></a>动态关联对象</h3><h3 id="NSCoding的自动归档和自动解档"><a href="#NSCoding的自动归档和自动解档" class="headerlink" title="NSCoding的自动归档和自动解档"></a>NSCoding的自动归档和自动解档</h3><h3 id="字典和模型互相转换"><a href="#字典和模型互相转换" class="headerlink" title="字典和模型互相转换"></a>字典和模型互相转换</h3><hr>
 <p>参考资料:</p>
