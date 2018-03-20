@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="常见的问题, 在这里做一个汇总. 只讲结论, 内部细节, 慢慢填坑. 什么情况使用 weak 关键字，相比 assign 有什么不同weak常用在有可能出现循环引用的地方, 他表示一种非拥有关系, 为这种属性设置新值时, 设置方法既不保留新值, 也不释放旧值. 与assign类似, 但是不同的是当属性所指的对象被释放时, 属性值会被置为nil, 而assign只执行基础类型的简单赋值操作.  we">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-19T16:08:02.973Z">
+<meta property="og:updated_time" content="2018-03-20T02:59:33.944Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-1">
 <meta name="twitter:description" content="常见的问题, 在这里做一个汇总. 只讲结论, 内部细节, 慢慢填坑. 什么情况使用 weak 关键字，相比 assign 有什么不同weak常用在有可能出现循环引用的地方, 他表示一种非拥有关系, 为这种属性设置新值时, 设置方法既不保留新值, 也不释放旧值. 与assign类似, 但是不同的是当属性所指的对象被释放时, 属性值会被置为nil, 而assign只执行基础类型的简单赋值操作.  we">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么情况使用-weak-关键字，相比-assign-有什么不同"><span class="toc-text">什么情况使用 weak 关键字，相比 assign 有什么不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#怎么用-copy-关键字"><span class="toc-text">怎么用 copy 关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的copy与mutableCopy"><span class="toc-text">对象的copy与mutableCopy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#runtime-如何实现-weak-属性"><span class="toc-text">runtime 如何实现 weak 属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property中有哪些属性关键字？-property-后面可以有哪些修饰符？"><span class="toc-text">@property中有哪些属性关键字？/ @property 后面可以有哪些修饰符？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#protocol-和-category-中如何使用-property"><span class="toc-text">@protocol 和 category 中如何使用 @property</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的"><span class="toc-text">@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么情况使用-weak-关键字，相比-assign-有什么不同"><span class="toc-text">什么情况使用 weak 关键字，相比 assign 有什么不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#怎么用-copy-关键字"><span class="toc-text">怎么用 copy 关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的copy与mutableCopy"><span class="toc-text">对象的copy与mutableCopy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#runtime-如何实现-weak-属性"><span class="toc-text">runtime 如何实现 weak 属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property中有哪些属性关键字？-property-后面可以有哪些修饰符？"><span class="toc-text">@property中有哪些属性关键字？/ @property 后面可以有哪些修饰符？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#protocol-和-category-中如何使用-property"><span class="toc-text">@protocol 和 category 中如何使用 @property</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的"><span class="toc-text">@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synthesize和-dynamic分别有什么作用"><span class="toc-text">@synthesize和@dynamic分别有什么作用</span></a></li></ol>
   </div>
 
 
@@ -233,7 +233,31 @@
 <li>其他: nonnull, null_resettable, nullable.</li>
 </ol>
 <p>基本数据类型默认关键字: atomic, assign, readwrite. 对象类型默认关键字: atomic, strong, readwrite.</p>
-<h2 id="protocol-和-category-中如何使用-property"><a href="#protocol-和-category-中如何使用-property" class="headerlink" title="@protocol 和 category 中如何使用 @property"></a>@protocol 和 category 中如何使用 @property</h2><h2 id="property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的"><a href="#property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的" class="headerlink" title="@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的"></a>@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的</h2>
+<p>atomic 会加一个@synchronized()锁, 并且引用计数会 +1, 来向调用者保证这个对象会一直存在, 但是这个锁并不能保证线程安全. </p>
+<h2 id="protocol-和-category-中如何使用-property"><a href="#protocol-和-category-中如何使用-property" class="headerlink" title="@protocol 和 category 中如何使用 @property"></a>@protocol 和 category 中如何使用 @property</h2><p>在 protocol 中使用 property 只会生成 setter 和 getter 方法声明, 我们使用属性的目的, 是希望遵守我协议的对象能实现该属性.</p>
+<p>category 使用 @property 也是只会生成 setter 和 getter 方法的声明, 如果我们真的需要给 category 增加属性的实现, 需要借助于运行时的两个函数<code>objc_setAssociatedObject</code>和<br><code>objc_getAssociatedObject</code>.</p>
+<h2 id="property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的"><a href="#property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的" class="headerlink" title="@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的"></a>@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的</h2><p>@property的本质是 ivar(实例变量) + getter + setter.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">typedef struct objc_property *objc_property_t;</div><div class="line"></div><div class="line">struct property_t &#123;</div><div class="line">    const char *name;</div><div class="line">    const char *attributes;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">typedef struct &#123;</div><div class="line">    const char *name;           /**&lt; The name of the attribute */</div><div class="line">    const char *value;          /**&lt; The value of the attribute (usually empty) */</div><div class="line">&#125; objc_property_attribute_t;</div></pre></td></tr></table></figure>
+<p>attributes的具体内容包含: 类型, 原子性, 内存语义和对应的实例变量.</p>
+<p>我们每次在增加一个属性, 系统都会在 ivar_list 中添加一个成员变量的描述, 在 method_list 中增加 setter 与 getter 方法的描述, 在属性列表中增加一个属性的描述, 然后计算该属性在对象中的偏移量, 然后给出 setter 与 getter 方法对应的实现, 在 setter 方法中从偏移量的位置开始赋值, 在 getter 方法中从偏移量开始取值, 为了能够读取正确字节数, 系统对象偏移量的指针类型进行了类型强转.</p>
+<p>详见<a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">Runtime用法与分析</a></p>
+<h2 id="synthesize和-dynamic分别有什么作用"><a href="#synthesize和-dynamic分别有什么作用" class="headerlink" title="@synthesize和@dynamic分别有什么作用"></a>@synthesize和@dynamic分别有什么作用</h2><p>@property有两个关键词, @synthesize(默认值)和@dynamic. </p>
+<p>@synthesize表示系统会默认添加一个@syntheszie var = _var的实例变量, 并且自动生成setter和getter方法. @synthesize 合成实例变量有以下几点规则:</p>
+<ol>
+<li>如果指定了成员变量的名称, 会生成一个指定的名称的成员变量.</li>
+<li>如果这个成员已经存在就不再生成了.</li>
+<li>如果没有指定成员变量的名称会自动生成一个属性同名的成员变量.</li>
+</ol>
+<p>@synthesize的使用场景: </p>
+<ol>
+<li>同时重写了setter和getter时</li>
+<li>重写了只读属性的getter时</li>
+<li>在使用了@dynamic时</li>
+<li>在@Protocol和category中定义属性时</li>
+<li>重载父类的属性时, 来手动合成Ivar(实例变量/成员变量).</li>
+</ol>
+<p>@dynamic表示我们不需要系统自动生成, 由用户自己实现, 如果没有手动生成的话, 在使用过程中是会奔溃的.</p>
+
     
   </div>
 </article>
