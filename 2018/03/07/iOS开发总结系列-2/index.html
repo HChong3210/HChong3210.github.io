@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>iOS开发总结系列-2 | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发总结系列-2">
+<meta property="og:url" content="http://hchong.net/2018/03/07/iOS开发总结系列-2/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法列表以及其父类方法列表中寻找方法运行, 如果在最顶层的父类中依然找不到相应的方法">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-03-22T14:47:41.216Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发总结系列-2">
+<meta name="twitter:description" content="什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法列表以及其父类方法列表中寻找方法运行, 如果在最顶层的父类中依然找不到相应的方法">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么时候会报unrecognized-selector的异常"><span class="toc-text">什么时候会报unrecognized selector的异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个objc对象如何进行内存布局"><span class="toc-text">一个objc对象如何进行内存布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#objc-msgForward函数是做什么的-直接调用它将会发生什么"><span class="toc-text">_objc_msgForward函数是做什么的, 直接调用它将会发生什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？"><span class="toc-text">能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-iOS开发总结系列-2" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS开发总结系列-2</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.03.07</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2018/03/07/iOS开发总结系列-2/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="什么时候会报unrecognized-selector的异常"><a href="#什么时候会报unrecognized-selector的异常" class="headerlink" title="什么时候会报unrecognized selector的异常"></a>什么时候会报unrecognized selector的异常</h2><p>涉及到消息的转发阶段知识<a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">Runtime用法与分析</a></p>
+<p>当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法列表以及其父类方法列表中寻找方法运行, 如果在最顶层的父类中依然找不到相应的方法时, 程序在运行时会挂掉并抛出异常unrecognized selector sent to XXX. 但是在这之前, objc的运行时会给出三次拯救程序崩溃的机会.</p>
+<ol>
+<li>Method resolution阶段. objc运行时会调用<code>+resolveInstanceMethod:</code>或者 <code>+resolveClassMethod:</code>, 让你有机会提供一个函数实现. 如果你添加了函数, 那运行时系统就会重新启动一次消息发送的过程, 否则, 运行时就会移到下一步, 消息转发(Message Forwarding).</li>
+<li>Fast forwarding阶段. 如果目标对象实现了<code>-forwardingTargetForSelector:</code>方法, Runtime这时就会调用这个方法, 给你把这个消息转发给其他对象的机会. 只要这个方法返回的不是nil和self, 整个消息发送过程会被重启, 当然发送的对象会变成你返回的那个对象. 否则就会继续Normal fowarging. 这里叫做Fast只是为了区别下一步的转发机制, 因为这一步不会创建任何新的对象, 但下一步会转发会创建一个NSInvocation对象, 所以相对更快一点.</li>
+<li>Normal forwarding阶段. 这一步是Runtime最后给你的挽救机会. 首先会发送<code>-methodSignatureForSelector:</code>消息获得函数的参数和返回值类型. 如果<code>-methodSignatureForSelector:</code>返回nil, Runtime就会发出<code>-doesNotRecognizeSelector:</code>消息, 程序这时候就挂掉了. 如果返回了一个函数签名, Runtime就会创建一个NSInvocation对象并发送<code>-forwardInvocation:</code>消息给目标对象. <h2 id="一个objc对象如何进行内存布局"><a href="#一个objc对象如何进行内存布局" class="headerlink" title="一个objc对象如何进行内存布局"></a>一个objc对象如何进行内存布局</h2>所有父类的成员变量和自己的成员变量都会存放在该对象所对应的存储空间中.<br>每一个对象内部都有一个isa指针, 指向他的类对象, 类对象中存放着本对象的对象方法列表, 成员列表的变量, 属性列表.<br>类的内部也有一个isa指针, 指向原类, 原类内部存放得失类方法列表, 内部也有一个superclass指针, 指向他的父类对象.<h2 id="objc-msgForward函数是做什么的-直接调用它将会发生什么"><a href="#objc-msgForward函数是做什么的-直接调用它将会发生什么" class="headerlink" title="_objc_msgForward函数是做什么的, 直接调用它将会发生什么"></a>_objc_msgForward函数是做什么的, 直接调用它将会发生什么</h2>_objc_msgForward是 IMP 类型, 用于消息转发: 当向一个对象发送一条消息, 但它并没有实现的时候, _objc_msgForward会尝试做消息转发.</li>
+</ol>
+<p>首先我们从消息的查找看起:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">id objc_msgSend(id self, SEL op, ...) &#123;</div><div class="line">    if (!self) return nil;</div><div class="line">	IMP imp = class_getMethodImplementation(self-&gt;isa, SEL op);</div><div class="line">	imp(self, op, ...); //调用这个函数，伪代码...</div><div class="line">&#125;</div><div class="line"> </div><div class="line">//查找IMP</div><div class="line">IMP class_getMethodImplementation(Class cls, SEL sel) &#123;</div><div class="line">    if (!cls || !sel) return nil;</div><div class="line">    IMP imp = lookUpImpOrNil(cls, sel);</div><div class="line">    if (!imp) return _objc_msgForward; //_objc_msgForward 用于消息转发</div><div class="line">    return imp;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">IMP lookUpImpOrNil(Class cls, SEL sel) &#123;</div><div class="line">    if (!cls-&gt;initialize()) &#123;</div><div class="line">        _class_initialize(cls);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    Class curClass = cls;</div><div class="line">    IMP imp = nil;</div><div class="line">    do &#123; //先查缓存,缓存没有时重建,仍旧没有则向父类查询</div><div class="line">        if (!curClass) break;</div><div class="line">        if (!curClass-&gt;cache) fill_cache(cls, curClass);</div><div class="line">        imp = cache_getImp(curClass, sel);</div><div class="line">        if (imp) break;</div><div class="line">    &#125; while (curClass = curClass-&gt;superclass);</div><div class="line"> </div><div class="line">    return imp;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们可以看出, _objc_msgForward 是一个函数指针(和 IMP 的类型一样), 是用于消息转发的: 当向一个对象发送一条消息, 但没有实现的时候, _objc_msgForward会尝试做消息转发.</p>
+<p>我们向一个对象发送一条错误的消息, 然后在程序中加入断点或者暂停程序运行, 并在 gdb 中输入下面的命令: <code>call (void)instrumentObjcMessageSends(YES)</code>. 之后, 运行时发送的所有消息都会打印到/tmp/msgSend-xxxx文件里了. 终端中输入命令<code>open /private/tmp</code>前往文件夹, 找到最新生成的, 双击打开.</p>
+<p>在里面我们可以看到整个程序运行时调用的方法, 排除NSObject做的事, 剩下的就是<code>_objc_msgForward</code>消息转发做的事(实际也是消息转发的整个完整流程, <a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">Runtime用法与分析</a>). </p>
+<ol>
+<li>调用resolveInstanceMethod:方法 (或 resolveClassMethod:). 允许用户在此时为该 Class 动态添加实现. 如果有实现了, 则调用并返回YES, 那么重新开始objc_msgSend流程. 这一次对象会响应这个选择器, 一般是因为它已经调用过class_addMethod. 如果仍没实现, 继续下面的动作.</li>
+<li>调用forwardingTargetForSelector:方法, 尝试找到一个能响应该消息的对象. 如果获取到, 则直接把消息转发给它, 返回非 nil 对象. 否则返回 nil, 继续下面的动作. 注意, 这里不要返回 self, 否则会形成死循环.</li>
+<li>调用methodSignatureForSelector:方法, 尝试获得一个方法签名. 如果获取不到, 则直接调用doesNotRecognizeSelector抛出异常. 如果能获取, 则返回非nil: 创建一个 NSlnvocation 并传给forwardInvocation:.</li>
+<li>调用forwardInvocation:方法, 将第3步获取到的方法签名包装成 Invocation 传入, 如何处理就在这里面了, 并返回非nil.</li>
+<li>调用doesNotRecognizeSelector:, 默认的实现是抛出异常. 如果第3步没能获得一个方法签名, 执行该步骤.</li>
+</ol>
+<p>上面前4个方法均是模板方法, 开发者可以override, 由 runtime 来调用. 最常见的实现消息转发: 就是重写方法3和4, 忽略掉一个消息或者代理给其他对象.</p>
+<p>一旦调用_objc_msgForward, 将跳过查找 IMP 的过程, 直接触发”消息转发”. 具体可以看上面消息查找的具体过程. 可能会导致抛出unrecoginised selector的异常而导致程序crash. </p>
+<h2 id="能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？"><a href="#能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？" class="headerlink" title="能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？"></a>能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？</h2><p>不能向编译后的类中增加实例变量, 因为已经注册在runtime中, 类结构体中的objc_ivar_list(实例变量链表)和instance_size(实例变量的内存大小)已经确定, 同时runtime 会调用 class_setIvarLayout 或 class_setWeakIvarLayout 来处理 strong weak 引用, 所以不能向存在的类中添加实例变量.</p>
+<p>可以向运行时创建的类中添加实例变量, 直接调用class_addIvar函数, 但是得在调用 objc_allocateClassPair 之后, objc_registerClassPair 之前, 原因同上.</p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2018/03/07/iOS开发总结系列-2/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
