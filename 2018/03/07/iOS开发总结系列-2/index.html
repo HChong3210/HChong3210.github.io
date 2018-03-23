@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法">
+  <meta name="description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-2">
 <meta property="og:url" content="http://hchong.net/2018/03/07/iOS开发总结系列-2/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法列表以及其父类方法列表中寻找方法运行, 如果在最顶层的父类中依然找不到相应的方法">
+<meta property="og:description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-22T14:47:41.216Z">
+<meta property="og:updated_time" content="2018-03-23T06:16:02.589Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-2">
-<meta name="twitter:description" content="什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法列表以及其父类方法列表中寻找方法运行, 如果在最顶层的父类中依然找不到相应的方法">
+<meta name="twitter:description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在">
 
   
 
@@ -204,7 +204,8 @@
 
   <div class="article-content">
     
-      <h2 id="什么时候会报unrecognized-selector的异常"><a href="#什么时候会报unrecognized-selector的异常" class="headerlink" title="什么时候会报unrecognized selector的异常"></a>什么时候会报unrecognized selector的异常</h2><p>涉及到消息的转发阶段知识<a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">Runtime用法与分析</a></p>
+      <p>这篇主要是RunTime相关的知识, 具体关于RunTime可以看<a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">RunTime用法与分析</a></p>
+<h2 id="什么时候会报unrecognized-selector的异常"><a href="#什么时候会报unrecognized-selector的异常" class="headerlink" title="什么时候会报unrecognized selector的异常"></a>什么时候会报unrecognized selector的异常</h2><p>涉及到消息的转发阶段知识<a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">Runtime用法与分析</a></p>
 <p>当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在该类中的方法列表以及其父类方法列表中寻找方法运行, 如果在最顶层的父类中依然找不到相应的方法时, 程序在运行时会挂掉并抛出异常unrecognized selector sent to XXX. 但是在这之前, objc的运行时会给出三次拯救程序崩溃的机会.</p>
 <ol>
 <li>Method resolution阶段. objc运行时会调用<code>+resolveInstanceMethod:</code>或者 <code>+resolveClassMethod:</code>, 让你有机会提供一个函数实现. 如果你添加了函数, 那运行时系统就会重新启动一次消息发送的过程, 否则, 运行时就会移到下一步, 消息转发(Message Forwarding).</li>
