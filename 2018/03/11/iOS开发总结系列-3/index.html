@@ -34,7 +34,7 @@
 <meta property="og:description" content="这篇主要是RunLoop相关的知识, 具体关于RunLoop可以看RunLoop用法与分析 RunLoop和线程是什么关系普通线程执行的任务是一条直线, 任务执行完就释放掉. RunLoop可以理解为特殊的线程, 这个现成不断的循环. 每个线程, 包括程序的主线程（main thread）都有与之相应的run loop对象. 他们之间的关系(CFDictionarySetValue(loopsDi">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/05/RunLoop_1.png">
-<meta property="og:updated_time" content="2018-03-23T14:45:43.607Z">
+<meta property="og:updated_time" content="2018-03-23T14:48:27.434Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-3">
 <meta name="twitter:description" content="这篇主要是RunLoop相关的知识, 具体关于RunLoop可以看RunLoop用法与分析 RunLoop和线程是什么关系普通线程执行的任务是一条直线, 任务执行完就释放掉. RunLoop可以理解为特殊的线程, 这个现成不断的循环. 每个线程, 包括程序的主线程（main thread）都有与之相应的run loop对象. 他们之间的关系(CFDictionarySetValue(loopsDi">
@@ -258,7 +258,7 @@
 <li>如果是RunLoop被显式唤醒(Source1), 重启RunLoop, 进入步骤2</li>
 </ul>
 </li>
-<li>通知观察者RunLoop即将结束.<br>详细内容参考<a href="http://hchong.net/2017/12/11/RunLoop%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">RunLoop用法与分析</a>.<h2 id="autoreleasepool如何实现-一个autoreleasepool对象何时释放"><a href="#autoreleasepool如何实现-一个autoreleasepool对象何时释放" class="headerlink" title="autoreleasepool如何实现, 一个autoreleasepool对象何时释放"></a>autoreleasepool如何实现, 一个autoreleasepool对象何时释放</h2>可以看<a href="https://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">这里</a>, <a href="https://draveness.me/autoreleasepool" target="_blank" rel="noopener">这里</a>, <a href="">这里</a></li>
+<li>通知观察者RunLoop即将结束.<br>详细内容参考<a href="http://hchong.net/2017/12/11/RunLoop%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">RunLoop用法与分析</a>.<h2 id="autoreleasepool如何实现-一个autoreleasepool对象何时释放"><a href="#autoreleasepool如何实现-一个autoreleasepool对象何时释放" class="headerlink" title="autoreleasepool如何实现, 一个autoreleasepool对象何时释放"></a>autoreleasepool如何实现, 一个autoreleasepool对象何时释放</h2>可以看<a href="https://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">这里</a>, <a href="https://draveness.me/autoreleasepool" target="_blank" rel="noopener">这里</a>, <a href="http://hchong.net/2018/03/23/Autoreleasepool%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">这里</a></li>
 </ol>
 <p>autoreleasepool实际上被两个函数<code>objc_autoreleasePoolPush()</code>和<code>objc_autoreleasePoolPop()</code>包括, 这两个函数的实质又是AutoreleasePoolPage.<br>AutoreleasePoolPage是一个双向链表, 存储了对象的内存地址. AutoreleasePoolPage里面有个next指针, 当向一个对象发送- autorelease消息, 就是将这个对象加入到当前AutoreleasePoolPage的栈顶next指针指向的位置.<br>每次调用<code>objc_autoreleasePoolPush()</code>, runtime就向链表中插入一个哨兵对象(nil), <code>objc_autoreleasePoolPush()</code>的返回值正是这个哨兵对象的地址. <code>objc_autoreleasePoolPop()</code>的入参也是这个哨兵对象的地址, 根据传入的哨兵对象地址找到哨兵对象所处的page, 在当前page中(从最新加入的对象一直向前清理, 可以向前跨越若干个page, 直到哨兵所在的page), 将晚于哨兵对象插入的所有autorelease对象都发送一次<code>- release</code>消息, 并向回移动next指针到正确位置.</p>
 <p>在没有手加Autorelease Pool的情况下, Autorelease对象是在当前的runloop迭代结束时释放的, 而它能够释放的原因是系统在每个runloop迭代中都加入了自动释放池Push和Pop.</p>

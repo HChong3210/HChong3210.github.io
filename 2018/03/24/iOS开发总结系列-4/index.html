@@ -17,7 +17,7 @@
 
   <meta charset="utf-8">
   
-  <title>iOS开发中的锁 | 我的博客地址</title>
+  <title>iOS开发总结系列-4 | 我的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="锁是比较常用的同步工具, 用于保证一段代码段在同一个时间只能允许被有限个线程访问, 下面我们来介绍下iOS开发中常见的锁. NSLock">
+  <meta name="description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD的队列（dispatch_queue_t）分哪两种类型 串行队列Serial Dispatch Queue 并行队列Concurrent Dispatch Queue  若干个url异步加载多张图片，然后在都下载完成后合成一张整图使用">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS开发中的锁">
-<meta property="og:url" content="http://hchong.net/2018/03/21/iOS开发中的锁/index.html">
+<meta property="og:title" content="iOS开发总结系列-4">
+<meta property="og:url" content="http://hchong.net/2018/03/24/iOS开发总结系列-4/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="锁是比较常用的同步工具, 用于保证一段代码段在同一个时间只能允许被有限个线程访问, 下面我们来介绍下iOS开发中常见的锁. NSLock">
+<meta property="og:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD的队列（dispatch_queue_t）分哪两种类型 串行队列Serial Dispatch Queue 并行队列Concurrent Dispatch Queue  若干个url异步加载多张图片，然后在都下载完成后合成一张整图使用dispatch_group, 有两种使用方式 dispatch_queue_t">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-23T15:51:43.876Z">
+<meta property="og:updated_time" content="2018-03-24T06:39:03.551Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS开发中的锁">
-<meta name="twitter:description" content="锁是比较常用的同步工具, 用于保证一段代码段在同一个时间只能允许被有限个线程访问, 下面我们来介绍下iOS开发中常见的锁. NSLock">
+<meta name="twitter:title" content="iOS开发总结系列-4">
+<meta name="twitter:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD的队列（dispatch_queue_t）分哪两种类型 串行队列Serial Dispatch Queue 并行队列Concurrent Dispatch Queue  若干个url异步加载多张图片，然后在都下载完成后合成一张整图使用dispatch_group, 有两种使用方式 dispatch_queue_t">
 
   
 
@@ -156,20 +156,20 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NSLock"><span class="toc-text">NSLock</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD的队列（dispatch-queue-t）分哪两种类型"><span class="toc-text">GCD的队列（dispatch_queue_t）分哪两种类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li></ol>
   </div>
 
 
 
 <div class="content content-post CENTER">
-   <article id="post-iOS开发中的锁" class="article article-type-post" itemprop="blogPost">
+   <article id="post-iOS开发总结系列-4" class="article article-type-post" itemprop="blogPost">
   <header class="article-header">
-    <h1 class="post-title">iOS开发中的锁</h1>
+    <h1 class="post-title">iOS开发总结系列-4</h1>
 
     <div class="article-meta">
       <span>
         <i class="icon-calendar"></i>
-        <span>2018.03.21</span>
+        <span>2018.03.24</span>
       </span>
 
       
@@ -190,7 +190,7 @@
       
         <span>
           <i class="icon-comment"></i>
-          <a href="http://www.hchong.net/2018/03/21/iOS开发中的锁/#disqus_thread"></a>
+          <a href="http://www.hchong.net/2018/03/24/iOS开发总结系列-4/#disqus_thread"></a>
         </span>
       
 
@@ -209,8 +209,15 @@
 
   <div class="article-content">
     
-      <p>锁是比较常用的同步工具, 用于保证一段代码段在同一个时间只能允许被有限个线程访问, 下面我们来介绍下iOS开发中常见的锁.</p>
-<h2 id="NSLock"><a href="#NSLock" class="headerlink" title="NSLock"></a>NSLock</h2>
+      <p>这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看<a href="http://hchong.net/2017/11/21/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B/">这里</a>.</p>
+<h2 id="GCD的队列（dispatch-queue-t）分哪两种类型"><a href="#GCD的队列（dispatch-queue-t）分哪两种类型" class="headerlink" title="GCD的队列（dispatch_queue_t）分哪两种类型"></a>GCD的队列（dispatch_queue_t）分哪两种类型</h2><ol>
+<li>串行队列Serial Dispatch Queue</li>
+<li>并行队列Concurrent Dispatch Queue</li>
+</ol>
+<h2 id="若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><a href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图" class="headerlink" title="若干个url异步加载多张图片，然后在都下载完成后合成一张整图"></a>若干个url异步加载多张图片，然后在都下载完成后合成一张整图</h2><p>使用dispatch_group, 有两种使用方式</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</div><div class="line">dispatch_group_t group = dispatch_group_create();</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片1 */ &#125;);</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片2 */ &#125;);</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片3 */ &#125;); </div><div class="line">dispatch_group_notify(group, dispatch_get_main_queue(), ^&#123;</div><div class="line">        // 合并图片</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<pre><code>
+</code></pre><h2 id="dispatch-barrier-async的作用"><a href="#dispatch-barrier-async的作用" class="headerlink" title="dispatch_barrier_async的作用"></a>dispatch_barrier_async的作用</h2><h2 id="为什么要废弃dispatch-get-current-queue"><a href="#为什么要废弃dispatch-get-current-queue" class="headerlink" title="为什么要废弃dispatch_get_current_queue"></a>为什么要废弃dispatch_get_current_queue</h2>
     
   </div>
 </article>
@@ -309,7 +316,7 @@
   <script>
     var disqus_shortname = 'forsigner';
     
-    var disqus_url = 'http://hchong.net/2018/03/21/iOS开发中的锁/';
+    var disqus_url = 'http://hchong.net/2018/03/24/iOS开发总结系列-4/';
     
     (function(){
       var dsq = document.createElement('script');
