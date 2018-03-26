@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="常见的问题, 在这里做一个汇总. 只讲结论, 内部细节, 慢慢填坑. 什么情况使用 weak 关键字，相比 assign 有什么不同weak常用在有可能出现循环引用的地方, 他表示一种非拥有关系, 为这种属性设置新值时, 设置方法既不保留新值, 也不释放旧值. 与assign类似, 但是不同的是当属性所指的对象被释放时, 属性值会被置为nil, 而assign只执行基础类型的简单赋值操作.  we">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-22T14:47:27.159Z">
+<meta property="og:updated_time" content="2018-03-26T11:32:30.389Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-1">
 <meta name="twitter:description" content="常见的问题, 在这里做一个汇总. 只讲结论, 内部细节, 慢慢填坑. 什么情况使用 weak 关键字，相比 assign 有什么不同weak常用在有可能出现循环引用的地方, 他表示一种非拥有关系, 为这种属性设置新值时, 设置方法既不保留新值, 也不释放旧值. 与assign类似, 但是不同的是当属性所指的对象被释放时, 属性值会被置为nil, 而assign只执行基础类型的简单赋值操作.  we">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么情况使用-weak-关键字，相比-assign-有什么不同"><span class="toc-text">什么情况使用 weak 关键字，相比 assign 有什么不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#怎么用-copy-关键字"><span class="toc-text">怎么用 copy 关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的copy与mutableCopy"><span class="toc-text">对象的copy与mutableCopy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#runtime-如何实现-weak-属性"><span class="toc-text">runtime 如何实现 weak 属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property中有哪些属性关键字？-property-后面可以有哪些修饰符？"><span class="toc-text">@property中有哪些属性关键字？/ @property 后面可以有哪些修饰符？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#protocol-和-category-中如何使用-property"><span class="toc-text">@protocol 和 category 中如何使用 @property</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的"><span class="toc-text">@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synthesize和-dynamic分别有什么作用"><span class="toc-text">@synthesize和@dynamic分别有什么作用</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么情况使用-weak-关键字，相比-assign-有什么不同"><span class="toc-text">什么情况使用 weak 关键字，相比 assign 有什么不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#怎么用-copy-关键字"><span class="toc-text">怎么用 copy 关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的copy与mutableCopy"><span class="toc-text">对象的copy与mutableCopy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#runtime-如何实现-weak-属性"><span class="toc-text">runtime 如何实现 weak 属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property中有哪些属性关键字？-property-后面可以有哪些修饰符？"><span class="toc-text">@property中有哪些属性关键字？/ @property 后面可以有哪些修饰符？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#protocol-和-category-中如何使用-property"><span class="toc-text">@protocol 和 category 中如何使用 @property</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#property-的本质是什么？ivar、getter、setter-是如何生成并添加到这个类中的"><span class="toc-text">@property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synthesize和-dynamic分别有什么作用"><span class="toc-text">@synthesize和@dynamic分别有什么作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#block-vs-weak"><span class="toc-text">block vs weak</span></a></li></ol>
   </div>
 
 
@@ -257,7 +257,7 @@
 <li>重载父类的属性时, 来手动合成Ivar(实例变量/成员变量).</li>
 </ol>
 <p>@dynamic表示我们不需要系统自动生成, 由用户自己实现, 如果没有手动生成的话, 在使用过程中是会奔溃的.</p>
-
+<h2 id="block-vs-weak"><a href="#block-vs-weak" class="headerlink" title="block vs weak"></a><strong>block vs </strong>weak</h2>
     
   </div>
 </article>
