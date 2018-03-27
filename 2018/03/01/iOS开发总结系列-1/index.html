@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="常见的问题, 在这里做一个汇总. 只讲结论, 内部细节, 慢慢填坑. 什么情况使用 weak 关键字，相比 assign 有什么不同weak常用在有可能出现循环引用的地方, 他表示一种非拥有关系, 为这种属性设置新值时, 设置方法既不保留新值, 也不释放旧值. 与assign类似, 但是不同的是当属性所指的对象被释放时, 属性值会被置为nil, 而assign只执行基础类型的简单赋值操作.  we">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-26T11:32:30.389Z">
+<meta property="og:updated_time" content="2018-03-27T02:26:34.167Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-1">
 <meta name="twitter:description" content="常见的问题, 在这里做一个汇总. 只讲结论, 内部细节, 慢慢填坑. 什么情况使用 weak 关键字，相比 assign 有什么不同weak常用在有可能出现循环引用的地方, 他表示一种非拥有关系, 为这种属性设置新值时, 设置方法既不保留新值, 也不释放旧值. 与assign类似, 但是不同的是当属性所指的对象被释放时, 属性值会被置为nil, 而assign只执行基础类型的简单赋值操作.  we">
@@ -257,7 +257,9 @@
 <li>重载父类的属性时, 来手动合成Ivar(实例变量/成员变量).</li>
 </ol>
 <p>@dynamic表示我们不需要系统自动生成, 由用户自己实现, 如果没有手动生成的话, 在使用过程中是会奔溃的.</p>
-<h2 id="block-vs-weak"><a href="#block-vs-weak" class="headerlink" title="block vs weak"></a><strong>block vs </strong>weak</h2>
+<h2 id="block-vs-weak"><a href="#block-vs-weak" class="headerlink" title="block vs weak"></a><strong>block vs </strong>weak</h2><p><strong>weak主要是用来避免循环引用的. </strong>weak修饰的变量, 在block内部被捕获后, 和外部的实际不是用一个变量. 他是对外部<strong>weak修饰的对象进行了一个弱引用. 当我们在block外部把</strong>weak修饰的变量释放后, block内部夜读不到这个变量. 如果外部被__weak修饰的变量被置为nil, 那么内部的对象实际上也是nil, 就会被释放掉. </p>
+<p><strong>block实际上是提升了变量的作用域, 我们在block内外, 用</strong>block修饰的变量实际上不是同一个, 在block内部使用相当于被强引用了一份. <strong>block 本身无法避免循环引用的问题, 但是我们可以通过在 block 内部手动把 blockObj 赋值为 nil 的方式来避免循环引用的问题.<br>这里需要注意, 我们只能在堆上面block对象使用</strong>block修饰的对象, ARC下一旦block赋值就会触发copy, block就会被复制到堆上因此可以直接使用, 但是MRC下我们则需要手动调用copy, 否则会编译报错.</p>
+
     
   </div>
 </article>
