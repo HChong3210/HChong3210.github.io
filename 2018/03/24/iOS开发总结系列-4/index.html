@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD的队列（dispatch_queue_t）分哪两种类型 串行队列Serial Dispatch Queue 并行队列Concurrent Dispatch Queue  若干个url异步加载多张图片，然后在都下载完成后合成一张整图使用">
+  <meta name="description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-4">
 <meta property="og:url" content="http://hchong.net/2018/03/24/iOS开发总结系列-4/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD的队列（dispatch_queue_t）分哪两种类型 串行队列Serial Dispatch Queue 并行队列Concurrent Dispatch Queue  若干个url异步加载多张图片，然后在都下载完成后合成一张整图使用dispatch_group, 有两种使用方式 dispatch_queue_t">
+<meta property="og:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-24T07:31:58.795Z">
+<meta property="og:updated_time" content="2018-03-27T10:29:05.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-4">
-<meta name="twitter:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD的队列（dispatch_queue_t）分哪两种类型 串行队列Serial Dispatch Queue 并行队列Concurrent Dispatch Queue  若干个url异步加载多张图片，然后在都下载完成后合成一张整图使用dispatch_group, 有两种使用方式 dispatch_queue_t">
+<meta name="twitter:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
 
   
 
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD的队列（dispatch-queue-t）分哪两种类型"><span class="toc-text">GCD的队列（dispatch_queue_t）分哪两种类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD里面有哪几种Queue"><span class="toc-text">GCD里面有哪几种Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li></ol>
   </div>
 
 
@@ -210,9 +210,10 @@
   <div class="article-content">
     
       <p>这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看<a href="http://hchong.net/2017/11/21/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B/">这里</a>.</p>
-<h2 id="GCD的队列（dispatch-queue-t）分哪两种类型"><a href="#GCD的队列（dispatch-queue-t）分哪两种类型" class="headerlink" title="GCD的队列（dispatch_queue_t）分哪两种类型"></a>GCD的队列（dispatch_queue_t）分哪两种类型</h2><ol>
-<li>串行队列Serial Dispatch Queue</li>
-<li>并行队列Concurrent Dispatch Queue</li>
+<h2 id="GCD里面有哪几种Queue"><a href="#GCD里面有哪几种Queue" class="headerlink" title="GCD里面有哪几种Queue"></a>GCD里面有哪几种Queue</h2><ol>
+<li>主队列 dispatch_main_queue(); 串行, 主要用来更新UI </li>
+<li>全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high </li>
+<li>自定义队列 dispatch_queue_t queue; 可以自定义是并行DISPATCH_QUEUE_CONCURRENT 或者 串行DISPATCH_QUEUE_SERIAL.</li>
 </ol>
 <h2 id="若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><a href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图" class="headerlink" title="若干个url异步加载多张图片，然后在都下载完成后合成一张整图"></a>若干个url异步加载多张图片，然后在都下载完成后合成一张整图</h2><p>使用dispatch_group, 有两种使用方式</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</div><div class="line">dispatch_group_t group = dispatch_group_create();</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片1 */ &#125;);</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片2 */ &#125;);</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片3 */ &#125;); </div><div class="line">dispatch_group_notify(group, dispatch_get_main_queue(), ^&#123;</div><div class="line">        // 合并图片</div><div class="line">&#125;);</div></pre></td></tr></table></figure>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>获取设备唯一标识符 | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="获取设备的唯一标识符具体可以分为如下几种：UDID MAC IDFA IDFV UUID. 下面分别来介绍下. UDID (Unique Device Identifier Description)UDID 是由子母和数字组成的40个字符串的序号, 用来区别每一个唯一的iOS设备, 这些编码看起来是随机的, 但实际上是">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="获取设备唯一标识符">
+<meta property="og:url" content="http://hchong.net/2018/03/27/获取设备唯一标识符/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="获取设备的唯一标识符具体可以分为如下几种：UDID MAC IDFA IDFV UUID. 下面分别来介绍下. UDID (Unique Device Identifier Description)UDID 是由子母和数字组成的40个字符串的序号, 用来区别每一个唯一的iOS设备, 这些编码看起来是随机的, 但实际上是跟硬件设备特点相关联的. 我们平时用开发者账号在设备上安装测试应用时, 往开发者">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-03-27T11:39:44.069Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="获取设备唯一标识符">
+<meta name="twitter:description" content="获取设备的唯一标识符具体可以分为如下几种：UDID MAC IDFA IDFV UUID. 下面分别来介绍下. UDID (Unique Device Identifier Description)UDID 是由子母和数字组成的40个字符串的序号, 用来区别每一个唯一的iOS设备, 这些编码看起来是随机的, 但实际上是跟硬件设备特点相关联的. 我们平时用开发者账号在设备上安装测试应用时, 往开发者">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#UDID-Unique-Device-Identifier-Description"><span class="toc-text">UDID (Unique Device Identifier Description)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MAC-Medium-Media-Access-Control"><span class="toc-text">MAC (Medium/Media Access Control)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDFA-Identifier-For-Identifier"><span class="toc-text">IDFA (Identifier For Identifier)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDFV（Identifier-For-Vendor）"><span class="toc-text">IDFV（Identifier For Vendor）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UUID-Universally-Unique-Identifier"><span class="toc-text">UUID (Universally Unique Identifier)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CFUUID"><span class="toc-text">CFUUID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSUUID"><span class="toc-text">NSUUID</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#比较完善的做法"><span class="toc-text">比较完善的做法</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-获取设备唯一标识符" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">获取设备唯一标识符</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.03.27</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2018/03/27/获取设备唯一标识符/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>获取设备的唯一标识符具体可以分为如下几种：UDID MAC IDFA IDFV UUID. 下面分别来介绍下.</p>
+<h2 id="UDID-Unique-Device-Identifier-Description"><a href="#UDID-Unique-Device-Identifier-Description" class="headerlink" title="UDID (Unique Device Identifier Description)"></a>UDID (Unique Device Identifier Description)</h2><p>UDID 是由子母和数字组成的40个字符串的序号, 用来区别每一个唯一的iOS设备, 这些编码看起来是随机的, 但实际上是跟硬件设备特点相关联的. 我们平时用开发者账号在设备上安装测试应用时, 往开发者账号上添加的就是设备的UDID.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSString *UDID = [[UIDevice currentDevice] uniqueIdentifier];</div></pre></td></tr></table></figure>
+<p>由于UDID是跟设备唯一对应的, 许多开发者试图通过UDID获取到用户的真实姓名, 密码, 地址等隐私数据. 为了避免引起麻烦, 苹果在iOS 5.0 的时候废除了UDID的代码获取权限, 现在应用试图获取UDID已被禁止且不允许上架.</p>
+<h2 id="MAC-Medium-Media-Access-Control"><a href="#MAC-Medium-Media-Access-Control" class="headerlink" title="MAC (Medium/Media Access Control)"></a>MAC (Medium/Media Access Control)</h2><p>这个就是常说的网卡地址, 一部iPhone上可能有多个MAC地址, 包括WIFI的, SIM的等. 具有全球唯一性, 这样就可以非常好的标识设备唯一性.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (NSString *) getMacAddress &#123;  </div><div class="line">        int mib[6];  </div><div class="line">        size_t len;  </div><div class="line">        charchar *buf;  </div><div class="line">        unsigned charchar *ptr;  </div><div class="line">        struct if_msghdr *ifm;  </div><div class="line">        struct sockaddr_dl *sdl;  </div><div class="line">   </div><div class="line">        mib[0] = CTL_NET;  </div><div class="line">        mib[1] = AF_ROUTE;  </div><div class="line">        mib[2] = 0;  </div><div class="line">        mib[3] = AF_LINK;  </div><div class="line">        mib[4] = NET_RT_IFLIST;  </div><div class="line">        </div><div class="line">        if ((mib[5] = if_nametoindex(&quot;en0&quot;)) == 0) &#123;  </div><div class="line">            printf(&quot;Error: if_nametoindex error/n&quot;);  </div><div class="line">            return NULL;  </div><div class="line">        &#125;  </div><div class="line">        </div><div class="line">        if (sysctl(mib, 6, NULL, &amp;len, NULL, 0) &lt; 0) &#123;  </div><div class="line">            printf(&quot;Error: sysctl, take 1/n&quot;);  </div><div class="line">            return NULL;  </div><div class="line">        &#125;  </div><div class="line">          </div><div class="line">        if ((buf = malloc(len)) == NULL) &#123;  </div><div class="line">            printf(&quot;Could not allocate memory. error!/n&quot;);  </div><div class="line">            return NULL;  </div><div class="line">        &#125;  </div><div class="line"> </div><div class="line">        if (sysctl(mib, 6, buf, &amp;len, NULL, 0) &lt; 0) &#123;  </div><div class="line">            printf(&quot;Error: sysctl, take 2&quot;);  </div><div class="line">            return NULL;  </div><div class="line">        &#125;  </div><div class="line"></div><div class="line">        ifm = (struct if_msghdr *)buf;  </div><div class="line">        sdl = (struct sockaddr_dl *)(ifm + 1);  </div><div class="line">        ptr = (unsigned charchar *)LLADDR(sdl);  </div><div class="line">        NSString *outstring = [NSString stringWithFormat:@&quot;%02x:%02x:%02x:%02x:%02x:%02x&quot;, *ptr, *(ptr+1), *(ptr+2), *(ptr+3), *(ptr+4), *(ptr+5)];  </div><div class="line">        free(buf);  </div><div class="line"></div><div class="line">        return [outstring uppercaseString]; </div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>但MAC地址跟UDID一样, 存在隐私问题, 所以在 iOS 7.0 之后, Mac地址再次遭到苹果的无情封杀. 如果使用之前的方法请求Mac地址都会返回一个固定值 02:00:00:00:00:00, 这一条路再次被堵死.</p>
+<h2 id="IDFA-Identifier-For-Identifier"><a href="#IDFA-Identifier-For-Identifier" class="headerlink" title="IDFA (Identifier For Identifier)"></a>IDFA (Identifier For Identifier)</h2><p>这是 iOS 6.0中提供的一个新方法, 在同一个设备上的所有App都会取到相同的值, 是苹果专门给各广告提供商用来追踪用户而设的. </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#import &lt;AdSupport/AdSupport.h&gt;</div><div class="line"></div><div class="line">NSString *adId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];</div></pre></td></tr></table></figure>
+<p>IDFA并不是唯一不变的, 如果用户完全重置系统(设置程序 -&gt; 通用 -&gt; 还原 -&gt; 还原位置与隐私), 这个广告标示符会重新生成. 另外如果用户明确的还原广告(设置程序-&gt; 通用 -&gt; 关于本机 -&gt; 广告 -&gt; 还原广告标示符), 那么广告标示符也会重新生成. 在iOS 10.0以后如果用户打开限制广告跟踪(设置程序-&gt; 通用 -&gt; 关于本机 -&gt; 广告 -&gt; 限制广告跟踪), 则获取到的IDFA为一个固定值00000000-0000-0000-0000-000000000000. 因此, 通过IDFA也无法唯一标识一个设备.<br>如果使用IDFA, 在上传Appstore时必须在iTunes Connect中的上传页面进行相应的设置.</p>
+<h2 id="IDFV（Identifier-For-Vendor）"><a href="#IDFV（Identifier-For-Vendor）" class="headerlink" title="IDFV（Identifier For Vendor）"></a>IDFV（Identifier For Vendor）</h2><p>IDFV是给Vendor标识用户用的, 每个设备在所属同一个Vendor的应用里, 都有相同的值. 其中的Vendor是指应用提供商, 准确的说, 是通过BundleID的反转的前两部分进行匹配, 如果相同就是同一个Vendor, 例如对于com.abc.app1, com.abc.app2 这两个BundleID来说, 就属于同一个Vendor, 共享同一个IDFV的值. 当然, 对于同一个设备不同Vendor的话, 获取到的值是不同的. 和IDFA不同的是, IDFV的值是一定能取到的. 它是iOS 6中新增的.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSString *strIDFV = [[[UIDevice currentDevice] identifierForVendor] UUIDString];</div></pre></td></tr></table></figure>
+<p>但是使用IDFV也会存在一些问题, 如果用户将属于此Vendor的所有App卸载, 则IDFV的值会被重置, 即再重装此Vendor的App, IDFV的值也会和之前的不同.</p>
+<h2 id="UUID-Universally-Unique-Identifier"><a href="#UUID-Universally-Unique-Identifier" class="headerlink" title="UUID (Universally Unique Identifier)"></a>UUID (Universally Unique Identifier)</h2><p>UUID是Universally Unique Identifier的缩写, 中文意思是通用唯一识别码. 它是苹果提供的一个获取大随机数的方法, 据说UUID随机数算法得到的数重复概率为170亿分之一. 这样, 每个人都可以建立不与其它人冲突的 UUID.</p>
+<h3 id="CFUUID"><a href="#CFUUID" class="headerlink" title="CFUUID"></a>CFUUID</h3><p>从iOS 2.0开始, CFUUID就已经出现了. 它是CoreFoundation包的一部分, 因此API属于C语言风格.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">CFUUIDRef cfuuid = CFUUIDCreate(kCFAllocatorDefault);</div><div class="line">NSString *cfuuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, cfuuid));</div></pre></td></tr></table></figure>
+<h3 id="NSUUID"><a href="#NSUUID" class="headerlink" title="NSUUID"></a>NSUUID</h3><p>NSUUID在iOS 6.0中才出现, 这跟CFUUID几乎完全一样, 只不过它是Objective-C接口. 通过下面的代码可以获得一个UUID字符串:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSString *uuid = [[NSUUID UUID] UUIDString];</div></pre></td></tr></table></figure>
+<h2 id="比较完善的做法"><a href="#比较完善的做法" class="headerlink" title="比较完善的做法"></a>比较完善的做法</h2><pre><code>//获取UQID
++ (NSString *)getUQID {
+    //从本地沙盒取
+    NSString *uqid = [[NSUserDefaults standardUserDefaults] objectForKey:UQID_KEY];
+
+    if (!uqid) {
+        //从keychain取
+        uqid = (NSString *)[YDKeyChain readObjectForKey:UQID_KEY];
+
+        if (uqid) {
+            [[NSUserDefaults standardUserDefaults] setObject:uqid forKey:UQID_KEY];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+
+        } else {
+            //从pasteboard取
+            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+            id data = [pasteboard dataForPasteboardType:UQID_KEY];
+            if (data) {
+                uqid = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            }
+
+            if (uqid) {
+                [[NSUserDefaults standardUserDefaults] setObject:uqid forKey:UQID_KEY];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [YDKeyChain saveObject:uqid forKey:UQID_KEY];
+
+            } else {
+
+                //获取idfa
+                uqid = [self getIDFA];
+
+                //idfa获取失败的情况，获取idfv
+                if (!uqid || [uqid isEqualToString:@&quot;00000000-0000-0000-0000-000000000000&quot;]) {
+                    uqid = [self getIDFV];
+
+                    //idfv获取失败的情况，获取uuid
+                    if (!uqid) {
+                        uqid = [self getUUID];
+                    }
+                }
+
+                [[NSUserDefaults standardUserDefaults] setObject:uqid forKey:UQID_KEY];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+
+                [YDKeyChain saveObject:uqid forKey:UQID_KEY];
+
+                UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+                NSData *data = [uqid dataUsingEncoding:NSUTF8StringEncoding];
+                [pasteboard setData:data forPasteboardType:UQID_KEY];
+
+            }
+        }
+    }
+    return uqid;
+</code></pre>
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2018/03/27/获取设备唯一标识符/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
