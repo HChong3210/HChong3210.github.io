@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-27T10:29:05.232Z">
+<meta property="og:updated_time" content="2018-03-28T13:02:48.520Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-4">
 <meta name="twitter:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD里面有哪几种Queue"><span class="toc-text">GCD里面有哪几种Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD里面有哪几种Queue"><span class="toc-text">GCD里面有哪几种Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何取消一个正在运行的线程"><span class="toc-text">如何取消一个正在运行的线程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation"><span class="toc-text">NSOperation</span></a></li></ol></li></ol>
   </div>
 
 
@@ -221,7 +221,7 @@
 <h2 id="dispatch-barrier-async的作用"><a href="#dispatch-barrier-async的作用" class="headerlink" title="dispatch_barrier_async的作用"></a>dispatch_barrier_async的作用</h2><p>在并行队列中, 为了保持某些任务的顺序, 需要等待一些任务完成后才能继续进行, 使用 barrier 来等待之前任务完成, 避免数据竞争等问题. 假设一个并行队列中添加了五个异步任务, 虽然遵循FIFO的原则, 这五个任务的执行必定是无序的. 当我们在第三个任务之后加入dispatch_barrier_async任务, 那么这五个任务就被分割成两部分, 前三次无序执行, 然后执行dispatch_barrier_async任务, 然后再无序执行后两次任务. 注意此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行.</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)barrierTest &#123;</div><div class="line">    </div><div class="line">    //此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行</div><div class="line">    dispatch_queue_t queue = dispatch_queue_create(&quot;barrierTest&quot;, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;1&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;2&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;3&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_barrier_async(queue, ^&#123;</div><div class="line">        sleep(3);</div><div class="line">        NSLog(@&quot;插入执行&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;4&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;5&quot;);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="为什么要废弃dispatch-get-current-queue"><a href="#为什么要废弃dispatch-get-current-queue" class="headerlink" title="为什么要废弃dispatch_get_current_queue"></a>为什么要废弃dispatch_get_current_queue</h2><p>dispatch_get_current_queue可能造成死锁, 详细的原因看<a href="为什么dispatch_get_current_queue被废弃">这里</a></p>
-
+<h2 id="如何取消一个正在运行的线程"><a href="#如何取消一个正在运行的线程" class="headerlink" title="如何取消一个正在运行的线程"></a>如何取消一个正在运行的线程</h2><h3 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h3><h3 id="NSOperation"><a href="#NSOperation" class="headerlink" title="NSOperation"></a>NSOperation</h3>
     
   </div>
 </article>

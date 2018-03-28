@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-28T12:58:49.680Z">
+<meta property="og:updated_time" content="2018-03-28T13:18:23.699Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-6">
 <meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NSString如何计算字符的个数"><span class="toc-text">NSString如何计算字符的个数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSUserDefaults性能优化"><span class="toc-text">NSUserDefaults性能优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库为什么要创建索引"><span class="toc-text">数据库为什么要创建索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Full-Text-Search为什么快"><span class="toc-text">Full Text Search为什么快</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NSString如何计算字符的个数"><span class="toc-text">NSString如何计算字符的个数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSUserDefaults性能优化"><span class="toc-text">NSUserDefaults性能优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库为什么要创建索引"><span class="toc-text">数据库为什么要创建索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Full-Text-Search为什么快"><span class="toc-text">Full Text Search为什么快</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#imageNamed-与imageWithContentsOfFile-对比"><span class="toc-text">imageNamed:与imageWithContentsOfFile:对比</span></a></li></ol>
   </div>
 
 
@@ -233,6 +233,8 @@
 <p>因此我们经常在主键列, 将常用在连接的列, 经常根据范围搜索的列, 经常排序的列, 经常使用在WHERE子句中的列上面创建索引.<br>而那些在查询中很少用的列, 数据值很少的列, text, image和bit数据类型的列(因为要么数据量大要么取值少), 修改性能远远大于检索性能时不应该创建索引.</p>
 <h2 id="Full-Text-Search为什么快"><a href="#Full-Text-Search为什么快" class="headerlink" title="Full Text Search为什么快"></a>Full Text Search为什么快</h2><p>它的工作原理是计算机索引程序通过扫描文章中的每一个词, 对每一个词建立一个索引, 指明该词在文章中出现的次数和位置, 当用户查询时, 检索程序就根据事先建立的索引进行查找, 并将查找的结果反馈给用户的检索方式.</p>
 <p>分为按字检索和按词检索: 按字检索是指对于文章中的每一个字都建立索引, 检索时将词分解为字的组合. 按词检索是指对文章中的词, 即语义单位建立索引, 检索时按词检索.</p>
+<h2 id="imageNamed-与imageWithContentsOfFile-对比"><a href="#imageNamed-与imageWithContentsOfFile-对比" class="headerlink" title="imageNamed:与imageWithContentsOfFile:对比"></a>imageNamed:与imageWithContentsOfFile:对比</h2><p>使用imageNamed这个方法生成的UIImage对象, 会在应用的bundle中寻找图片, 如果找到则Cache到系统缓存中, 作为内存的cache, 而程序员是无法操作cache的, 只能由系统自动处理, 如果我们需要重复加载一张图片, 那这无疑是一种很好的方式, 因为系统能很快的从内存的cache找到这张图片. 但是试想, 如果加载很多很大的图片的时候, 内存消耗过大的时候, 就会会强制释放内存, 即会遇到内存警告(memory warnings). 由于在iOS系统中释放图片的内存比较麻烦, 所以冲易产生内存泄露.<br>经常使用在图片资源反复使用到, 而且占用内存少的场景下.</p>
+<p>相比上面的imageNamed这个方法要写的代码多了几行, 使用imageWithContentsOfFile的方式加载的图片, 图片会被系统以数据的方式进行加载. 返回的对象不会保存在缓存中, 一旦对象销毁就会释放内存, 所以一般不会因为加载图片的方法遇到内存问题.<br>经常使用在图片资源较大, 加载到内存后, 比较耗费内存资源, 图片一般只使用一次的场景下.</p>
 
     
   </div>

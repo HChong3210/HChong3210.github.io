@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FkctxGN8VXdie7M8Fbx6U5Bpfi4c">
 <meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FixnilG9OWm4w4qUNZGKSkYXZ4gu">
-<meta property="og:updated_time" content="2018-03-28T12:59:22.605Z">
+<meta property="og:updated_time" content="2018-03-28T13:14:40.123Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-5">
 <meta name="twitter:description" content="这里主要是一些计算机的基础知识部分, 在平常业务中不怎么用, 但是对深入了解计算机原理有很大帮助. HTTP请求中的GET和POSTGET和POST是网络请求到的两种基本方式.GET把参数包含在URL中, POST通过request body传递参数.GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache">
@@ -159,7 +159,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP请求中的GET和POST"><span class="toc-text">HTTP请求中的GET和POST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP与UDP"><span class="toc-text">TCP与UDP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#三次握手"><span class="toc-text">三次握手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四次挥手"><span class="toc-text">四次挥手</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP与HTTPS"><span class="toc-text">HTTP与HTTPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数字签名和数字证书"><span class="toc-text">数字签名和数字证书</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP如何做缓存"><span class="toc-text">HTTP如何做缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP长连接-vs-TCP连接-vs-websocket"><span class="toc-text">HTTP长连接 vs TCP连接 vs websocket</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#长连接"><span class="toc-text">长连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP连接"><span class="toc-text">TCP连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#websocket"><span class="toc-text">websocket</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP2-0针对同一个域名的多个请求-会建立多少个tcp连接"><span class="toc-text">HTTP2.0针对同一个域名的多个请求, 会建立多少个tcp连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的拥塞控制机制"><span class="toc-text">TCP的拥塞控制机制</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP请求中的GET和POST"><span class="toc-text">HTTP请求中的GET和POST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP与UDP"><span class="toc-text">TCP与UDP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#三次握手"><span class="toc-text">三次握手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四次挥手"><span class="toc-text">四次挥手</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP与HTTPS"><span class="toc-text">HTTP与HTTPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数字签名和数字证书"><span class="toc-text">数字签名和数字证书</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP如何做缓存"><span class="toc-text">HTTP如何做缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP长连接-vs-TCP连接-vs-websocket"><span class="toc-text">HTTP长连接 vs TCP连接 vs websocket</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#长连接"><span class="toc-text">长连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP连接"><span class="toc-text">TCP连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#websocket"><span class="toc-text">websocket</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP2-0针对同一个域名的多个请求-会建立多少个tcp连接"><span class="toc-text">HTTP2.0针对同一个域名的多个请求, 会建立多少个tcp连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP的拥塞控制机制"><span class="toc-text">TCP的拥塞控制机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-post的body体使用form-urlencoded和multipart-form-data的区别"><span class="toc-text">HTTP post的body体使用form-urlencoded和multipart/form-data的区别</span></a></li></ol>
   </div>
 
 
@@ -268,8 +268,9 @@
 <li>慢启动指的是在TCP的开始传输阶段, 因为不知道网络负荷情况, 因此采用试探的方法, 逐渐增大拥塞窗口.</li>
 <li>拥塞避免指的是, 为了防止拥塞窗口增长过快而引起网络拥塞, TCP还需要设置一个慢启动阈值ssthresh, 当拥塞窗口的值增加到阈值时, 就减缓拥塞窗口的增长速度. 当网络拥塞时, 我们重新执行慢启动算法. </li>
 <li>快速重传指的是接收端每收到一个失序的数据报文段后就立即发出重复确认, 以便更早地通知发送端有丢包的情况发生. 举例: 接收端收到了1, 2两个报文, 接下来应该收到3. 但是, 直接收到了4, 这时就会向发送端发送2号数据报文段的确认, 这个称为重复确认. 继续往下走接收到了5, 6报文, 接收端仍然要向发送端发出2号数据报文段的重复确认. 这时发送端会收到多个2号数据报文段的重复确认, 则认为3号数据报文段发生了丢包, 需要立即向接收端重传3号数据报文段, 而不需要等待重传计时器到期再重传. 快速重传算法中规定如果收到某数据报文段的三个重复确认, 则立即重传下一个数据报文段.</li>
-<li>当发送端连续收到三个重复确认时, 就将慢启动阈值ssthresh减半, 以预防网络拥塞的发生, 并且将拥塞窗口cwnd的值置为减半后的ssthresh, 然后开始执行拥塞避免算法, 使得cwnd缓慢地加性增大.</li>
+<li>当发送端连续收到三个重复确认时, 就将慢启动阈值ssthresh减半, 以预防网络拥塞的发生, 并且将拥塞窗口cwnd的值置为减半后的ssthresh, 然后开始执行拥塞避免算法, 使得cwnd缓慢地加性增大.<h2 id="HTTP-post的body体使用form-urlencoded和multipart-form-data的区别"><a href="#HTTP-post的body体使用form-urlencoded和multipart-form-data的区别" class="headerlink" title="HTTP post的body体使用form-urlencoded和multipart/form-data的区别"></a>HTTP post的body体使用form-urlencoded和multipart/form-data的区别</h2>form-urlencoded是默认的mime内容编码类型, 是通用的, 但是它在传输比较大的二进制或者文本数据时效率极低.</li>
 </ul>
+<p>multipart/form-data是当上传文件或者二进制数据和非ASCII数据使用.</p>
 
     
   </div>
