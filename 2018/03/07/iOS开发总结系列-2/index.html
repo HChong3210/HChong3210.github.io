@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-27T10:24:53.806Z">
+<meta property="og:updated_time" content="2018-03-28T13:19:32.907Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-2">
 <meta name="twitter:description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么时候会报unrecognized-selector的异常"><span class="toc-text">什么时候会报unrecognized selector的异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个objc对象如何进行内存布局"><span class="toc-text">一个objc对象如何进行内存布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#objc-msgForward函数是做什么的-直接调用它将会发生什么"><span class="toc-text">_objc_msgForward函数是做什么的, 直接调用它将会发生什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？"><span class="toc-text">能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#load-vs-initialize"><span class="toc-text">+load vs +initialize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-swizzling"><span class="toc-text">Method swizzling</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么时候会报unrecognized-selector的异常"><span class="toc-text">什么时候会报unrecognized selector的异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个objc对象如何进行内存布局"><span class="toc-text">一个objc对象如何进行内存布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#objc-msgForward函数是做什么的-直接调用它将会发生什么"><span class="toc-text">_objc_msgForward函数是做什么的, 直接调用它将会发生什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？"><span class="toc-text">能否向编译后得到的类中增加实例变量？能否向运行时创建的类中添加实例变量？为什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#load-vs-initialize"><span class="toc-text">+load vs +initialize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Method-swizzling"><span class="toc-text">Method swizzling</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用runtime-hook类方法和实例方法"><span class="toc-text">如何使用runtime hook类方法和实例方法</span></a></li></ol>
   </div>
 
 
@@ -277,7 +277,7 @@
 </tbody>
 </table>
 <h2 id="Method-swizzling"><a href="#Method-swizzling" class="headerlink" title="Method swizzling"></a>Method swizzling</h2><p>我们可以利用 method_exchangeImplementations 来交换2个方法中的IMP.<br>我们可以利用 class_replaceMethod 来修改类.<br>我们可以利用 method_setImplementation 来直接设置某个方法的IMP.<br>…<br>归根到底都是更换selector的IMP(函数指针, 指向方法的实现).</p>
-
+<h2 id="如何使用runtime-hook类方法和实例方法"><a href="#如何使用runtime-hook类方法和实例方法" class="headerlink" title="如何使用runtime hook类方法和实例方法"></a>如何使用runtime hook类方法和实例方法</h2>
     
   </div>
 </article>
