@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>iOS开发总结系列-多线程 | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发总结系列-多线程">
+<meta property="og:url" content="http://hchong.net/2018/03/24/iOS开发总结系列-多线程/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-03-30T02:56:22.173Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发总结系列-多线程">
+<meta name="twitter:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD里面有哪几种Queue"><span class="toc-text">GCD里面有哪几种Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何取消一个正在运行的线程"><span class="toc-text">如何取消一个正在运行的线程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation"><span class="toc-text">NSOperation</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-iOS开发总结系列-多线程" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS开发总结系列-多线程</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.03.24</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2018/03/24/iOS开发总结系列-多线程/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看<a href="http://hchong.net/2017/11/21/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B/">这里</a>.</p>
+<h2 id="GCD里面有哪几种Queue"><a href="#GCD里面有哪几种Queue" class="headerlink" title="GCD里面有哪几种Queue"></a>GCD里面有哪几种Queue</h2><ol>
+<li>主队列 dispatch_main_queue(); 串行, 主要用来更新UI </li>
+<li>全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high </li>
+<li>自定义队列 dispatch_queue_t queue; 可以自定义是并行DISPATCH_QUEUE_CONCURRENT 或者 串行DISPATCH_QUEUE_SERIAL.</li>
+</ol>
+<h2 id="若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><a href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图" class="headerlink" title="若干个url异步加载多张图片，然后在都下载完成后合成一张整图"></a>若干个url异步加载多张图片，然后在都下载完成后合成一张整图</h2><p>使用dispatch_group, 有两种使用方式</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</div><div class="line">dispatch_group_t group = dispatch_group_create();</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片1 */ &#125;);</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片2 */ &#125;);</div><div class="line">dispatch_group_async(group, queue, ^&#123; /*加载图片3 */ &#125;); </div><div class="line">dispatch_group_notify(group, dispatch_get_main_queue(), ^&#123;</div><div class="line">        // 合并图片</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)groupTest2 &#123;</div><div class="line">    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</div><div class="line">    dispatch_group_t group = dispatch_group_create();</div><div class="line">    </div><div class="line">    dispatch_group_enter(group);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        sleep(2); //这里线程睡眠1秒钟，模拟异步请求</div><div class="line">        NSLog(@&quot;%@ one finish&quot;, [NSThread currentThread]);</div><div class="line">        dispatch_group_leave(group);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_group_enter(group);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        sleep(2); //这里线程睡眠1秒钟，模拟异步请求</div><div class="line">        NSLog(@&quot;%@ two finish&quot;, [NSThread currentThread]);</div><div class="line">        dispatch_group_leave(group);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_group_notify(group, queue, ^&#123;</div><div class="line">        NSLog(@&quot;group finished&quot;);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="dispatch-barrier-async的作用"><a href="#dispatch-barrier-async的作用" class="headerlink" title="dispatch_barrier_async的作用"></a>dispatch_barrier_async的作用</h2><p>在并行队列中, 为了保持某些任务的顺序, 需要等待一些任务完成后才能继续进行, 使用 barrier 来等待之前任务完成, 避免数据竞争等问题. 假设一个并行队列中添加了五个异步任务, 虽然遵循FIFO的原则, 这五个任务的执行必定是无序的. 当我们在第三个任务之后加入dispatch_barrier_async任务, 那么这五个任务就被分割成两部分, 前三次无序执行, 然后执行dispatch_barrier_async任务, 然后再无序执行后两次任务. 注意此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)barrierTest &#123;</div><div class="line">    </div><div class="line">    //此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行</div><div class="line">    dispatch_queue_t queue = dispatch_queue_create(&quot;barrierTest&quot;, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;1&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;2&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;3&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_barrier_async(queue, ^&#123;</div><div class="line">        sleep(3);</div><div class="line">        NSLog(@&quot;插入执行&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;4&quot;);</div><div class="line">    &#125;);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        NSLog(@&quot;5&quot;);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="为什么要废弃dispatch-get-current-queue"><a href="#为什么要废弃dispatch-get-current-queue" class="headerlink" title="为什么要废弃dispatch_get_current_queue"></a>为什么要废弃dispatch_get_current_queue</h2><p>dispatch_get_current_queue可能造成死锁, 详细的原因看<a href="为什么dispatch_get_current_queue被废弃">这里</a></p>
+<h2 id="如何取消一个正在运行的线程"><a href="#如何取消一个正在运行的线程" class="headerlink" title="如何取消一个正在运行的线程"></a>如何取消一个正在运行的线程</h2><h3 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h3><ol>
+<li><p>使用dispatch_block_cancel(iOS8之后)来取消, 但是必须使用 dispatch_block_create 创建 dispatch_block_t.</p>
+ <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)gcdBlockCancel&#123;</div><div class="line">    dispatch_queue_t queue = dispatch_queue_create(&quot;com.gcdtest.www&quot;, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    dispatch_block_t block1 = dispatch_block_create(0, ^&#123;</div><div class="line">        sleep(5);</div><div class="line">        NSLog(@&quot;block1 %@&quot;,[NSThread currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_block_t block2 = dispatch_block_create(0, ^&#123;</div><div class="line">        NSLog(@&quot;block2 %@&quot;,[NSThread currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_block_t block3 = dispatch_block_create(0, ^&#123;</div><div class="line">        NSLog(@&quot;block3 %@&quot;,[NSThread currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_async(queue, block1);</div><div class="line">    dispatch_async(queue, block2);</div><div class="line">    dispatch_block_cancel(block3);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 注意: dispatch_block_cancel只能取消尚未执行的任务, 对正在执行的任务不起作用.</p>
+</li>
+<li>模仿NSOperation, 定义外部变量, 标记block是否需要取消</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@property (nonatomic, assign) BOOL isCancel;</div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    self.view.backgroundColor = [UIColor whiteColor];</div><div class="line">    [self gcdCancel];</div><div class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">        self.isCancel = YES;</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)gcdCancel &#123;</div><div class="line">    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</div><div class="line">    dispatch_async(queue, ^&#123;</div><div class="line">        for (int i = 0; i &lt; 10000; i++) &#123;</div><div class="line">            NSLog(@&quot;%d&quot;, i);</div><div class="line">            if (self.isCancel) &#123;</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>不等循环结束, self.isCancel已经被标记为YES, 线程就已经return, 结束.</p>
+<h3 id="NSOperation"><a href="#NSOperation" class="headerlink" title="NSOperation"></a>NSOperation</h3><p>NSOperation提供了cancel方法, 但是这也只是把状态标记为cancel, 已经执行的任务是还在继续跑的, 所以我们要要在Operation的声明周期函数中, 频繁的检查 .cancelled 状态, 只要 .cancelled == true我们就把operation的 finished 状态, 设置为true, 并且结束没有完成的任务.</p>
+<p>我们要在<code>- start</code>, <code>- main</code>等任何声明周期函数中检查, 也可以通过KVO观察cancel的变化来做相应的操作. </p>
+<blockquote>
+<p>In life cycle of operation, you should frequently check .cancelled whenever .cancelled == true, you should stop operation and set .finished == true<br>In macOS 10.6 and later, if you call the cancel method on an operation that is in an operation queue and has unfinished dependent operations, those dependent operations are subsequently ignored. Because the operation is already cancelled, this behavior allows the queue to call the operation’s start method to remove the operation from the queue without calling its main method. If you call the cancel method on an operation that is not in a queue, the operation is immediately marked as being cancelled. In each case, marking the operation as ready or finished results in the generation of the appropriate KVO notifications.</p>
+</blockquote>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2018/03/24/iOS开发总结系列-多线程/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
