@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-31T08:54:20.606Z">
+<meta property="og:updated_time" content="2018-03-31T14:59:38.637Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-语言设计">
 <meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NSString如何计算字符的个数"><span class="toc-text">NSString如何计算字符的个数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSUserDefaults性能优化"><span class="toc-text">NSUserDefaults性能优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库为什么要创建索引"><span class="toc-text">数据库为什么要创建索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Full-Text-Search为什么快"><span class="toc-text">Full Text Search为什么快</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#imageNamed-与imageWithContentsOfFile-对比"><span class="toc-text">imageNamed:与imageWithContentsOfFile:对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Image的加载以及内存计算"><span class="toc-text">Image的加载以及内存计算</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NSString如何计算字符的个数"><span class="toc-text">NSString如何计算字符的个数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSUserDefaults性能优化"><span class="toc-text">NSUserDefaults性能优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库为什么要创建索引"><span class="toc-text">数据库为什么要创建索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Full-Text-Search为什么快"><span class="toc-text">Full Text Search为什么快</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#imageNamed-与imageWithContentsOfFile-对比"><span class="toc-text">imageNamed:与imageWithContentsOfFile:对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Image的加载以及内存计算"><span class="toc-text">Image的加载以及内存计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#isEqual与hash"><span class="toc-text">==, isEqual与hash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSDictionary-内部结构、实现原理"><span class="toc-text">NSDictionary 内部结构、实现原理</span></a></li></ol>
   </div>
 
 
@@ -256,6 +256,24 @@
 <p>不管是 JPEG 还是 PNG 图片, 都是一种压缩的位图图形格式. 只不过 PNG 图片是无损压缩, 并且支持 alpha 通道, 而 JPEG 图片则是有损压缩. 因此, 在将磁盘中的图片渲染到屏幕之前, 必须先要得到图片的原始像素数据, 才能执行后续的绘制操作, 这就是为什么需要对图片解压缩的原因.</p>
 <p>解压缩后的图片大小 = 图片的像素宽 <em> 图片的像素高 </em> 每个像素所占的字节数. 因为位图不用解压缩, 所以位图的内存大小就是图片的实际大小. 非位图的图片要解压缩, 所以非位图的图片在内存中的大小就是上面的公式.</p>
 <p>强制解压缩的原理就是对图片进行重新绘制, 得到一张新的解压缩后的位图. 其中, 用到的最核心的函数是 <code>CGBitmapContextCreate:</code>.</p>
+<h2 id="isEqual与hash"><a href="#isEqual与hash" class="headerlink" title="==, isEqual与hash"></a>==, isEqual与hash</h2><ul>
+<li>对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象)</li>
+<li>常见类型的isEqual方法还有NSString isEqualToString / NSDate isEqualToDate / NSArray isEqualToArray / NSDictionary isEqualToDictionary / NSSet isEqualToSet. isEqual比较对象值是否相等, 如果是自定义对象, 那么对象所有的属性也要像等.</li>
+<li><p>hash 值决定了该对象在 hash 表中存储的位置. hash值是对象判等的必要非充分条件, 集成成员的hash值和目标hash值相等, 并且进行对象判等为true, 则hash返回true.</p>
+<ul>
+<li>作为判等的结果 hash方法只在对象被添加至NSSet和设置为NSDictionary的key时会调用. </li>
+<li>基于hash值索引的Hash Table查找某个成员的过程就是: 通过hash值直接找到查找目标的位置, 如果目标位置上有多个相同hash值得成员, 此时再按照数组方式进行查找.</li>
+</ul>
+</li>
+</ul>
+<h2 id="NSDictionary-内部结构、实现原理"><a href="#NSDictionary-内部结构、实现原理" class="headerlink" title="NSDictionary 内部结构、实现原理"></a>NSDictionary 内部结构、实现原理</h2><p>NSDictionary（字典）是使用 hash表来实现key和value之间的映射和存储的, hash函数设计的好坏影响着数据的查找访问效率.</p>
+<p>Objective-C 中的字典 NSDictionary 底层其实是一个哈希表, 实际上绝大多数语言中字典都通过哈希表实现. 哈希表的本质是一个数组, 数组中每一个元素称为一个箱子(bin), 箱子中存放的是键值对.</p>
+<ol>
+<li>根据 key 计算出它的哈希值 h.</li>
+<li>假设箱子的个数为 n, 那么这个键值对应该放在第 (h % n) 个箱子中.</li>
+<li>如果该箱子中已经有了键值对, 就使用开放寻址法或者拉链法(每个箱子其实是一个链表, 属于同一个箱子的所有键值对都会排列在链表中)解决冲突.</li>
+</ol>
+<p>负载因子(load factor), 它用来衡量哈希表的 空/满 程度, 一定程度上也可以体现查询的效率, 计算公式为: <code>负载因子 = 总键值对数 / 箱子个数</code>. 负载因子越大, 意味着哈希表越满, 越容易导致冲突, 性能也就越低. 因此, 一般来说, 当负载因子大于某个常数(可能是 1, 或者 0.75 等)时, 哈希表将自动扩容.<br>哈希表在自动扩容时, 一般会创建两倍于原来个数的箱子, 因此即使 key 的哈希值不变, 对箱子个数取余的结果也会发生改变, 因此所有键值对的存放位置都有可能发生改变, 这个过程也称为重哈希(rehash).</p>
 
     
   </div>
