@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FkctxGN8VXdie7M8Fbx6U5Bpfi4c">
 <meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FixnilG9OWm4w4qUNZGKSkYXZ4gu">
-<meta property="og:updated_time" content="2018-03-30T02:57:26.145Z">
+<meta property="og:updated_time" content="2018-03-30T06:06:37.874Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-网络编程">
 <meta name="twitter:description" content="这里主要是一些计算机的基础知识部分, 在平常业务中不怎么用, 但是对深入了解计算机原理有很大帮助. HTTP请求中的GET和POSTGET和POST是网络请求到的两种基本方式.GET把参数包含在URL中, POST通过request body传递参数.GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache">
@@ -259,8 +259,9 @@
 <li>保持连接状态. Websocket需要先创建连接, 这就使得其成为一种有状态的协议, 之后通信时可以省略部分状态信息. 而HTTP请求可能需要在每个请求都携带状态信息(如身份认证等).</li>
 <li>更好的二进制支持. Websocket定义了二进制帧, 相对HTTP, 可以更轻松地处理二进制内容.</li>
 <li>Websocket定义了扩展, 用户可以扩展协议, 实现部分自定义的子协议. 如部分浏览器支持压缩等.</li>
-<li>更好的压缩效果. 相对于HTTP压缩, Websocket在适当的扩展支持下, 可以沿用之前内容的上下文, 在传递类似的数据时, 可以显著地提高压缩率.<h2 id="HTTP2-0针对同一个域名的多个请求-会建立多少个tcp连接"><a href="#HTTP2-0针对同一个域名的多个请求-会建立多少个tcp连接" class="headerlink" title="HTTP2.0针对同一个域名的多个请求, 会建立多少个tcp连接"></a>HTTP2.0针对同一个域名的多个请求, 会建立多少个tcp连接</h2>这里主要是HTTP2.0的多路复用机制.</li>
+<li>更好的压缩效果. 相对于HTTP压缩, Websocket在适当的扩展支持下, 可以沿用之前内容的上下文, 在传递类似的数据时, 可以显著地提高压缩率.</li>
 </ol>
+<h2 id="HTTP2-0针对同一个域名的多个请求-会建立多少个tcp连接"><a href="#HTTP2-0针对同一个域名的多个请求-会建立多少个tcp连接" class="headerlink" title="HTTP2.0针对同一个域名的多个请求, 会建立多少个tcp连接"></a>HTTP2.0针对同一个域名的多个请求, 会建立多少个tcp连接</h2><p>这里主要是HTTP2.0的多路复用机制.</p>
 <p>在同一个域名下, 开启一个TCP的connection, 每个请求以stream的方式发送, 每个steam有一个唯一标识. connection一旦建立, 后续的请求都可以复用这个connection并且可以同时发送, server端可以根据stream的唯一标识来相应对应的请求.<br>直到客户端不需要与服务器进行进一步的通信(例如主动用户离开这个页面), 或者服务器主动关闭connection, 这个connection就断开.</p>
 <p>stream的基本组成单位是frame(二进制帧), 每种frame又分为很多种类型例如HEADERS Frame(头部帧), DATA Frame(内容帧)等等. 请求头HEADERS Frame组成了resquest, 返回头HEADERS Frame和DATA Frame组成了response, request和response组成了一个stream.</p>
 <h2 id="TCP的拥塞控制机制"><a href="#TCP的拥塞控制机制" class="headerlink" title="TCP的拥塞控制机制"></a>TCP的拥塞控制机制</h2><p>拥塞控制是TCP协议的意向重要功能, TCP的拥塞机制是从端到端的角度, 推测网络是否发生拥堵, 如果拥堵则降低数据发送效率, 以缓解网络拥塞. 拥塞机制控制算法包括了慢启动, 拥塞避免, 快速重传, 快速恢复四部分.<br>TCP的拥塞控制采用的是窗口机制, TCP的发送端维持一个称为拥塞窗口cwnd的变量, 单位为字节, 用于表示在未收到接收端确认的情况下, 可以连续发送的数据字节数. 他会动态变化, 与网络拥塞情况成反比.</p>
@@ -268,10 +269,10 @@
 <li>慢启动指的是, 在TCP的开始传输阶段, 因为不知道网络负荷情况, 因此采用试探的方法, 逐渐增大拥塞窗口.</li>
 <li>拥塞避免指的是, 为了防止拥塞窗口增长过快而引起网络拥塞, TCP还需要设置一个慢启动阈值ssthresh, 当拥塞窗口的值增加到阈值时, 就减缓拥塞窗口的增长速度. 当网络拥塞时, 我们重新执行慢启动算法. </li>
 <li>快速重传指的是, 接收端每收到一个失序的数据报文段后就立即发出重复确认, 以便更早地通知发送端有丢包的情况发生. 举例: 接收端收到了1, 2两个报文, 接下来应该收到3. 但是, 直接收到了4, 这时就会向发送端发送2号数据报文段的确认, 这个称为重复确认. 继续往下走接收到了5, 6报文, 接收端仍然要向发送端发出2号数据报文段的重复确认. 这时发送端会收到多个2号数据报文段的重复确认, 则认为3号数据报文段发生了丢包, 需要立即向接收端重传3号数据报文段, 而不需要等待重传计时器到期再重传. 快速重传算法中规定如果收到某数据报文段的三个重复确认, 则立即重传下一个数据报文段.</li>
-<li><p>快速重连指的是, 当发送端连续收到三个重复确认时, 就将慢启动阈值ssthresh减半, 以预防网络拥塞的发生, 并且将拥塞窗口cwnd的值置为减半后的ssthresh, 然后开始执行拥塞避免算法, 使得cwnd缓慢地加性增大.</p>
-<h2 id="HTTP-post的body体使用form-urlencoded和multipart-form-data的区别"><a href="#HTTP-post的body体使用form-urlencoded和multipart-form-data的区别" class="headerlink" title="HTTP post的body体使用form-urlencoded和multipart/form-data的区别"></a>HTTP post的body体使用form-urlencoded和multipart/form-data的区别</h2></li>
-<li><p>form-urlencoded是默认的mime内容编码类型, 是通用的, 但是它在传输比较大的二进制或者文本数据时效率极低.</p>
-</li>
+<li>快速重连指的是, 当发送端连续收到三个重复确认时, 就将慢启动阈值ssthresh减半, 以预防网络拥塞的发生, 并且将拥塞窗口cwnd的值置为减半后的ssthresh, 然后开始执行拥塞避免算法, 使得cwnd缓慢地加性增大.</li>
+</ul>
+<h2 id="HTTP-post的body体使用form-urlencoded和multipart-form-data的区别"><a href="#HTTP-post的body体使用form-urlencoded和multipart-form-data的区别" class="headerlink" title="HTTP post的body体使用form-urlencoded和multipart/form-data的区别"></a>HTTP post的body体使用form-urlencoded和multipart/form-data的区别</h2><ul>
+<li>form-urlencoded是默认的mime内容编码类型, 是通用的, 但是它在传输比较大的二进制或者文本数据时效率极低.</li>
 <li>multipart/form-data是当上传文件或者二进制数据和非ASCII数据使用.</li>
 </ul>
 

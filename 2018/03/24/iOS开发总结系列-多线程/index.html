@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-30T02:56:22.173Z">
+<meta property="og:updated_time" content="2018-03-31T08:22:22.297Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-多线程">
 <meta name="twitter:description" content="这一篇主要总结开发中的多线程问题, 之前已经写过一篇多线程总结, 可以看这里. GCD里面有哪几种Queue 主队列 dispatch_main_queue(); 串行, 主要用来更新UI  全局队列 dispatch_global_queue(); 并行, 四个优先级：background, low, default, high  自定义队列 dispatch_queue_t queue; 可以">
@@ -156,7 +156,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD里面有哪几种Queue"><span class="toc-text">GCD里面有哪几种Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何取消一个正在运行的线程"><span class="toc-text">如何取消一个正在运行的线程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation"><span class="toc-text">NSOperation</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GCD里面有哪几种Queue"><span class="toc-text">GCD里面有哪几种Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#若干个url异步加载多张图片，然后在都下载完成后合成一张整图"><span class="toc-text">若干个url异步加载多张图片，然后在都下载完成后合成一张整图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async的作用"><span class="toc-text">dispatch_barrier_async的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要废弃dispatch-get-current-queue"><span class="toc-text">为什么要废弃dispatch_get_current_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何取消一个正在运行的线程"><span class="toc-text">如何取消一个正在运行的线程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GCD"><span class="toc-text">GCD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NSOperation"><span class="toc-text">NSOperation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#死锁"><span class="toc-text">死锁</span></a></li></ol>
   </div>
 
 
@@ -235,6 +235,20 @@
 <blockquote>
 <p>In life cycle of operation, you should frequently check .cancelled whenever .cancelled == true, you should stop operation and set .finished == true<br>In macOS 10.6 and later, if you call the cancel method on an operation that is in an operation queue and has unfinished dependent operations, those dependent operations are subsequently ignored. Because the operation is already cancelled, this behavior allows the queue to call the operation’s start method to remove the operation from the queue without calling its main method. If you call the cancel method on an operation that is not in a queue, the operation is immediately marked as being cancelled. In each case, marking the operation as ready or finished results in the generation of the appropriate KVO notifications.</p>
 </blockquote>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>死锁是指两个或两个以上的进程在执行过程中, 因争夺资源而造成的一种互相等待的现象, 若无外力作用, 它们都将无法推进下去.</p>
+<p>死锁产生的主要原因:</p>
+<ul>
+<li>系统资源不足</li>
+<li>进程运行推进的顺序不合适</li>
+<li>资源分配不当</li>
+</ul>
+<p>产生死锁的四个必要条件:</p>
+<ul>
+<li>互斥条件: 一个资源每次只能被一个进程使用. 这个无法预防, 恰恰是设备的固有属性, 我们还应该保护.</li>
+<li>占有且等待: 一个进程因请求资源而阻塞时, 对已获得的资源保持不放. 这个我们可以通过要求进程一次性的请求所有需要的资源, 并且阻塞这个进程直到所有请求都同时满足来预防. </li>
+<li>不可强行占有: 进程已获得的资源, 在未使用完成之前, 不能强行剥夺. 如果占有某些资源的一个进程进行进一步资源请求时被拒绝, 则该进程必须释放它最初占有的资源, 或者抢占另外一条进程并要求释放资源这两种方式来预防.</li>
+<li>循环等待条件: 若干进程之间形成一种头尾相接的循环等待资源关系. 我们可以通过定义资源类型的线性顺序来预防.</li>
+</ul>
 
     
   </div>
