@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="我的博客地址">
 <meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-31T14:59:38.637Z">
+<meta property="og:updated_time" content="2018-04-01T14:24:03.645Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-语言设计">
 <meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
@@ -271,7 +271,13 @@
 <ol>
 <li>根据 key 计算出它的哈希值 h.</li>
 <li>假设箱子的个数为 n, 那么这个键值对应该放在第 (h % n) 个箱子中.</li>
-<li>如果该箱子中已经有了键值对, 就使用开放寻址法或者拉链法(每个箱子其实是一个链表, 属于同一个箱子的所有键值对都会排列在链表中)解决冲突.</li>
+<li>如果该箱子中已经有了键值对, 那么就会有冲突, 如何解决冲突:<ul>
+<li>开放寻址法. </li>
+<li>链地址法. 每个箱子其实是一个链表, 属于同一个箱子的所有键值对都会排列在链表中</li>
+<li>再哈希法. 当发生冲突时, 使用第二个, 第三个, 哈希函数计算地址, 直到无冲突. 缺点: 计算时间增加. 比如对字符串首字母进行哈希, 如果产生冲突可以按照字符串字母第二位进行哈希, 再冲突, 第三位, 直到不冲突为止.</li>
+<li>建立一个公共溢出区. 假设哈希函数的值域为[0,m-1], 则设向量HashTable[0..m-1]为基本表, 另外设立存储空间向量OverTable[0..v]用以存储发生冲突的记录.</li>
+</ul>
+</li>
 </ol>
 <p>负载因子(load factor), 它用来衡量哈希表的 空/满 程度, 一定程度上也可以体现查询的效率, 计算公式为: <code>负载因子 = 总键值对数 / 箱子个数</code>. 负载因子越大, 意味着哈希表越满, 越容易导致冲突, 性能也就越低. 因此, 一般来说, 当负载因子大于某个常数(可能是 1, 或者 0.75 等)时, 哈希表将自动扩容.<br>哈希表在自动扩容时, 一般会创建两倍于原来个数的箱子, 因此即使 key 的哈希值不变, 对箱子个数取余的结果也会发生改变, 因此所有键值对的存放位置都有可能发生改变, 这个过程也称为重哈希(rehash).</p>
 
