@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>iOS事件传递与响应 | 我的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="iOS中的事件分为3大类型: 触屏事件(手势), 传感器事件(摇一摇, 陀螺仪), 远程控制事件(耳机的线控, 外接手柄). 按照时间顺序, 事件的生命周期概括如下:   事件的产生和传递 找出最合适的View后事件的处理  下面以触摸事件为例. 事件的产生和传递事件的产生发生触摸事件后, 系统会将该事件加入到一个由U">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS事件传递与响应">
+<meta property="og:url" content="http://hchong.net/2018/04/08/iOS事件传递流程/index.html">
+<meta property="og:site_name" content="我的博客地址">
+<meta property="og:description" content="iOS中的事件分为3大类型: 触屏事件(手势), 传感器事件(摇一摇, 陀螺仪), 远程控制事件(耳机的线控, 外接手柄). 按照时间顺序, 事件的生命周期概括如下:   事件的产生和传递 找出最合适的View后事件的处理  下面以触摸事件为例. 事件的产生和传递事件的产生发生触摸事件后, 系统会将该事件加入到一个由UIApplication管理的事件队列中. 因为队列的特点是FIFO, 先进先出">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-09T07:04:55.479Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS事件传递与响应">
+<meta name="twitter:description" content="iOS中的事件分为3大类型: 触屏事件(手势), 传感器事件(摇一摇, 陀螺仪), 远程控制事件(耳机的线控, 外接手柄). 按照时间顺序, 事件的生命周期概括如下:   事件的产生和传递 找出最合适的View后事件的处理  下面以触摸事件为例. 事件的产生和传递事件的产生发生触摸事件后, 系统会将该事件加入到一个由UIApplication管理的事件队列中. 因为队列的特点是FIFO, 先进先出">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=d671a41f" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#事件的产生和传递"><span class="toc-text">事件的产生和传递</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#事件的产生"><span class="toc-text">事件的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事件的传递与寻找最合适的View"><span class="toc-text">事件的传递与寻找最合适的View</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#时间传递与寻找最合适View的底层实现"><span class="toc-text">时间传递与寻找最合适View的底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hitTest-withEvent"><span class="toc-text">hitTest:withEvent:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pointInside-withEvent"><span class="toc-text">pointInside:withEvent:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件的响应"><span class="toc-text">事件的响应</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件处理的完整流程"><span class="toc-text">事件处理的完整流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常见用法"><span class="toc-text">常见用法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一个事件多个对象处理"><span class="toc-text">一个事件多个对象处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩大view的点击区域"><span class="toc-text">扩大view的点击区域</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-iOS事件传递流程" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS事件传递与响应</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.04.08</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a href="http://www.hchong.net/2018/04/08/iOS事件传递流程/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>iOS中的事件分为3大类型: 触屏事件(手势), 传感器事件(摇一摇, 陀螺仪), 远程控制事件(耳机的线控, 外接手柄). 按照时间顺序, 事件的生命周期概括如下: </p>
+<ol>
+<li>事件的产生和传递</li>
+<li>找出最合适的View后事件的处理</li>
+</ol>
+<p>下面以触摸事件为例.</p>
+<h1 id="事件的产生和传递"><a href="#事件的产生和传递" class="headerlink" title="事件的产生和传递"></a>事件的产生和传递</h1><h2 id="事件的产生"><a href="#事件的产生" class="headerlink" title="事件的产生"></a>事件的产生</h2><p>发生触摸事件后, 系统会将该事件加入到一个由UIApplication管理的事件队列中. 因为队列的特点是FIFO, 先进先出, 先产生的事件先处理.</p>
+<p>UIApplication会从事件队列中取出最前面的事件, 并将事件分发下去以便处理, 通常先发送事件给应用程序的主窗口(Keywindow).</p>
+<p>主窗口(keywindow)会在视图层析结构找到一个最合适的视图来处理触摸事件, 找到合适的视图控件后就会调用视图控件的touches方法来做具体的事件处理.</p>
+<h2 id="事件的传递与寻找最合适的View"><a href="#事件的传递与寻找最合适的View" class="headerlink" title="事件的传递与寻找最合适的View"></a>事件的传递与寻找最合适的View</h2><p>触摸事件的传递是从父控件到子控件, 也就是UIApplication-&gt;window-&gt;寻找处理事件最合适的view. <em>如果父控件不能接受触摸事件, 那么子控件就不可能接收到触摸事件.</em></p>
+<ol>
+<li>主窗口接收到应用程序传递过来的事件后, 首先判断自己能否接手触摸事件. 如果能, 那么在判断触摸点在不在窗口自己身上.</li>
+<li>如果触摸点在自己身上, 那么窗口会倒序遍历子控件来寻找最合适的View(倒序先遍历最新添加的View, 效率更高).</li>
+<li>遍历到每一个子控件, 会重复上面的两个步骤. (传递事件给子控件, 判断子控件能否接受事件, 触摸点是否在子控件上)</li>
+<li>循环遍历子控件, 直到找到最合适的View. 如果没有符合条件的子控件, 那么就认为自己最合适处理.</li>
+</ol>
+<p>如果UIView的<code>userInteractionEnabled = NO</code>, 或者<code>hidden = YES</code>, 或者透明度&lt;0.01则不能接受触摸事件. 注意父控件的hidden属性和透明度alpha属性都会影响他的子控件.</p>
+<h2 id="时间传递与寻找最合适View的底层实现"><a href="#时间传递与寻找最合适View的底层实现" class="headerlink" title="时间传递与寻找最合适View的底层实现"></a>时间传递与寻找最合适View的底层实现</h2><p>寻找最合适的View用到了两个重要方法: <code>hitTest:withEvent:</code> 和 <code>pointInside:withEvent:</code>.</p>
+<h3 id="hitTest-withEvent"><a href="#hitTest-withEvent" class="headerlink" title="hitTest:withEvent:"></a>hitTest:withEvent:</h3><p>只要事件一传递给一个控件, 这个控件就会调用他自己的<code>hitTest:withEvent:</code>方法. 他的作用就是寻找并返回最合适的view(能够响应事件的那个最合适的view). <em>不管这个控件能不能处理事件, 也不管触摸点在不在这个控件上, 事件都会先传递给这个控件, 随后再调用 <code>hitTest:withEvent:</code>方法.</em></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">底层具体实现如下: </div><div class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event &#123;</div><div class="line">    // 1.判断当前控件能否接收事件</div><div class="line">    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;</div><div class="line">    // 2. 判断点在不在当前控件</div><div class="line">    if ([self pointInside:point withEvent:event] == NO) return nil;</div><div class="line">    // 3.从后往前遍历自己的子控件</div><div class="line">    NSInteger count = self.subviews.count;</div><div class="line">    for (NSInteger i = count - 1; i &gt;= 0; i--) &#123;</div><div class="line">        UIView *childView = self.subviews[i];</div><div class="line">        // 把当前控件上的坐标系转换成子控件上的坐标系</div><div class="line">        CGPoint childP = [self convertPoint:point toView:childView];</div><div class="line">        UIView *fitView = [childView hitTest:childP withEvent:event];</div><div class="line">        if (fitView) &#123; // 寻找到最合适的view</div><div class="line">            return fitView;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    // 循环结束,表示没有比自己更合适的view</div><div class="line">    return self;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>事件传递给窗口或者控件后, 就调用<code>hitTest:withEvent:</code>寻找最合适的View. 所以是先传递事件, 再根据事件在自己身上找到最合适的View. 不管子控件是不是最合适的View, 系统都会先把事件传递给子控件, 经过子控件的<code>hitTest:withEvent:</code>验证后才知道有没有最合适的View. 所以如果确定最终父控件是最合适的view, 那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的.</p>
+<p>一般我们在父控件的hitTest:withEvent:中返回子控件作为最合适的view. 例如: 当遍历子控件时, 如果触摸点不在子控件A自己身上而是在子控件B身上, 还要要求返回子控件A作为最合适的view, 采用返回自己的方法可能会导致还没有来得及遍历A自己, 就有可能已经遍历了点真正所在的view, 也就是B. 这就导致了返回的不是自己而是触摸点真正所在的view, 所以还是建议在父控件的hitTest:withEvent:中返回子控件作为最合适的view.</p>
+<h3 id="pointInside-withEvent"><a href="#pointInside-withEvent" class="headerlink" title="pointInside:withEvent:"></a>pointInside:withEvent:</h3><p>pointInside:withEvent:方法判断点在不在当前view上(方法调用者的坐标系上)如果返回YES, 代表点在方法调用者的坐标系上; 返回NO代表点不在方法调用者的坐标系上, 那么方法调用者也就不能处理事件.</p>
+<h1 id="事件的响应"><a href="#事件的响应" class="headerlink" title="事件的响应"></a>事件的响应</h1><p>如果找到合适的View之后就会调用该view的touches方法要进行响应处理具体的事件, 找不到就不会调用. </p>
+<p>响应者链条其实就是很多响应者对象(继承自UIResponder的对象)一起组合起来的链条称之为响应者链条. 响应者链的事件传递过程如下:</p>
+<ol>
+<li>如果当前view是控制器的view, 那么控制器就是上一个响应者, 事件就传递给控制器; 如果当前view不是控制器的view, 那么父视图就是当前view的上一个响应者, 事件就传递给它的父视图.</li>
+<li>在视图层级结构的最顶级视图, 如果也不能处理接收到的事件或者消息, 则将其事件或消息传递给window对象进行处理.</li>
+<li>如果window对象也不处理, 则将其事件或消息传递给UIApplication对象.</li>
+<li>如果UIApplication也不能处理该事件或者消息则将其丢弃.</li>
+</ol>
+<h1 id="事件处理的完整流程"><a href="#事件处理的完整流程" class="headerlink" title="事件处理的完整流程"></a>事件处理的完整流程</h1><ol>
+<li>触摸屏产生触摸事件后, 触摸事件会被添加到由UIApplication管理的事件队列中去.</li>
+<li>UIApplication会从事件队列中取出最前面的事件, 把事件传递给应用程序的主窗口(keywindow).</li>
+<li>主窗口会在视图层级结构中找到一个最合适的View来处理触摸事件.</li>
+<li>最合适的View会调用自己的touches方法处理事件.</li>
+<li>把事件沿着响应者链向上抛.</li>
+</ol>
+<p>事件的传递是从上到下(父控件到子控件), 事件的响应是从下到上(顺着响应者链条向上传递: 子控件到父控件).</p>
+<h1 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h1><h2 id="一个事件多个对象处理"><a href="#一个事件多个对象处理" class="headerlink" title="一个事件多个对象处理"></a>一个事件多个对象处理</h2><p>事件的响应是顺着响应者链条向上传递的, 即从子控件传递给父控件, touch方法默认不处理事件, 而是把事件顺着响应者链条传递给上一个响应者. 这样我们就可以依托这个原理, 让一个事件多个控件响应.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">-(void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event &#123;</div><div class="line">  NSLog(@&quot;-- dosomething&quot;);</div><div class="line">  [super touchesBegan:touches withEvent:event];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="扩大view的点击区域"><a href="#扩大view的点击区域" class="headerlink" title="扩大view的点击区域"></a>扩大view的点击区域</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">底层具体实现如下: </div><div class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event &#123;</div><div class="line">    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;</div><div class="line">    CGRect touchRect = CGRectInset(self.bounds, -10, -10);</div><div class="line">    if (CGRectContainsPoint(touchRect, point)) &#123;</div><div class="line">        NSInteger count = self.subviews.count;</div><div class="line">        for (NSInteger i = count - 1; i &gt;= 0; i--) &#123;</div><div class="line">            UIView *childView = self.subviews[i];</div><div class="line">            CGPoint childP = [self convertPoint:point toView:childView];</div><div class="line">            UIView *fitView = [childView hitTest:childP withEvent:event];</div><div class="line">            if (fitView) &#123;</div><div class="line">                return fitView;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return self;</div><div class="line">    &#125;</div><div class="line">    return nil;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<p>参考资料:<br>1.<a href="http://blog.flight.dev.qunar.com/2016/10/28/ios-event-mechanism-summary/" target="_blank" rel="noopener">iOS事件传递及响应</a></p>
+<p>2.<a href="https://zhoon.github.io/ios/2015/04/12/ios-event.html" target="_blank" rel="noopener">深入浅出iOS事件机制</a></p>
+<p>3.<a href="https://www.jianshu.com/p/2e074db792ba" target="_blank" rel="noopener">史上最详细的iOS之事件的传递</a></p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'forsigner';
+    
+    var disqus_url = 'http://hchong.net/2018/04/08/iOS事件传递流程/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//forsigner.disqus.com/count.js" async></script>
+
+
+
+    
+
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
