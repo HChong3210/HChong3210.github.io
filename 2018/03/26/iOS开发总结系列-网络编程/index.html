@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FkctxGN8VXdie7M8Fbx6U5Bpfi4c">
 <meta property="og:image" content="http://7tszky.com1.z0.glb.clouddn.com/FixnilG9OWm4w4qUNZGKSkYXZ4gu">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2667071-60c63f19bb202a10.jpg?imageMogr2/auto-orient/">
-<meta property="og:updated_time" content="2018-04-14T12:11:31.731Z">
+<meta property="og:updated_time" content="2018-04-14T12:37:03.450Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-网络编程">
 <meta name="twitter:description" content="这里主要是一些计算机的基础知识部分, 在平常业务中不怎么用, 但是对深入了解计算机原理有很大帮助. HTTP请求中的GET和POSTGET和POST是网络请求到的两种基本方式.GET把参数包含在URL中, POST通过request body传递参数.GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache">
@@ -296,7 +296,17 @@
 <li>网关的IP地址</li>
 <li>DNS的IP地址</li>
 </ul>
-<p>我们在浏览器里面输入了一个网址, </p>
+<p>我们在浏览器里面输入了一个网址www.google.com, 这意味着浏览器要向Google发送一个网页请求的数据包. </p>
+<ol>
+<li>我们知道了网址但是不知道IP地址, 那么我们就需要DNS协议帮助我们将网址转换为IP地址. 于是我们想DNS服务器(DNS的IP地址, 端口是53)发送一个DNS数据包, DNS服务器告诉我们Google的IP地址, 于是我们知道了Google的IP地址.</li>
+<li>接下来, 我们要判断Google的IP地址是不是和本机的IP地址在同一个子网络里面, 这里我们要用到子网掩码. 我们通过子网掩码分别对本机IP地址和Google的IP地址做&amp;运算, 如果结果不同就表示不在同一个自网络. 很显然我们和Google的IP地址不在同一个自网络. 因此, 我们要向Google发送数据包, 必须通过网关转发. 也就是说, 接收方的MAC地址将是网关的MAC地址.</li>
+<li>浏览网页用的是HTTP协议, HTTP协议包含一些请求方式, HOST, User-Agent, Accept-Encoding, Accept-Language, Accept-Charset, Cookie等信息.</li>
+<li>TCP数据包需要设置端口, Google默认是80端口, 本机随机生成一个端口号. 然后把HTTP的数据包嵌入到TCP的数据包中.</li>
+<li>TCP数据包再嵌入IP数据包, IP数据包需要设置双方的IP地址, 这个我们在前面已经解析出来了.</li>
+<li>最后, IP数据包嵌入以太网数据包. 以太网数据包需要设置双方的MAC地址, 发送方为本机的网卡MAC地址, 接收方为网关的MAC地址(通过ARP协议得到).</li>
+<li>以太网数据包的数据部分, 最大长度为1500字节. 因此IP数据包必须分割成若干个包. 每个包都有自己的IP标头(20字节).</li>
+<li>经过多个网关的转发, Google的服务器(解析出来的IP地址), 收到了这若干个以太网数据包. 根据IP标头的序号, Google将四个包拼起来, 取出完整的TCP数据包, 然后读出里面的”HTTP请求”, 接着做出”HTTP响应”, 再用TCP协议发回来. 本机收到HTTP响应以后, 就可以将网页显示出来, 完成一次网络通信.</li>
+</ol>
 
     
   </div>
