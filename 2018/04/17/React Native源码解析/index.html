@@ -25,18 +25,18 @@
     <meta name="keywords" content="RN," />
   
 
-  <meta name="description" content="这是一个描述">
+  <meta name="description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX">
 <meta name="keywords" content="RN">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React Native源码解析">
 <meta property="og:url" content="http://hchong.net/2018/04/17/React Native源码解析/index.html">
 <meta property="og:site_name" content="我的博客地址">
-<meta property="og:description" content="这是一个描述">
+<meta property="og:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-17T14:00:26.959Z">
+<meta property="og:updated_time" content="2018-04-18T15:10:37.320Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React Native源码解析">
-<meta name="twitter:description" content="这是一个描述">
+<meta name="twitter:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
 
   
 
@@ -154,6 +154,11 @@
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#背景介绍"><span class="toc-text">背景介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#React-Native启动流程"><span class="toc-text">React Native启动流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#React-Native源码加载"><span class="toc-text">React Native源码加载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#React-Native页面渲染"><span class="toc-text">React Native页面渲染</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#React-Native事件处理"><span class="toc-text">React Native事件处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#React-Native通信机制"><span class="toc-text">React Native通信机制</span></a></li></ol>
+  </div>
+
 
 
 <div class="content content-post CENTER">
@@ -204,7 +209,16 @@
 
   <div class="article-content">
     
-      
+      <h1 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h1><p>前端大致的开发流程就是:</p>
+<ul>
+<li>用 HTML 创建 DOM, 构建整个网页的布局, 结构</li>
+<li>用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等</li>
+<li>用 JavaScript 接受用户事件, 动态的操控 DOM</li>
+</ul>
+<p>在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 JavaScript 并创建 DOM. 我们也可以在里面写CSS.</p>
+<p>React 独创了 Virtual DOM 机制. Virtual DOM 是一个存在于内存中的 JavaScript 对象, 它与 DOM 是一一对应的关系, 也就是说只要有 Virtual DOM, 我们就能渲染出 DOM. 当界面发生变化时, 得益于高效的 DOM Diff 算法, 我们能够知道 Virtual DOM 的变化, 从而高效的改动 DOM, 避免了重新绘制 DOM.</p>
+<p>React Native我们可以理解为Native 版本的 React. 即使使用了 React Native, 我们依然需要 UIKit 等框架, 调用的是 Objective-C 代码. JavaScript 只是辅助, 它只是提供了配置信息和逻辑的处理结果. 它只是以 JavaScript 的形式告诉 Objective-C 该执行什么代码. </p>
+<h1 id="React-Native启动流程"><a href="#React-Native启动流程" class="headerlink" title="React Native启动流程"></a>React Native启动流程</h1><h1 id="React-Native源码加载"><a href="#React-Native源码加载" class="headerlink" title="React Native源码加载"></a>React Native源码加载</h1><h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a>React Native页面渲染</h1><h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a>React Native事件处理</h1><h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1>
     
   </div>
 </article>
