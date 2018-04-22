@@ -34,7 +34,7 @@
 <meta property="og:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://img.souche.com/f2e/bfb53a0a04e1c7a9ca7c99d9440e0972.png">
-<meta property="og:updated_time" content="2018-04-19T15:49:09.847Z">
+<meta property="og:updated_time" content="2018-04-22T15:57:39.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React Native源码解析">
 <meta name="twitter:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
@@ -226,7 +226,9 @@
 <p>RCTModuleXXX 表示所有的RN的Module组件都是 RCTModuleData, 无论是RN的核心系统组件还是扩展的UI组件, API组件. </p>
 <p>RCTJSExecutor 是一个特殊的 RCTModuleData. 他是系统组件的核心, 负责单独开一个线程, 执行JS代码, 处理JS回调, 是bridge的核心通道.</p>
 <p>RCTEventDispatcher 也是一个特殊的 RCTModuleData. 各个业务模块通过它主动调起JS, 他封装了eventDispatcher得API来方便业务Module使用.</p>
-<h1 id="React-Native源码加载"><a href="#React-Native源码加载" class="headerlink" title="React Native源码加载"></a>React Native源码加载</h1><h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a>React Native页面渲染</h1><h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a>React Native事件处理</h1><h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1>
+<h1 id="React-Native源码加载"><a href="#React-Native源码加载" class="headerlink" title="React Native源码加载"></a>React Native源码加载</h1><p>RCTRootView的初始化中<code>-initWithBundleURL:XXX</code>中初始化了一个</p>
+<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a>React Native页面渲染</h1><h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a>React Native事件处理</h1><h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1><p>React Native用iOS自带的JavaScriptCore作为JS的解析引擎, 并没有用到JavaScript提供的一些可以让JS与OC互调的特性, </p>
+
     
   </div>
 </article>
