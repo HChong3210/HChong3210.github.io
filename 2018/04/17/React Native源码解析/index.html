@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://img.souche.com/f2e/bfb53a0a04e1c7a9ca7c99d9440e0972.png">
 <meta property="og:image" content="http://img.souche.com/f2e/f0aa996dd91edbb43c65963064be0fae.png">
-<meta property="og:updated_time" content="2018-04-24T15:52:51.577Z">
+<meta property="og:updated_time" content="2018-04-25T10:34:02.272Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React Native源码解析">
 <meta name="twitter:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
@@ -227,20 +227,39 @@
 <p>RCTModuleXXX 表示所有的RN的Module组件都是 RCTModuleData, 无论是RN的核心系统组件还是扩展的UI组件, API组件. </p>
 <p>RCTJSExecutor 是一个特殊的 RCTModuleData. 他是系统组件的核心, 负责单独开一个线程, 执行JS代码, 处理JS回调, 是bridge的核心通道.</p>
 <p>RCTEventDispatcher 也是一个特殊的 RCTModuleData. 各个业务模块通过它主动调起JS, 他封装了eventDispatcher得API来方便业务Module使用.</p>
-<h1 id="React-Native源码加载"><a href="#React-Native源码加载" class="headerlink" title="React Native源码加载"></a>React Native源码加载</h1><p><img src="http://img.souche.com/f2e/f0aa996dd91edbb43c65963064be0fae.png" alt="源码加载顺序"></p>
+<p><img src="http://img.souche.com/f2e/f0aa996dd91edbb43c65963064be0fae.png" alt="源码加载顺序"></p>
 <ul>
 <li>创建RCTRootView -&gt; 设置窗口根控制器的View, 把RN的View添加到窗口上显示.</li>
 <li>在RCTRootView中创建RCTBridge -&gt; 桥接对象, 管理JS和OC交互, 做中转. </li>
-<li>在RCTBridge中创建RCTBatchedBridge -&gt; 批量桥接对象, JS和OC的交互基本都在这里. </li>
+<li>在RCTBridge中创建RCTBatchedBridge -&gt; 批量桥接对象, JS和OC的交互基本都在这里. <ul>
 <li>创建一个Displaylink, 以设备屏幕渲染的频率触发一个timer, 判断是否有个别module需要按着timer去回调js, 如果没有module, 这个模块其实就是空跑一个displaylink.</li>
+</ul>
+</li>
+<li>RCTBatchedBridge对象 -&gt; start<ul>
 <li>创建一个dispatchQueue, 后面的操作都在这个队列里面, 保证顺序执行.</li>
 <li>RCTBatchedBridge -&gt; loadSource, 从本地或者远端拉取jsbundle.</li>
-<li>RCTBatchedBridge -&gt; initModulesWithDispatchGroup, 创建OC的模块表<br>  * </li>
-<li>RCTJSCExecutor -&gt; injectJSONText, 向JS中插入OC的模块表</li>
-<li></li>
-<li>爱的色放</li>
+<li>RCTBatchedBridge -&gt; initModulesWithDispatchGroup, 创建OC的模块表<ul>
+<li>RCTJavaScriptExecutor -&gt; setUp, Asynchronously initialize the JS executor, 异步初始化JS的桥接对象, 通过JSContext设置桥接.</li>
+<li>RCTBatchedBridge -&gt; moduleConfig, Asynchronously gather the module config, 异步获取moduleConfig.</li>
+<li>上面两个完成后, 执行RCTJSCExecutor -&gt; injectJSONText, 向JS中插入OC的模块表</li>
 </ul>
-<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a>React Native页面渲染</h1><h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a>React Native事件处理</h1><h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1><p>React Native用iOS自带的JavaScriptCore作为JS的解析引擎, 并没有用到JavaScript提供的一些可以让JS与OC互调的特性, </p>
+</li>
+<li>上面几个执行完后, 执行RCTBatchedBridge -&gt; executeSourceCode, 确保在JSExecutor专属的Thread内执行jsbundle代码. 把前面创建的RCTDisplayLink添加在在JSExecutor的Thread所在的runloop上.</li>
+</ul>
+</li>
+</ul>
+<h1 id="React-Native源码加载"><a href="#React-Native源码加载" class="headerlink" title="React Native源码加载"></a>React Native源码加载</h1><p>源码加载, 也就是JS代码加载的过程, 主要是APP启动流程中RCTBatchedBridge -&gt; loadSource这一步骤. </p>
+<ul>
+<li>RCTJavaScriptLoader -&gt; loadBundleAtURL, 加载JS代码, 这个URL可以是本地的文件路径也可以是服务器地址.</li>
+<li>RCTJavaScriptLoader -&gt; attemptAsynchronousLoadOfBundleAtURL, 异步加载JS文件, 里面的判断较多, 对本地URL和远端URL有做区分对待.</li>
+<li>上面下载完成后, 会把源代码通过block回调给外面来处理. RCTBatchedBridge -&gt; executeSourceCode. 在这里会调用RCTJSCExecutor -&gt; executeApplicationScript, 把JS代码交给RCTJSCExecutor对象然后在JS专用线程中来处理JS代码</li>
+<li>处理结束后在回调中注册RCTDisplayLink到JS专用线程对应的RunLoop中. 然后发送 RCTJavaScriptDidLoadNotification 通知.</li>
+<li>接收通知的地方有三个, 分别是隐藏self.window, 同步所有的设置, 新建一个RCTRootContentView.</li>
+<li>在创建RCTRootContentView对象时, 会通过通知传过来的参数获取前面我们创建的RCTBridge中的RCTUIManager(管理UI组件). 并且把RCTRootContentView对象注册为RootView. 并且把它添加到_viewRegistry中去(这是一个字典, 所有注册过的View都在这里面, key是一个reactTag). </li>
+<li>在创建RCTRootContentView对象时, 也会创建一个RCTTouchHandler, 用来处理事件. 详见<a href="#React Native事件处理">这里</a>.</li>
+<li>RCTRootContentView对象创建完成后, 执行RCTRootContentView -&gt; runApplication方法. </li>
+</ul>
+<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a>React Native页面渲染</h1><h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a><span id="React Native事件处理">React Native事件处理</span></h1><h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1><p>React Native用iOS自带的JavaScriptCore作为JS的解析引擎, 并没有用到JavaScript提供的一些可以让JS与OC互调的特性, </p>
 
     
   </div>
