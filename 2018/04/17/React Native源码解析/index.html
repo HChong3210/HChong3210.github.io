@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://img.souche.com/f2e/bfb53a0a04e1c7a9ca7c99d9440e0972.png">
 <meta property="og:image" content="http://img.souche.com/f2e/f0aa996dd91edbb43c65963064be0fae.png">
-<meta property="og:updated_time" content="2018-04-26T02:02:37.815Z">
+<meta property="og:updated_time" content="2018-04-26T09:26:54.064Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React Native源码解析">
 <meta name="twitter:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
@@ -257,14 +257,53 @@
 <li>接收通知的地方有三个, 分别是隐藏self.window, 同步所有的设置, 新建一个RCTRootContentView.</li>
 <li>在创建RCTRootContentView对象时, 会通过通知传过来的参数获取前面我们创建的RCTBridge中的RCTUIManager(管理UI组件). 并且把RCTRootContentView对象注册为RootView. 并且把它添加到_viewRegistry中去(这是一个字典, 所有注册过的View都在这里面, key是一个reactTag). </li>
 <li>在创建RCTRootContentView对象时, 也会创建一个RCTTouchHandler, 用来处理事件. 详见<a href="#React Native事件处理">这里</a>.</li>
-<li>RCTRootContentView对象创建完成后, 执行RCTRootContentView -&gt; runApplication方法. 通知JS运行APP</li>
+<li>RCTRootContentView对象创建完成后, 执行RCTRootContentView -&gt; runApplication方法. 通知JS运行APP, 来渲染控件. 详见<a href="#React Native页面渲染">这里</a>.</li>
 <li>RCTBridge -&gt; enqueueJSCall, 通过桥接对象让JS调用 APPRegistry. </li>
 <li>RCTBatchedBridge -&gt; _actuallyInvokeAndProcessModule, 通过批量桥架让JS执行AppRegistry方法.</li>
 <li>RCTJSCExecutor -&gt; _executeJSCall, 让JS执行者调用JS代码.</li>
 <li>执行完JS代码后, 会返回一个数组, 这个数组里面是OC要执行的操作(包含 RCTBridgeFieldRequestModuleIDs = 0, RCTBridgeFieldMethodIDs,  RCTBridgeFieldParams, RCTBridgeFieldCallID). 然后把数组传递给RCTBatchedBridge -&gt; _processResponse. </li>
 <li>在这里面执行RCTBatchedBridge -&gt; handleBuffer方法, 这个方法最终会便利数组依次调用RCTBatchedBridge -&gt; callNativeModule方法.</li>
 </ul>
-<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a>React Native页面渲染</h1><h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a><span id="React Native事件处理">React Native事件处理</span></h1><h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1><p>React Native用iOS自带的JavaScriptCore作为JS的解析引擎, 并没有用到JavaScript提供的一些可以让JS与OC互调的特性, </p>
+<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a><span id="React Native页面渲染">React Native页面渲染</span></h1><p><em>每一个 js render() 方法中的 component 都对应于 native 中的一个 RCTView. 在渲染前, js 会循环取出各个 component. 然后通过 UIManager (NativeModules 中的一项) 的 createView 方法, 通过 BatchedBridge 调用 native 端的 RCTUIManager 的同名方法, 创建与 component 相对应的类. 对于触摸事件也是类似的. native 端通过 bridge 将触摸事件传给 js, js 在找到对应 component 后, 响应各个触摸事件.</em></p>
+<ul>
+<li>RCTRootContentView -&gt; runApplication, 通知JS运行APP.</li>
+<li>在 native 调用 <code>-enqueueJSCall:method:args:completion</code> 后, 我们最终调用JS中 AppRegistry 的 runApplication方法. 下面这些都是JS线程中JS调用OC的方法.<ul>
+<li>RCTUIManager -&gt; createView:viewName:rootTag:props: </li>
+<li>这里使用了 RCT_EXPORT_METHOD 宏标记了该方法, 所以可以在JS中调用. </li>
+<li>每创建一个 UIView 就会 创建一个 RCTShadowView, 与UIView一一对应. 保存对应UIView的布局和子控件, 管理UIView的加载.</li>
+<li>把设置好的 view 保存到 _viewRegistry 中. js 和 native 端都会保存好这个 tag 和 view 的映射表. 这里的 _viewRegistry 就是 native 端保存的字典.</li>
+<li>最终在 ReactNativeBaseComponent.js 中调用了 UIManager.createView(). 这里实际调用的是原生中 RCTUIManager 暴露出来的 createView 方法.</li>
+<li>此时又调用到JS代码中的RCTUIManager -&gt; setChildren:reactTags: 给RCTRootView对应的RCTRootShadowView设置子控件. 继续调用RCTRootShadowView -&gt; insertReactSubview方法, 遍历子控件给RCTRootShadowView插入所有子控件.</li>
+</ul>
+</li>
+<li>RCTBatchedBridge -&gt; _processResponse:error:, 处理完执行JS代码返回的对象.</li>
+<li>RCTBatchedBridge -&gt; handleBuffer, 其中调用了RCTUIManager -&gt; batchDidComplete方法. </li>
+<li>在上面的方法中又调用了RCTUIManager -&gt; _layoutAndMount方法, 布局RCTRootView和增加子控件.<ul>
+<li>会遍历所有的View, 调用 RCTShadowView -&gt; processUpdatedProperties:处理保存在RCTShadowView中属性, 布局RCTShadowView对应UIView的所有子控件, 给原生View添加子控件</li>
+</ul>
+</li>
+<li>完成UI渲染.</li>
+</ul>
+<h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a><span id="React Native事件处理">React Native事件处理</span></h1><ul>
+<li>在创建 RCTRootContentView 时内部会 创建一个 RCTTouchHandler. RCTTouchHandler继承于 UIGestureRecognizer 内部实现了touchBegin等触摸方法, 用来处理触摸事件. RCTTouchHandler被添加到 RCTRootContentView 上面.</li>
+<li>创建 RCTTouchHandler 时, 内部会创建 RCTEventDispatcher. </li>
+<li>当原生的Touchs事件被触发, 会在里面调用 RCTEventDispatcher -&gt; sendEvent. 让事件分发对象调用发送事件对象, 并且内部会把事件保存到_eventQueue.</li>
+<li>再调用 RCTEventDispatcher -&gt; flushEventsQueue, 遍历获取事件队列中所有事件执行 RCTEventDispatcher -&gt; dispatchEvent.</li>
+<li>在 RCTEventDispatcher -&gt; dispatchEvent 中我们可以看到又调用了 RCTBatchedBridge -&gt; enqueueJSCall:args:方法, 又进入了桥接对象执行JS的步骤.</li>
+<li>总的来说, 就是原生响应触摸事件, 通过 RCTEventDispatcher 传递到桥接对象, 最终还是调用JS的代码处理.</li>
+</ul>
+<h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1><p>React Native用iOS自带的JavaScriptCore作为JS的解析引擎, 并没有用到JavaScript提供的一些可以让JS与OC互调的特性, </p>
+<hr>
+<p>参考资料:<br>1.<a href="http://i.dotidea.cn/2016/05/react-native-communication-principle-for-ios/" target="_blank" rel="noopener">React Native通信原理解析</a></p>
+<p>2.<a href="http://awhisper.github.io/2016/07/02/ReactNative%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%901/" target="_blank" rel="noopener">ReactNative iOS源码解析</a></p>
+<p>3.<a href="https://zhang759740844.github.io/2017/01/17/RN%20Native%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" target="_blank" rel="noopener">React-Native 初始化与通信原理源码分析</a></p>
+<p>4.<a href="https://www.jianshu.com/p/9e4f9f98f82d" target="_blank" rel="noopener">React Native原理篇整理笔记</a></p>
+<p>5.<a href="https://blog.csdn.net/u011342466/article/details/57180192" target="_blank" rel="noopener">React Native通讯机制—从源码分析</a></p>
+<p>6.<a href="https://www.jianshu.com/p/bd7dfd8c9917" target="_blank" rel="noopener">React Native从源码一步一步解析它的实现原理</a></p>
+<p>7.<a href="http://fighting300.com/2017/03/02/reactnative-code/" target="_blank" rel="noopener">React Native源码分析</a></p>
+<p>8.<a href="https://www.jianshu.com/p/0688b24950f4" target="_blank" rel="noopener">React Native源码分析原理（二）(基于0.48版本)</a></p>
+<p>9.<a href="http://blog.cnbang.net/tech/2698/" target="_blank" rel="noopener">React Native通信机制详解</a></p>
+<p>10.<a href="https://zhang759740844.github.io/2017/01/24/RN%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/" target="_blank" rel="noopener">React-Native 如何创建原生 View 源码解析</a></p>
 
     
   </div>
