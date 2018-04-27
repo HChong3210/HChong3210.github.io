@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://img.souche.com/f2e/bfb53a0a04e1c7a9ca7c99d9440e0972.png">
 <meta property="og:image" content="http://img.souche.com/f2e/f0aa996dd91edbb43c65963064be0fae.png">
-<meta property="og:updated_time" content="2018-04-26T15:36:59.265Z">
+<meta property="og:updated_time" content="2018-04-27T07:25:46.363Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React Native源码解析">
 <meta name="twitter:description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
@@ -295,12 +295,33 @@
 <h1 id="React-Native通信机制"><a href="#React-Native通信机制" class="headerlink" title="React Native通信机制"></a>React Native通信机制</h1><p>React Native用iOS自带的JavaScriptCore作为JS的解析引擎, 并没有用到JavaScript提供的一些可以让JS与OC互调的特性, 而是自己实现了一套机制, 这套机制可以通用于所有JS引擎上.</p>
 <p>首先我们要介绍两个宏:</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define RCT_EXPORT_MODULE(js_name) \</div><div class="line">RCT_EXTERN void RCTRegisterModule(Class); \</div><div class="line">+ (NSString *)moduleName &#123; return @#js_name; &#125; \</div><div class="line">+ (void)load &#123; RCTRegisterModule(self); &#125;</div></pre></td></tr></table></figure>
-<p>可以看到添加 RCT_EXPORT_MODULE 宏, 相当定义了load, moduleName方法. 正是在load方法中调用了 RCTRegisterModule 方法注册 Module. 注意过多的load方法是会影响APP的启动速度的. RCTRegisterModule 只是简单收集所有需要曝露给 JS 的类.</p>
+<p>可以看到添加 RCT_EXPORT_MODULE 宏, 相当定义了load, moduleName方法. 正是在load方法中调用了 RCTRegisterModule 方法注册 Module. 注意过多的load方法是会影响APP的启动速度的. RCTRegisterModule 只是简单收集所有需要曝露给 JS 的类. </p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define RCT_EXPORT_METHOD(method) \</div><div class="line">  RCT_REMAP_METHOD(, method)</div><div class="line">  </div><div class="line">#define RCT_REMAP_METHOD(js_name, method) \</div><div class="line">  RCT_EXTERN_REMAP_METHOD(js_name, method) \</div><div class="line">  - (void)method</div><div class="line"></div><div class="line">#define RCT_EXTERN_REMAP_METHOD(js_name, method) \</div><div class="line">  + (NSArray&lt;NSString *&gt; *)RCT_CONCAT(__rct_export__, \</div><div class="line">    RCT_CONCAT(js_name, RCT_CONCAT(__LINE__, __COUNTER__))) &#123; \</div><div class="line">    return @[@#js_name, @#method]; \</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
 <p>可以看到通过宏添加了一个新方法, 其命名规则: <code>__rct_export__ + __LINE__ + __COUNTER__</code>. 同时注意到, 所有曝露给 JS 的方法返回值都是 void, 要返回结果时, 需通过 callback 方式实现.</p>
 <p>在RN初始化过程中会调用 RCTBatchedBridge -&gt; -initModulesWithDispatchGroup:方法, 这个方法中会调用如下代码: </p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">  for (Class moduleClass in RCTGetModuleClasses()) &#123;</div><div class="line">    NSString *moduleName = RCTBridgeModuleNameForClass(moduleClass);</div><div class="line"></div><div class="line">    // Check for module name collisions</div><div class="line">    RCTModuleData *moduleData = moduleDataByName[moduleName];</div><div class="line">    if (moduleData) &#123;</div><div class="line">      if (moduleData.hasInstance) &#123;</div><div class="line">        // Existing module was preregistered, so it takes precedence</div><div class="line">        continue;</div><div class="line">      &#125; else if ([moduleClass new] == nil) &#123;</div><div class="line">        // The new module returned nil from init, so use the old module</div><div class="line">        continue;</div><div class="line">      &#125; else if ([moduleData.moduleClass new] != nil) &#123;</div><div class="line">        // Both modules were non-nil, so it&apos;s unclear which should take precedence</div><div class="line">        RCTLogError(@&quot;Attempted to register RCTBridgeModule class %@ for the &quot;</div><div class="line">                    &quot;name &apos;%@&apos;, but name was already registered by class %@&quot;,</div><div class="line">                    moduleClass, moduleName, moduleData.moduleClass);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // Instantiate moduleData (TODO: can we defer this until config generation?)</div><div class="line">    moduleData = [[RCTModuleData alloc] initWithModuleClass:moduleClass</div><div class="line">                                                     bridge:self];</div><div class="line">    moduleDataByName[moduleName] = moduleData;</div><div class="line">    [moduleClassesByID addObject:moduleClass];</div><div class="line">    [moduleDataByID addObject:moduleData];</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">//查找所有响应 RCTBridgeModule 的class.</div><div class="line">void RCTRegisterModule(Class moduleClass)</div><div class="line">&#123;</div><div class="line">  static dispatch_once_t onceToken;</div><div class="line">  dispatch_once(&amp;onceToken, ^&#123;</div><div class="line">    RCTModuleClasses = [NSMutableArray new];</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  RCTAssert([moduleClass conformsToProtocol:@protocol(RCTBridgeModule)],</div><div class="line">            @&quot;%@ does not conform to the RCTBridgeModule protocol&quot;,</div><div class="line">            moduleClass);</div><div class="line"></div><div class="line">  // Register module</div><div class="line">  [RCTModuleClasses addObject:moduleClass];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>至此, 所有需要曝露给 JS 的 module 都已注册完成, 并以RCTModuleData格式存储在RCTCxxBridge中.</p>
+<p>暴露给 JS 的类被 RCT_EXPORT_MODULE 宏注册. 暴露给 JavaScript 的方法被 RCT_EXPORT_METHOD 宏为函数名加上了 <code>__rct_export__</code> 前缀, 通过 runtime 获取类的函数列表. 至此, 所有需要曝露给 JS 的 module , Method都已注册完成, 并以RCTModuleData格式存储在 RCTCxxBridge 中. Bridge 持有一个数组, 数组中保存了所有的模块的 RCTModuleData 对象. 只要给定 ModuleId 和 MethodId 就可以唯一确定要调用的方法.</p>
+<p>在 React Native 中, Objective-C 和 JavaScript 的交互都是通过传递 ModuleId、MethodId 和 Arguments 进行的.</p>
+<p>Objective-C 调用 JavaScript 代码时:</p>
+<ul>
+<li>在加载完JS代码后会调用 RCTBatchedBridge 的 <code>-enqueueApplicationScript:url:onComplete</code>方法.</li>
+<li>加载完成后会调用 RCTJSCExecutor 的 <code>-flushedQueue:</code>方法.</li>
+<li>最终主要是在 RCTJSCExecutor 的  <code>-_executeJSCall:arguments:unwrapResult:callback</code>方法, 这里这个函数名是我们要调用 JavaScript 的中转函数名, 它的作用其实是处理参数, 而非真正要调用的 JavaScript 函数. 这个中转函数接收到的参数包含了 ModuleId、MethodId 和 Arguments, 然后由中转函数查找自己的模块配置表, 找到真正要调用的 JavaScript 函数.</li>
+</ul>
+<p>实际使用的时候, 我们可以使用 RCTEventDispatcher 的 <code>-sendEvent:</code>方法直接向JS发送事件. 而不用通过模块配置表.</p>
+<p>JavaScript 调用 Objective-C 代码时: </p>
+<ul>
+<li>JS端调用某个OC模块暴露出来的方法. </li>
+<li>JavaScript 会解析出方法的 ModuleId, MethodId 和 Arguments 并放入到 MessageQueue 中, 等待 Objective-C 主动拿走, 或者超时后主动发送给 Objective-C.</li>
+<li>把JS的callback函数缓存在MessageQueue的一个成员变量里, 用CallbackID代表callback.</li>
+<li>Objective-C 负责处理调用的方法是 RCTBatchedBridge 的<code>-handleBuffer:</code> 在这里解析出ModuleId, MethodId, Params</li>
+<li>然后调用 RCTBatchedBridge 的 <code>- (id)callNativeModule:method:params:</code> 方法.</li>
+<li>RCTModuleMethod对JS传过来的每一个参数进行处理, CallbackID类型被转换为一个 block</li>
+<li>再实现 RCTModuleMethod 的 <code>[method invokeWithBridge:self module:moduleData.instance arguments:params]</code> 方法, OC模块方法调用完, 执行block回调至此方法调用结束.</li>
+<li>RCTModuleMethod 还有一个 <code>-processMethodSignature</code>方法, 它会根据 JavaScript 的 CallbackId 创建一个 Block, OC模块方法调用完, 执行上面参数转换的block回调.</li>
+<li>block里带着CallbackID 和block 传过来的参数去调 JS 里 MessageQueue 的方法 invokeCallbackAndReturnFlushedQueue. </li>
+<li>MessageQueue 通过 CallbackID 找到相应的JS callback方法. 调用callback方法, 并把OC带过来的参数一起传过去, 完成回调.</li>
+</ul>
 <hr>
 <p>参考资料:<br>1.<a href="http://i.dotidea.cn/2016/05/react-native-communication-principle-for-ios/" target="_blank" rel="noopener">React Native通信原理解析</a></p>
 <p>2.<a href="http://awhisper.github.io/2016/07/02/ReactNative%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%901/" target="_blank" rel="noopener">ReactNative iOS源码解析</a></p>
@@ -313,6 +334,8 @@
 <p>9.<a href="http://blog.cnbang.net/tech/2698/" target="_blank" rel="noopener">React Native通信机制详解</a></p>
 <p>10.<a href="https://zhang759740844.github.io/2017/01/24/RN%E6%98%BE%E7%A4%BA%E5%8E%9F%E7%90%86/" target="_blank" rel="noopener">React-Native 如何创建原生 View 源码解析</a></p>
 <p>11.<a href="http://zxfcumtcs.github.io/2017/10/08/ReactNativeCommunicationMechanism/" target="_blank" rel="noopener">ReactNative源码解析——通信机制详解</a></p>
+<p>12.<a href="https://bestswifter.com/react-native/#javascriptrctjscexecutor" target="_blank" rel="noopener">React Native从入门到原理</a></p>
+<p>13.<a href="https://www.jianshu.com/p/bd7dfd8c9917" target="_blank" rel="noopener">React Native源码中JavaScriptCore详解</a></p>
 
     
   </div>
