@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://img.souche.com/f2e/2b762dfb368b3b50621cd5c39b51a86e.png">
 <meta property="og:image" content="https://ob6mci30g.qnssl.com/Blog/ArticleImage/40_15.png">
-<meta property="og:updated_time" content="2018-05-03T15:37:24.823Z">
+<meta property="og:updated_time" content="2018-05-03T15:39:50.555Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS的路由协议实践">
 <meta name="twitter:description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
@@ -290,7 +290,7 @@
 <ol>
 <li>然后有两个category, 分别是<code>UINavigationController+HCModuleCore</code>和<code>UIViewController+HCModuleCore</code>. 分别对应push和present的情况. 因为上面已经拿到了要跳转到的页面的实例, 这里就可以通过push或者present的方法跳转过去.   </li>
 </ol>
-<h2 id="远程调用和本地调用的区分以及安全防范"><a href="#远程调用和本地调用的区分以及安全防范" class="headerlink" title="远程调用和本地调用的区分以及安全防范"></a>远程调用和本地调用的区分以及安全防范</h2><p>远程调用和本地调用, </p>
+<h2 id="远程调用和本地调用的区分以及安全防范"><a href="#远程调用和本地调用的区分以及安全防范" class="headerlink" title="远程调用和本地调用的区分以及安全防范"></a>远程调用和本地调用的区分以及安全防范</h2><p>远程调用和本地调用, 如果是其他APP打开本地APP可以通过设置白名单的方式, 因为每个APP的Scheme都是不同的, 如果是网络层面上劫持协议, 可以通过HTTPS的方式来防止网络劫持.</p>
 <h2 id="模块间的方法调用"><a href="#模块间的方法调用" class="headerlink" title="模块间的方法调用"></a>模块间的方法调用</h2><p>我们可以选择对外暴露一个方法, 方法有两个参数, 一个是ModuleName, 一个是要执行的方法. 这样我们可以根据ModuleName在注册的类中找到这个类的实例, 然后通过NSInvocation来调用将要执行的方法.</p>
 <hr>
 <p>参考文章:<br>1.<a href="https://halfrost.com/ios_router/" target="_blank" rel="noopener">iOS 组件化 —— 路由设计思路分析</a></p>
