@@ -5,7 +5,7 @@
 
 
 <head>
-  <!-- 代码块的高亮 -->
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-17T13:58:31.022Z">
+<meta property="og:updated_time" content="2018-06-25T03:21:26.787Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-Runtime">
 <meta name="twitter:description" content="这篇主要是RunTime相关的知识, 具体关于RunTime可以看RunTime用法与分析 什么时候会报unrecognized selector的异常涉及到消息的转发阶段知识Runtime用法与分析 当调用该对象上某个方法, 而该对象上没有实现这个方法的时候, 可以通过“消息转发”进行解决. objc在向一个对象发送消息时, runtime库会根据对象的isa指针找到该对象实际所属的类, 然后在">
@@ -71,7 +71,7 @@
   
 
   
-    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 </head>
 
@@ -79,7 +79,7 @@
 
 
   
-    <span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
   
 
   <div class="post-header CENTER">
@@ -283,7 +283,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="Method-swizzling"><a href="#Method-swizzling" class="headerlink" title="Method swizzling"></a>Method swizzling</h2><p>我们可以利用 method_exchangeImplementations 来交换2个方法中的IMP.<br>我们可以利用 class_replaceMethod 来修改类.<br>我们可以利用 method_setImplementation 来直接设置某个方法的IMP.<br>…<br>归根到底都是更换selector的IMP(函数指针, 指向方法的实现).</p>
+<h2 id="Method-swizzling"><a href="#Method-swizzling" class="headerlink" title="Method swizzling"></a>Method swizzling</h2><p>该特性的实质是, 为类添加一个新的方法, 然后将目标方法和新的方法的IMP进行互换, 结果就是修改selector和IMP的对应关系.</p>
+<p>我们可以利用 method_exchangeImplementations 来交换2个方法中的IMP.<br>我们可以利用 class_replaceMethod 来修改类.<br>我们可以利用 method_setImplementation 来直接设置某个方法的IMP.<br>…<br>归根到底都是更换selector的IMP(函数指针, 指向方法的实现).</p>
 <h2 id="如何使用runtime-hook类方法和实例方法"><a href="#如何使用runtime-hook类方法和实例方法" class="headerlink" title="如何使用runtime hook类方法和实例方法"></a>如何使用runtime hook类方法和实例方法</h2><p>使用Method Swizzling 方法. swizzling大多时候是在category中的+load方法中使用, 也可以创建hook的管理类, 放在里面使用.</p>
 <p>使用<code>class_getInstanceMethod</code>来获取实例方法, 使用<code>class_getClassMethod</code>来获取类方法. </p>
 <ul>
@@ -451,7 +452,7 @@
       // load success
     });
   }
-</script>
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </body>
 </html>
