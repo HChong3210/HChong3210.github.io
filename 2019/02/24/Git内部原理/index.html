@@ -22,20 +22,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+    <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="记录一下开发过程中遇到的问题">
+  <meta name="description" content="git基本原理常见的git工作流如下, 来分解下看常见的工作流背后的逻辑.  git hash-object -w ${要保存的文件} =&amp;gt; 生成要保存的文件(Git对象)的HASH值 git update-index --add --cacheinfo 100644 ${Git对象的HASH值} ${要">
+<meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git内部原理">
 <meta property="og:url" content="http://hchong.net/2019/02/24/Git内部原理/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="记录一下开发过程中遇到的问题">
+<meta property="og:description" content="git基本原理常见的git工作流如下, 来分解下看常见的工作流背后的逻辑.  git hash-object -w ${要保存的文件} =&amp;gt; 生成要保存的文件(Git对象)的HASH值 git update-index --add --cacheinfo 100644 ${Git对象的HASH值} ${要保存的文件} =&amp;gt; 向暂存区保存文件 git write-tree =&amp;gt; 生">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-24T07:29:54.554Z">
+<meta property="og:updated_time" content="2019-02-24T07:37:00.510Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git内部原理">
-<meta name="twitter:description" content="记录一下开发过程中遇到的问题">
+<meta name="twitter:description" content="git基本原理常见的git工作流如下, 来分解下看常见的工作流背后的逻辑.  git hash-object -w ${要保存的文件} =&amp;gt; 生成要保存的文件(Git对象)的HASH值 git update-index --add --cacheinfo 100644 ${Git对象的HASH值} ${要保存的文件} =&amp;gt; 向暂存区保存文件 git write-tree =&amp;gt; 生">
 
   
 
@@ -153,6 +154,11 @@
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#git基本原理"><span class="toc-text">git基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#git-init"><span class="toc-text">git init</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-add"><span class="toc-text">git add .</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#保存文件为二进制文件-Git对象"><span class="toc-text">保存文件为二进制文件(Git对象)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二进制文件存放到”暂存区”"><span class="toc-text">二进制文件存放到”暂存区”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-status"><span class="toc-text">git status</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-commit"><span class="toc-text">git commit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#branch"><span class="toc-text">branch</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tag"><span class="toc-text">tag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol></li></ol>
+  </div>
+
 
 
 <div class="content content-post CENTER">
@@ -174,6 +180,11 @@
       
 
       
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
 
 
       
@@ -198,7 +209,51 @@
 
   <div class="article-content">
     
-      
+      <h1 id="git基本原理"><a href="#git基本原理" class="headerlink" title="git基本原理"></a>git基本原理</h1><p>常见的git工作流如下, 来分解下看常见的工作流背后的逻辑.</p>
+<ol>
+<li><code>git hash-object -w ${要保存的文件}</code> =&gt; 生成要保存的文件(Git对象)的HASH值</li>
+<li><code>git update-index --add --cacheinfo 100644 ${Git对象的HASH值} ${要保存的文件}</code> =&gt; 向暂存区保存文件</li>
+<li><code>git write-tree</code> =&gt; 生成目录对象(Tree对象)的HASH值</li>
+<li><code>echo &quot;first commit&quot; | git commit-tree ${目录对象(Tree对象)的HASH值}</code> =&gt; 包含元数据和目录树的对象HASH值(最终的commit对象)</li>
+<li><code>echo ${commit对象的HASH值} &gt; .git/refs/heads/${要commit的分支名称}</code> 表示指定分支指针指向该快照.</li>
+</ol>
+<h2 id="git-init"><a href="#git-init" class="headerlink" title="git init"></a>git init</h2><p>在项目根目录下创建一个.git子目录, 用来保存版本信息. objects 目录存储所有数据内容，refs 目录存储指向数据 (分支) 的提交对象的指针，HEAD 文件指向当前分支，index 文件保存了暂存区域信息</p>
+<h2 id="git-add"><a href="#git-add" class="headerlink" title="git add ."></a>git add .</h2><p>该命令实际可以拆分为<code>保存对象</code>和<code>更新暂存区</code>两部分操作.</p>
+<h3 id="保存文件为二进制文件-Git对象"><a href="#保存文件为二进制文件-Git对象" class="headerlink" title="保存文件为二进制文件(Git对象)"></a>保存文件为二进制文件(Git对象)</h3><ol>
+<li><code>git hash-object -w test.txt</code>命令实际分为两步: 第一步把test.txt文件压缩为二进制文件(Git对象), 保存在.git/objects目录下. 第二步计算test.txt的HASH值, 作为二进制文件的名称. 最终输出 <strong>Git对象的HASH值</strong></li>
+</ol>
+<h3 id="二进制文件存放到”暂存区”"><a href="#二进制文件存放到”暂存区”" class="headerlink" title="二进制文件存放到”暂存区”"></a>二进制文件存放到”暂存区”</h3><p>文件保存成二进制对象以后, 需要通知 Git 哪些文件发生了变动. 所有变动的文件, Git 都记录在”暂存区”.</p>
+<ol>
+<li><code>git update-index --add --cacheinfo 100644 ${Git对象的HASH值} test.txt</code>. 向暂存区写入文件名test.txt, 二进制对象名（哈希值）和<a href="文件权限">https://stackoverflow.com/questions/737673/how-to-read-the-mode-field-of-git-ls-trees-output</a>(100代表regular file，644代表文件权限.).</li>
+<li><code>git ls-files --stage</code>. 用来查看暂存区的文件.</li>
+</ol>
+<h2 id="git-status"><a href="#git-status" class="headerlink" title="git status"></a>git status</h2><p><code>git status</code>实际就是检查暂存区的内容.</p>
+<h2 id="git-commit"><a href="#git-commit" class="headerlink" title="git commit"></a>git commit</h2><p>仅仅记录单个文件的变化是不够的, 我们还需要记录文件之间的目录关系.</p>
+<ol>
+<li><code>git write-tree</code>也是分两步. 第一步从当前索引创建一个树形对象, 保存为二进制文件(Git对象), 保存在.git/objects目录下. 第二步计算HASH值, 作为二进制文件的名称. 最终输出<strong>Tree对象的HASH值</strong></li>
+<li><code>echo &quot;commit说明&quot; | git commit-tree ${Tree对象的HASH值}</code>. 该命令实际也是分两步. 第一步给出commit的备注. 第二部将元数据和目录树一起生成一个Git对象. 最终输出<strong>Commit对象的HASH值</strong></li>
+<li>此时使用<code>git log</code>是看不到内容的, 因为没有branch信息.</li>
+<li><code>echo ${Commit对象的HASH值} &gt; .git/refs/heads/master</code> 表示master指针指向该快照.</li>
+</ol>
+<h2 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h2><p>分支（branch）就是指向某个快照的指针, 分支名就是指针名, 但是HASH值不便于记忆, 所以我们概念中的branch就是分支名的别名. 分支还会自动更新, 如果当前分支有新的快照, 指针就会自动指向它. 比如, master 分支就是有一个叫做 master 指针, 它指向的快照就是 master 分支的当前快照.<br>Git 有一个特殊指针HEAD, 总是指向当前分支的最近一次快照. 另外, Git 还提供简写方式, <code>HEAD^</code>指向 HEAD的前一个快照(父节点). <code>HEAD~6</code>则是HEAD之前的第6个快照.<br>每一个分支指针都是一个文本文件, 保存在.git/refs/heads/目录, 该文件的内容就是它所指向的快照的二进制对象名(哈希值).</p>
+<h2 id="tag"><a href="#tag" class="headerlink" title="tag"></a>tag</h2><p><strong>Tag对象</strong>是一种对象, Tag 对象指向一个 commit 而不是一个 tree. 它就像是一个分支引用, 但是不会变化——永远指向同一个 commit, 仅仅是提供一个更加友好的名字.</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><ol>
+<li><code>git add -all(git add .)</code>相当于对目录下的所有文件遍历并且做了上面的操作.</li>
+<li><code>git cat-file -p ${Git对象的HASH值}</code>用来查看二进制文件的原始内容.</li>
+<li>每次生成Git对象, 实际是对有变动的文件做的全量的快照(当前的目录结构, 以及每个文件对应的二进制对象).</li>
+<li>通过<code>git config user.name ${用户名}</code>, <code>git config user.email ${Email 地址}</code>来设置是谁提交的记录.</li>
+<li><code>git log --stat ${Git对象的HASH值}</code>, 也可以查看快照在当前分支上的变动信息.</li>
+<li><code>git checkout ${Git对象的HASH值}</code>, 用于切换到某个快照.</li>
+<li><code>git show ${Git对象的HASH值}</code>, 用于展示某个快照的所有代码变动.</li>
+<li><code>git commit-tree ${目录结构Git对象的HASH} -p ${基于本次结构Git对象的HASH值}</code>. -p参数用来指定父节点, 也就是本次快照所基于的快照.</li>
+<li>100  644, 表明这是一个普通文件. 其他可用的模式有：100 755 表示可执行文件, 120 000 表示符号链接. 文件模式是从常规的 UNIX 文件模式中参考来的.</li>
+<li>Git的对象存储大致如下, 是通过Ruby脚本来实现的<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">content = &quot;what is up, doc?&quot;</div><div class="line">header = &quot;blob(数据对象) #&#123;content.length&#125;\0&quot;</div><div class="line"></div><div class="line">store = header + content</div><div class="line">sha1 = Digest::SHA1.hexdigest(store)</div><div class="line">zlib_content = Zlib::Deflate.deflate(store)</div><div class="line">将zlib_content写入磁盘, 命名为sha1</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<hr>
+<p>参考资料:</p>
+<p><a href="1">http://wiki.jikexueyuan.com/project/pro-git/git-internals.html</a><br><a href="2">http://www.ruanyifeng.com/blog/2018/10/git-internals.html</a><br><a href="3">https://medium.com/@shalithasuranga/how-does-git-work-internally-7c36dcb1f2cf</a></p>
+
     
   </div>
 </article>
@@ -349,7 +404,24 @@
       // load success
     });
   }
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
 
 </body>
 </html>
