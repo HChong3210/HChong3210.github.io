@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>iOS开发基础-Notification &amp; KVC &amp; KVO &amp; delegate | HChong的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.KVC/KVO是观察者">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发基础-Notification &amp; KVC &amp; KVO &amp; delegate">
+<meta property="og:url" content="http://hchong.net/2019/07/22/iOS开发基础-Notification-KVC-KVO-delegate/index.html">
+<meta property="og:site_name" content="HChong的博客地址">
+<meta property="og:description" content="KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.KVC/KVO是观察者模式的一种实现, 而delegate是代理模式和通知模式在iOS中的具体实现,">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-23T03:05:33.037Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发基础-Notification &amp; KVC &amp; KVO &amp; delegate">
+<meta name="twitter:description" content="KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.KVC/KVO是观察者模式的一种实现, 而delegate是代理模式和通知模式在iOS中的具体实现,">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-143601576-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?fbe237c14d5a4a92186f32fb70f9d87d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+<body>
+
+
+  
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header LEFT">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-kVC"><span class="toc-text">1 kVC</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-KVC内部原理"><span class="toc-text">1.1 KVC内部原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-1-KVC设置值的流程"><span class="toc-text">1.1.1 KVC设置值的流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-2-KVC取值的流程"><span class="toc-text">1.1.2 KVC取值的流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-KVC常见实践"><span class="toc-text">1.2 KVC常见实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-1-修改和访问私有属性私有变量"><span class="toc-text">1.2.1 修改和访问私有属性私有变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-2-动态取值和设置值"><span class="toc-text">1.2.2 动态取值和设置值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-3-Model和字典转换"><span class="toc-text">1.2.3 Model和字典转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-4-操作集合"><span class="toc-text">1.2.4 操作集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-5-利用KVC高阶消息传递"><span class="toc-text">1.2.5 利用KVC高阶消息传递</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-KVO"><span class="toc-text">2 KVO</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-Notification"><span class="toc-text">3 Notification</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-delegate"><span class="toc-text">4 delegate</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post LEFT">
+   <article id="post-iOS开发基础-Notification-KVC-KVO-delegate" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS开发基础-Notification &amp; KVC &amp; KVO &amp; delegate</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.07.22</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/iOS开发-基础/">iOS开发-基础</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.<br>KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.<br>KVC/KVO是观察者模式的一种实现, 而delegate是代理模式和通知模式在iOS中的具体实现, NSNotification则是发布-订阅模式的一种实现. 网上有很多人说，观察者模式和发布-订阅模式是两种不同的设计模式，它们压根就是两码事，不能混为一谈。也有很多人说，两者其实都是观察者模式，只是实现手段有点不一样罢了，本质是一样的。我认为发布-订阅模式只是观察者模式的一种实现手段, 它本质还是观察者模式. </p>
+<h1 id="1-kVC"><a href="#1-kVC" class="headerlink" title="1 kVC"></a>1 kVC</h1><p>全称是Key-value coding, 翻译成键值编码。它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制. KVC 机制是由 NSKeyValueCoding 协议定义的.</p>
+<p>KVC中以字符串的形式向对象发送消息, 这个字符串是我们关注的属性的关键. 常见的的基本调用如下:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">**设置值**</div><div class="line">// value的值为OC对象，如果是基本数据类型要包装成NSNumber</div><div class="line">- (void)setValue:(id)value forKey:(NSString *)key;</div><div class="line">// keyPath键路径，类型为xx.xx</div><div class="line">- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;</div><div class="line">// 它的默认实现是抛出异常，可以重写这个函数做错误处理。</div><div class="line">- (void)setValue:(id)value forUndefinedKey:(NSString *)key;</div><div class="line"></div><div class="line">**获取值**</div><div class="line">- (id)valueForKey:(NSString *)key;</div><div class="line">- (id)valueForKeyPath:(NSString *)keyPath;</div><div class="line">// 如果Key不存在，且没有KVC无法搜索到任何和Key有关的字段或者属性，则会调用这个方法，默认是抛出异常</div><div class="line">- (id)valueForUndefinedKey:(NSString *)key;</div><div class="line"></div><div class="line">**其他**</div><div class="line">// 允许直接访问实例变量，默认返回YES。如果某个类重写了这个方法，且返回NO，则KVC不可以访问该类。</div><div class="line">+ (BOOL)accessInstanceVariablesDirectly;</div><div class="line">// 这是集合操作的API，里面还有一系列这样的API，如果属性是一个NSMutableArray，那么可以用这个方法来返回</div><div class="line">- (NSMutableArray *)mutableArrayValueForKey:(NSString *)key;</div><div class="line">// 如果你在setValue方法时面给Value传nil，则会调用这个方法</div><div class="line">- (void)setNilValueForKey:(NSString *)key;</div><div class="line">// 输入一组key，返回该组key对应的Value，再转成字典返回，用于将Model转到字典。</div><div class="line">- (NSDictionary *)dictionaryWithValuesForKeys:(NSArray *)keys;</div><div class="line">// KVC提供属性值确认的API，它可以用来检查set的值是否正确、为不正确的值做一个替换值或者拒绝设置新值并返回错误原因。</div><div class="line">- (BOOL)validateValue:(id)ioValue forKey:(NSString *)inKey error:(NSError)outError;</div></pre></td></tr></table></figure>
+<p>keyPath方法是集成了key的所有功能，也就是说对一个对象的一般属性进行赋值、取值，两个方法是通用的，都可以实现。但是对对象中的对象进的属性行赋值，只有keyPath能够实现.</p>
+<h2 id="1-1-KVC内部原理"><a href="#1-1-KVC内部原理" class="headerlink" title="1.1 KVC内部原理"></a>1.1 KVC内部原理</h2><p>比如说如下的一行KVC的代码：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];</div></pre></td></tr></table></figure></p>
+<p>就会被编译器处理成：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);</div><div class="line">IMP method = objc_msg_lookup (site-&gt;isa,sel);</div><div class="line">method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);</div></pre></td></tr></table></figure></p>
+<p>这下KVC内部的实现就很清楚的清楚了, 一个对象在调用setValue的时候:</p>
+<ol>
+<li>首先根据方法名找到运行方法的时候所需要的环境参数.</li>
+<li>他会从自己isa指针结合环境参数, 找到具体的方法实现的接口.</li>
+<li>再直接查找得来的具体的方法实现.</li>
+</ol>
+<p>下面我们再看一下KVC中设置值和获取值的流程:</p>
+<h3 id="1-1-1-KVC设置值的流程"><a href="#1-1-1-KVC设置值的流程" class="headerlink" title="1.1.1 KVC设置值的流程"></a>1.1.1 KVC设置值的流程</h3><ol>
+<li>首先搜索同名的setter方法(无@synthsize情况下, 因为@synthsize告诉编译器生成set<key>:格式的setter方法).</key></li>
+<li>上面的setter方法没找到，如果类方法accessInstanceVariablesDirectly返回YES。那么按_<key>，_is<key>，<key>，is<key>的顺序在类中查找实例变量。（NSKeyValueCodingCatogery中实现的类方法，默认实现为返回YES）</key></key></key></key></li>
+<li>如果找到设置成员的值, 如果没有调用<code>setValue:forUndefinedKey:</code>.</li>
+</ol>
+<p>注意: 通常情况下，KVC不允许在调用setValue：属性值 forKey：(或者keyPath)时对非对象传递一个nil的值。很简单，因为值类型是不能为nil的。如果你不小心传了，KVC会调用setNilValueForKey:方法。这个方法默认是抛出异常，所以一般而言最好还是重写这个方法。</p>
+<h3 id="1-1-2-KVC取值的流程"><a href="#1-1-2-KVC取值的流程" class="headerlink" title="1.1.2 KVC取值的流程"></a>1.1.2 KVC取值的流程</h3><ol>
+<li>首先按get<key>、<key>、is<key>的顺序查找getter方法(无@synthsize情况下, 因为@synthsize告诉编译器自动生成key:格式的getter方法). 如果是bool、int等基础数据类型，会做NSNumber的转换.</key></key></key></li>
+<li>上面的getter没有找到，查找countOf<key>、objectIn<key>AtIndex:、<key>AtIndexes格式的方法。</key></key></key></li>
+<li>如果countOf<key>和另外两个方法中的一个找到，那么就会返回一个可以响应NSArray所有方法的代理集合(collection proxy object)。发送给这个代理集合(collection proxy object)的NSArray消息方法，就会以countOf<key>、objectIn<key>AtIndex:、<key>AtIndexes这几个方法组合的形式调用。还有一个可选的get<key>:range:方法</key></key></key></key></key></li>
+<li>还没查到，那么查找countOf<key>、enumeratorOf<key>、memberOf<key>:格式的方法</key></key></key></li>
+<li>如果这三个方法都找到，那么就返回一个可以响应NSSet所有方法的代理集合(collection proxy object)。发送给这个代理集合(collection proxy object)的NSSet消息方法，就会以countOf<key>、enumeratorOf<key>、memberOf<key>:组合的形式调用</key></key></key></li>
+<li>还是没查到，那么如果类方法accessInstanceVariablesDirectly返回YES，那么按_<key>，_is<key>，<key>，is<key>的顺序直接搜索成员名</key></key></key></key></li>
+<li>再没查到，调用valueForUndefinedKey:。</li>
+</ol>
+<h2 id="1-2-KVC常见实践"><a href="#1-2-KVC常见实践" class="headerlink" title="1.2 KVC常见实践"></a>1.2 KVC常见实践</h2><p>这里是一些常见的KVC的实践.</p>
+<h3 id="1-2-1-修改和访问私有属性私有变量"><a href="#1-2-1-修改和访问私有属性私有变量" class="headerlink" title="1.2.1 修改和访问私有属性私有变量"></a>1.2.1 修改和访问私有属性私有变量</h3><p>对于类里的私有属性，Objective-C是无法直接访问的，但是KVC可以通过key, keypath做到.</p>
+<h3 id="1-2-2-动态取值和设置值"><a href="#1-2-2-动态取值和设置值" class="headerlink" title="1.2.2 动态取值和设置值"></a>1.2.2 动态取值和设置值</h3><p>利用KVC动态的取值和设值是最基本的用途.</p>
+<h3 id="1-2-3-Model和字典转换"><a href="#1-2-3-Model和字典转换" class="headerlink" title="1.2.3 Model和字典转换"></a>1.2.3 Model和字典转换</h3><p>利用runtime来获取成员属性, 通过KVC来赋值. 下面是一个简单的Demo.<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (instancetype)modelWithDict:(NSDictionary *)dict &#123;</div><div class="line">    id objc = [[self alloc] init];</div><div class="line">    /*</div><div class="line">     遍历模型中所有成员属性，去字典中查找</div><div class="line">     属性定义在类中，类有个属性列表（数组）</div><div class="line">     */</div><div class="line">    </div><div class="line">    //遍历模型所有成员属性</div><div class="line">    /*ivar表示成员属性</div><div class="line">     &#123;</div><div class="line">     _ID;//这个才叫成员属性，成员属性对应属性</div><div class="line">     &#125;</div><div class="line">     class_copyIvarList：把成员属性列表复制一份</div><div class="line">     Ivar * 表示指向Ivar数组的指针</div><div class="line">     */</div><div class="line">    unsigned int count;</div><div class="line">    Ivar *ivarList = class_copyIvarList([self class], &amp;count);</div><div class="line">    for (int i = 0; i &lt; count; i ++) &#123;</div><div class="line">        Ivar ivar = ivarList[i];</div><div class="line">        NSString *propertyName = [NSString stringWithUTF8String:ivar_getName(ivar)];</div><div class="line">        NSString *propertyType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];</div><div class="line">        NSString *key = [propertyName substringFromIndex:1];</div><div class="line">        id value = dict[key];</div><div class="line">        //也有存在类型是NSDictionary但是不想转成模型的情况</div><div class="line">        //二级转换</div><div class="line">        //值是字典，并且成员属性不是字典的时候需要转模型</div><div class="line">        if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![propertyType containsString:@&quot;NS&quot;]) &#123;</div><div class="line">            //转换成哪个类型</div><div class="line">            </div><div class="line">            //得到的propertyType是@&quot;User&quot;这样的一个字符串，所以需要先做截取</div><div class="line">            NSString *typeString = [propertyType substringFromIndex:2];</div><div class="line">            typeString = [typeString substringToIndex:typeString.length - 1];</div><div class="line">            //获取需要转换类的类对象</div><div class="line">            Class modelClass = NSClassFromString(typeString);</div><div class="line">            if (modelClass) &#123;</div><div class="line">                value = [modelClass modelWithDict:value];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (value) &#123;</div><div class="line">            [objc setValue:value forKey:key];</div><div class="line">        &#125;   </div><div class="line">    &#125;</div><div class="line">    return objc;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="1-2-4-操作集合"><a href="#1-2-4-操作集合" class="headerlink" title="1.2.4 操作集合"></a>1.2.4 操作集合</h3><p>Apple对KVC的valueForKey:方法作了一些特殊的实现，比如说NSArray和NSSet这样的容器类就实现了这些方法。所以可以用KVC很方便地操作集合.</p>
+<h3 id="1-2-5-利用KVC高阶消息传递"><a href="#1-2-5-利用KVC高阶消息传递" class="headerlink" title="1.2.5 利用KVC高阶消息传递"></a>1.2.5 利用KVC高阶消息传递</h3><p>当对容器类使用KVC时，valueForKey:将会被传递给容器中的每一个对象，而不是容器本身进行操作。结果会被添加进返回的容器中，这样，开发者可以很方便的操作集合来返回另一个集合.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">int main(int argc, const char * argv[]) &#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line">        </div><div class="line">       NSArray* arrStr = @[@&quot;english&quot;,@&quot;franch&quot;,@&quot;chinese&quot;];</div><div class="line">       NSArray* arrCapStrLength = [arrStr valueForKeyPath:@&quot;capitalizedString.length&quot;];</div><div class="line">        for (NSNumber* length  in arrCapStrLength) &#123;</div><div class="line">            NSLog(@&quot;%ld&quot;,(long)length.integerValue);</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//打印结果</div><div class="line">7</div><div class="line">6</div><div class="line">7</div></pre></td></tr></table></figure>
+<h1 id="2-KVO"><a href="#2-KVO" class="headerlink" title="2 KVO"></a>2 KVO</h1><p>之前总结过关于KVO的相关, 可以看<a href="http://hchong.net/2018/01/24/KVO%E8%AF%A6%E8%A7%A3/">这里</a></p>
+<p>通过KVC修改属性会触发KVO, 是因为内部触发了setter方法. </p>
+<p>通过KVC修改成员变量也会触发KVO, 是因为通过KVC修改成员变量的值, 系统内部帮助我们调用了willChangeValueForKey和didChangeValueForKey这两个方法, 并且在didChangeValueForKey 内部调用了 observeValueForKeyPath:方法.</p>
+<h1 id="3-Notification"><a href="#3-Notification" class="headerlink" title="3 Notification"></a>3 Notification</h1><ul>
+<li>1对N （多）</li>
+<li>不关心返回值，单向的传值</li>
+<li>NSNotificationCenter单例统一处理发通知</li>
+<li>通过不同的唯一的通知标识名NotificationName区分不同通知</li>
+<li>被观察者主动发出通知</li>
+<li>使用Notification一定要谨慎，由于1对多的缘故，避免滥用，不好查问题。</li>
+<li>其次就是在Controller销毁时，一定要注销掉通知.</li>
+<li>最好保证观察者和被观察者的事件都在同一个线程中来处理, 否则可能会出现一些奇怪的Bug.</li>
+</ul>
+<h1 id="4-delegate"><a href="#4-delegate" class="headerlink" title="4 delegate"></a>4 delegate</h1><p>在 iOS 中，代理(delegate)的本质是 protocol.</p>
+<ul>
+<li>一般用来处理 一对一 的关系. </li>
+<li>支持正向与反向传值(参数, 返回值). </li>
+<li>可以用require和optional来修饰的</li>
+</ul>
+<hr>
+<p>参考资料:<br>1.<a href="http://yulingtianxia.com/blog/2014/05/12/objective-czhong-de-kvche-kvo/" target="_blank" rel="noopener">Objective-C中的KVC和KVO</a><br>2.<a href="https://blog.csdn.net/omegayy/article/details/7381301" target="_blank" rel="noopener">Objective-C KVC机制</a><br>3.<a href="https://www.jianshu.com/p/8b2a98a8808a" target="_blank" rel="noopener">KVC内部执行过程分析</a><br>4.<a href="https://swiftcafe.io/2016/01/03/kvc" target="_blank" rel="noopener">swift中的 KVC 与 KVO</a><br>5.<a href="https://blog.csdn.net/qq_18505715/article/details/80205796" target="_blank" rel="noopener">iOS KVC实现原理</a><br>6.<a href="https://juejin.im/post/5aef18b76fb9a07aa34a28e6#heading-21" target="_blank" rel="noopener">iOS KVC和KVO详解</a></p>
+
+    
+    <span class="asdf">
+      <style type="text/css">
+      asdf{margin-top:20}
+      </style>
+      </span>
+  </div>
+  
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/07/11/iOS开发UI-UI绘制原理/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+  
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  
+</article>
+
+
+   
+
+</div>
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
