@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>iOS开发基础-NSDictionary-NSMutableArray内部实现 | HChong的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. 这里讲解的十分详细, 此处我们对主要流程做一个概述. 1 NSDictionaryFoundation框架下提供了很多高级数据结构, 这些都是对Core Foundat">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发基础-NSDictionary-NSMutableArray内部实现">
+<meta property="og:url" content="http://hchong.net/2019/07/25/iOS开发基础-NSDictionary-NSMutableArray内部实现/index.html">
+<meta property="og:site_name" content="HChong的博客地址">
+<meta property="og:description" content="dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. 这里讲解的十分详细, 此处我们对主要流程做一个概述. 1 NSDictionaryFoundation框架下提供了很多高级数据结构, 这些都是对Core Foundation下的封装, 例如NSDictionary就是对_CFDictionary的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.joyingx.me/images/20150503/4.jpg">
+<meta property="og:image" content="http://blog.joyingx.me/images/20150503/5.jpg">
+<meta property="og:updated_time" content="2019-07-25T08:27:59.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发基础-NSDictionary-NSMutableArray内部实现">
+<meta name="twitter:description" content="dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. 这里讲解的十分详细, 此处我们对主要流程做一个概述. 1 NSDictionaryFoundation框架下提供了很多高级数据结构, 这些都是对Core Foundation下的封装, 例如NSDictionary就是对_CFDictionary的">
+<meta name="twitter:image" content="http://blog.joyingx.me/images/20150503/4.jpg">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-143601576-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?fbe237c14d5a4a92186f32fb70f9d87d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+<body>
+
+
+  
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header LEFT">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-NSDictionary"><span class="toc-text">1 NSDictionary</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-1-原理分析"><span class="toc-text">1.1 原理分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-hash碰撞"><span class="toc-text">1.2 hash碰撞</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-2-总结"><span class="toc-text">1.2 总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-NSMutableArray"><span class="toc-text">2 NSMutableArray</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-ivars"><span class="toc-text">2.1 ivars</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-内存布局"><span class="toc-text">2.2 内存布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-总结"><span class="toc-text">2.3 总结</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post LEFT">
+   <article id="post-iOS开发基础-NSDictionary-NSMutableArray内部实现" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS开发基础-NSDictionary-NSMutableArray内部实现</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.07.25</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/iOS开发-基础/">iOS开发-基础</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. <a href="https://blog.csdn.net/Deft_MKJing/article/details/82732833" target="_blank" rel="noopener">这里</a>讲解的十分详细, 此处我们对主要流程做一个概述.</p>
+<h1 id="1-NSDictionary"><a href="#1-NSDictionary" class="headerlink" title="1 NSDictionary"></a>1 NSDictionary</h1><p>Foundation框架下提供了很多高级数据结构, 这些都是对Core Foundation下的封装, 例如NSDictionary就是对_CFDictionary的封装.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">struct __CFDictionary &#123;</div><div class="line">    CFRuntimeBase _base;</div><div class="line">    CFIndex _count;</div><div class="line">    CFIndex _capacity;</div><div class="line">    CFIndex _bucketsNum;</div><div class="line">    uintptr_t _marker;</div><div class="line">    void *_context;</div><div class="line">    CFIndex _deletes;</div><div class="line">    CFOptionFlags _xflags;</div><div class="line">    const void **_keys;	</div><div class="line">    const void **_values;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>根据数据结构可以发现dictionary内部使用了两个指针数组分别来保存keys和values, dictionary采用的是连续存储的方式存储键值对. Apple给的查询复杂度可以快至O(1), 下面我们就来分析下是如何做到的. </p>
+<h1 id="1-1-原理分析"><a href="#1-1-原理分析" class="headerlink" title="1.1 原理分析"></a>1.1 原理分析</h1><p>创建N个空桶，N为排序数组中最大值加一。然后遍历排序数组，以元素值为下标，将其放入对应的桶中. 如果少量数据，可以根据数组里面的最大值+1创建出那么多空桶，然后遍历，根据索引在空桶的值上累加，最后遍历空桶（已装载），根据值遍历出对应的下标.</p>
+<p>虽然这样做效率非常高，但是如果数据过大，内存吃不消，这样就有了哈希排序的介绍。例如一组数据，我们可以根据hash算法后取模的值进行空桶排列，但是如果两个值例如 101和11 % 10都是余1，会被放入同一个桶里面，这样就会有需要二次排列。虽然这个排序效率并不高，因此哈希化就变成了数据存储的一种设计.</p>
+<p>从dictionary的结构中可以看到keys大概率是一个数组, 那么当对象完成hash化运算, 这个计算结果要如何和数组实现位置匹配. 由于是两个数组分别存储, 因此, key哈希出来的数组下标地址, 同样这个地址对应到values数组的下标, 就是匹配到的值. 但是hash过程中必定会出现冲突，如何来处理冲突？</p>
+<h2 id="1-2-hash碰撞"><a href="#1-2-hash碰撞" class="headerlink" title="1.2 hash碰撞"></a>1.2 hash碰撞</h2><p>解决hash碰撞的方式是将发生碰撞的多个元素放到一个容器中，这个容器通常使用链表结构，这种解决方案被称作拉链法. 这个方案能够解决hash碰撞的匹配问题。但拉链法会将key和value包装成一个结构存储，而dictionary的结构拥有keys和values这两个数组，说明了这两个数据是被分开存储的，所以使用这个方案的可能性不高。而且拉链法存在一个问题：桶数量不多的情况下，拉链衍生出来的链表会非常庞大，需要二次遍历，匹配损耗一样很大, 官方都说了查找算法接近O(1),因此肯定不是拉链法，下面就有了开放定址法.</p>
+<p>使用开放定址法的结构通常允许在通列表的数量达到了某个阈值，通常是通列表长度的80%使用量时，对通列表进行一次扩充grow，然后重新计算数据的keyHash放入新桶中. 开放定址法可以通过动态扩充通列表长度解决了满桶无法插入的问题，也符合O(1)的查询速度，但同样随着数据量的增加，数据会明显的集中在某一段连续区域，称作堆积现象</p>
+<p>除了上述提到的拉链和开放定址，还有再哈希以及建立公共溢出区域来解决冲突.</p>
+<h1 id="1-2-总结"><a href="#1-2-总结" class="headerlink" title="1.2 总结"></a>1.2 总结</h1><p>NSDictionary是使用hash表来实现key和value的映射和存储. 可以看到，NSDictionary设置的key和value，key值会根据特定的hash函数算出建立的空桶数组，keys和values同样多，然后存储数据的时候，根据hash函数算出来的值，找到对应的index下标，如果下标已有数据，开放定址法后移动插入，如果空桶数组到达数据阀值，这个时候就会把空桶数组扩容，然后重新哈希插入。这样把一些不连续的key-value值插入到了能建立起关系的hash表中，当我们查找的时候，key根据哈希值算出来，然后根据索引，直接index访问hash表keys和hash表values，这样查询速度就可以和连续线性存储的数据一样接近O(1)了，只是占用空间有点大，性能就很强悍。如果删除的时候，也会根据_maker标记逻辑上的删除，除非NSDictionary（NSDictionary本体的hash值就是count）内存被移除。我们也会根据dictionary之所以采用这种设计，其一出于查询性能的考虑；其二dictionary在使用过程中总是会很快的被释放，不会长期占用内存.</p>
+<h1 id="2-NSMutableArray"><a href="#2-NSMutableArray" class="headerlink" title="2 NSMutableArray"></a>2 NSMutableArray</h1><p><a href="http://blog.joyingx.me/2015/05/03/NSMutableArray%20%E5%8E%9F%E7%90%86%E6%8F%AD%E9%9C%B2/" target="_blank" rel="noopener">这里</a>讲解的十分详细.</p>
+<p>普通c数组，归根接地就是一段能被方便读写的连续内存控件. 使用一段线性内存空间的一个最明显的缺点是，在下标 0 处插入一个元素时，需要移动其它所有的元素. 同样地，假如想要保持相同的内存指针作为首个元素的地址，移除第一个元素需要进行相同的动作. </p>
+<p>当数组非常大时，这样很快会成为问题。显而易见，直接指针存取在数组的世界里必定不是最高级的抽象。C 风格的数组通常很有用，但 Obj-C 程序员每天的主要工作使得它们需要 NSMutableArray 这样一个可变的、可索引的容器</p>
+<h2 id="2-1-ivars"><a href="#2-1-ivars" class="headerlink" title="2.1 ivars"></a>2.1 ivars</h2><p>我们来概括下每个 ivar 的意思：</p>
+<ul>
+<li>_used 是计数的意思</li>
+<li>_list 是缓冲区指针</li>
+<li>_size 是缓冲区的大小</li>
+<li>_offset 是在缓冲区里的数组的第一个元素索引</li>
+</ul>
+<h2 id="2-2-内存布局"><a href="#2-2-内存布局" class="headerlink" title="2.2 内存布局"></a>2.2 内存布局</h2><p>最关键的部分是决定 realOffset 应该等于 fetchOffset（减去 0）还是 fetchOffset 减 _size。看着纯代码不一定能画出完美的图画，我们设想一下两个关于如何获取对象的例子.</p>
+<p>_size &gt; fetchOffset这个例子中，偏移量相对较小:<br><img src="http://blog.joyingx.me/images/20150503/4.jpg" alt="_size &gt; fetchOffset"><br>为了获取 0 处的对象，我们计算出 fetchOffset 等于 3 + 0。因为 _size 大于 fetchOffset，realOffset 也等于 3。代码返回 _list[3] 的值。而获取 4 处的对象时，fetchOffset 等于 3 + 4，代码返回 _list[7]。</p>
+<p>_size &lt;= fetchOffset, 当偏移量比较大时:<br><img src="http://blog.joyingx.me/images/20150503/5.jpg" alt="_size &lt;= fetchOffset"><br>获取 0 处的对象，使得 fetchOffset 等于 7 + 0，调用方法后如期望的返回 _list[7]。然而，获取 4 处的对象时，fetchOffset 等于 7 + 4 = 11，要大于 _size。获得的 realOffset 要从 fetchOffset 减去 _size，即 11 - 10 = 1，方法返回 list[1].</p>
+<h2 id="2-3-总结"><a href="#2-3-总结" class="headerlink" title="2.3 总结"></a>2.3 总结</h2><p>__NSArrayM 用了环形缓冲区 (circular buffer)。这个数据结构相当简单，只是比常规数组或缓冲区复杂点。环形缓冲区的内容能在到达任意一端时绕向另一端。</p>
+<p>环形缓冲区有一些非常酷的属性。尤其是，除非缓冲区满了(每当缓冲区满了，它会重新分配1.625倍大小的空间.)，否则在任意一端插入或删除均不会要求移动任何内存。我们来分析这个类如何充分利用环形缓冲区来使得自身比 C 数组强大得多。在任意一端插入或者删除，只是修改offset参数，不需要移动内存，我们访问的时候只是不和普通的数组一样index多少就是多少，这里会计算加上offset之后处理的值取数据，而不是插入头和尾巴的时候，环形结构会根据最少移动内存指针的方式插入，例如要在A和B之间插入，按照C的数组，我们需要把B到E的元素移动内存，但是环形缓冲区的设计，我们只要把A的值向前移动一个单位内存，即可，同时修改offset偏移量，就能保证最小的移动单元来完成中间插入.</p>
+<hr>
+<p>参考资料:<br>1.<a href="http://blog.joyingx.me/2015/05/03/NSMutableArray%20%E5%8E%9F%E7%90%86%E6%8F%AD%E9%9C%B2/" target="_blank" rel="noopener">NSMutableArray原理揭露</a><br>2.<a href="https://blog.csdn.net/Deft_MKJing/article/details/82732833" target="_blank" rel="noopener">NSDictionary和NSMutableArray底层原理（哈希表和环形缓冲区）</a><br>3.<a href="https://juejin.im/post/59bce186f265da065a63ad8d" target="_blank" rel="noopener">如何设计并实现一个线程安全的 Map ？(上篇)</a><br>4.<a href="https://juejin.im/post/59d8d7cc6fb9a00a496e93b2" target="_blank" rel="noopener">如何设计并实现一个线程安全的 Map ？(下篇)</a><br>5.<a href=""></a></p>
+
+    
+    <span class="asdf">
+      <style type="text/css">
+      asdf{margin-top:20}
+      </style>
+      </span>
+  </div>
+  
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/07/25/iOS开发基础-内存管理/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+  
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  
+</article>
+
+
+   
+
+</div>
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
