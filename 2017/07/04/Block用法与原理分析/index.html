@@ -233,26 +233,147 @@ ga('send', 'pageview');
     
       <h1 id="Block用法及分析"><a href="#Block用法及分析" class="headerlink" title="Block用法及分析"></a>Block用法及分析</h1><p>Block的默认格式是这样的: <strong><code>返回值类型 (^Block变量名)(形参列表) = ^返回值类型 (形参列表){ 内容 }</code></strong>. 后面的返回值类型和形参列表可以省略. </p>
 <p>Block用一句话来形容就是带有自动变量(局部变量)的匿名函数. 他可以嵌套定义, 定义Block方法和定义函数方法类似, Block可以定义在方法内部和外部, 必须调用Block, 才会执行<code>{}</code>内部的方法. 本质是对象, 使代码高聚合. 结合<code>clang</code>分析可以发现Block的真实面目.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">struct Block_layout &#123;  </div><div class="line">    void *isa;</div><div class="line">    int flags;</div><div class="line">    int reserved;</div><div class="line">    void (*invoke)(void *, ...);</div><div class="line">    struct Block_descriptor *descriptor;</div><div class="line">    /* Imported variables. */</div><div class="line">&#125;;</div><div class="line"></div><div class="line">struct Block_descriptor &#123;  </div><div class="line">    unsigned long int reserved;</div><div class="line">    unsigned long int size;</div><div class="line">    void (*copy)(void *dst, void *src);</div><div class="line">    void (*dispose)(void *);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p><img src="http://img.souche.com/f2e/d71a93dbbbf11a6055810df74fdf309d.png" alt="block的数据结构"></p>
+<pre><code>struct Block_layout {  
+    void *isa;
+    int flags;
+    int reserved;
+    void (*invoke)(void *, ...);
+    struct Block_descriptor *descriptor;
+    /* Imported variables. */
+};
+
+struct Block_descriptor {  
+    unsigned long int reserved;
+    unsigned long int size;
+    void (*copy)(void *dst, void *src);
+    void (*dispose)(void *);
+};
+</code></pre><p><img src="http://img.souche.com/f2e/d71a93dbbbf11a6055810df74fdf309d.png" alt="block的数据结构"></p>
 <p>可以看到有<code>isa</code>的存在, 由此可以说明, OC处理Block是按照对象来处理的. 在iOS中, isa常见的就是_NSConcreteStackBlock, _NSConcreteMallocBlock, _NSConcreteGlobalBlock这三种类型. </p>
 <h2 id="常见的使用方法"><a href="#常见的使用方法" class="headerlink" title="常见的使用方法"></a>常见的使用方法</h2><p>常见的Block的使用方式有以下几种:</p>
 <h3 id="作为变量的用法"><a href="#作为变量的用法" class="headerlink" title="作为变量的用法"></a>作为变量的用法</h3><p>官方提供的快捷写法(inlineBlock)的示例是这样的:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&lt;#returnType#&gt;(^&lt;#blockName#&gt;)(&lt;#parameterTypes#&gt;) = ^(&lt;#parameters#&gt;) &#123;</div><div class="line">   &lt;#statements#&gt;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>我们举个🌰</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//定义一个block变量sum, 并且赋值(此处省略返回值类型int)</div><div class="line">int(^sum)(int, int) = ^(int a, int b) &#123;</div><div class="line">   return a + b;</div><div class="line">&#125;;</div><div class="line">//调用block变量</div><div class="line">int count = sum(2, 3);</div><div class="line">NSLog(@&quot;%d&quot;, count);</div><div class="line">    </div><div class="line">也可以吧定义和赋值分开来写, 类似于这样</div><div class="line"></div><div class="line">//定义一个block变量</div><div class="line">int (^sum)(int, int);</div><div class="line">//给block变量赋值(此处没有省略返回值类型)</div><div class="line">sum = ^int(int a, int b) &#123;</div><div class="line">    return a + b;</div><div class="line">&#125;;</div><div class="line">int count = sum(2, 3);</div><div class="line">    NSLog(@&quot;%d&quot;, count);</div></pre></td></tr></table></figure>
-<h3 id="作为属性的用法"><a href="#作为属性的用法" class="headerlink" title="作为属性的用法"></a>作为属性的用法</h3><p>block作为属性, 可以存在在找那个类的声明周期中, 这样就可以全局的使用, 也比较常用.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">1. 定义一个block属性</div><div class="line">@property (nonatomic, copy) int (^sum)(int a, int b);</div><div class="line"></div><div class="line">也可以使用`typedefBlock`的方式来定义(推荐)</div><div class="line">typedef int(^Sum)(int, int);</div><div class="line"></div><div class="line">@property (nonatomic, copy) Sum sum;</div><div class="line"></div><div class="line"></div><div class="line">2. 然后在合适的地方写该属性(block)的实现, </div><div class="line">self.sum = ^int(int a, int b) &#123;</div><div class="line">    return a + b;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">3. 最后是block的调用</div><div class="line">int count = self.sum(3, 4);</div><div class="line">NSLog(@&quot;%d&quot;, count);</div></pre></td></tr></table></figure>
-<h3 id="作为函数-方法-参数的用法"><a href="#作为函数-方法-参数的用法" class="headerlink" title="作为函数(方法)参数的用法"></a>作为函数(方法)参数的用法</h3><p>在这里C和OC的还略有不同. </p>
+<pre><code>&lt;#returnType#&gt;(^&lt;#blockName#&gt;)(&lt;#parameterTypes#&gt;) = ^(&lt;#parameters#&gt;) {
+   &lt;#statements#&gt;
+};
+</code></pre><p>我们举个🌰</p>
+<pre><code>//定义一个block变量sum, 并且赋值(此处省略返回值类型int)
+int(^sum)(int, int) = ^(int a, int b) {
+   return a + b;
+};
+//调用block变量
+int count = sum(2, 3);
+NSLog(@&quot;%d&quot;, count);
+
+也可以吧定义和赋值分开来写, 类似于这样
+
+//定义一个block变量
+int (^sum)(int, int);
+//给block变量赋值(此处没有省略返回值类型)
+sum = ^int(int a, int b) {
+    return a + b;
+};
+int count = sum(2, 3);
+    NSLog(@&quot;%d&quot;, count);
+</code></pre><h3 id="作为属性的用法"><a href="#作为属性的用法" class="headerlink" title="作为属性的用法"></a>作为属性的用法</h3><p>block作为属性, 可以存在在找那个类的声明周期中, 这样就可以全局的使用, 也比较常用.</p>
+<pre><code>1. 定义一个block属性
+@property (nonatomic, copy) int (^sum)(int a, int b);
+
+也可以使用`typedefBlock`的方式来定义(推荐)
+typedef int(^Sum)(int, int);
+
+@property (nonatomic, copy) Sum sum;
+
+
+2. 然后在合适的地方写该属性(block)的实现, 
+self.sum = ^int(int a, int b) {
+    return a + b;
+};
+
+3. 最后是block的调用
+int count = self.sum(3, 4);
+NSLog(@&quot;%d&quot;, count);
+</code></pre><h3 id="作为函数-方法-参数的用法"><a href="#作为函数-方法-参数的用法" class="headerlink" title="作为函数(方法)参数的用法"></a>作为函数(方法)参数的用法</h3><p>在这里C和OC的还略有不同. </p>
 <p>block作为函数参数的用法也是较常见的, 例如网络请求方法中, 会把网络请求结果处理的代码在block中, 等请求到数据的时候直接调用.</p>
 <p>block的定义也可以分为两种情况, 一种是使用了<code>typedefBlock</code>来定义, 一种是直接定义, 下面例子会给出代码示例. 假设有个下载的网络请求, 会有成功和失败的代码处理被我们封装在block里面, 作为参数在外面被调用.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">//.h文件</div><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line">typedef void(^SuccessBlock)(id obj);</div><div class="line">typedef void(^FailBlock)(id obj);</div><div class="line"></div><div class="line">@interface DownLoadManager : NSObject</div><div class="line"></div><div class="line">+ (void)downLoadedSuccess:(SuccessBlock)success fail:(FailBlock)fail;</div><div class="line"></div><div class="line">+ (void)uploadSuccess:(void(^)(id obj))success fail:(void(^)(id obj))fail;</div><div class="line">@end</div><div class="line"></div><div class="line"></div><div class="line">//.m文件</div><div class="line">#import &quot;DownLoadManager.h&quot;</div><div class="line"></div><div class="line">@implementation DownLoadManager</div><div class="line"></div><div class="line">+ (void)downLoadedSuccess:(SuccessBlock)success fail:(FailBlock)fail &#123;</div><div class="line">    //使用延迟来模拟异步数据请求</div><div class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">        success(@&quot;我是数据&quot;);</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)uploadSuccess:(void(^)(id obj))success fail:(void(^)(id obj))fail &#123;</div><div class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">        success(@&quot;我是数据&quot;);</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line">@end</div><div class="line"></div><div class="line"></div><div class="line">//在外面调用: </div><div class="line">[DownLoadManager downLoadedSuccess:^(id obj) &#123;</div><div class="line">    NSLog(@&quot;%@&quot;, obj);</div><div class="line">&#125; fail:^(id obj) &#123;</div><div class="line">        </div><div class="line">&#125;];</div><div class="line"></div><div class="line">[DownLoadManager uploadSuccess:^(id obj) &#123;</div><div class="line">   </div><div class="line">&#125; fail:^(id obj) &#123;</div><div class="line">   </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
-<p>可以看到, 这里的作为参数有两种方式, 一种是使用<code>typedef</code>定义, 一种是直接定义, 这两种方式和作为属性的两种用法基本类似.</p>
+<pre><code>
+//.h文件
+#import &lt;Foundation/Foundation.h&gt;
+typedef void(^SuccessBlock)(id obj);
+typedef void(^FailBlock)(id obj);
+
+@interface DownLoadManager : NSObject
+
++ (void)downLoadedSuccess:(SuccessBlock)success fail:(FailBlock)fail;
+
++ (void)uploadSuccess:(void(^)(id obj))success fail:(void(^)(id obj))fail;
+@end
+
+
+//.m文件
+#import &quot;DownLoadManager.h&quot;
+
+@implementation DownLoadManager
+
++ (void)downLoadedSuccess:(SuccessBlock)success fail:(FailBlock)fail {
+    //使用延迟来模拟异步数据请求
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        success(@&quot;我是数据&quot;);
+    });
+}
+
++ (void)uploadSuccess:(void(^)(id obj))success fail:(void(^)(id obj))fail {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        success(@&quot;我是数据&quot;);
+    });
+}
+@end
+
+
+//在外面调用: 
+[DownLoadManager downLoadedSuccess:^(id obj) {
+    NSLog(@&quot;%@&quot;, obj);
+} fail:^(id obj) {
+
+}];
+
+[DownLoadManager uploadSuccess:^(id obj) {
+
+} fail:^(id obj) {
+
+}];
+</code></pre><p>可以看到, 这里的作为参数有两种方式, 一种是使用<code>typedef</code>定义, 一种是直接定义, 这两种方式和作为属性的两种用法基本类似.</p>
 <p>下面是在C中的使用方法. 对比一下可以发现还是有一些差别的, 在OC中直接使用的话, block的name是没有定义的, C中是有的.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">// 实现，不使用 typedef</div><div class="line">// void (^iblock)()作为函数参数类型，iblock函数形参名</div><div class="line">void iprint( void (^iblock)() )&#123; </div><div class="line">    iblock(); // 调用 block参数&#125;</div><div class="line"></div><div class="line">// 实现，使用 typedef</div><div class="line">typedef void (^IBlock)();</div><div class="line">void iprint(IBlock iblock)&#123;</div><div class="line">    iblock(); // 调用 block参数</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">// 调用「不管使用不使用 typedef 调用方式一致」</div><div class="line">iprint(^&#123;</div><div class="line">    NSLog(@&quot;传入的实参代码块区域&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h3 id="作为返回值的用法"><a href="#作为返回值的用法" class="headerlink" title="作为返回值的用法"></a>作为返回值的用法</h3><p>block作为返回值的用法主要使用场景是函数的链式编程中, 可以参考<a href="http://hchong.net/2017/12/17/%E9%93%BE%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%AE%9E%E8%B7%B5/">这篇文章</a>.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">typedef NSString *(^NameBlock)(NSString *inputalue);//定义一个返回值是String, 参数是String类型的block, 名字为NameBlock</div><div class="line"></div><div class="line">@property (nonatomic, copy) NameBlock nameBlock;</div><div class="line"></div><div class="line">//实现属性的get方法</div><div class="line">- (NSString *(^)(NSString *))nameBlock &#123;</div><div class="line">    return ^NSString *(NSString *inputValue) &#123;</div><div class="line">        return [inputValue stringByAppendingString:@&quot;test&quot;];</div><div class="line">    &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//调用方式如下</div><div class="line">NSLog(@&quot;%@&quot;, self.nameBlock(@&quot;block作为返回值&quot;));</div></pre></td></tr></table></figure>
-<h3 id="常见的使用场景"><a href="#常见的使用场景" class="headerlink" title="常见的使用场景"></a>常见的使用场景</h3><ul>
+<pre><code>// 实现，不使用 typedef
+// void (^iblock)()作为函数参数类型，iblock函数形参名
+void iprint( void (^iblock)() ){ 
+    iblock(); // 调用 block参数}
+
+// 实现，使用 typedef
+typedef void (^IBlock)();
+void iprint(IBlock iblock){
+    iblock(); // 调用 block参数
+
+}
+
+// 调用「不管使用不使用 typedef 调用方式一致」
+iprint(^{
+    NSLog(@&quot;传入的实参代码块区域&quot;);
+});
+</code></pre><h3 id="作为返回值的用法"><a href="#作为返回值的用法" class="headerlink" title="作为返回值的用法"></a>作为返回值的用法</h3><p>block作为返回值的用法主要使用场景是函数的链式编程中, 可以参考<a href="http://hchong.net/2017/12/17/%E9%93%BE%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%AE%9E%E8%B7%B5/">这篇文章</a>.</p>
+<pre><code>typedef NSString *(^NameBlock)(NSString *inputalue);//定义一个返回值是String, 参数是String类型的block, 名字为NameBlock
+
+@property (nonatomic, copy) NameBlock nameBlock;
+
+//实现属性的get方法
+- (NSString *(^)(NSString *))nameBlock {
+    return ^NSString *(NSString *inputValue) {
+        return [inputValue stringByAppendingString:@&quot;test&quot;];
+    };
+}
+
+//调用方式如下
+NSLog(@&quot;%@&quot;, self.nameBlock(@&quot;block作为返回值&quot;));
+</code></pre><h3 id="常见的使用场景"><a href="#常见的使用场景" class="headerlink" title="常见的使用场景"></a>常见的使用场景</h3><ul>
 <li><p>Enumeration (像我们上面看到的 NSArray 的枚举接口)</p>
 </li>
 <li><p>View Animations (animations)</p>
@@ -269,10 +390,34 @@ ga('send', 'pageview');
 </li>
 </ul>
 <h2 id="捕获外部变量"><a href="#捕获外部变量" class="headerlink" title="捕获外部变量"></a>捕获外部变量</h2><p>C语言中的变量一共有五种: 自动变量, 函数参数, 静态局部变量, 静态全局变量, 全局变量. 要研究外部变量的捕获就去除掉函数参数这一项. 下面逐一分析.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static int staticGlobalInt = 0;//静态全局变量</div><div class="line">int globalInt;//全局变量</div><div class="line"></div><div class="line">//测试Block的变量捕获</div><div class="line">- (void)variableTest &#123;</div><div class="line">    static int staticInt = 0;//静态局部变量</div><div class="line">    __block int intNumber = 0;//局部变量</div><div class="line">    globalInt = 0;//全局变量</div><div class="line">    staticGlobalInt = 0;//静态全局变量</div><div class="line">    </div><div class="line">    NSLog(@&quot;初始化时---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);</div><div class="line">    </div><div class="line">    void(^addTest)() = ^()&#123;</div><div class="line">        staticGlobalInt++;</div><div class="line">        globalInt++;</div><div class="line">        staticInt++;</div><div class="line">        intNumber++;</div><div class="line">        NSLog(@&quot;在block中---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);</div><div class="line">    &#125;;</div><div class="line">    NSLog(@&quot;在block调用结束后---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);</div><div class="line">    addTest();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在这里, 如果不加<code>__block</code>的话, 局部变量在block内部使用是会报错的, 原因后面讲. 这里先来说一下结果, 打印的结果是:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">初始化时---静态全局变量:0, 全局变量:0, 静态局部变量:0, 局部变量:0</div><div class="line">在block调用结束后---静态全局变量:0, 全局变量:0, 静态局部变量:0, 局部变量:0</div><div class="line">在block中---静态全局变量:1, 全局变量:1, 静态局部变量:1, 局部变量:1</div></pre></td></tr></table></figure>
-<p>可以发现结果都变了, 但是内部实现实际上不同的.</p>
+<pre><code>static int staticGlobalInt = 0;//静态全局变量
+int globalInt;//全局变量
+
+//测试Block的变量捕获
+- (void)variableTest {
+    static int staticInt = 0;//静态局部变量
+    __block int intNumber = 0;//局部变量
+    globalInt = 0;//全局变量
+    staticGlobalInt = 0;//静态全局变量
+
+    NSLog(@&quot;初始化时---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);
+
+    void(^addTest)() = ^(){
+        staticGlobalInt++;
+        globalInt++;
+        staticInt++;
+        intNumber++;
+        NSLog(@&quot;在block中---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);
+    };
+    NSLog(@&quot;在block调用结束后---静态全局变量:%d, 全局变量:%d, 静态局部变量:%d, 局部变量:%d&quot;, staticGlobalInt, globalInt, staticInt, intNumber);
+    addTest();
+}
+</code></pre><p>在这里, 如果不加<code>__block</code>的话, 局部变量在block内部使用是会报错的, 原因后面讲. 这里先来说一下结果, 打印的结果是:</p>
+<pre><code>
+初始化时---静态全局变量:0, 全局变量:0, 静态局部变量:0, 局部变量:0
+在block调用结束后---静态全局变量:0, 全局变量:0, 静态局部变量:0, 局部变量:0
+在block中---静态全局变量:1, 全局变量:1, 静态局部变量:1, 局部变量:1
+</code></pre><p>可以发现结果都变了, 但是内部实现实际上不同的.</p>
 <ul>
 <li><p>静态全局变量和静态局部变量, 由于他们是存储在全局区(数据区), 作用域的范围是整个程序的生命周期, 只要程序在运行, 就可以访问到. 所以block直接访问了对应的变量, 而没有把他们copy到block中去</p>
 </li>
@@ -303,22 +448,62 @@ ga('send', 'pageview');
 <p> MRC环境下, 只有copy, <code>__block</code>才会被复制到堆上, 否则, <code>__block</code>一直都在栈上, block也只是<strong>NSStackBlock, 这个时候`</strong>forwarding`指针就只指向自己了.</p>
 </li>
 <li><p><code>__block</code>修饰对象<br> 对象在OC中, 默认声明自带<code>__strong</code>所有权修饰符的</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">__block id block_obj = [[NSObject alloc]init];  </div><div class="line">id obj = [[NSObject alloc]init];</div><div class="line">等价于</div><div class="line">Objective-C</div><div class="line">__block id __strong block_obj = [[NSObject alloc]init];  </div><div class="line">id __strong obj = [[NSObject alloc]init];</div></pre></td></tr></table></figure>
-<p> 在ARC环境下, 不仅仅是声明了<code>__block</code>的外部对象, 没有声明<code>__block</code>的对象, 在block内部也会被retain. 因为加了<code>__block</code>, 只是对一个自动变量有影响, 它们是指针, 相当于延长了指针变量的声明周期, 只要访问对象的话还是会retain.</p>
+<pre><code> __block id block_obj = [[NSObject alloc]init];  
+ id obj = [[NSObject alloc]init];
+ 等价于
+ Objective-C
+ __block id __strong block_obj = [[NSObject alloc]init];  
+ id __strong obj = [[NSObject alloc]init];
+</code></pre><p> 在ARC环境下, 不仅仅是声明了<code>__block</code>的外部对象, 没有声明<code>__block</code>的对象, 在block内部也会被retain. 因为加了<code>__block</code>, 只是对一个自动变量有影响, 它们是指针, 相当于延长了指针变量的声明周期, 只要访问对象的话还是会retain.</p>
 <p> 在MRC环境下, <code>__block</code>根本不会对指针所指向的对象执行copy操作, 而只是把指针进行的复制. </p>
 </li>
 </ol>
 <h3 id="weak"><a href="#weak" class="headerlink" title="__weak"></a>__weak</h3><p><code>__weak</code>修饰的对象被Block捕获时是对其进行弱引用持有的, 因为<code>__NSConcreteMallocBlock</code>捕获外部对象会在内部持有他, 引用计数会+1. 如果使用<code>__weak</code>修饰外部变量, Block捕获的变量就会是弱引用持有. 当Block所有者的作用域结束时, 他指向的对象没有被其他强引用持有, 所以立即被释放, 这是Block内部持有的弱引用也被置为nil.</p>
 <p><em>注意</em>: block并不会捕获形参到block内部进行持有. 例如下面这样:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Student *student = [[Student alloc]init];</div><div class="line">student.name = @&quot;Hello World&quot;;</div><div class="line"></div><div class="line">student.study = ^(NSString * name)&#123;</div><div class="line">    NSLog(@&quot;my name is = %@&quot;,name);</div><div class="line">&#125;;</div><div class="line">student.study(student.name);</div></pre></td></tr></table></figure>
-<h3 id="strong"><a href="#strong" class="headerlink" title="__strong"></a>__strong</h3><p><code>__strong</code>修饰的对象被Block捕获时是对其进行强引用持有的. 当Block的所有者的作用域结束时, <code>__strong</code>修饰的对象依然被Block强引用持有, 所以不会立即释放.</p>
+<pre><code>Student *student = [[Student alloc]init];
+student.name = @&quot;Hello World&quot;;
+
+student.study = ^(NSString * name){
+    NSLog(@&quot;my name is = %@&quot;,name);
+};
+student.study(student.name);
+</code></pre><h3 id="strong"><a href="#strong" class="headerlink" title="__strong"></a>__strong</h3><p><code>__strong</code>修饰的对象被Block捕获时是对其进行强引用持有的. 当Block的所有者的作用域结束时, <code>__strong</code>修饰的对象依然被Block强引用持有, 所以不会立即释放.</p>
 <h3 id="weakSelf-amp-strongSelf"><a href="#weakSelf-amp-strongSelf" class="headerlink" title="weakSelf &amp; strongSelf"></a>weakSelf &amp; strongSelf</h3><p>weakSelf 是为了block不持有self，避免Retain Circle循环引用。在 Block 内如果需要访问 self 的方法、变量，建议使用 weakSelf. weakSelf有下面两种写法.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">__weak __typeof(self)weakSelf = self;</div><div class="line">#define WEAKSELF typeof(self) __weak weakSelf = self;</div></pre></td></tr></table></figure>
-<p>strongSelf的目的是因为一旦进入block执行, 假设不允许self在这个执行过程中释放, 就需要加入strongSelf. block执行完后这个strongSelf 会自动释放, 不会存在循环引用问题。如果在 Block 内需要多次 访问 self，则需要使用 strongSelf. strongSelf的写法如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">__weak __typeof(self)weakSelf = self;</div><div class="line">__strong __typeof(weakSelf)strongSelf = weakSelf</div></pre></td></tr></table></figure>
-<h3 id="避免Block使用的对象被提前释放"><a href="#避免Block使用的对象被提前释放" class="headerlink" title="避免Block使用的对象被提前释放"></a>避免Block使用的对象被提前释放</h3><p>在 Block 中用异步的方式使用了外部对象, 当对象被释放后, 异步方法回调时访问该对象则会为空, 这时就可能造成程序崩溃了. 解决这个问题的方式则是 <code>__weak</code>/<code>__strong</code>. 例如下面这种样式的: </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@implementation TestBlockViewController</div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    </div><div class="line">    // Init properties.</div><div class="line">    self.tag = @&quot;tag is OK.&quot;;</div><div class="line">    </div><div class="line">    // Init TestService&apos;s block.</div><div class="line">    typeof(self) __weak weakSelf = self;</div><div class="line">    self.myBlock = ^&#123;</div><div class="line">        typeof(weakSelf) __strong strongSelf = weakSelf;</div><div class="line">        </div><div class="line">        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">            NSLog(@&quot;strongSelf is OK.&quot;);</div><div class="line">            NSLog(@&quot;%@&quot;, strongSelf.tag);</div><div class="line">            //NSLog(@&quot;%@&quot;, self.tag); // Retain cycle.</div><div class="line">        &#125;);</div><div class="line">    &#125;;</div><div class="line">    </div><div class="line">&#125;</div><div class="line">- (void)backButtonAction &#123;    </div><div class="line">    self.myBlock();</div><div class="line">    [self.navigationController popViewControllerAnimated:YES];</div><div class="line">&#125;</div><div class="line">- (void)dealloc &#123;</div><div class="line">    NSLog(@&quot;TestBlockViewController dealloc.&quot;);</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
-<hr>
+<pre><code>__weak __typeof(self)weakSelf = self;
+#define WEAKSELF typeof(self) __weak weakSelf = self;
+</code></pre><p>strongSelf的目的是因为一旦进入block执行, 假设不允许self在这个执行过程中释放, 就需要加入strongSelf. block执行完后这个strongSelf 会自动释放, 不会存在循环引用问题。如果在 Block 内需要多次 访问 self，则需要使用 strongSelf. strongSelf的写法如下:</p>
+<pre><code>__weak __typeof(self)weakSelf = self;
+__strong __typeof(weakSelf)strongSelf = weakSelf
+</code></pre><h3 id="避免Block使用的对象被提前释放"><a href="#避免Block使用的对象被提前释放" class="headerlink" title="避免Block使用的对象被提前释放"></a>避免Block使用的对象被提前释放</h3><p>在 Block 中用异步的方式使用了外部对象, 当对象被释放后, 异步方法回调时访问该对象则会为空, 这时就可能造成程序崩溃了. 解决这个问题的方式则是 <code>__weak</code>/<code>__strong</code>. 例如下面这种样式的: </p>
+<pre><code>@implementation TestBlockViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    // Init properties.
+    self.tag = @&quot;tag is OK.&quot;;
+
+    // Init TestService&#39;s block.
+    typeof(self) __weak weakSelf = self;
+    self.myBlock = ^{
+        typeof(weakSelf) __strong strongSelf = weakSelf;
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@&quot;strongSelf is OK.&quot;);
+            NSLog(@&quot;%@&quot;, strongSelf.tag);
+            //NSLog(@&quot;%@&quot;, self.tag); // Retain cycle.
+        });
+    };
+
+}
+- (void)backButtonAction {    
+    self.myBlock();
+    [self.navigationController popViewControllerAnimated:YES];
+}
+- (void)dealloc {
+    NSLog(@&quot;TestBlockViewController dealloc.&quot;);
+}
+@end
+</code></pre><hr>
 <p>参考资料: </p>
 <p>1.<a href="https://halfrost.com/ios_block/" target="_blank" rel="noopener">深入研究 Block 捕获外部变量和 __block 实现原理</a></p>
 <p>2.<a href="http://www.jianshu.com/p/51d04b7639f1" target="_blank" rel="noopener">Block技巧与底层解析</a></p>

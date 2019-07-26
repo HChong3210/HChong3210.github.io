@@ -240,8 +240,37 @@ ga('send', 'pageview');
 <h2 id="一个objc对象如何进行内存布局"><a href="#一个objc对象如何进行内存布局" class="headerlink" title="一个objc对象如何进行内存布局"></a>一个objc对象如何进行内存布局</h2><p>所有父类的成员变量和自己的成员变量都会存放在该对象所对应的存储空间中.<br>每一个对象内部都有一个isa指针, 指向他的类对象, 类对象中存放着本对象的对象方法列表, 成员列表的变量, 属性列表.<br>类的内部也有一个isa指针, 指向原类, 原类内部存放得失类方法列表, 内部也有一个superclass指针, 指向他的父类对象.</p>
 <h2 id="objc-msgForward函数是做什么的-直接调用它将会发生什么"><a href="#objc-msgForward函数是做什么的-直接调用它将会发生什么" class="headerlink" title="_objc_msgForward函数是做什么的, 直接调用它将会发生什么"></a>_objc_msgForward函数是做什么的, 直接调用它将会发生什么</h2><p>_objc_msgForward是 IMP 类型, 用于消息转发: 当向一个对象发送一条消息, 但它并没有实现的时候, _objc_msgForward会尝试做消息转发.</p>
 <p>首先我们从消息的查找看起:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">id objc_msgSend(id self, SEL op, ...) &#123;</div><div class="line">    if (!self) return nil;</div><div class="line">	IMP imp = class_getMethodImplementation(self-&gt;isa, SEL op);</div><div class="line">	imp(self, op, ...); //调用这个函数，伪代码...</div><div class="line">&#125;</div><div class="line"> </div><div class="line">//查找IMP</div><div class="line">IMP class_getMethodImplementation(Class cls, SEL sel) &#123;</div><div class="line">    if (!cls || !sel) return nil;</div><div class="line">    IMP imp = lookUpImpOrNil(cls, sel);</div><div class="line">    if (!imp) return _objc_msgForward; //_objc_msgForward 用于消息转发</div><div class="line">    return imp;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">IMP lookUpImpOrNil(Class cls, SEL sel) &#123;</div><div class="line">    if (!cls-&gt;initialize()) &#123;</div><div class="line">        _class_initialize(cls);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    Class curClass = cls;</div><div class="line">    IMP imp = nil;</div><div class="line">    do &#123; //先查缓存,缓存没有时重建,仍旧没有则向父类查询</div><div class="line">        if (!curClass) break;</div><div class="line">        if (!curClass-&gt;cache) fill_cache(cls, curClass);</div><div class="line">        imp = cache_getImp(curClass, sel);</div><div class="line">        if (imp) break;</div><div class="line">    &#125; while (curClass = curClass-&gt;superclass);</div><div class="line"> </div><div class="line">    return imp;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>我们可以看出, _objc_msgForward 是一个函数指针(和 IMP 的类型一样), 是用于消息转发的: 当向一个对象发送一条消息, 但没有实现的时候, _objc_msgForward会尝试做消息转发.</p>
+<pre><code>id objc_msgSend(id self, SEL op, ...) {
+    if (!self) return nil;
+    IMP imp = class_getMethodImplementation(self-&gt;isa, SEL op);
+    imp(self, op, ...); //调用这个函数，伪代码...
+}
+
+//查找IMP
+IMP class_getMethodImplementation(Class cls, SEL sel) {
+    if (!cls || !sel) return nil;
+    IMP imp = lookUpImpOrNil(cls, sel);
+    if (!imp) return _objc_msgForward; //_objc_msgForward 用于消息转发
+    return imp;
+}
+
+IMP lookUpImpOrNil(Class cls, SEL sel) {
+    if (!cls-&gt;initialize()) {
+        _class_initialize(cls);
+    }
+
+    Class curClass = cls;
+    IMP imp = nil;
+    do { //先查缓存,缓存没有时重建,仍旧没有则向父类查询
+        if (!curClass) break;
+        if (!curClass-&gt;cache) fill_cache(cls, curClass);
+        imp = cache_getImp(curClass, sel);
+        if (imp) break;
+    } while (curClass = curClass-&gt;superclass);
+
+    return imp;
+}
+</code></pre><p>我们可以看出, _objc_msgForward 是一个函数指针(和 IMP 的类型一样), 是用于消息转发的: 当向一个对象发送一条消息, 但没有实现的时候, _objc_msgForward会尝试做消息转发.</p>
 <p>我们向一个对象发送一条错误的消息, 然后在程序中加入断点或者暂停程序运行, 并在 gdb 中输入下面的命令: <code>call (void)instrumentObjcMessageSends(YES)</code>. 之后, 运行时发送的所有消息都会打印到/tmp/msgSend-xxxx文件里了. 终端中输入命令<code>open /private/tmp</code>前往文件夹, 找到最新生成的, 双击打开.</p>
 <p>在里面我们可以看到整个程序运行时调用的方法, 排除NSObject做的事, 剩下的就是<code>_objc_msgForward</code>消息转发做的事(实际也是消息转发的整个完整流程, <a href="http://hchong.net/2017/12/11/Runtime%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">Runtime用法与分析</a>). </p>
 <ol>
@@ -314,13 +343,28 @@ ga('send', 'pageview');
 <li>我们可以利用 <code>method_setImplementation</code> 来直接设置某个方法的IMP.</li>
 </ul>
 <p>下面是AFN中的写法:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static inline void af_swizzleSelector(Class class, SEL originalSelector, SEL swizzledSelector) &#123;</div><div class="line">    Method originalMethod = class_getInstanceMethod(class, originalSelector);</div><div class="line">    Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);</div><div class="line">    if (class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))) &#123;</div><div class="line">        class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));</div><div class="line">    &#125; else &#123;</div><div class="line">        method_exchangeImplementations(originalMethod, swizzledMethod);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p>在iOS中代理的本质就是代理对象内存的传递和操作, 我们在委托方设置代理属性后, 实际上只是用一个id类型的指针将代理对象进行了一个弱引用. 委托方让代理方执行协议, 实际上是在委托方中向这个id类型的指针指向的对象(代理方对象)发送消息.</p>
+<pre><code>static inline void af_swizzleSelector(Class class, SEL originalSelector, SEL swizzledSelector) {
+    Method originalMethod = class_getInstanceMethod(class, originalSelector);
+    Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+    if (class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))) {
+        class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+    } else {
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+    }
+}
+</code></pre><h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p>在iOS中代理的本质就是代理对象内存的传递和操作, 我们在委托方设置代理属性后, 实际上只是用一个id类型的指针将代理对象进行了一个弱引用. 委托方让代理方执行协议, 实际上是在委托方中向这个id类型的指针指向的对象(代理方对象)发送消息.</p>
 <p>委托方的代理属性本质上就是代理对象自身, 设置委托代理就是代理属性指针指向代理对象, 相当于代理对象只是在委托方中调用自己的方法. 如果方法没有实现就会报错(代理方没有实现委托方中协议中的方法).</p>
 <p>协议只是一种语法, 是声明委托方中的代理属性可以调用协议中声明的方法. 如果代理方遵守协议那么协议中方法的实现就会加入到代理方类的objc_protocol_list中去. 委托方的self.delegate实际指向代理方的地址, 消息转发到代理方那里, 调用代理方objc_protocol_list中的实现.</p>
 <h2 id="为什么category不能添加属性可以添加方法"><a href="#为什么category不能添加属性可以添加方法" class="headerlink" title="为什么category不能添加属性可以添加方法"></a>为什么category不能添加属性可以添加方法</h2><p>因为category在runtime中是用一个结构体表示的, 结构体在C中是初始化完成后是不能改变的, 但是方法是一个链表, 他是可以往里面添加新的方法的.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">struct _category_t &#123;</div><div class="line">    const char *name;</div><div class="line">    struct _class_t *cls;</div><div class="line">    const struct _method_list_t *instance_methoods;</div><div class="line">    const struct _method_list_t *class_methods;</div><div class="line">    const struct _protocol_list_t *protocols;</div><div class="line">    const struct _prop_list_t *properties;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里面虽然可以添加property, 但是这些property并不会自动生成Ivar, 也就是不会有 @synthesize 的作用. dyld加载的期间, 这些categories会被加载并patch到相应的类中, 这个过程是动态的, Ivar不能动态添加, 因为表示ObjC类的结构体运行时并不能改变. </p>
+<pre><code>struct _category_t {
+    const char *name;
+    struct _class_t *cls;
+    const struct _method_list_t *instance_methoods;
+    const struct _method_list_t *class_methods;
+    const struct _protocol_list_t *protocols;
+    const struct _prop_list_t *properties;
+}
+</code></pre><p>这里面虽然可以添加property, 但是这些property并不会自动生成Ivar, 也就是不会有 @synthesize 的作用. dyld加载的期间, 这些categories会被加载并patch到相应的类中, 这个过程是动态的, Ivar不能动态添加, 因为表示ObjC类的结构体运行时并不能改变. </p>
 
     
     <span class="asdf">

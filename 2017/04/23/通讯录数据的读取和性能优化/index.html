@@ -33,10 +33,14 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析. 通讯录的授权">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNc79gy1ffevnuzt0zj30pg0e2wfj.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNc79gy1ffevnwtfovj317m0q440f.jpg">
 <meta property="og:updated_time" content="2017-05-09T12:12:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通讯录数据的读取和性能优化">
 <meta name="twitter:description" content="通讯录数据的读取和性能优化前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用Contacts Framework替代AddressBookFramework. 下面我将就iOS9和iOS8两种API进行分析. 通讯录的授权">
+<meta name="twitter:image" content="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG">
 
   
 
@@ -184,7 +188,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8查询通讯录授权状态"><span class="toc-text">iOS8查询通讯录授权状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9查询通讯录授权状态"><span class="toc-text">iOS9查询通讯录授权状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8写入联系人"><span class="toc-text">iOS8写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9写入联系人"><span class="toc-text">iOS9写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8删除联系人"><span class="toc-text">iOS8删除联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9删除联系人"><span class="toc-text">iOS9删除联系人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8读取联系人"><span class="toc-text">iOS8读取联系人</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#通讯录数据的读取和性能优化"><span class="toc-text">通讯录数据的读取和性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录的授权"><span class="toc-text">通讯录的授权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8查询通讯录授权状态"><span class="toc-text">iOS8查询通讯录授权状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9查询通讯录授权状态"><span class="toc-text">iOS9查询通讯录授权状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据写入和删除"><span class="toc-text">通讯录数据写入和删除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8写入联系人"><span class="toc-text">iOS8写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9写入联系人"><span class="toc-text">iOS9写入联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8删除联系人"><span class="toc-text">iOS8删除联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9删除联系人"><span class="toc-text">iOS9删除联系人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通讯录数据读取"><span class="toc-text">通讯录数据读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS8读取联系人"><span class="toc-text">iOS8读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS9读取联系人"><span class="toc-text">iOS9读取联系人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通讯录分组"><span class="toc-text">通讯录分组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能优化"><span class="toc-text">性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方案一"><span class="toc-text">方案一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方案二"><span class="toc-text">方案二</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监听通讯录数据变化"><span class="toc-text">监听通讯录数据变化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ios8监听通讯录变化"><span class="toc-text">ios8监听通讯录变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ios9监听通讯录变化"><span class="toc-text">ios9监听通讯录变化</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -231,250 +235,542 @@ ga('send', 'pageview');
     
       <h1 id="通讯录数据的读取和性能优化"><a href="#通讯录数据的读取和性能优化" class="headerlink" title="通讯录数据的读取和性能优化"></a>通讯录数据的读取和性能优化</h1><p>前段时间再做一个关于通讯录相关的项目, 记录一下通讯录相关的基础和读取优化的部分. 在本篇文章中, 我主要侧重读取通讯录数据方面, 至于调用原生的界面在这里则不做阐述. 关于通讯录的API, 在iOS9之后做了较大的调整, 使用<code>Contacts Framework</code>替代<code>AddressBookFramework</code>. 下面我将就iOS9和iOS8两种API进行分析.</p>
 <h2 id="通讯录的授权"><a href="#通讯录的授权" class="headerlink" title="通讯录的授权"></a>通讯录的授权</h2><p>既然要读取通讯录, 那么通讯录授权状态的查询, 要放在在前面, 这里也区分iOS9和iOS8系统.</p>
-<h3 id="iOS8查询通讯录授权状态"><a href="#iOS8查询通讯录授权状态" class="headerlink" title="iOS8查询通讯录授权状态"></a>iOS8查询通讯录授权状态</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (void)checkAddressBookAuthorization:(void (^)(bool isAuthorized))block &#123;</div><div class="line">    ABAddressBookRef addressBookRef =  ABAddressBookCreateWithOptions(NULL, NULL);</div><div class="line">    switch (ABAddressBookGetAuthorizationStatus()) &#123;</div><div class="line">        case kABAuthorizationStatusNotDetermined: &#123;</div><div class="line">            NSLog(@&quot;未询问用户是否授权&quot;);</div><div class="line">            ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) &#123;</div><div class="line">                if (granted) &#123;</div><div class="line">                    NSLog(@&quot;授权可以读取&quot;);</div><div class="line">                    block(YES);</div><div class="line">                &#125; else &#123;</div><div class="line">                    NSLog(@&quot;授权不能读取&quot;);</div><div class="line">                    block(NO);</div><div class="line">                &#125;</div><div class="line">            &#125;);</div><div class="line">        &#125; break;</div><div class="line">        case kABAuthorizationStatusAuthorized: &#123;</div><div class="line">            NSLog(@&quot;同意授权通讯录&quot;);</div><div class="line">            block(YES);</div><div class="line">        &#125; break;</div><div class="line">        case kABAuthorizationStatusDenied: &#123;</div><div class="line">            block(NO);</div><div class="line">            NSLog(@&quot;未授权，用户拒绝造成的&quot;);</div><div class="line">        &#125; break;</div><div class="line">        case kABAuthorizationStatusRestricted: &#123;</div><div class="line">            block(NO);</div><div class="line">            NSLog(@&quot;未授权，例如家长控制&quot;);</div><div class="line">        &#125; break;</div><div class="line">        default: &#123;</div><div class="line">        &#125; break;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="iOS9查询通讯录授权状态"><a href="#iOS9查询通讯录授权状态" class="headerlink" title="iOS9查询通讯录授权状态"></a>iOS9查询通讯录授权状态</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)addressBookEmpowerCheck &#123;</div><div class="line">    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];</div><div class="line">    switch (status) &#123;</div><div class="line">        case CNAuthorizationStatusNotDetermined: &#123;</div><div class="line">            [[[CNContactStore alloc]init] requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) &#123;</div><div class="line">                NSLog(@&quot;还没问&quot;);</div><div class="line">                if (granted) &#123;</div><div class="line">                    NSLog(@&quot;点击了同意&quot;);</div><div class="line">                &#125; else &#123;</div><div class="line">                    NSLog(@&quot;点击了拒绝&quot;);</div><div class="line">                &#125;</div><div class="line">            &#125;];</div><div class="line">        &#125;</div><div class="line">        break;</div><div class="line">        case CNAuthorizationStatusRestricted: &#123;</div><div class="line">            NSLog(@&quot;未授权, 例如家长控制&quot;);</div><div class="line">        &#125;</div><div class="line">        break;</div><div class="line">        case CNAuthorizationStatusDenied: &#123;</div><div class="line">            NSLog(@&quot;未授权, 用户拒绝所致&quot;);</div><div class="line">        &#125;</div><div class="line">        break;</div><div class="line">        case CNAuthorizationStatusAuthorized: &#123;</div><div class="line">            NSLog(@&quot;已经授权&quot;);</div><div class="line">        &#125;</div><div class="line">        break;</div><div class="line">        default: &#123;</div><div class="line">        &#125;</div><div class="line">        break;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>注意: 如果是iOS10的系统需要在<code>Info.plist</code>配置<code>NSContactsUsageDescription</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&lt;key&gt;NSContactsUsageDescription&lt;/key&gt;</div><div class="line">&lt;string&gt;请求访问通讯录&lt;/string&gt;</div></pre></td></tr></table></figure>
-<h2 id="通讯录数据写入和删除"><a href="#通讯录数据写入和删除" class="headerlink" title="通讯录数据写入和删除"></a>通讯录数据写入和删除</h2><p>当通讯录数据少时, 数据的读取耗时较少, 为了更好地测试大量数据下的性能问题, 我们先写入大量的数据来进行测试. </p>
-<h3 id="iOS8写入联系人"><a href="#iOS8写入联系人" class="headerlink" title="iOS8写入联系人"></a>iOS8写入联系人</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone &#123;</div><div class="line">    if((name.length &lt; 1)||(phone.length &lt; 1))&#123;</div><div class="line">        NSLog(@&quot;输入属性不能为空&quot;);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    CFErrorRef error = NULL;</div><div class="line">    </div><div class="line">    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &amp;error);</div><div class="line">    ABRecordRef newRecord = ABPersonCreate();</div><div class="line">    ABRecordSetValue(newRecord, kABPersonFirstNameProperty, (__bridge CFTypeRef)name, &amp;error);</div><div class="line">    </div><div class="line">    ABMutableMultiValueRef multi = ABMultiValueCreateMutable(kABMultiStringPropertyType);</div><div class="line">    ABMultiValueAddValueAndLabel(multi, (__bridge CFTypeRef)name, kABPersonPhoneMobileLabel, NULL);</div><div class="line">    </div><div class="line">    ABRecordSetValue(newRecord, kABPersonPhoneProperty, multi, &amp;error);</div><div class="line">    CFRelease(multi);</div><div class="line">    </div><div class="line">    ABAddressBookAddRecord(addressBook, newRecord, &amp;error);</div><div class="line">    CFRelease(newRecord);</div><div class="line">    CFRelease(addressBook);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>需要注意的是, 在本例中, 只填写了<code>FirstName</code>和<code>phone</code>, 实际还有许多其他属性可供选择, 具体参照<code>ABAddressBookRef</code>和<code>ABRecordRef</code>需要调用<code>CFRelease</code>来释放内存.</p>
-<h3 id="iOS9写入联系人"><a href="#iOS9写入联系人" class="headerlink" title="iOS9写入联系人"></a>iOS9写入联系人</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone &#123;</div><div class="line">    // 创建对象</div><div class="line">    CNMutableContact * contact = [[CNMutableContact alloc]init];</div><div class="line">    contact.givenName = name?:@&quot;defaultname&quot;;</div><div class="line">    CNLabeledValue *phoneNumber = [CNLabeledValue labeledValueWithLabel:CNLabelPhoneNumberMobile value:[CNPhoneNumber phoneNumberWithStringValue:phone?:@&quot;10086&quot;]];</div><div class="line">    contact.phoneNumbers = @[phoneNumber];</div><div class="line">     </div><div class="line">    // 把对象加到请求中</div><div class="line">    CNSaveRequest * saveRequest = [[CNSaveRequest alloc]init];</div><div class="line">    [saveRequest addContact:contact toContainerWithIdentifier:nil];</div><div class="line">     </div><div class="line">    // 执行请求</div><div class="line">    CNContactStore * store = [[CNContactStore alloc]init];</div><div class="line">    [store executeSaveRequest:saveRequest error:nil];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>更稳健一点的写法, 是可以把请求放在通讯录授权判断的block中</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">CNContactStore *store = [[CNContactStore alloc] init];</div><div class="line">[store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) &#123;</div><div class="line">    if (!granted) &#123;</div><div class="line">        dispatch_async(dispatch_get_main_queue(), ^&#123;</div><div class="line">            //失败原因</div><div class="line">        &#125;);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    //do something</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
-<p>使用下面这种方式<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"> - (void)addContactWithName:(NSString *)name &#123;</div><div class="line">    </div><div class="line">    CNContactStore *store = [[CNContactStore alloc] init];</div><div class="line">    [store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) &#123;</div><div class="line">        if (!granted) &#123;</div><div class="line">            dispatch_async(dispatch_get_main_queue(), ^&#123;</div><div class="line">                //失败原因</div><div class="line">            &#125;);</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        CNMutableContact *contact = [[CNMutableContact alloc] init];</div><div class="line">        contact.familyName = @&quot;Doe&quot;;</div><div class="line">        contact.givenName = @&quot;John&quot;;</div><div class="line">        </div><div class="line">        CNLabeledValue *homePhone = [CNLabeledValue labeledValueWithLabel:CNLabelHome value:[CNPhoneNumber phoneNumberWithStringValue:@&quot;312-555-1212&quot;]];</div><div class="line">        contact.phoneNumbers = @[homePhone];</div><div class="line">        </div><div class="line">        CNSaveRequest *request = [[CNSaveRequest alloc] init];</div><div class="line">        [request addContact:contact toContainerWithIdentifier:nil];</div><div class="line">        </div><div class="line">        // save it</div><div class="line">        NSError *saveError;</div><div class="line">        if (![store executeSaveRequest:request error:&amp;saveError]) &#123;</div><div class="line">            NSLog(@&quot;error = %@&quot;, saveError);</div><div class="line">        &#125;</div><div class="line">    &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="iOS8删除联系人"><a href="#iOS8删除联系人" class="headerlink" title="iOS8删除联系人"></a>iOS8删除联系人</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)removeItemWithName:(NSString *)name phone:(NSString *)phone &#123;</div><div class="line">    ABAddressBookRef addressbook = ABAddressBookCreate();</div><div class="line">    CFStringRef nameRef = (__bridge CFStringRef) name;</div><div class="line">    CFArrayRef  allSearchRecords = ABAddressBookCopyPeopleWithName(addressbook, nameRef);</div><div class="line">    if (allSearchRecords != NULL)</div><div class="line">    &#123;</div><div class="line">        CFIndex count = CFArrayGetCount(allSearchRecords);</div><div class="line">        for (int i = 0; i &lt; count; ++i)</div><div class="line">        &#123;</div><div class="line">            ABRecordRef contact = CFArrayGetValueAtIndex(allSearchRecords, i);</div><div class="line">            ABAddressBookRemoveRecord(addressbook, contact, nil);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    ABAddressBookSave(addressbook, nil);</div><div class="line">    CFRelease(addressbook);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="iOS9删除联系人"><a href="#iOS9删除联系人" class="headerlink" title="iOS9删除联系人"></a>iOS9删除联系人</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)removeContactWithName:(NSString *)name &#123;</div><div class="line">    CNContactStore *store = [[CNContactStore alloc] init];</div><div class="line">    NSPredicate *predicate = [CNContact predicateForContactsMatchingName:name];</div><div class="line">    NSArray *contacts = [store unifiedContactsMatchingPredicate:predicate keysToFetch:@[CNContactGivenNameKey, CNContactFamilyNameKey] error:nil];</div><div class="line">    </div><div class="line">    for (CNMutableContact *contact in contacts) &#123;</div><div class="line">        CNSaveRequest *request = [[CNSaveRequest alloc] init];</div><div class="line">        [request deleteContact:contact];</div><div class="line">        // save it</div><div class="line">        NSError *saveError;</div><div class="line">        if (![store executeSaveRequest:request error:&amp;saveError]) &#123;</div><div class="line">            NSLog(@&quot;error = %@&quot;, saveError);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="通讯录数据读取"><a href="#通讯录数据读取" class="headerlink" title="通讯录数据读取"></a>通讯录数据读取</h2><p>通过上面的一通操作, 我们已经可以创建和删除通讯录了, 那么我们就通过批量写入通讯录数据, 来进行通讯录数据的读取, 并且按照姓名和首字母分组排序. 相应的, 此处我们也区分<code>iOS8</code>和<code>iOS9</code>下面两个不同的框架.</p>
-<h3 id="iOS8读取联系人"><a href="#iOS8读取联系人" class="headerlink" title="iOS8读取联系人"></a>iOS8读取联系人</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (NSArray *)getAllContact &#123;</div><div class="line">    NSMutableArray *array = [NSMutableArray arrayWithCapacity:0];</div><div class="line">    </div><div class="line">    CFErrorRef *error = NULL;</div><div class="line">    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error);</div><div class="line">    </div><div class="line">    CFIndex numberOfPeople = ABAddressBookGetPersonCount(addressBook);</div><div class="line">    CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(addressBook);</div><div class="line">    if (numberOfPeople == 0) &#123;</div><div class="line">        CFRelease(people);</div><div class="line">        CFRelease(addressBook);</div><div class="line">        return @[];</div><div class="line">    &#125;</div><div class="line">    for ( int i = 0; i &lt; numberOfPeople; i++)&#123;</div><div class="line">        AddressBookContact *contact = [[AddressBookContact alloc] init];</div><div class="line">        </div><div class="line">        ABRecordRef person = CFArrayGetValueAtIndex(people, i);</div><div class="line">        </div><div class="line">        //姓名</div><div class="line">        NSString *firstName = (NSString *)CFBridgingRelease(ABRecordCopyValue(person, kABPersonFirstNameProperty));</div><div class="line">        NSString *lastName = (NSString *)CFBridgingRelease(ABRecordCopyValue(person, kABPersonLastNameProperty));</div><div class="line">        NSString *name = [NSString stringWithFormat:@&quot;%@%@&quot;, lastName, firstName;</div><div class="line">        contact.name = name;</div><div class="line">        </div><div class="line">        //第一次添加该条记录的时间戳</div><div class="line">        NSDate *createDate = (NSDate *)CFBridgingRelease(ABRecordCopyValue(person, kABPersonCreationDateProperty));</div><div class="line">        NSTimeInterval timeIn = [createDate timeIntervalSince1970];</div><div class="line">        NSInteger createTime = round(timeIn);</div><div class="line">        contact.createTime = [NSString stringWithFormat:@&quot;%010ld&quot;, (long)createTime];</div><div class="line">        </div><div class="line">        //读取电话多值</div><div class="line">        ABMultiValueRef phone = ABRecordCopyValue(person, kABPersonPhoneProperty);</div><div class="line">        NSArray *arr = (NSArray *)CFBridgingRelease(ABMultiValueCopyArrayOfAllValues(phone));</div><div class="line">        contact.phone = [AddressBookData filterPhoneFormate:[arr lastObject]];</div><div class="line">        </div><div class="line">        if (contact.phone.length &gt; 0) &#123;</div><div class="line">            [array addObject:contact];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    CFRelease(people);</div><div class="line">    CFRelease(addressBook);</div><div class="line">    return array;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//剔除手机号中的特殊字符</div><div class="line">+ (NSString *)filterPhoneFormate:(NSString *)phoneNumber &#123;</div><div class="line">    NSCharacterSet *notAllowedChars = [[NSCharacterSet characterSetWithCharactersInString:@&quot;0123456789&quot;] invertedSet];</div><div class="line">    NSString *resultString = [[phoneNumber componentsSeparatedByCharactersInSet:notAllowedChars] componentsJoinedByString:@&quot;&quot;];</div><div class="line">    return resultString;</div><div class="line">&#125;</div><div class="line">```    </div><div class="line">### iOS9读取联系人</div></pre></td></tr></table></figure>
-<pre><code>// 创建通信录对象
-CNContactStore *contactStore = [[CNContactStore alloc] init];
-
-// 创建获取通信录的请求对象
-// 拿到所有打算获取的属性对应的key
-NSArray *keys = @[CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey];
-
-// 创建CNContactFetchRequest对象
-CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
-
-// 遍历所有的联系人
-[contactStore enumerateContactsWithFetchRequest:request error:nil usingBlock:^(CNContact * _Nonnull contact, BOOL * _Nonnull stop) {
-    // 获取联系人的姓名
-    NSString *lastname = contact.familyName;
-    NSString *firstname = contact.givenName;
-    NSLog(@&quot;%@ %@&quot;, lastname, firstname);
-
-    // 获取联系人的电话号码
-    NSArray *phoneNums = contact.phoneNumbers;
-    for (CNLabeledValue *labeledValue in phoneNums) {
-        // 获取电话号码的KEY
-        NSString *phoneLabel = labeledValue.label;
-
-        // 获取电话号码
-        CNPhoneNumber *phoneNumer = labeledValue.value;
-        NSString *phoneValue = phoneNumer.stringValue;
-
-        NSLog(@&quot;%@ %@&quot;, phoneLabel, phoneValue);
-        AddressBookContact *contact = [[AddressBookContact alloc] init];
-        contact.name = [NSString stringWithFormat:@&quot;%@%@&quot;,lastname,firstname];
-        person.phone = phoneValue;
-        [_addressBookArray addObject:contact];
-    }
-}];
-</code></pre><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">我们通过上面的方法拿到的数据是一个元素是我们自定义数据模型`AddressBookContact`的数组, 所有的数据都在这一个数组里面, 没有分组, 相同首字母的联系人按照创建时间来排序.显然这样的数据是不能满足我们业务需求的. 常见的是按照首字母来分组, 下面我们就以iOS8为例来对数据进行分组排序和展示, 类似于系统通讯录列表.</div><div class="line">### 通讯录分组</div></pre></td></tr></table></figure>
-<p>//返回包含分组信息和分组后通讯录数据的字典</p>
-<ul>
-<li><p>(NSDictionary <em>)dealDataWithArray:(NSArray </em>)array {<br>  if (array.count == 0) {</p>
-<pre><code>return nil;
-</code></pre><p>  }<br>  NSMutableArray <em>titleArray = [NSMutableArray arrayWithCapacity:0];<br>  NSMutableArray </em>data = [NSMutableArray arrayWithCapacity:0];<br>  NSMutableArray * tmpArray = [[NSMutableArray alloc]init];<br>  for (NSInteger i =0; i &lt;27; i++) {</p>
-<pre><code>//给临时数组创建27个数组作为元素，用来存放A-Z和#开头的联系人
-NSMutableArray * array = [[NSMutableArray alloc]init];
-[tmpArray addObject:array];
-</code></pre><p>  }</p>
-<p>  for (AddressBookContact * model in array) {</p>
-<pre><code>//AddressMode是联系人的数据模型
-//转化为首拼音并取首字母
-NSString * nickName = [AddressBookDataManager returnFirstWordWithString:model.name];
-
-if (nickName.length == 0) {
-    //如果不是，就放到最后一个代表#的数组
-    NSMutableArray * array =[tmpArray lastObject];
-    [array addObject:model];
-} else {
-    int firstWord = [nickName characterAtIndex:0];
-    //把字典放到对应的数组中去
-
-    if (firstWord &gt;= 65 &amp;&amp; firstWord &lt;= 90) {
-        //如果首字母是A-Z，直接放到对应数组
-        NSMutableArray * array = tmpArray[firstWord - 65];
-        [array addObject:model];
-
-    } else {
-        //如果不是，就放到最后一个代表#的数组
-        NSMutableArray * array =[tmpArray lastObject];
-        [array addObject:model];
+<h3 id="iOS8查询通讯录授权状态"><a href="#iOS8查询通讯录授权状态" class="headerlink" title="iOS8查询通讯录授权状态"></a>iOS8查询通讯录授权状态</h3><pre><code>+ (void)checkAddressBookAuthorization:(void (^)(bool isAuthorized))block {
+    ABAddressBookRef addressBookRef =  ABAddressBookCreateWithOptions(NULL, NULL);
+    switch (ABAddressBookGetAuthorizationStatus()) {
+        case kABAuthorizationStatusNotDetermined: {
+            NSLog(@&quot;未询问用户是否授权&quot;);
+            ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+                if (granted) {
+                    NSLog(@&quot;授权可以读取&quot;);
+                    block(YES);
+                } else {
+                    NSLog(@&quot;授权不能读取&quot;);
+                    block(NO);
+                }
+            });
+        } break;
+        case kABAuthorizationStatusAuthorized: {
+            NSLog(@&quot;同意授权通讯录&quot;);
+            block(YES);
+        } break;
+        case kABAuthorizationStatusDenied: {
+            block(NO);
+            NSLog(@&quot;未授权，用户拒绝造成的&quot;);
+        } break;
+        case kABAuthorizationStatusRestricted: {
+            block(NO);
+            NSLog(@&quot;未授权，例如家长控制&quot;);
+        } break;
+        default: {
+        } break;
     }
 }
-</code></pre><p>  }</p>
-<p>  //此时数据已按首字母排序并分组<br>  //遍历数组，删掉空数组<br>  for (NSMutableArray * mutArr in tmpArray) {</p>
-<pre><code>//如果数组不为空就添加到数据源当中
-if (mutArr.count != 0) {
-    [data addObject:mutArr];
-    AddressBookContact * model = mutArr[0];
-    NSString * nickName = [AddressBookDataManager returnFirstWordWithString:model.name];
+</code></pre><h3 id="iOS9查询通讯录授权状态"><a href="#iOS9查询通讯录授权状态" class="headerlink" title="iOS9查询通讯录授权状态"></a>iOS9查询通讯录授权状态</h3><pre><code>- (void)addressBookEmpowerCheck {
+    CNAuthorizationStatus status = [CNContactStore authorizationStatusForEntityType:CNEntityTypeContacts];
+    switch (status) {
+        case CNAuthorizationStatusNotDetermined: {
+            [[[CNContactStore alloc]init] requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                NSLog(@&quot;还没问&quot;);
+                if (granted) {
+                    NSLog(@&quot;点击了同意&quot;);
+                } else {
+                    NSLog(@&quot;点击了拒绝&quot;);
+                }
+            }];
+        }
+        break;
+        case CNAuthorizationStatusRestricted: {
+            NSLog(@&quot;未授权, 例如家长控制&quot;);
+        }
+        break;
+        case CNAuthorizationStatusDenied: {
+            NSLog(@&quot;未授权, 用户拒绝所致&quot;);
+        }
+        break;
+        case CNAuthorizationStatusAuthorized: {
+            NSLog(@&quot;已经授权&quot;);
+        }
+        break;
+        default: {
+        }
+        break;
+    }
+}
+</code></pre><p>注意: 如果是iOS10的系统需要在<code>Info.plist</code>配置<code>NSContactsUsageDescription</code></p>
+<pre><code>&lt;key&gt;NSContactsUsageDescription&lt;/key&gt;
+&lt;string&gt;请求访问通讯录&lt;/string&gt;
+</code></pre><h2 id="通讯录数据写入和删除"><a href="#通讯录数据写入和删除" class="headerlink" title="通讯录数据写入和删除"></a>通讯录数据写入和删除</h2><p>当通讯录数据少时, 数据的读取耗时较少, 为了更好地测试大量数据下的性能问题, 我们先写入大量的数据来进行测试. </p>
+<h3 id="iOS8写入联系人"><a href="#iOS8写入联系人" class="headerlink" title="iOS8写入联系人"></a>iOS8写入联系人</h3><pre><code>- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone {
+    if((name.length &lt; 1)||(phone.length &lt; 1)){
+        NSLog(@&quot;输入属性不能为空&quot;);
+        return;
+    }
+    CFErrorRef error = NULL;
 
-    if (nickName.length != 0) {
-        int firstWord = [nickName characterAtIndex:0];
-        //取出其中的首字母放入到标题数组，暂时不考虑非A-Z的情况
-        if (firstWord &gt;= 65 &amp;&amp; firstWord &lt;= 90) {
-            [titleArray addObject:nickName];
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &amp;error);
+    ABRecordRef newRecord = ABPersonCreate();
+    ABRecordSetValue(newRecord, kABPersonFirstNameProperty, (__bridge CFTypeRef)name, &amp;error);
+
+    ABMutableMultiValueRef multi = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    ABMultiValueAddValueAndLabel(multi, (__bridge CFTypeRef)name, kABPersonPhoneMobileLabel, NULL);
+
+    ABRecordSetValue(newRecord, kABPersonPhoneProperty, multi, &amp;error);
+    CFRelease(multi);
+
+    ABAddressBookAddRecord(addressBook, newRecord, &amp;error);
+    CFRelease(newRecord);
+    CFRelease(addressBook);
+}
+</code></pre><p>需要注意的是, 在本例中, 只填写了<code>FirstName</code>和<code>phone</code>, 实际还有许多其他属性可供选择, 具体参照<code>ABAddressBookRef</code>和<code>ABRecordRef</code>需要调用<code>CFRelease</code>来释放内存.</p>
+<h3 id="iOS9写入联系人"><a href="#iOS9写入联系人" class="headerlink" title="iOS9写入联系人"></a>iOS9写入联系人</h3><pre><code>- (void)creatItemWithName:(NSString *)name phone:(NSString *)phone {
+    // 创建对象
+    CNMutableContact * contact = [[CNMutableContact alloc]init];
+    contact.givenName = name?:@&quot;defaultname&quot;;
+    CNLabeledValue *phoneNumber = [CNLabeledValue labeledValueWithLabel:CNLabelPhoneNumberMobile value:[CNPhoneNumber phoneNumberWithStringValue:phone?:@&quot;10086&quot;]];
+    contact.phoneNumbers = @[phoneNumber];
+
+    // 把对象加到请求中
+    CNSaveRequest * saveRequest = [[CNSaveRequest alloc]init];
+    [saveRequest addContact:contact toContainerWithIdentifier:nil];
+
+    // 执行请求
+    CNContactStore * store = [[CNContactStore alloc]init];
+    [store executeSaveRequest:saveRequest error:nil];
+}
+</code></pre><p>更稳健一点的写法, 是可以把请求放在通讯录授权判断的block中</p>
+<pre><code>    CNContactStore *store = [[CNContactStore alloc] init];
+    [store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (!granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //失败原因
+            });
+            return;
+        }
+        //do something
+    }];
+</code></pre><p>使用下面这种方式</p>
+<pre><code> - (void)addContactWithName:(NSString *)name {
+
+    CNContactStore *store = [[CNContactStore alloc] init];
+    [store requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (!granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //失败原因
+            });
+            return;
+        }
+
+        CNMutableContact *contact = [[CNMutableContact alloc] init];
+        contact.familyName = @&quot;Doe&quot;;
+        contact.givenName = @&quot;John&quot;;
+
+        CNLabeledValue *homePhone = [CNLabeledValue labeledValueWithLabel:CNLabelHome value:[CNPhoneNumber phoneNumberWithStringValue:@&quot;312-555-1212&quot;]];
+        contact.phoneNumbers = @[homePhone];
+
+        CNSaveRequest *request = [[CNSaveRequest alloc] init];
+        [request addContact:contact toContainerWithIdentifier:nil];
+
+        // save it
+        NSError *saveError;
+        if (![store executeSaveRequest:request error:&amp;saveError]) {
+            NSLog(@&quot;error = %@&quot;, saveError);
+        }
+    }];
+}
+</code></pre><h3 id="iOS8删除联系人"><a href="#iOS8删除联系人" class="headerlink" title="iOS8删除联系人"></a>iOS8删除联系人</h3><pre><code>- (void)removeItemWithName:(NSString *)name phone:(NSString *)phone {
+    ABAddressBookRef addressbook = ABAddressBookCreate();
+    CFStringRef nameRef = (__bridge CFStringRef) name;
+    CFArrayRef  allSearchRecords = ABAddressBookCopyPeopleWithName(addressbook, nameRef);
+    if (allSearchRecords != NULL)
+    {
+        CFIndex count = CFArrayGetCount(allSearchRecords);
+        for (int i = 0; i &lt; count; ++i)
+        {
+            ABRecordRef contact = CFArrayGetValueAtIndex(allSearchRecords, i);
+            ABAddressBookRemoveRecord(addressbook, contact, nil);
+        }
+    }
+    ABAddressBookSave(addressbook, nil);
+    CFRelease(addressbook);
+}
+</code></pre><h3 id="iOS9删除联系人"><a href="#iOS9删除联系人" class="headerlink" title="iOS9删除联系人"></a>iOS9删除联系人</h3><pre><code>- (void)removeContactWithName:(NSString *)name {
+    CNContactStore *store = [[CNContactStore alloc] init];
+    NSPredicate *predicate = [CNContact predicateForContactsMatchingName:name];
+    NSArray *contacts = [store unifiedContactsMatchingPredicate:predicate keysToFetch:@[CNContactGivenNameKey, CNContactFamilyNameKey] error:nil];
+
+    for (CNMutableContact *contact in contacts) {
+        CNSaveRequest *request = [[CNSaveRequest alloc] init];
+        [request deleteContact:contact];
+        // save it
+        NSError *saveError;
+        if (![store executeSaveRequest:request error:&amp;saveError]) {
+            NSLog(@&quot;error = %@&quot;, saveError);
         }
     }
 }
-</code></pre><p>  }</p>
-<p>  //判断是否需要加#<br>  if (titleArray.count != data.count) {</p>
-<pre><code>[titleArray addObject:@&quot;#&quot;];
-</code></pre><p>  }</p>
-<p>  NSDictionary *dic = @{@”source”: [AddressBookDataManager sortedArray:data],</p>
-<pre><code>@&quot;title&quot;: titleArray};
-</code></pre><p>  return dic;<br>}</p>
-</li>
-<li><p>(NSArray <em>)sortedArray:(NSArray </em>)data {<br>  NSMutableArray *sortedArray = [NSMutableArray array];<br>  for (NSInteger index = 0; index &lt; data.count; index++) {</p>
-<pre><code>NSMutableArray *personArrayForSection = data[index];
-NSArray *temp = [personArrayForSection sortedArrayUsingComparator:^NSComparisonResult(AddressBookContact * contact1, AddressBookContact * contact2) {
-    return [contact1.name compare:contact2.name];
-}];
-sortedArray[index] = temp;
-</code></pre><p>  }<br>  return sortedArray;<br>}</p>
-</li>
-</ul>
-<p>#pragma mark - Tool</p>
-<ul>
-<li><p>(BOOL)objectIsNull:(id)obj{<br>  return ([obj isKindOfClass:[NSNull class]] || obj == nil) ? YES : NO;<br>}</p>
-</li>
-<li><p>(NSString*)strNoNull:(id)str{<br>  if ([AddressBookDataManager objectIsNull:str]) {</p>
-<pre><code>str = @&quot;&quot;;
-</code></pre><p>  }<br>  return str;<br>}</p>
-</li>
-</ul>
-<p>//汉字转拼音并取得关键字</p>
-<ul>
-<li><p>(NSString <em>)returnFirstWordWithString:(NSString </em>)str {<br>  NSMutableString * mutStr = [NSMutableString stringWithString:str];</p>
-<p>  //将mutStr中的汉字转化为带音标的拼音（如果是汉字就转换，如果不是则保持原样）<br>  CFStringTransform((<strong>bridge CFMutableStringRef)mutStr, NULL, kCFStringTransformMandarinLatin, NO);<br>  //将带有音标的拼音转换成不带音标的拼音（这一步是从上一步的基础上来的，所以这两句话一句也不能少）<br>  CFStringTransform((</strong>bridge CFMutableStringRef)mutStr, NULL, kCFStringTransformStripCombiningMarks, NO);<br>  if (mutStr.length &gt; 0) {</p>
-<pre><code>//全部转换为大写    取出首字母并返回
-NSString * res = [[mutStr uppercaseString] substringToIndex:1];
-return res;
-</code></pre><p>  } else {</p>
-<pre><code>return @&quot;&quot;;
-</code></pre><p>  }<br>}</p>
-</li>
-</ul>
-<p>//剔除手机号中的特殊字符</p>
-<ul>
-<li>(NSString <em>)filterPhoneFormate:(NSString </em>)phoneNumber {<br>  NSCharacterSet <em>notAllowedChars = [[NSCharacterSet characterSetWithCharactersInString:@”0123456789”] invertedSet];<br>  NSString </em>resultString = [[phoneNumber componentsSeparatedByCharactersInSet:notAllowedChars] componentsJoinedByString:@””];<br>  return resultString;<br>}</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">![数据截图](http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG)</div><div class="line">至此, 我们可以得到符合业务需求的通讯录页面, 已经按照姓名首字母分组, 并且实现了快速索引. 我的通讯录测试数据有2700+条数据, 每次通讯录打开都要耗时特别久, 为了更好的用户体验, 这时就会想到要优化一下代码了.</div><div class="line"></div><div class="line">### 性能优化</div><div class="line">说道性能优化, 首先就要进行性能分析, 知道我们需要优化的地方在哪里. Xcode提供了一个强大的分析工具Instruments, 具体一些常见的分析可以参考[这里](http://hchong.net/2017/04/13/Xcode%E7%A5%9E%E5%99%A8-Instruments%E5%A4%A7%E6%B3%95/).</div><div class="line">我们主要使用Instruments的Time ProFiler来分析一下, 究竟耗时的代码在哪里, 并且做一下优化.</div><div class="line">![耗时操作](http://ww1.sinaimg.cn/large/006tNc79gy1ffevnuzt0zj30pg0e2wfj.jpg)</div><div class="line">![耗时操作的具体代码](http://ww2.sinaimg.cn/large/006tNc79gy1ffevnwtfovj317m0q440f.jpg)</div><div class="line">通过分析可以发现, 目前的瓶颈主要出现在汉字转拼音取首字母的方法上, 可以发现我们使用的是`CFStringTransform`类, 我们先对这个进行一些优化</div></pre></td></tr></table></figure>
-<p>//汉字首字母</p>
-<ul>
-<li>(NSString <em>)returnFirstWordWithString:(NSString </em>)str {<br>  NSMutableString <em>mutableString = [NSMutableString stringWithString:str];<br>  CFStringTransform((CFMutableStringRef)mutableString, NULL, kCFStringTransformToLatin, false);<br>  mutableString = (NSMutableString </em>)[mutableString stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:[NSLocale currentLocale]];<br>  NSString *string = [mutableString stringByReplacingOccurrencesOfString:@”‘“ withString:@””];<br>  return [[string uppercaseString] substringToIndex:1];<br>}<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">再使用Instruments分析发现, 并没有什么太大的效果. 分析一下发现, 发现我们取首字母主要有两个用途.一个是把全部通讯录按照首字母的方式进行分组, 另一个用途就是为了在列表页生成索引数组. </div><div class="line"></div><div class="line">#### 方案一</div><div class="line">一番查找发现, 系统针对这种情况已经有API可供我们调用了(贴心的Apple).下面就要介绍本次优化的关键类`UILocalizedIndexedCollation`.</div><div class="line"></div><div class="line">&gt; 返回传入object对象指定selector在[UILocalizedIndexedCollation currentCollation]中的匹配的索引</div><div class="line">// Returns the index of the section that will contain the object.</div><div class="line">// selector must not take any arguments and return an NSString.</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>(NSInteger)sectionForObject:(id)object collationStringSelector:(SEL)selector;</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">&gt; 返回传入object对象指定selector在[UILocalizedIndexedCollation currentCollation]中的匹配的索引</div><div class="line">// Returns the index of the section that will contain the object.</div><div class="line">// selector must not take any arguments and return an NSString.</div></pre></td></tr></table></figure>
-</li>
-<li><p>(NSInteger)sectionForObject:(id)object collationStringSelector:(SEL)selector;</p>
-</li>
-<li><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>(NSDictionary <em>)dealDataWithArray:(NSArray </em>)array {</p>
-<p>  // 1.初始化一个索引，根据不同国家语言，会初始化出不同的索引，中文的是“A~Z,#”<br>  UILocalizedIndexedCollation <em>collation = [UILocalizedIndexedCollation currentCollation];<br>  // 2.获取索引的数量，并初始化对应数量的空数组，用于存放筛选数据<br>  NSInteger sectionTitlesCount = [[collation sectionTitles] count];<br>  NSMutableArray </em>sectionArrays = [NSMutableArray arrayWithCapacity:sectionTitlesCount];<br>  for (int i = 0; i &lt; sectionTitlesCount; i++) {</p>
-<pre><code>NSMutableArray *sectionArray = [NSMutableArray arrayWithCapacity:1];
-[sectionArrays addObject:sectionArray];
-</code></pre><p>  }<br>  // 3.排序的方法<br>  SEL sorter = ABPersonGetSortOrdering() == kABPersonSortByFirstName ? NSSelectorFromString(@”name”) : NSSelectorFromString(@”name”);<br>  // 4.分组<br>  for (AddressBookContact *contact in array) {</p>
-<pre><code>//获取name属性的值所在的位置，比如&quot;小白鼠&quot;，首字母是X，在A~Z中排第23（第一位是0），sectionNumber就为23
-NSInteger sectionNumber = [collation sectionForObject:contact collationStringSelector:sorter];
-//把name为“小白鼠”的contact加入newSectionsArray中的第23个数组中去
-NSMutableArray *sectionNames = sectionArrays[sectionNumber];
-[sectionNames addObject:contact];
-</code></pre><p>  }<br>  //5.排序<br>  for (NSInteger i = 0; i &lt; sectionTitlesCount; i++) {</p>
-<pre><code>NSMutableArray *personArrayForSection = sectionArrays[i];
-NSArray *sortedPersonArrayForSection = [collation sortedArrayFromArray:personArrayForSection collationStringSelector:@selector(name)];
-sectionArrays[i] = sortedPersonArrayForSection;
-</code></pre><p>  }</p>
-<p>  NSArray <em>titleArray = [[[UILocalizedIndexedCollation currentCollation] sectionTitles] copy];<br>  NSDictionary </em>dic = @{@”source”: sectionArrays,</p>
-<pre><code>@&quot;title&quot;: titleArray};
-</code></pre><p>  return dic;<br>  }</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">分析一下上面的代码, 我们使用`UILocalizedIndexedCollation`提供的方法, 按照A-Z来快读数据进行分组, 并且排序. 索引数组也直接使用`UILocalizedIndexedCollation`自带的方法.这样就避免了大量的循环遍历和取姓名拼音首字母造成的开销.</div><div class="line"></div><div class="line">相应的, 列表展示页面的title和索引也要做调整</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li>(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{<br>  if ([self.dataArray[section] count] == 0 || self.dataArray.count == 0) {<pre><code>return 0.01;
-</code></pre>  }<br>  return 22;<br>}</li>
-</ul>
-<p>// 按照索引个数配置tableview区数</p>
-<ul>
-<li>(NSString <em>)tableView:(UITableView </em>)tableView titleForHeaderInSection:(NSInteger)section {<br>  if ([self.dataArray[section] count] == 0 || self.dataArray.count == 0) {<pre><code>return @&quot;&quot;;
-</code></pre>  }<br>  return [[UILocalizedIndexedCollation currentCollation] sectionTitles][section];<br>}</li>
-</ul>
-<p>// 配置索引内容，就是通讯录中右侧的那一列“A~Z、#”</p>
-<ul>
-<li>(NSArray <em>)sectionIndexTitlesForTableView:(UITableView </em>)tableView {<br>  return [[UILocalizedIndexedCollation currentCollation] sectionIndexTitles];<br>}</li>
-</ul>
-<p>// 索引点击响应</p>
-<ul>
-<li>(NSInteger)tableView:(UITableView <em>)tableView sectionForSectionIndexTitle:(NSString </em>)title atIndex:(NSInteger)index {<br>  return [[UILocalizedIndexedCollation currentCollation] sectionForSectionIndexTitleAtIndex:index];<br>}</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">至此优化结束, 再通过Time Profiler来分析下发现时间已经从5.8s到2.6s, 优化效果还是很明显的. 2.6s中数组排序大概耗时1.7s, 我们使用的已经是系统推荐的排序方法, 除非采用复杂度更低的排序算法, 这里已经没办法再优化了.</div><div class="line"></div><div class="line">这里有三种不同实现的排序方法, 测试了下, 优化效果都不明显</div></pre></td></tr></table></figure>
-<ul>
-<li>(NSArray <em>)sortedArray:(NSArray </em>)data {<br>  //        NSMutableArray <em>sortedArray = [NSMutableArray array];<br>  //        //对每个section中的数组按照name属性排序<br>  //        for (NSInteger index = 0; index &lt; data.count; index++) {<br>  //            NSMutableArray </em>personArrayForSection = data[index];<br>  //            NSSortDescriptor <em>nameDesc    = [NSSortDescriptor sortDescriptorWithKey:@”name”<br>  //                                                                          ascending:YES];<br>  //            NSArray </em>descriptorArray = @[nameDesc];//此处可以按照多个排序规则, 顺序比较, 比较的顺序就是数组里面元素的顺序<br>  //<br>  //            NSArray *temp = [personArrayForSection sortedArrayUsingDescriptors: descriptorArray];<br>  //            sortedArray[index] = temp;<br>  //        }</li>
-</ul>
-<pre><code>NSMutableArray *sortedArray = [NSMutableArray array];
-for (NSInteger index = 0; index &lt; data.count; index++) {
-    NSMutableArray *personArrayForSection = data[index];
-    NSArray *temp = [personArrayForSection sortedArrayUsingComparator:^NSComparisonResult(AddressBookContact * contact1, AddressBookContact * contact2) {
-        return [contact1.name compare:contact2.name];
+</code></pre><h2 id="通讯录数据读取"><a href="#通讯录数据读取" class="headerlink" title="通讯录数据读取"></a>通讯录数据读取</h2><p>通过上面的一通操作, 我们已经可以创建和删除通讯录了, 那么我们就通过批量写入通讯录数据, 来进行通讯录数据的读取, 并且按照姓名和首字母分组排序. 相应的, 此处我们也区分<code>iOS8</code>和<code>iOS9</code>下面两个不同的框架.</p>
+<h3 id="iOS8读取联系人"><a href="#iOS8读取联系人" class="headerlink" title="iOS8读取联系人"></a>iOS8读取联系人</h3><pre><code>+ (NSArray *)getAllContact {
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:0];
+
+    CFErrorRef *error = NULL;
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error);
+
+    CFIndex numberOfPeople = ABAddressBookGetPersonCount(addressBook);
+    CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(addressBook);
+    if (numberOfPeople == 0) {
+        CFRelease(people);
+        CFRelease(addressBook);
+        return @[];
+    }
+    for ( int i = 0; i &lt; numberOfPeople; i++){
+        AddressBookContact *contact = [[AddressBookContact alloc] init];
+
+        ABRecordRef person = CFArrayGetValueAtIndex(people, i);
+
+        //姓名
+        NSString *firstName = (NSString *)CFBridgingRelease(ABRecordCopyValue(person, kABPersonFirstNameProperty));
+        NSString *lastName = (NSString *)CFBridgingRelease(ABRecordCopyValue(person, kABPersonLastNameProperty));
+        NSString *name = [NSString stringWithFormat:@&quot;%@%@&quot;, lastName, firstName;
+        contact.name = name;
+
+        //第一次添加该条记录的时间戳
+        NSDate *createDate = (NSDate *)CFBridgingRelease(ABRecordCopyValue(person, kABPersonCreationDateProperty));
+        NSTimeInterval timeIn = [createDate timeIntervalSince1970];
+        NSInteger createTime = round(timeIn);
+        contact.createTime = [NSString stringWithFormat:@&quot;%010ld&quot;, (long)createTime];
+
+        //读取电话多值
+        ABMultiValueRef phone = ABRecordCopyValue(person, kABPersonPhoneProperty);
+        NSArray *arr = (NSArray *)CFBridgingRelease(ABMultiValueCopyArrayOfAllValues(phone));
+        contact.phone = [AddressBookData filterPhoneFormate:[arr lastObject]];
+
+        if (contact.phone.length &gt; 0) {
+            [array addObject:contact];
+        }
+    }
+    CFRelease(people);
+    CFRelease(addressBook);
+    return array;
+}
+
+//剔除手机号中的特殊字符
++ (NSString *)filterPhoneFormate:(NSString *)phoneNumber {
+    NSCharacterSet *notAllowedChars = [[NSCharacterSet characterSetWithCharactersInString:@&quot;0123456789&quot;] invertedSet];
+    NSString *resultString = [[phoneNumber componentsSeparatedByCharactersInSet:notAllowedChars] componentsJoinedByString:@&quot;&quot;];
+    return resultString;
+}
+</code></pre><h3 id="iOS9读取联系人"><a href="#iOS9读取联系人" class="headerlink" title="iOS9读取联系人"></a>iOS9读取联系人</h3><pre><code>    // 创建通信录对象
+    CNContactStore *contactStore = [[CNContactStore alloc] init];
+
+    // 创建获取通信录的请求对象
+    // 拿到所有打算获取的属性对应的key
+    NSArray *keys = @[CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey];
+
+    // 创建CNContactFetchRequest对象
+    CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
+
+    // 遍历所有的联系人
+    [contactStore enumerateContactsWithFetchRequest:request error:nil usingBlock:^(CNContact * _Nonnull contact, BOOL * _Nonnull stop) {
+        // 获取联系人的姓名
+        NSString *lastname = contact.familyName;
+        NSString *firstname = contact.givenName;
+        NSLog(@&quot;%@ %@&quot;, lastname, firstname);
+
+        // 获取联系人的电话号码
+        NSArray *phoneNums = contact.phoneNumbers;
+        for (CNLabeledValue *labeledValue in phoneNums) {
+            // 获取电话号码的KEY
+            NSString *phoneLabel = labeledValue.label;
+
+            // 获取电话号码
+            CNPhoneNumber *phoneNumer = labeledValue.value;
+            NSString *phoneValue = phoneNumer.stringValue;
+
+            NSLog(@&quot;%@ %@&quot;, phoneLabel, phoneValue);
+            AddressBookContact *contact = [[AddressBookContact alloc] init];
+            contact.name = [NSString stringWithFormat:@&quot;%@%@&quot;,lastname,firstname];
+            person.phone = phoneValue;
+            [_addressBookArray addObject:contact];
+        }
     }];
-    sortedArray[index] = temp;
+</code></pre><p>我们通过上面的方法拿到的数据是一个元素是我们自定义数据模型<code>AddressBookContact</code>的数组, 所有的数据都在这一个数组里面, 没有分组, 相同首字母的联系人按照创建时间来排序.显然这样的数据是不能满足我们业务需求的. 常见的是按照首字母来分组, 下面我们就以iOS8为例来对数据进行分组排序和展示, 类似于系统通讯录列表.</p>
+<h3 id="通讯录分组"><a href="#通讯录分组" class="headerlink" title="通讯录分组"></a>通讯录分组</h3><pre><code>//返回包含分组信息和分组后通讯录数据的字典
++ (NSDictionary *)dealDataWithArray:(NSArray *)array {
+    if (array.count == 0) {
+        return nil;
+    }
+    NSMutableArray *titleArray = [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray *data = [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray * tmpArray = [[NSMutableArray alloc]init];
+    for (NSInteger i =0; i &lt;27; i++) {
+        //给临时数组创建27个数组作为元素，用来存放A-Z和#开头的联系人
+        NSMutableArray * array = [[NSMutableArray alloc]init];
+        [tmpArray addObject:array];
+    }
+
+    for (AddressBookContact * model in array) {
+        //AddressMode是联系人的数据模型
+        //转化为首拼音并取首字母
+        NSString * nickName = [AddressBookDataManager returnFirstWordWithString:model.name];
+
+        if (nickName.length == 0) {
+            //如果不是，就放到最后一个代表#的数组
+            NSMutableArray * array =[tmpArray lastObject];
+            [array addObject:model];
+        } else {
+            int firstWord = [nickName characterAtIndex:0];
+            //把字典放到对应的数组中去
+
+            if (firstWord &gt;= 65 &amp;&amp; firstWord &lt;= 90) {
+                //如果首字母是A-Z，直接放到对应数组
+                NSMutableArray * array = tmpArray[firstWord - 65];
+                [array addObject:model];
+
+            } else {
+                //如果不是，就放到最后一个代表#的数组
+                NSMutableArray * array =[tmpArray lastObject];
+                [array addObject:model];
+            }
+        }
+    }
+
+    //此时数据已按首字母排序并分组
+    //遍历数组，删掉空数组
+    for (NSMutableArray * mutArr in tmpArray) {
+        //如果数组不为空就添加到数据源当中
+        if (mutArr.count != 0) {
+            [data addObject:mutArr];
+            AddressBookContact * model = mutArr[0];
+            NSString * nickName = [AddressBookDataManager returnFirstWordWithString:model.name];
+
+            if (nickName.length != 0) {
+                int firstWord = [nickName characterAtIndex:0];
+                //取出其中的首字母放入到标题数组，暂时不考虑非A-Z的情况
+                if (firstWord &gt;= 65 &amp;&amp; firstWord &lt;= 90) {
+                    [titleArray addObject:nickName];
+                }
+            }
+        }
+    }
+
+    //判断是否需要加#
+    if (titleArray.count != data.count) {
+        [titleArray addObject:@&quot;#&quot;];
+    }
+
+    NSDictionary *dic = @{@&quot;source&quot;: [AddressBookDataManager sortedArray:data],
+                          @&quot;title&quot;: titleArray};
+    return dic;
+}
+
++ (NSArray *)sortedArray:(NSArray *)data {
+    NSMutableArray *sortedArray = [NSMutableArray array];
+    for (NSInteger index = 0; index &lt; data.count; index++) {
+        NSMutableArray *personArrayForSection = data[index];
+        NSArray *temp = [personArrayForSection sortedArrayUsingComparator:^NSComparisonResult(AddressBookContact * contact1, AddressBookContact * contact2) {
+            return [contact1.name compare:contact2.name];
+        }];
+        sortedArray[index] = temp;
+    }
+    return sortedArray;
 }
 
 
+#pragma mark - Tool
++ (BOOL)objectIsNull:(id)obj{
+    return ([obj isKindOfClass:[NSNull class]] || obj == nil) ? YES : NO;
+}
 
-//    UILocalizedIndexedCollation *collation = [UILocalizedIndexedCollation currentCollation];
-//    NSMutableArray *sortedArray = [NSMutableArray array];
-//    //对每个section中的数组按照name属性排序
-//    for (NSInteger index = 0; index &lt; data.count; index++) {
-//        NSMutableArray *personArrayForSection = data[index];
-//        NSArray *sortedPersonArrayForSection = [collation sortedArrayFromArray:personArrayForSection collationStringSelector:@selector(name)];
-//        sortedArray[index] = sortedPersonArrayForSection;
-//    }
-return sortedArray;
-</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">#### 方案二</div><div class="line">至于第二种优化方案, 我们需要借助本地化存储SQL来实现. 当然如果没有本地化存储的需求, 则方案一就够用了.</div><div class="line"></div><div class="line">因为主要耗时的操作在分组和排序上, 我么你可以利用SQL的快速查找和排序来实现.在3000条左右数据时和方案一的效果差不多, 此处就不再贴代码了, 只提供一下思路.</div><div class="line"></div><div class="line">## 监听通讯录数据变化</div><div class="line">此处仍然区分iOS8和iOS9的API, 但是需要注意监听规则:</div><div class="line">1.当App活跃（前台+后台包活期间）的时候, 当通讯录修改的时候, 会收到通知.</div><div class="line">2.当App不活跃的时候(挂起的时候), App收不到通知; 而是, 当App到前台的时候收到延迟的通知.</div><div class="line">3.当App被杀掉进程后, App收不到通知; 当再次进入App时依然没有通知.</div><div class="line">### ios8监听通讯录变化</div></pre></td></tr></table></figure></p>
-<p>@property (nonatomic, assign) ABAddressBookRef addresBook;</p>
-<ul>
-<li>(instancetype)init {<br>  self = [super init];<br>  if (self) {<pre><code>_addresBook = ABAddressBookCreateWithOptions(NULL, NULL);
-ABAddressBookRegisterExternalChangeCallback(_addresBook, addressBookChanged, nil);
-</code></pre>  }<br>  return self;<br>}</li>
-</ul>
-<p>//监听通讯录变化<br>void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void <em>context) {<br>    NSLog(@”通讯录变化啦….”);<br>    //    VC1 </em>myVC = (__bridge VC1 *)context;<br>    //    [myVC getPersonOutOfAddressBook];<br>}</p>
-<ul>
-<li>(void)dealloc {<br>  NSLog(@”%@——————-dealloc”, self);<br>  ABAddressBookUnregisterExternalChangeCallback(_addresBook, addressBookChanged, nil);<br>}</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">### ios9监听通讯录变化</div></pre></td></tr></table></figure>
-<ul>
-<li><p>(instancetype)init {<br>  self = [super init];<br>  if (self) {</p>
-<pre><code>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addressBookDidChange:) name:CNContactStoreDidChangeNotification object:nil];
-</code></pre><p>  }<br>  return self;<br>}</p>
-</li>
-</ul>
-<ul>
-<li><p>(void)dealloc {<br>  NSLog(@”%@——————-dealloc”, self);<br>  [[NSNotificationCenter defaultCenter] removeObserver:self name:CNContactStoreDidChangeNotification object:nil];<br>}</p>
-</li>
-<li><p>(void)addressBookDidChange:(NSNotification*)notification{<br>  NSLog(@”通讯录变化啦….”);<br>}<br>```</p>
-</li>
-</ul>
-<p>参考文档:</p>
++ (NSString*)strNoNull:(id)str{
+    if ([AddressBookDataManager objectIsNull:str]) {
+        str = @&quot;&quot;;
+    }
+    return str;
+}
+
+//汉字转拼音并取得关键字
++ (NSString *)returnFirstWordWithString:(NSString *)str {
+    NSMutableString * mutStr = [NSMutableString stringWithString:str];
+
+    //将mutStr中的汉字转化为带音标的拼音（如果是汉字就转换，如果不是则保持原样）
+    CFStringTransform((__bridge CFMutableStringRef)mutStr, NULL, kCFStringTransformMandarinLatin, NO);
+    //将带有音标的拼音转换成不带音标的拼音（这一步是从上一步的基础上来的，所以这两句话一句也不能少）
+    CFStringTransform((__bridge CFMutableStringRef)mutStr, NULL, kCFStringTransformStripCombiningMarks, NO);
+    if (mutStr.length &gt; 0) {
+        //全部转换为大写    取出首字母并返回
+        NSString * res = [[mutStr uppercaseString] substringToIndex:1];
+        return res;
+    } else {
+        return @&quot;&quot;;
+    }
+}
+
+//剔除手机号中的特殊字符
++ (NSString *)filterPhoneFormate:(NSString *)phoneNumber {
+    NSCharacterSet *notAllowedChars = [[NSCharacterSet characterSetWithCharactersInString:@&quot;0123456789&quot;] invertedSet];
+    NSString *resultString = [[phoneNumber componentsSeparatedByCharactersInSet:notAllowedChars] componentsJoinedByString:@&quot;&quot;];
+    return resultString;
+}
+</code></pre><p><img src="http://ohjcp7fjy.bkt.clouddn.com/IMG_0277.PNG" alt="数据截图"><br>至此, 我们可以得到符合业务需求的通讯录页面, 已经按照姓名首字母分组, 并且实现了快速索引. 我的通讯录测试数据有2700+条数据, 每次通讯录打开都要耗时特别久, 为了更好的用户体验, 这时就会想到要优化一下代码了.</p>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><p>说道性能优化, 首先就要进行性能分析, 知道我们需要优化的地方在哪里. Xcode提供了一个强大的分析工具Instruments, 具体一些常见的分析可以参考<a href="http://hchong.net/2017/04/13/Xcode%E7%A5%9E%E5%99%A8-Instruments%E5%A4%A7%E6%B3%95/">这里</a>.<br>我们主要使用Instruments的Time ProFiler来分析一下, 究竟耗时的代码在哪里, 并且做一下优化.<br><img src="http://ww1.sinaimg.cn/large/006tNc79gy1ffevnuzt0zj30pg0e2wfj.jpg" alt="耗时操作"><br><img src="http://ww2.sinaimg.cn/large/006tNc79gy1ffevnwtfovj317m0q440f.jpg" alt="耗时操作的具体代码"><br>通过分析可以发现, 目前的瓶颈主要出现在汉字转拼音取首字母的方法上, 可以发现我们使用的是<code>CFStringTransform</code>类, 我们先对这个进行一些优化</p>
+<pre><code>//汉字首字母
++ (NSString *)returnFirstWordWithString:(NSString *)str {
+    NSMutableString *mutableString = [NSMutableString stringWithString:str];
+    CFStringTransform((CFMutableStringRef)mutableString, NULL, kCFStringTransformToLatin, false);
+    mutableString = (NSMutableString *)[mutableString stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:[NSLocale currentLocale]];
+    NSString *string = [mutableString stringByReplacingOccurrencesOfString:@&quot;&#39;&quot; withString:@&quot;&quot;];
+    return [[string uppercaseString] substringToIndex:1];
+}
+</code></pre><p>再使用Instruments分析发现, 并没有什么太大的效果. 分析一下发现, 发现我们取首字母主要有两个用途.一个是把全部通讯录按照首字母的方式进行分组, 另一个用途就是为了在列表页生成索引数组. </p>
+<h4 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h4><p>一番查找发现, 系统针对这种情况已经有API可供我们调用了(贴心的Apple).下面就要介绍本次优化的关键类<code>UILocalizedIndexedCollation</code>.</p>
+<blockquote>
+<p>返回传入object对象指定selector在[UILocalizedIndexedCollation currentCollation]中的匹配的索引<br>// Returns the index of the section that will contain the object.<br>// selector must not take any arguments and return an NSString.</p>
+<pre><code>- (NSInteger)sectionForObject:(id)object collationStringSelector:(SEL)selector;
+</code></pre><p>返回传入object对象指定selector在[UILocalizedIndexedCollation currentCollation]中的匹配的索引<br>// Returns the index of the section that will contain the object.<br>// selector must not take any arguments and return an NSString.</p>
+<pre><code>- (NSInteger)sectionForObject:(id)object collationStringSelector:(SEL)selector;
+-
+</code></pre></blockquote>
+<pre><code>+ (NSDictionary *)dealDataWithArray:(NSArray *)array {
+
+    // 1.初始化一个索引，根据不同国家语言，会初始化出不同的索引，中文的是“A~Z,#”
+    UILocalizedIndexedCollation *collation = [UILocalizedIndexedCollation currentCollation];
+    // 2.获取索引的数量，并初始化对应数量的空数组，用于存放筛选数据
+    NSInteger sectionTitlesCount = [[collation sectionTitles] count];
+    NSMutableArray *sectionArrays = [NSMutableArray arrayWithCapacity:sectionTitlesCount];
+    for (int i = 0; i &lt; sectionTitlesCount; i++) {
+        NSMutableArray *sectionArray = [NSMutableArray arrayWithCapacity:1];
+        [sectionArrays addObject:sectionArray];
+    }
+    // 3.排序的方法
+    SEL sorter = ABPersonGetSortOrdering() == kABPersonSortByFirstName ? NSSelectorFromString(@&quot;name&quot;) : NSSelectorFromString(@&quot;name&quot;);
+    // 4.分组
+    for (AddressBookContact *contact in array) {
+        //获取name属性的值所在的位置，比如&quot;小白鼠&quot;，首字母是X，在A~Z中排第23（第一位是0），sectionNumber就为23
+        NSInteger sectionNumber = [collation sectionForObject:contact collationStringSelector:sorter];
+        //把name为“小白鼠”的contact加入newSectionsArray中的第23个数组中去
+        NSMutableArray *sectionNames = sectionArrays[sectionNumber];
+        [sectionNames addObject:contact];
+    }
+    //5.排序
+    for (NSInteger i = 0; i &lt; sectionTitlesCount; i++) {
+        NSMutableArray *personArrayForSection = sectionArrays[i];
+        NSArray *sortedPersonArrayForSection = [collation sortedArrayFromArray:personArrayForSection collationStringSelector:@selector(name)];
+        sectionArrays[i] = sortedPersonArrayForSection;
+    }
+
+    NSArray *titleArray = [[[UILocalizedIndexedCollation currentCollation] sectionTitles] copy];
+    NSDictionary *dic = @{@&quot;source&quot;: sectionArrays,
+                          @&quot;title&quot;: titleArray};
+    return dic;
+    }
+</code></pre><p>分析一下上面的代码, 我们使用<code>UILocalizedIndexedCollation</code>提供的方法, 按照A-Z来快读数据进行分组, 并且排序. 索引数组也直接使用<code>UILocalizedIndexedCollation</code>自带的方法.这样就避免了大量的循环遍历和取姓名拼音首字母造成的开销.</p>
+<p>相应的, 列表展示页面的title和索引也要做调整</p>
+<pre><code>- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if ([self.dataArray[section] count] == 0 || self.dataArray.count == 0) {
+        return 0.01;
+    }
+    return 22;
+}
+
+// 按照索引个数配置tableview区数
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if ([self.dataArray[section] count] == 0 || self.dataArray.count == 0) {
+        return @&quot;&quot;;
+    }
+    return [[UILocalizedIndexedCollation currentCollation] sectionTitles][section];
+}
+
+// 配置索引内容，就是通讯录中右侧的那一列“A~Z、#”
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    return [[UILocalizedIndexedCollation currentCollation] sectionIndexTitles];
+}
+
+// 索引点击响应
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    return [[UILocalizedIndexedCollation currentCollation] sectionForSectionIndexTitleAtIndex:index];
+}
+</code></pre><p>至此优化结束, 再通过Time Profiler来分析下发现时间已经从5.8s到2.6s, 优化效果还是很明显的. 2.6s中数组排序大概耗时1.7s, 我们使用的已经是系统推荐的排序方法, 除非采用复杂度更低的排序算法, 这里已经没办法再优化了.</p>
+<p>这里有三种不同实现的排序方法, 测试了下, 优化效果都不明显</p>
+<pre><code>+ (NSArray *)sortedArray:(NSArray *)data {
+    //        NSMutableArray *sortedArray = [NSMutableArray array];
+    //        //对每个section中的数组按照name属性排序
+    //        for (NSInteger index = 0; index &lt; data.count; index++) {
+    //            NSMutableArray *personArrayForSection = data[index];
+    //            NSSortDescriptor *nameDesc    = [NSSortDescriptor sortDescriptorWithKey:@&quot;name&quot;
+    //                                                                          ascending:YES];
+    //            NSArray *descriptorArray = @[nameDesc];//此处可以按照多个排序规则, 顺序比较, 比较的顺序就是数组里面元素的顺序
+    //
+    //            NSArray *temp = [personArrayForSection sortedArrayUsingDescriptors: descriptorArray];
+    //            sortedArray[index] = temp;
+    //        }
+
+
+    NSMutableArray *sortedArray = [NSMutableArray array];
+    for (NSInteger index = 0; index &lt; data.count; index++) {
+        NSMutableArray *personArrayForSection = data[index];
+        NSArray *temp = [personArrayForSection sortedArrayUsingComparator:^NSComparisonResult(AddressBookContact * contact1, AddressBookContact * contact2) {
+            return [contact1.name compare:contact2.name];
+        }];
+        sortedArray[index] = temp;
+    }
+
+
+
+    //    UILocalizedIndexedCollation *collation = [UILocalizedIndexedCollation currentCollation];
+    //    NSMutableArray *sortedArray = [NSMutableArray array];
+    //    //对每个section中的数组按照name属性排序
+    //    for (NSInteger index = 0; index &lt; data.count; index++) {
+    //        NSMutableArray *personArrayForSection = data[index];
+    //        NSArray *sortedPersonArrayForSection = [collation sortedArrayFromArray:personArrayForSection collationStringSelector:@selector(name)];
+    //        sortedArray[index] = sortedPersonArrayForSection;
+    //    }
+    return sortedArray;
+}
+</code></pre><h4 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h4><p>至于第二种优化方案, 我们需要借助本地化存储SQL来实现. 当然如果没有本地化存储的需求, 则方案一就够用了.</p>
+<p>因为主要耗时的操作在分组和排序上, 我么你可以利用SQL的快速查找和排序来实现.在3000条左右数据时和方案一的效果差不多, 此处就不再贴代码了, 只提供一下思路.</p>
+<h2 id="监听通讯录数据变化"><a href="#监听通讯录数据变化" class="headerlink" title="监听通讯录数据变化"></a>监听通讯录数据变化</h2><p>此处仍然区分iOS8和iOS9的API, 但是需要注意监听规则:<br>1.当App活跃（前台+后台包活期间）的时候, 当通讯录修改的时候, 会收到通知.<br>2.当App不活跃的时候(挂起的时候), App收不到通知; 而是, 当App到前台的时候收到延迟的通知.<br>3.当App被杀掉进程后, App收不到通知; 当再次进入App时依然没有通知.</p>
+<h3 id="ios8监听通讯录变化"><a href="#ios8监听通讯录变化" class="headerlink" title="ios8监听通讯录变化"></a>ios8监听通讯录变化</h3><pre><code>@property (nonatomic, assign) ABAddressBookRef addresBook;
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _addresBook = ABAddressBookCreateWithOptions(NULL, NULL);
+        ABAddressBookRegisterExternalChangeCallback(_addresBook, addressBookChanged, nil);
+    }
+    return self;
+}
+
+//监听通讯录变化
+void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context) {
+    NSLog(@&quot;通讯录变化啦....&quot;);
+    //    VC1 *myVC = (__bridge VC1 *)context;
+    //    [myVC getPersonOutOfAddressBook];
+}
+
+- (void)dealloc {
+    NSLog(@&quot;%@-------------------dealloc&quot;, self);
+    ABAddressBookUnregisterExternalChangeCallback(_addresBook, addressBookChanged, nil);
+}
+</code></pre><h3 id="ios9监听通讯录变化"><a href="#ios9监听通讯录变化" class="headerlink" title="ios9监听通讯录变化"></a>ios9监听通讯录变化</h3><pre><code>- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addressBookDidChange:) name:CNContactStoreDidChangeNotification object:nil];
+
+    }
+    return self;
+}
+
+
+- (void)dealloc {
+    NSLog(@&quot;%@-------------------dealloc&quot;, self);
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:CNContactStoreDidChangeNotification object:nil];
+}
+
+- (void)addressBookDidChange:(NSNotification*)notification{
+    NSLog(@&quot;通讯录变化啦....&quot;);
+}
+</code></pre><p>参考文档:</p>
 <p>1.<a href="http://www.jianshu.com/p/47189c71543b" target="_blank" rel="noopener">iOS9下全新的通讯录框架</a></p>
 <p>2.<a href="http://www.jianshu.com/p/94e8444f1ad6" target="_blank" rel="noopener">iOS学习笔记29-系统服务(二)通讯录</a></p>
 <p>3.<a href="http://www.jianshu.com/p/6acad14cf3c9" target="_blank" rel="noopener">iOS通讯录开发</a></p>

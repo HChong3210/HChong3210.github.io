@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="+ (NSUInteger)hash;和- (BOOL)isEqual:(id)object;都是NSObject类中的方法, 所有继承自NSObject的类都可以调用这两个方法来实现相应的功能, 下面我们开始一起研究一下他们两个的功能和深层次原理. 1 isEqual1.1 ==对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象). isEqu">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-25T12:09:12.782Z">
+<meta property="og:updated_time" content="2019-07-26T03:31:13.964Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发基础-hash &amp; isEqual">
 <meta name="twitter:description" content="+ (NSUInteger)hash;和- (BOOL)isEqual:(id)object;都是NSObject类中的方法, 所有继承自NSObject的类都可以调用这两个方法来实现相应的功能, 下面我们开始一起研究一下他们两个的功能和深层次原理. 1 isEqual1.1 ==对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象). isEqu">
@@ -247,12 +247,72 @@ ga('send', 'pageview');
 <li>NSString -isEqualToString:</li>
 <li>NSTimeZone -isEqualToTimeZone:</li>
 </ul>
-<h2 id="NSArray的内部伪实现"><a href="#NSArray的内部伪实现" class="headerlink" title="NSArray的内部伪实现"></a>NSArray的内部伪实现</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@implementation NSArray (Approximate)</div><div class="line">- (BOOL)isEqualToArray:(NSArray *)array &#123;</div><div class="line">  if (!array || [self count] != [array count]) &#123;</div><div class="line">    return NO;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  for (NSUInteger idx = 0; idx &lt; [array count]; idx++) &#123;</div><div class="line">      if (![self[idx] isEqual:array[idx]]) &#123;</div><div class="line">          return NO;</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  return YES;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (BOOL)isEqual:(id)object &#123;</div><div class="line">  if (self == object) &#123;</div><div class="line">    return YES;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  if (![object isKindOfClass:[NSArray class]]) &#123;</div><div class="line">    return NO;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  return [self isEqualToArray:(NSArray *)object];</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<h2 id="NSArray的内部伪实现"><a href="#NSArray的内部伪实现" class="headerlink" title="NSArray的内部伪实现"></a>NSArray的内部伪实现</h2><pre><code class="OC">@implementation NSArray (Approximate)
+- (BOOL)isEqualToArray:(NSArray *)array {
+  if (!array || [self count] != [array count]) {
+    return NO;
+  }
+
+  for (NSUInteger idx = 0; idx &lt; [array count]; idx++) {
+      if (![self[idx] isEqual:array[idx]]) {
+          return NO;
+      }
+  }
+
+  return YES;
+}
+
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+
+  if (![object isKindOfClass:[NSArray class]]) {
+    return NO;
+  }
+
+  return [self isEqualToArray:(NSArray *)object];
+}
+@end
+</code></pre>
 <h2 id="自定义类型的isEqual"><a href="#自定义类型的isEqual" class="headerlink" title="自定义类型的isEqual"></a>自定义类型的isEqual</h2><p>Person.h</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@interface Person : NSObject</div><div class="line"></div><div class="line">@property (nonatomic, copy) NSString *name;</div><div class="line">@property (nonatomic, strong) NSDate *birthday;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="OC">@interface Person : NSObject
+
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) NSDate *birthday;
+
+@end
+</code></pre>
 <p>Person.m</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (BOOL)isEqual:(id)object </div><div class="line">&#123;</div><div class="line">    if (self == object) &#123;</div><div class="line">        return YES;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (![object isKindOfClass:[Person class]]) &#123;</div><div class="line">        return NO;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return [self isEqualToPerson:(Person *)object];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (BOOL)isEqualToPerson:(Person *)person </div><div class="line">&#123;</div><div class="line">    if (!person) &#123;</div><div class="line">        return NO;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    BOOL haveEqualNames = (!self.name &amp;&amp; !person.name) || [self.name isEqualToString:person.name];</div><div class="line">    BOOL haveEqualBirthdays = (!self.birthday &amp;&amp; !person.birthday) || [self.birthday isEqualToDate:person.birthday];</div><div class="line"></div><div class="line">    return haveEqualNames &amp;&amp; haveEqualBirthdays;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSString *a = @&quot;Hello&quot;;</div><div class="line">NSString *b = @&quot;Hello&quot;;</div><div class="line">BOOL wtf = (a == b); // YES</div></pre></td></tr></table></figure>
+<pre><code class="OC">- (BOOL)isEqual:(id)object 
+{
+    if (self == object) {
+        return YES;
+    }
+
+    if (![object isKindOfClass:[Person class]]) {
+        return NO;
+    }
+
+    return [self isEqualToPerson:(Person *)object];
+}
+
+- (BOOL)isEqualToPerson:(Person *)person 
+{
+    if (!person) {
+        return NO;
+    }
+
+    BOOL haveEqualNames = (!self.name &amp;&amp; !person.name) || [self.name isEqualToString:person.name];
+    BOOL haveEqualBirthdays = (!self.birthday &amp;&amp; !person.birthday) || [self.birthday isEqualToDate:person.birthday];
+
+    return haveEqualNames &amp;&amp; haveEqualBirthdays;
+}
+</code></pre>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><pre><code class="OC">NSString *a = @&quot;Hello&quot;;
+NSString *b = @&quot;Hello&quot;;
+BOOL wtf = (a == b); // YES
+</code></pre>
 <p>比较 NSString 对象正确的方法是 -isEqualToString:. 任何情况下都不要直接使用 == 来对 NSString 进行比较. </p>
 <p>上面的结果返回YES是因为一种称为字符串驻留的优化技术，它把一个不可变字符串对象的值拷贝给各个不同的指针。NSString <em>a 和 </em>b都指向同样一个驻留字符串值 @”Hello”。 注意所有这些针对的都是静态定义的不可变字符串.</p>
 <h1 id="2-hash"><a href="#2-hash" class="headerlink" title="2 hash"></a>2 hash</h1><p>hash 方法的存在，是因为将对象加到 NSSet 等集合中时，当成员被加入到Hash Table中时, 会给它分配一个hash值, 以标识该成员在集合中的位置, 通过这个位置标识可以将查找的时间复杂度优化到O(1), 当然如果多个成员都是同一个位置标识, 那么查找就不能达到O(1)了. 对于 Hash 值，系统默认是返回该对象的内存地址.</p>
@@ -264,15 +324,28 @@ ga('send', 'pageview');
 </ul>
 <p>NSSet添加新成员时, 需要根据hash值来快速查找成员, 以保证集合中是否已经存在该成员.<br>NSDictionary在查找key时, 也利用了key的hash值来提高查找的效率.</p>
 <h2 id="2-2-如何重写hash"><a href="#2-2-如何重写hash" class="headerlink" title="2.2 如何重写hash"></a>2.2 如何重写hash</h2><p>Person类中, 我们重写他的hash方法, 直接返回<code>[super hash]</code>是有问题的. 下面我们举例来来说明问题.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Person *person1 = [Person personWithName:kName1 birthday:self.date1];</div><div class="line">Person *person2 = [Person personWithName:kName1 birthday:self.date1];</div><div class="line">NSLog(@&quot;[person1 isEqual:person2] = %@&quot;, [person1 isEqual:person2] ? @&quot;YES&quot; : @&quot;NO&quot;);</div><div class="line"></div><div class="line">NSMutableSet *set = [NSMutableSet set];</div><div class="line">[set addObject:person1];</div><div class="line">[set addObject:person2];</div><div class="line">NSLog(@&quot;set count = %ld&quot;, set.count);</div></pre></td></tr></table></figure>
+<pre><code class="OC">Person *person1 = [Person personWithName:kName1 birthday:self.date1];
+Person *person2 = [Person personWithName:kName1 birthday:self.date1];
+NSLog(@&quot;[person1 isEqual:person2] = %@&quot;, [person1 isEqual:person2] ? @&quot;YES&quot; : @&quot;NO&quot;);
+
+NSMutableSet *set = [NSMutableSet set];
+[set addObject:person1];
+[set addObject:person2];
+NSLog(@&quot;set count = %ld&quot;, set.count);
+</code></pre>
 <p>打印结果如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">[person1 isEqual:person2] = YES</div><div class="line">set count = 2</div></pre></td></tr></table></figure>
+<pre><code class="OC">[person1 isEqual:person2] = YES
+set count = 2
+</code></pre>
 <p>说明isEqual相同的两个对象都被加入到了同一个NSSet中. 所以直接返回[super hash]是不正确的.</p>
 <blockquote>
 <p>In reality, a simple XOR over the hash values of critical properties is sufficient 99% of the time(对关键属性的hash值进行位或运算作为hash值).</p>
 </blockquote>
 <p>对于上面Person类的hash方法实现如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (NSUInteger)hash &#123;</div><div class="line">    return [self.name hash] ^ [self.birthday hash];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code class="OC">- (NSUInteger)hash {
+    return [self.name hash] ^ [self.birthday hash];
+}
+</code></pre>
 <h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h1><ul>
 <li>对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象). isEqual只能用来比较对象类型.</li>
 <li>==运算符只是简单地判断是否是同一个对象, 而isEqual方法可以判断对象是否相同.</li>

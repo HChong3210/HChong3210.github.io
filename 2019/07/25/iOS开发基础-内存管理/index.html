@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. #">
+  <meta name="description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. 1 内存分配关于内存分配可以看之前的总结; 2 引用计数原理Objc是通过引用计数来管理内存, Cocoa为我们提供了这些内存管理的准则:  自己生成的对象, 自己持有. 非自己生成的对象, 自己也能持有. 不在需要自己持有对象的时候, ">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发基础-内存管理">
 <meta property="og:url" content="http://hchong.net/2019/07/25/iOS开发基础-内存管理/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. #">
+<meta property="og:description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. 1 内存分配关于内存分配可以看之前的总结; 2 引用计数原理Objc是通过引用计数来管理内存, Cocoa为我们提供了这些内存管理的准则:  自己生成的对象, 自己持有. 非自己生成的对象, 自己也能持有. 不在需要自己持有对象的时候, 释放. 非自己持有的对象无需释放.  Objective-C 引用计数原理详细讲">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-25T03:19:43.028Z">
+<meta property="og:updated_time" content="2019-07-26T03:21:35.424Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发基础-内存管理">
-<meta name="twitter:description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. #">
+<meta name="twitter:description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. 1 内存分配关于内存分配可以看之前的总结; 2 引用计数原理Objc是通过引用计数来管理内存, Cocoa为我们提供了这些内存管理的准则:  自己生成的对象, 自己持有. 非自己生成的对象, 自己也能持有. 不在需要自己持有对象的时候, 释放. 非自己持有的对象无需释放.  Objective-C 引用计数原理详细讲">
 
   
 
@@ -182,6 +182,11 @@ ga('send', 'pageview');
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-内存分配"><span class="toc-text">1 内存分配</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-引用计数原理"><span class="toc-text">2 引用计数原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-引用计数如何存储"><span class="toc-text">2.1 引用计数如何存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2"><span class="toc-text">2.2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#对象的内存分布"><span class="toc-text">对象的内存分布</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存泄漏"><span class="toc-text">内存泄漏</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#内存泄漏的排查"><span class="toc-text">内存泄漏的排查</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#循环引用"><span class="toc-text">循环引用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AutoreleasePool"><span class="toc-text">AutoreleasePool</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Thread-Local-Storage"><span class="toc-text">Thread Local Storage</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tagged-Pointer"><span class="toc-text">Tagged Pointer</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Toll-Free-Bridge"><span class="toc-text">Toll-Free Bridge</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Other"><span class="toc-text">Other</span></a></li></ol>
+  </div>
+
 
 
 <div class="content content-post LEFT">
@@ -225,7 +230,43 @@ ga('send', 'pageview');
   <div class="article-content">
     
       <p>内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理.</p>
-<p># </p>
+<h1 id="1-内存分配"><a href="#1-内存分配" class="headerlink" title="1 内存分配"></a>1 内存分配</h1><p>关于内存分配可以看<a href="http://hchong.net/2016/09/18/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">之前的总结</a>;</p>
+<h1 id="2-引用计数原理"><a href="#2-引用计数原理" class="headerlink" title="2 引用计数原理"></a>2 引用计数原理</h1><p>Objc是通过引用计数来管理内存, Cocoa为我们提供了这些内存管理的准则:</p>
+<ul>
+<li>自己生成的对象, 自己持有.</li>
+<li>非自己生成的对象, 自己也能持有.</li>
+<li>不在需要自己持有对象的时候, 释放.</li>
+<li>非自己持有的对象无需释放.</li>
+</ul>
+<p><a href="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/" target="_blank" rel="noopener">Objective-C 引用计数原理</a>详细讲解了引用计数的原理. 简单来说就是ARC在代码编译阶段, 会自动在代码的上下文中成对插入retain以及release, 保证引用计数能够正确管理内存. 如果对象不是强引用类型, 那么ARC的处理也会进行相应的改变.</p>
+<h2 id="2-1-引用计数如何存储"><a href="#2-1-引用计数如何存储" class="headerlink" title="2.1 引用计数如何存储"></a>2.1 引用计数如何存储</h2><ul>
+<li>有些对象如果支持使用 TaggedPointer, 苹果会直接将其指针值作为引用计数返回.</li>
+<li>如果当前设备是 64 位环境并且使用 Objective-C 2.0, 那么”一些”对象会使用其 isa 指针的一部分空间来存储它的引用计数.</li>
+<li>否则 Runtime 会使用一张散列表来管理引用计数.</li>
+</ul>
+<h2 id="2-2"><a href="#2-2" class="headerlink" title="2.2"></a>2.2</h2><h1 id="对象的内存分布"><a href="#对象的内存分布" class="headerlink" title="对象的内存分布"></a>对象的内存分布</h1><h1 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h1><p>之前总结过关于内存泄漏的文章, 可以看<a href="http://hchong.net/2018/04/04/iOS%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">这里</a>.</p>
+<p>常见的有Block下的循环引用, delegate循环引用问题, NSTimer的循环引用, 非OC对象内存处理(free), 地图类处理, 大次数循环内存暴涨问题.</p>
+<h2 id="内存泄漏的排查"><a href="#内存泄漏的排查" class="headerlink" title="内存泄漏的排查"></a>内存泄漏的排查</h2><p>内存泄漏(memory leak): 是指申请的内存空间使用完毕之后未回收。 一次内存泄露危害可以忽略，但若一直泄漏，无论有多少内存，迟早都会被占用光，最终导致程序crash。（因此，开发中我们要尽量避免内存泄漏的出现</p>
+<p>内存溢出(out of memory): 是指程序在申请内存时，没有足够的内存空间供其使用。<br>通俗理解就是内存不够用了，通常在运行大型应用或游戏时，应用或游戏所需要的内存远远超出了你主机内安装的内存所承受大小，就叫内存溢出。最终导致机器重启或者程序crash.</p>
+<p>目前比较常用的内存泄漏的排查方法有两种，都在Xcode中可以直接使用：</p>
+<ul>
+<li>静态分析方法（Analyze)</li>
+<li>动态分析方法（Instrument工具库里的Leaks）。一般推荐使用第二种.</li>
+</ul>
+<p>静态内存泄漏分析方法: </p>
+<ol>
+<li>通过Xcode打开项目，然后点击Product-&gt;Analyze，开始进入静态内存泄漏分析</li>
+<li>等待分析结果</li>
+<li>根据分析的结果对可能造成内存泄漏的代码进行排查</li>
+</ol>
+<p>动态内存泄漏分析方法:</p>
+<p>动态分析法主要使用Instruments工具中的Leaks. 可以参开之前的<a href="http://hchong.net/2017/04/13/Xcode%E7%A5%9E%E5%99%A8-Instruments%E5%A4%A7%E6%B3%95/">总结</a>.</p>
+<h1 id="循环引用"><a href="#循环引用" class="headerlink" title="循环引用"></a>循环引用</h1><h1 id="AutoreleasePool"><a href="#AutoreleasePool" class="headerlink" title="AutoreleasePool"></a>AutoreleasePool</h1><p><a href="http://hchong.net/2018/03/12/Autoreleasepool%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">这里</a>可以看到之前关于AutoreleasePool的总结.</p>
+<p><a href="https://www.jianshu.com/p/32265cbb2a26" target="_blank" rel="noopener">这里</a>有一篇Draveness大神关于AutoreleasePool的剖析, 十分详细.</p>
+<p><a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">这里</a>是sunny大神的黑幕背后的Autorelease.</p>
+<h1 id="Thread-Local-Storage"><a href="#Thread-Local-Storage" class="headerlink" title="Thread Local Storage"></a>Thread Local Storage</h1><h1 id="Tagged-Pointer"><a href="#Tagged-Pointer" class="headerlink" title="Tagged Pointer"></a>Tagged Pointer</h1><h1 id="Toll-Free-Bridge"><a href="#Toll-Free-Bridge" class="headerlink" title="Toll-Free Bridge"></a>Toll-Free Bridge</h1><p><a href="http://hchong.net/2018/05/07/OC%E4%B8%AD%E7%9A%84%E6%A1%A5%E6%8E%A5Toll-Free%20Bridging/">这里</a>可以看到之前总结的关于OC中内存管理的桥接机制.</p>
+<h1 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h1><hr>
+<p>参考资料:<br>1.<a href="https://www.jianshu.com/p/32265cbb2a26" target="_blank" rel="noopener">自动释放池的前世今生 —- 深入解析 Autoreleasepool</a><br>2.<a href="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/" target="_blank" rel="noopener">Objective-C 引用计数原理</a><br>3.<a href="http://sindrilin.com/runtime/2016/12/23/%E9%97%B2%E8%81%8A%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86" target="_blank" rel="noopener">闲聊内存管理</a><br>4.<a href="https://blog.devtang.com/2016/07/30/ios-memory-management/" target="_blank" rel="noopener">理解 iOS 的内存管理</a><br>5.<a href="https://juejin.im/post/5abe543bf265da23784064dd" target="_blank" rel="noopener">iOS内存管理详解</a><br>6.<a href="http://zhoulingyu.com/2017/02/15/Advanced-iOS-Study-objc-Memory-2/" target="_blank" rel="noopener">iOS进阶——iOS（Objective-C）内存管理·二</a><br>7.<a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">黑幕背后的Autorelease</a><br>8.<a href="https://www.jianshu.com/p/32265cbb2a26" target="_blank" rel="noopener">自动释放池的前世今生 —- 深入解析 Autoreleasepool</a><br>9.<a href="http://blog.devtang.com/2014/05/30/understand-tagged-pointer/" target="_blank" rel="noopener">深入理解Tagged Pointer</a><br>10.<a href="http://blog.leichunfeng.com/blog/2015/05/31/objective-c-autorelease-pool-implementation-principle/" target="_blank" rel="noopener">Objective-C Autorelease Pool 的实现原理</a><br>11.<a href="http://blog.tracyone.com/tags/ARC/" target="_blank" rel="noopener">深入浅出ARC(上,中,下)</a></p>
 
     
     <span class="asdf">

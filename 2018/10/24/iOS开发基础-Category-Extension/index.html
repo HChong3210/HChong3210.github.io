@@ -249,13 +249,34 @@ ga('send', 'pageview');
 </ul>
 <h2 id="1-2-调用优先级"><a href="#1-2-调用优先级" class="headerlink" title="1.2 调用优先级"></a>1.2 调用优先级</h2><p>分类(category) &gt; 本类 &gt; 父类。即，优先调用cateory中的方法，然后调用本类方法，最后调用父类方法. </p>
 <p>注意：category是在运行时加载的，不是在编译时.</p>
-<h2 id="1-3-为什么category不能添加成员变量"><a href="#1-3-为什么category不能添加成员变量" class="headerlink" title="1.3 为什么category不能添加成员变量"></a>1.3 为什么category不能添加成员变量</h2><p>Objective-C类是由Class类型来表示的，它实际上是一个指向objc_class结构体的指针。它的定义如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">typedef struct objc_class *Class;</div></pre></td></tr></table></figure></p>
-<p>objc_class结构体的定义如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">struct objc_class &#123;</div><div class="line">    Class isa  OBJC_ISA_AVAILABILITY;</div><div class="line">    #if !__OBJC2__</div><div class="line">    Class super_class                       OBJC2_UNAVAILABLE;  // 父类</div><div class="line">    const char *name                        OBJC2_UNAVAILABLE;  // 类名</div><div class="line">    long version                            OBJC2_UNAVAILABLE;  // 类的版本信息，默认为0</div><div class="line">    long info                               OBJC2_UNAVAILABLE;  // 类信息，供运行期使用的一些位标识</div><div class="line">    long instance_size                      OBJC2_UNAVAILABLE;  // 该类的实例变量大小</div><div class="line">    struct objc_ivar_list *ivars            OBJC2_UNAVAILABLE;  // 该类的成员变量链表</div><div class="line">    struct objc_method_list **methodLists   OBJC2_UNAVAILABLE;  // 方法定义的链表</div><div class="line">    struct objc_cache *cache                OBJC2_UNAVAILABLE;  // 方法缓存</div><div class="line">    struct objc_protocol_list *protocols    OBJC2_UNAVAILABLE;  // 协议链表</div><div class="line">    #endif</div><div class="line">&#125; OBJC2_UNAVAILABLE;</div></pre></td></tr></table></figure>
-<p>在上面的objc_class结构体中，ivars是objc_ivar_list（成员变量列表）指针；methodLists是指向objc_method_list指针的指针。在Runtime中，objc_class结构体大小是固定的，不可能往这个结构体中添加数据，只能修改。所以ivars指向的是一个固定区域，只能修改成员变量值，不能增加成员变量个数。methodList是一个二维数组，所以可以修改*methodLists的值来增加成员方法，虽没办法扩展methodLists指向的内存区域，却可以改变这个内存区域的值（存储的是指针）。因此，可以动态添加方法，不能添加成员变量。</p>
+<h2 id="1-3-为什么category不能添加成员变量"><a href="#1-3-为什么category不能添加成员变量" class="headerlink" title="1.3 为什么category不能添加成员变量"></a>1.3 为什么category不能添加成员变量</h2><p>Objective-C类是由Class类型来表示的，它实际上是一个指向objc_class结构体的指针。它的定义如下：</p>
+<pre><code>typedef struct objc_class *Class;
+</code></pre><p>objc_class结构体的定义如下：</p>
+<pre><code>struct objc_class {
+    Class isa  OBJC_ISA_AVAILABILITY;
+    #if !__OBJC2__
+    Class super_class                       OBJC2_UNAVAILABLE;  // 父类
+    const char *name                        OBJC2_UNAVAILABLE;  // 类名
+    long version                            OBJC2_UNAVAILABLE;  // 类的版本信息，默认为0
+    long info                               OBJC2_UNAVAILABLE;  // 类信息，供运行期使用的一些位标识
+    long instance_size                      OBJC2_UNAVAILABLE;  // 该类的实例变量大小
+    struct objc_ivar_list *ivars            OBJC2_UNAVAILABLE;  // 该类的成员变量链表
+    struct objc_method_list **methodLists   OBJC2_UNAVAILABLE;  // 方法定义的链表
+    struct objc_cache *cache                OBJC2_UNAVAILABLE;  // 方法缓存
+    struct objc_protocol_list *protocols    OBJC2_UNAVAILABLE;  // 协议链表
+    #endif
+} OBJC2_UNAVAILABLE;
+</code></pre><p>在上面的objc_class结构体中，ivars是objc_ivar_list（成员变量列表）指针；methodLists是指向objc_method_list指针的指针。在Runtime中，objc_class结构体大小是固定的，不可能往这个结构体中添加数据，只能修改。所以ivars指向的是一个固定区域，只能修改成员变量值，不能增加成员变量个数。methodList是一个二维数组，所以可以修改*methodLists的值来增加成员方法，虽没办法扩展methodLists指向的内存区域，却可以改变这个内存区域的值（存储的是指针）。因此，可以动态添加方法，不能添加成员变量。</p>
 <h2 id="1-4-category中能添加属性吗"><a href="#1-4-category中能添加属性吗" class="headerlink" title="1.4 category中能添加属性吗?"></a>1.4 category中能添加属性吗?</h2><p>Category不能添加成员变量（instance variables），那到底能不能添加属性（property）呢? 这个我们要从Category的结构体开始分析: </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">typedef struct category_t &#123;</div><div class="line">    const char *name;  //类的名字</div><div class="line">    classref_t cls;  //类</div><div class="line">    struct method_list_t *instanceMethods;  //category中所有给类添加的实例方法的列表</div><div class="line">    struct method_list_t *classMethods;  //category中所有添加的类方法的列表</div><div class="line">    struct protocol_list_t *protocols;  //category实现的所有协议的列表</div><div class="line">    struct property_list_t *instanceProperties;  //category中添加的所有属性</div><div class="line">&#125; category_t;</div></pre></td></tr></table></figure>
-<p>从Category的定义也可以看出Category的可为（可以添加实例方法，类方法，甚至可以实现协议，添加属性）和不可为（无法添加实例变量）。</p>
+<pre><code>typedef struct category_t {
+    const char *name;  //类的名字
+    classref_t cls;  //类
+    struct method_list_t *instanceMethods;  //category中所有给类添加的实例方法的列表
+    struct method_list_t *classMethods;  //category中所有添加的类方法的列表
+    struct protocol_list_t *protocols;  //category实现的所有协议的列表
+    struct property_list_t *instanceProperties;  //category中添加的所有属性
+} category_t;
+</code></pre><p>从Category的定义也可以看出Category的可为（可以添加实例方法，类方法，甚至可以实现协议，添加属性）和不可为（无法添加实例变量）。</p>
 <p>但是为什么网上很多人都说Category不能添加属性呢? 实际上，Category实际上允许添加属性的，同样可以使用@property，但是不会生成_变量（带下划线的成员变量），也不会生成添加属性的getter和setter方法的实现，所以，尽管添加了属性，也无法使用点语法调用getter和setter方法(实际上，点语法是可以写的，只不过在运行时调用到这个方法时候会报方法找不到的错误). 但实际上可以使用runtime去实现Category为已有的类添加新的属性并生成getter和setter方法</p>
 <h2 id="1-5-category的加载"><a href="#1-5-category的加载" class="headerlink" title="1.5 category的加载"></a>1.5 category的加载</h2><p>Objective-C的运行是依赖OC的runtime的, 而OC的runtime和其他系统库一样, 是OS X和iOS通过dyld动态加载的.</p>
 <p>category被附加到类上面是在map_images的时候发生的，在new-ABI的标准下，_objc_init里面的调用的map_images最终会调用objc-runtime-new.mm里面的_read_images方法. 在_read_images方法的结尾:</p>
@@ -273,19 +294,78 @@ ga('send', 'pageview');
 <li>原类的方法和category中的方法同名, 原类的方法会被category的直接”覆盖”, 如果存在于多个category中则参考第一条.</li>
 </ul>
 <h2 id="1-6-load和initialize的调用顺序"><a href="#1-6-load和initialize的调用顺序" class="headerlink" title="1.6 load和initialize的调用顺序"></a>1.6 load和initialize的调用顺序</h2><p>关于load和initialize的相关信息, 可以看<a href="http://hchong.net/2019/07/24/iOS%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80-load-initialize/">这里</a>. 在MyClass及其分类中都添加这两个方法，只不过打印不同. </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+(void)load &#123;</div><div class="line">    NSLog(@&quot;MyClass:%s&quot;,__func__);</div><div class="line">&#125;</div><div class="line">+(void)initialize &#123;</div><div class="line">    NSLog(@&quot;MyClass:%s&quot;,__func__);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><img src="http://img.souche.com/f2e/22b0bc484d5bb5354c7dd580b3e5a0ab.png" alt="load"><br>load方法，文件镜像被读取时调用，直观的表现是程序刚运行就会看到打印结果. 从上图可以看到, load的执行顺序是先类，后category, 而category的+load执行顺序是根据编译顺序决定的.</p>
+<pre><code>+(void)load {
+    NSLog(@&quot;MyClass:%s&quot;,__func__);
+}
++(void)initialize {
+    NSLog(@&quot;MyClass:%s&quot;,__func__);
+}
+</code></pre><p><img src="http://img.souche.com/f2e/22b0bc484d5bb5354c7dd580b3e5a0ab.png" alt="load"><br>load方法，文件镜像被读取时调用，直观的表现是程序刚运行就会看到打印结果. 从上图可以看到, load的执行顺序是先类，后category, 而category的+load执行顺序是根据编译顺序决定的.</p>
 <p>附加category到类的工作会先于+load方法的执行. 因为category被附加到类上面是在map_images的时候发生的.</p>
 <p><img src="http://img.souche.com/f2e/f8ad0648bbbc7ef5c35d4a684544c1d5.png" alt="initialize"><br>从上图可以看到, initialize函数后编译的先被访问, 原类的方法会被分类的”覆盖”.(因为initialize只有在第一次被使用是会调用一次且仅一次，所以其他与普通方法相同).</p>
 <h2 id="1-7-category和方法覆盖"><a href="#1-7-category和方法覆盖" class="headerlink" title="1.7 category和方法覆盖"></a>1.7 category和方法覆盖</h2><p>category其实并不是完全替换掉原来类的同名方法，只是category在方法列表的前面而已，所以我们只要顺着方法列表找到最后一个对应名字的方法，就可以调用原来类的方法:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Class currentClass = [MyClass class];</div><div class="line">MyClass *my = [[MyClass alloc] init];</div><div class="line"></div><div class="line">if (currentClass) &#123;</div><div class="line">    unsigned int methodCount;</div><div class="line">    Method *methodList = class_copyMethodList(currentClass, &amp;methodCount);</div><div class="line">    IMP lastImp = NULL;</div><div class="line">    SEL lastSel = NULL;</div><div class="line">    for (NSInteger i = 0; i &lt; methodCount; i++) &#123;</div><div class="line">        Method method = methodList[i];</div><div class="line">        NSString *methodName = [NSString stringWithCString:sel_getName(method_getName(method)) </div><div class="line">        								encoding:NSUTF8StringEncoding];</div><div class="line">        if ([@&quot;printName&quot; isEqualToString:methodName]) &#123;</div><div class="line">            lastImp = method_getImplementation(method);</div><div class="line">            lastSel = method_getName(method);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    typedef void (*fn)(id,SEL);</div><div class="line">    </div><div class="line">    if (lastImp != NULL) &#123;</div><div class="line">        fn f = (fn)lastImp;</div><div class="line">        f(my,lastSel);</div><div class="line">    &#125;</div><div class="line">    free(methodList);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="1-7-category和关联对象"><a href="#1-7-category和关联对象" class="headerlink" title="1.7 category和关联对象"></a>1.7 category和关联对象</h2><p>category里面是无法为category添加实例变量的. 但是我们很多时候需要在category中添加和对象关联的值，这个时候可以求助关联对象来实现. 因为在分类中 @property 并不会自动生成实例变量以及存取方法，所以一般使用关联对象为已经存在的类添加属性, 这样我们通过category新增的属性就会存在与之对应的实例变量和存取方法.</p>
+<pre><code>Class currentClass = [MyClass class];
+MyClass *my = [[MyClass alloc] init];
+
+if (currentClass) {
+    unsigned int methodCount;
+    Method *methodList = class_copyMethodList(currentClass, &amp;methodCount);
+    IMP lastImp = NULL;
+    SEL lastSel = NULL;
+    for (NSInteger i = 0; i &lt; methodCount; i++) {
+        Method method = methodList[i];
+        NSString *methodName = [NSString stringWithCString:sel_getName(method_getName(method)) 
+                                        encoding:NSUTF8StringEncoding];
+        if ([@&quot;printName&quot; isEqualToString:methodName]) {
+            lastImp = method_getImplementation(method);
+            lastSel = method_getName(method);
+        }
+    }
+    typedef void (*fn)(id,SEL);
+
+    if (lastImp != NULL) {
+        fn f = (fn)lastImp;
+        f(my,lastSel);
+    }
+    free(methodList);
+}
+</code></pre><h2 id="1-7-category和关联对象"><a href="#1-7-category和关联对象" class="headerlink" title="1.7 category和关联对象"></a>1.7 category和关联对象</h2><p>category里面是无法为category添加实例变量的. 但是我们很多时候需要在category中添加和对象关联的值，这个时候可以求助关联对象来实现. 因为在分类中 @property 并不会自动生成实例变量以及存取方法，所以一般使用关联对象为已经存在的类添加属性, 这样我们通过category新增的属性就会存在与之对应的实例变量和存取方法.</p>
 <p>对象关联详解可以看<a href="https://draveness.me/ao" target="_blank" rel="noopener">这里</a>;</p>
 <p>MyClass+Category1.h:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#import &quot;MyClass.h&quot;</div><div class="line"></div><div class="line">@interface MyClass (Category1)</div><div class="line"></div><div class="line">@property(nonatomic,copy) NSString *name;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>MyClass+Category1.m:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#import &quot;MyClass+Category1.h&quot;</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line"></div><div class="line">@implementation MyClass (Category1)</div><div class="line"></div><div class="line">+ (void)load</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;%@&quot;,@&quot;load in Category1&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)setName:(NSString *)name</div><div class="line">&#123;</div><div class="line">    objc_setAssociatedObject(self,</div><div class="line">                             &quot;name&quot;,</div><div class="line">                             name,</div><div class="line">                             OBJC_ASSOCIATION_COPY);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (NSString*)name</div><div class="line">&#123;</div><div class="line">    NSString *nameObject = objc_getAssociatedObject(self, &quot;name&quot;);</div><div class="line">    return nameObject;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>对象销毁时候如何处理关联对象呢? </p>
+<pre><code>#import &quot;MyClass.h&quot;
+
+@interface MyClass (Category1)
+
+@property(nonatomic,copy) NSString *name;
+
+@end
+</code></pre><p>MyClass+Category1.m:</p>
+<pre><code>#import &quot;MyClass+Category1.h&quot;
+#import &lt;objc/runtime.h&gt;
+
+@implementation MyClass (Category1)
+
++ (void)load
+{
+    NSLog(@&quot;%@&quot;,@&quot;load in Category1&quot;);
+}
+
+- (void)setName:(NSString *)name
+{
+    objc_setAssociatedObject(self,
+                             &quot;name&quot;,
+                             name,
+                             OBJC_ASSOCIATION_COPY);
+}
+
+- (NSString*)name
+{
+    NSString *nameObject = objc_getAssociatedObject(self, &quot;name&quot;);
+    return nameObject;
+}
+
+@end
+</code></pre><p>对象销毁时候如何处理关联对象呢? </p>
 <p>所有的关联对象都由AssociationsManager管理. AssociationsManager里面是由一个静态AssociationsHashMap来存储所有的关联对象的。这相当于把所有对象的关联对象都存在一个全局map里面。而map的的key是这个对象的指针地址（任意两个不同对象的指针地址一定是不同的），而这个map的value又是另外一个AssociationsHashMap，里面保存了关联对象的kv对.</p>
 <p>runtime的销毁对象函数objc_destructInstance里面会判断这个对象有没有关联对象，如果有，会调用_object_remove_assocations做关联对象的清理工作.</p>
 <h1 id="2-Extension"><a href="#2-Extension" class="headerlink" title="2 Extension"></a>2 Extension</h1><p>Extension被开发者称之为扩展、延展、匿名分类。Extension看起来很像一个匿名的Category，但是Extension和Category几乎完全是两个东西. Extension的主要使用场景有下面几种:</p>

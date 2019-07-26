@@ -331,9 +331,84 @@ ga('send', 'pageview');
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fhjo37irdyj31g20hojs1.jpg" alt="Mobile Provisioning Profiles"></p>
 <p><em>Mobile Provisioning Profiles</em>由于前面已经填写过描述文件, 此处只需要选择与当前打包工程相匹配的描述文件.</p>
 <h2 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h2><p>在这里才进入了自动化集成的关键步骤, 前面的都是一些准备工作. 我们选择<em>增加构建步骤</em>, 按照自己的实际需求, 选择打包脚本的类型. 因为Jenkins自带Shell脚本集成, 所以此处我选择<em>Execute shell</em>, 使用shell脚本来进行构建.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">export PATH</div><div class="line">#######执行脚本命令#######</div><div class="line">rm -rf Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa</div><div class="line">security unlock-keychain  -p &quot;HChong&quot; ~/Library/Keychains/login.keychain</div><div class="line">sh /Users/Shared/Jenkins/Library/BuildScript/build.sh JenkinsTest 4c86cf7c8b4d00013c59b30b0c8d5e77</div><div class="line">fir p /Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa -T 4c86cf7c8b4d00013c59b30b0c8d5e77</div></pre></td></tr></table></figure>
-<p>shell脚本的具体内容如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line"></div><div class="line">#=================项目路径配置===============</div><div class="line">PROJECT_PATH=&apos;/Users/Shared/Jenkins/Home/workspace/iOSPackage&apos;</div><div class="line">WORKSPACE_NAME=&apos;JenkinsTest.xcworkspace&apos;</div><div class="line">Archive_PATH=&apos;/Users/Shared/Jenkins/Library/archive&apos;</div><div class="line">IPA_PATH=&apos;/Users/Shared/Jenkins/Library/ipa&apos;</div><div class="line">PLIST_PATH=&apos;/Users/Shared/Jenkins/Home/workspace/iOSPackage/exportArchive.plist&apos;</div><div class="line"></div><div class="line"></div><div class="line">#===================================脚本开始=================================================</div><div class="line">#使用帮助</div><div class="line">if [ $# == 0 ];then</div><div class="line">echo &quot;===========================如何使用=============================&quot;</div><div class="line">echo &quot; eg: ./build [scheme] [token] &apos;版本描述中间不要留空格&apos;, 不传token默认用当前已经登录的fir token&quot;</div><div class="line">echo &quot; scheme list:&quot;</div><div class="line">echo &quot; JenkinsTest&quot;</div><div class="line">echo &quot; token list:&quot;</div><div class="line">echo &quot;================================================================&quot;</div><div class="line">exit</div><div class="line">fi</div><div class="line"></div><div class="line">#update code from gitlab</div><div class="line">cd $PROJECT_PATH</div><div class="line">#git pull</div><div class="line"></div><div class="line">#update pod</div><div class="line">#pod install --repo-update</div><div class="line">#pod update</div><div class="line"></div><div class="line">#删除旧的编译目录</div><div class="line">APP_BUILD_LOCATION=$&#123;PROJECT_PATH&#125;/Build/</div><div class="line">rm -rf $&#123;APP_BUILD_LOCATION&#125;</div><div class="line">#创建dfc目录</div><div class="line"></div><div class="line">#key auth</div><div class="line">security unlock-keychain &quot;-p&quot; &quot;钥匙串密码&quot; &quot;/Users/hc/Library/Keychains/login.keychain&quot;</div><div class="line"></div><div class="line">#创建ARCHIVE目录</div><div class="line">mkdir -p IPA_PATH</div><div class="line">#Archive_NAME = $1.xcarchive</div><div class="line"></div><div class="line">#开始打包</div><div class="line">cd $&#123;PROJECT_PATH&#125;</div><div class="line">pwd</div><div class="line"></div><div class="line">XCCONFIG_PATH=$&#123;PROJECT_PATH&#125;/dfc_v2/appconfig</div><div class="line"></div><div class="line">#xcodebuild -workspace $&#123;WORKSPACE_NAME&#125; -scheme Enterprise -xcconfig $&#123;XCCONFIG_PATH&#125;/$1.xcconfig -archivePath $&#123;Archive_PATH&#125;/$1.xcarchive archive</div><div class="line">xcodebuild -workspace $&#123;WORKSPACE_NAME&#125; -scheme $1 -config $1 -archivePath $&#123;Archive_PATH&#125;/$1.xcarchive archive</div><div class="line">echo &quot;--------------------------------------------&quot;$&#123;Archive_PATH&#125;/$1.xcarchive</div><div class="line"></div><div class="line">#创建ipa</div><div class="line">IPA_LOCATION=$&#123;IPA_PATH&#125;/$1</div><div class="line"></div><div class="line">#删除旧的ipa</div><div class="line">rm -rf IPA_LOCATION</div><div class="line">mkdir -p $&#123;IPA_PATH&#125;/$1</div><div class="line">xcodebuild -exportArchive -exportOptionsPlist $&#123;PLIST_PATH&#125; -archivePath $&#123;Archive_PATH&#125;/$1.xcarchive -exportPath $&#123;IPA_LOCATION&#125;</div><div class="line"></div><div class="line"></div><div class="line">IPA_FILE_LOCATION=$&#123;IPA_PATH&#125;/$1/$1.ipa</div><div class="line"></div><div class="line">#检查ipa是否创建成功</div><div class="line">if [ -f $IPA_FILE_LOCATION ]; then</div><div class="line">echo &quot;ipa已经创建:&quot;$&#123;IPA_FILE_LOCATION&#125;</div><div class="line">else</div><div class="line">echo &quot;打包失败&quot;</div><div class="line">exit 0</div><div class="line">fi</div></pre></td></tr></table></figure></p>
-<h2 id="构建后的操作"><a href="#构建后的操作" class="headerlink" title="构建后的操作"></a>构建后的操作</h2><p>顾名思义, 就是构建之后进行的操作. 在这里我们可以选择<em>Execute a set of scripts</em>, 通过脚本来实现构建后的操作. 常见的是将构建的结果, 上传到内测平台或者内部下载地址. 但是如果构建操作的脚本中包含有这一项, 这一个步骤也就可以忽略掉了.</p>
+<pre><code>export PATH
+#######执行脚本命令#######
+rm -rf Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa
+security unlock-keychain  -p &quot;HChong&quot; ~/Library/Keychains/login.keychain
+sh /Users/Shared/Jenkins/Library/BuildScript/build.sh JenkinsTest 4c86cf7c8b4d00013c59b30b0c8d5e77
+fir p /Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa -T 4c86cf7c8b4d00013c59b30b0c8d5e77
+</code></pre><p>shell脚本的具体内容如下</p>
+<pre><code>#!/bin/bash
+
+#=================项目路径配置===============
+PROJECT_PATH=&#39;/Users/Shared/Jenkins/Home/workspace/iOSPackage&#39;
+WORKSPACE_NAME=&#39;JenkinsTest.xcworkspace&#39;
+Archive_PATH=&#39;/Users/Shared/Jenkins/Library/archive&#39;
+IPA_PATH=&#39;/Users/Shared/Jenkins/Library/ipa&#39;
+PLIST_PATH=&#39;/Users/Shared/Jenkins/Home/workspace/iOSPackage/exportArchive.plist&#39;
+
+
+#===================================脚本开始=================================================
+#使用帮助
+if [ $# == 0 ];then
+echo &quot;===========================如何使用=============================&quot;
+echo &quot; eg: ./build [scheme] [token] &#39;版本描述中间不要留空格&#39;, 不传token默认用当前已经登录的fir token&quot;
+echo &quot; scheme list:&quot;
+echo &quot; JenkinsTest&quot;
+echo &quot; token list:&quot;
+echo &quot;================================================================&quot;
+exit
+fi
+
+#update code from gitlab
+cd $PROJECT_PATH
+#git pull
+
+#update pod
+#pod install --repo-update
+#pod update
+
+#删除旧的编译目录
+APP_BUILD_LOCATION=${PROJECT_PATH}/Build/
+rm -rf ${APP_BUILD_LOCATION}
+#创建dfc目录
+
+#key auth
+security unlock-keychain &quot;-p&quot; &quot;钥匙串密码&quot; &quot;/Users/hc/Library/Keychains/login.keychain&quot;
+
+#创建ARCHIVE目录
+mkdir -p IPA_PATH
+#Archive_NAME = $1.xcarchive
+
+#开始打包
+cd ${PROJECT_PATH}
+pwd
+
+XCCONFIG_PATH=${PROJECT_PATH}/dfc_v2/appconfig
+
+#xcodebuild -workspace ${WORKSPACE_NAME} -scheme Enterprise -xcconfig ${XCCONFIG_PATH}/$1.xcconfig -archivePath ${Archive_PATH}/$1.xcarchive archive
+xcodebuild -workspace ${WORKSPACE_NAME} -scheme $1 -config $1 -archivePath ${Archive_PATH}/$1.xcarchive archive
+echo &quot;--------------------------------------------&quot;${Archive_PATH}/$1.xcarchive
+
+#创建ipa
+IPA_LOCATION=${IPA_PATH}/$1
+
+#删除旧的ipa
+rm -rf IPA_LOCATION
+mkdir -p ${IPA_PATH}/$1
+xcodebuild -exportArchive -exportOptionsPlist ${PLIST_PATH} -archivePath ${Archive_PATH}/$1.xcarchive -exportPath ${IPA_LOCATION}
+
+
+IPA_FILE_LOCATION=${IPA_PATH}/$1/$1.ipa
+
+#检查ipa是否创建成功
+if [ -f $IPA_FILE_LOCATION ]; then
+echo &quot;ipa已经创建:&quot;${IPA_FILE_LOCATION}
+else
+echo &quot;打包失败&quot;
+exit 0
+fi
+</code></pre><h2 id="构建后的操作"><a href="#构建后的操作" class="headerlink" title="构建后的操作"></a>构建后的操作</h2><p>顾名思义, 就是构建之后进行的操作. 在这里我们可以选择<em>Execute a set of scripts</em>, 通过脚本来实现构建后的操作. 常见的是将构建的结果, 上传到内测平台或者内部下载地址. 但是如果构建操作的脚本中包含有这一项, 这一个步骤也就可以忽略掉了.</p>
 <h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="找不到Fir命令"><a href="#找不到Fir命令" class="headerlink" title="找不到Fir命令"></a>找不到Fir命令</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fhjsalg3fej31b80cewfp.jpg" alt="找不到Fir命令"><br>出现如图所示的Error, 一般是由于没有安装fit-cli命令导致, 通过安装<code>gem install fir-cli -V --no-ri --no-rdoc</code>来解决. 如果提示安装成功, 但是还是报错的话, 那就在安装命令前加上<code>sudo</code>, 覆盖安装即可.</p>
 <h3 id="fir-cli-jenkins-fir-command-not-found"><a href="#fir-cli-jenkins-fir-command-not-found" class="headerlink" title="fir-cli jenkins fir:command not found"></a>fir-cli jenkins fir:command not found</h3><p>这个错误是由于没有导入fir-cli安装目录导致的, 可以先在终端输入<code>echo $PATH</code>, 然后把输出结果复制下来, 在Jenkins -&gt; 系统管理 -&gt; 添加全局变量. 然后在工程构建步骤, 先引入全局变量<code>export ${PATH}</code>. 如果没有设置全局变量的话, 也可以直接使用<code>export PATH=</code>echo $PATH 的输出结果``</p>
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fhk9pyt7nsj31dg0cmwen.jpg" alt="添加Path全局变量"></p>

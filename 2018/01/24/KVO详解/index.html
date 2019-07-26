@@ -31,12 +31,12 @@
 <meta property="og:title" content="KVO用法与自定义实现">
 <meta property="og:url" content="http://hchong.net/2018/01/24/KVO详解/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="KVO用法与自定义实现KVO用法KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者: - (void)addObserver:(NSObject *)observer         for">
+<meta property="og:description" content="KVO用法与自定义实现KVO用法KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者: - (void)addObserver:(NSObject *)observer          fo">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-07-23T03:24:30.807Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KVO用法与自定义实现">
-<meta name="twitter:description" content="KVO用法与自定义实现KVO用法KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者: - (void)addObserver:(NSObject *)observer         for">
+<meta name="twitter:description" content="KVO用法与自定义实现KVO用法KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者: - (void)addObserver:(NSObject *)observer          fo">
 
   
 
@@ -230,8 +230,11 @@ ga('send', 'pageview');
   <div class="article-content">
     
       <h1 id="KVO用法与自定义实现"><a href="#KVO用法与自定义实现" class="headerlink" title="KVO用法与自定义实现"></a>KVO用法与自定义实现</h1><h2 id="KVO用法"><a href="#KVO用法" class="headerlink" title="KVO用法"></a>KVO用法</h2><p>KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)addObserver:(NSObject *)observer</div><div class="line">         forKeyPath:(NSString *)keyPath</div><div class="line">            options:(NSKeyValueObservingOptions)options</div><div class="line">            context:(void *)context</div></pre></td></tr></table></figure>
-<blockquote>
+<pre><code>- (void)addObserver:(NSObject *)observer
+         forKeyPath:(NSString *)keyPath
+            options:(NSKeyValueObservingOptions)options
+            context:(void *)context
+</code></pre><blockquote>
 <ul>
 <li><p>observer: 观察者，负责处理监听事件的对象, 注册 KVO 通知的对象。观察者必须实现 key-value observing 方法 observeValueForKeyPath:ofObject:change:context:</p>
 </li>
@@ -244,8 +247,11 @@ ga('send', 'pageview');
 </ul>
 </blockquote>
 <p>当 keyPath 的值改变的时候这个方法会被调用:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)observeValueForKeyPath:(NSString *)keyPath</div><div class="line">                      ofObject:(id)object</div><div class="line">                        change:(NSDictionary *)change</div><div class="line">                       context:(void *)context</div></pre></td></tr></table></figure>
-<blockquote>
+<pre><code>- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+</code></pre><blockquote>
 <ul>
 <li><p>keyPath 监听的属性名</p>
 </li>
@@ -258,11 +264,14 @@ ga('send', 'pageview');
 </ul>
 </blockquote>
 <p>当一个观察者完成了监听一个对象的改变, 经常在 <code>-observeValueForKeyPath:ofObject:change:context:</code>，或者 <code>-dealloc</code> 中调用注销监听的方法:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)removeObserver:(NSObject *)anObserver</div><div class="line">            forKeyPath:(NSString *)keyPath</div></pre></td></tr></table></figure>
-<hr>
+<pre><code>- (void)removeObserver:(NSObject *)anObserver
+            forKeyPath:(NSString *)keyPath
+</code></pre><hr>
 <p>这里有几个特殊的方法需要着重说明一下, </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)willChangeValueForKey:(NSString *)key;</div><div class="line">- (void)didChangeValueForKey:(NSString *)key;</div><div class="line">+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key;</div></pre></td></tr></table></figure>
-<p><code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>默认是在setter方法中实现的, 用KVO做键值观察后, 系统会在运行时重写属性的set方法, 并且在赋值前后分别调用.</p>
+<pre><code>- (void)willChangeValueForKey:(NSString *)key;
+- (void)didChangeValueForKey:(NSString *)key;
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key;
+</code></pre><p><code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>默认是在setter方法中实现的, 用KVO做键值观察后, 系统会在运行时重写属性的set方法, 并且在赋值前后分别调用.</p>
 <p><code>automaticallyNotifiesObserversForKey:</code>控制是否自动发送通知, 如果返回NO, KVO无法自动运作, 需手动触发.</p>
 <h2 id="KVO的原理"><a href="#KVO的原理" class="headerlink" title="KVO的原理"></a>KVO的原理</h2><p>KVO 的实现也依赖于 Objective-C 强大的 Runtime. Apple 的文档有简单提到过 KVO 的实现: </p>
 <blockquote>
@@ -276,21 +285,93 @@ ga('send', 'pageview');
 <h2 id="如何实现带block回调的KVO"><a href="#如何实现带block回调的KVO" class="headerlink" title="如何实现带block回调的KVO"></a>如何实现带block回调的KVO</h2><p> 根据Apple的官方文档, 我们不难发现自定义KVO需要的几个步骤:</p>
 <ol>
 <li><p>创建注册子类, 重写子类的class方法</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//1.创建注册子类</div><div class="line">//1.1获取被监听对象的类名称</div><div class="line">Class class = object_getClass(self);</div><div class="line">NSString *className = NSStringFromClass(class);</div><div class="line">//1.2检查被检测对象的class的前缀是否被替换过(通过检查前缀来判断), 如果被替换过就说明正在被观测</div><div class="line">if (![className hasPrefix:kHCKVOClassPrefix]) &#123;</div><div class="line">    class = [self makeKvoClassWithOriginalClassName:className];</div><div class="line">    //为观测的对象设置一个指定的类</div><div class="line">    object_setClass(self, class);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
+<pre><code>//1.创建注册子类
+//1.1获取被监听对象的类名称
+Class class = object_getClass(self);
+NSString *className = NSStringFromClass(class);
+//1.2检查被检测对象的class的前缀是否被替换过(通过检查前缀来判断), 如果被替换过就说明正在被观测
+if (![className hasPrefix:kHCKVOClassPrefix]) {
+    class = [self makeKvoClassWithOriginalClassName:className];
+    //为观测的对象设置一个指定的类
+    object_setClass(self, class);
+}
+</code></pre></li>
 <li><p>为新的子类添加set方法</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"> //2.为新的子类添加set方法</div><div class="line">//2.1得到Setter方法</div><div class="line">SEL setterSelector = NSSelectorFromString(setterForGetter(key));</div><div class="line">//2.2得到指定类的实例方法</div><div class="line">Method setterMethod = class_getInstanceMethod([self class], setterSelector);</div><div class="line">if (!setterMethod) &#123;</div><div class="line">    @throw @&quot;没有对应的Setter方法&quot;;</div><div class="line">    return;</div><div class="line">&#125;</div><div class="line">//2.3为新类添加set方法</div><div class="line">if (![self hasSelector:setterSelector]) &#123;</div><div class="line">    const char *types = method_getTypeEncoding(setterMethod);</div><div class="line">    class_addMethod(class, setterSelector, (IMP)kvo_setter, types);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
+<pre><code> //2.为新的子类添加set方法
+//2.1得到Setter方法
+SEL setterSelector = NSSelectorFromString(setterForGetter(key));
+//2.2得到指定类的实例方法
+Method setterMethod = class_getInstanceMethod([self class], setterSelector);
+if (!setterMethod) {
+    @throw @&quot;没有对应的Setter方法&quot;;
+    return;
+}
+//2.3为新类添加set方法
+if (![self hasSelector:setterSelector]) {
+    const char *types = method_getTypeEncoding(setterMethod);
+    class_addMethod(class, setterSelector, (IMP)kvo_setter, types);
+}
+</code></pre></li>
 <li><p>改变isa指针, 指向新的子类</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//3改变isa指针，指向子类</div><div class="line">object_setClass(self, class);</div></pre></td></tr></table></figure>
-</li>
+<pre><code>//3改变isa指针，指向子类
+object_setClass(self, class);
+</code></pre></li>
 <li><p>保存set, get方法, 保存block</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//保存set、get方法名</div><div class="line">    objc_setAssociatedObject(self, kHCKVO_getter_key, key, OBJC_ASSOCIATION_COPY_NONATOMIC);</div><div class="line">    objc_setAssociatedObject(self, kHCKVO_setter_key, setterForGetter(key), OBJC_ASSOCIATION_COPY_NONATOMIC);</div><div class="line">    //保存block</div><div class="line">    objc_setAssociatedObject(self, kHCKVO_block_key, block, OBJC_ASSOCIATION_COPY_NONATOMIC);</div></pre></td></tr></table></figure>
-</li>
+<pre><code>//保存set、get方法名
+    objc_setAssociatedObject(self, kHCKVO_getter_key, key, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(self, kHCKVO_setter_key, setterForGetter(key), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    //保存block
+    objc_setAssociatedObject(self, kHCKVO_block_key, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+</code></pre></li>
 </ol>
 <p>这里面主要的难点在重写属性的set方法, 代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//新类的set方法</div><div class="line">static void kvo_setter(id self, SEL _cmd, id newValue) &#123;</div><div class="line">    //包括调用父类的set方法，获取旧值、新值，获取observer并通知observer</div><div class="line">    NSString *setterName = NSStringFromSelector(_cmd);</div><div class="line">    NSString *getterName = getterForSetter(setterName);</div><div class="line">    </div><div class="line">    if (!getterName) &#123;</div><div class="line">        NSString *reason = [NSString stringWithFormat:@&quot;Object %@ does not have getter %@&quot;, self, setterName];</div><div class="line">        @throw [NSException exceptionWithName:NSInvalidArgumentException</div><div class="line">                                       reason:reason</div><div class="line">                                     userInfo:nil];</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    /*</div><div class="line">     //使用objc_msgSendSuper向父类发消息, 调用父类set方法</div><div class="line">    id oldValue = [self valueForKey:getterName];</div><div class="line">    </div><div class="line">    //superclass</div><div class="line">    struct objc_super superclazz = &#123;</div><div class="line">        .receiver = self,</div><div class="line">        .super_class = class_getSuperclass(object_getClass(self))</div><div class="line">    &#125;;</div><div class="line">    // cast our pointer so the compiler won&apos;t complain</div><div class="line">    void (*objc_msgSendSuperCasted)(void *, SEL, id) = (void *)objc_msgSendSuper;</div><div class="line">    // call super&apos;s setter, which is original class&apos;s setter method</div><div class="line">    objc_msgSendSuperCasted(&amp;superclazz, _cmd, newValue);</div><div class="line">     */</div><div class="line">    </div><div class="line">    </div><div class="line">    //保存子类类型</div><div class="line">    Class class = [self class];</div><div class="line">    //isa指向原类</div><div class="line">    object_setClass(self, class_getSuperclass(class));</div><div class="line">    //调用原类get方法，获取oldValue</div><div class="line">    id oldValue = objc_msgSend(self, NSSelectorFromString(getterName));</div><div class="line">    //调用原类set方法</div><div class="line">    objc_msgSend(self, _cmd, newValue);</div><div class="line">    //isa改回子类类型</div><div class="line">    object_setClass(self, class);</div><div class="line"></div><div class="line">    </div><div class="line">    //取出block</div><div class="line">    HCObservingBlock block = objc_getAssociatedObject(self, kHCKVO_block_key);</div><div class="line">    block(self, getterName, oldValue, newValue);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其中, 关于调用父类的set方法有两种方式. 一种是直接向新类的superClass发送消息, 另外一种是先改变isa指向superclass, 调用完set方法后重新再改变isa指向新类.</p>
+<pre><code>//新类的set方法
+static void kvo_setter(id self, SEL _cmd, id newValue) {
+    //包括调用父类的set方法，获取旧值、新值，获取observer并通知observer
+    NSString *setterName = NSStringFromSelector(_cmd);
+    NSString *getterName = getterForSetter(setterName);
+
+    if (!getterName) {
+        NSString *reason = [NSString stringWithFormat:@&quot;Object %@ does not have getter %@&quot;, self, setterName];
+        @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                       reason:reason
+                                     userInfo:nil];
+        return;
+    }
+
+    /*
+     //使用objc_msgSendSuper向父类发消息, 调用父类set方法
+    id oldValue = [self valueForKey:getterName];
+
+    //superclass
+    struct objc_super superclazz = {
+        .receiver = self,
+        .super_class = class_getSuperclass(object_getClass(self))
+    };
+    // cast our pointer so the compiler won&#39;t complain
+    void (*objc_msgSendSuperCasted)(void *, SEL, id) = (void *)objc_msgSendSuper;
+    // call super&#39;s setter, which is original class&#39;s setter method
+    objc_msgSendSuperCasted(&amp;superclazz, _cmd, newValue);
+     */
+
+
+    //保存子类类型
+    Class class = [self class];
+    //isa指向原类
+    object_setClass(self, class_getSuperclass(class));
+    //调用原类get方法，获取oldValue
+    id oldValue = objc_msgSend(self, NSSelectorFromString(getterName));
+    //调用原类set方法
+    objc_msgSend(self, _cmd, newValue);
+    //isa改回子类类型
+    object_setClass(self, class);
+
+
+    //取出block
+    HCObservingBlock block = objc_getAssociatedObject(self, kHCKVO_block_key);
+    block(self, getterName, oldValue, newValue);
+}
+</code></pre><p>其中, 关于调用父类的set方法有两种方式. 一种是直接向新类的superClass发送消息, 另外一种是先改变isa指向superclass, 调用完set方法后重新再改变isa指向新类.</p>
 <h2 id="如何实现系统自带的KVO"><a href="#如何实现系统自带的KVO" class="headerlink" title="如何实现系统自带的KVO"></a>如何实现系统自带的KVO</h2><p>系统自带KVO的实现方法和自定义带block回调的KVO的实现方法一样, 不同的是我们在重写新类的set方法中不是调用父类的set方法, 而是调用父类的<code>observeValueForKeyPath: ofObject: change: context:</code>方法.</p>
 <hr>
 <p>完整代码查看<a href="https://github.com/HChong3210/HCKVO" target="_blank" rel="noopener">这里</a></p>

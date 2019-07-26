@@ -31,12 +31,12 @@
 <meta property="og:title" content="链式编程实践">
 <meta property="og:url" content="http://hchong.net/2017/12/17/链式编程实践/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="链式编程是将多个操作, 通过.的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是返回值是self, 参数为需要操作的值的block. 下面我们来看一下Masonry中链式编程的应用. Masonry中的应用Masonry的使用大致如下 UIView *demo = [[UIView alloc] init];[self.view addSubview:">
+<meta property="og:description" content="链式编程是将多个操作, 通过.的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是返回值是self, 参数为需要操作的值的block. 下面我们来看一下Masonry中链式编程的应用. Masonry中的应用Masonry的使用大致如下 UIView *demo = [[UIView alloc] init]; [self.view addSubview">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2018-03-07T16:36:17.230Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="链式编程实践">
-<meta name="twitter:description" content="链式编程是将多个操作, 通过.的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是返回值是self, 参数为需要操作的值的block. 下面我们来看一下Masonry中链式编程的应用. Masonry中的应用Masonry的使用大致如下 UIView *demo = [[UIView alloc] init];[self.view addSubview:">
+<meta name="twitter:description" content="链式编程是将多个操作, 通过.的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是返回值是self, 参数为需要操作的值的block. 下面我们来看一下Masonry中链式编程的应用. Masonry中的应用Masonry的使用大致如下 UIView *demo = [[UIView alloc] init]; [self.view addSubview">
 
   
 
@@ -231,9 +231,22 @@ ga('send', 'pageview');
     
       <p>链式编程是将多个操作, 通过<code>.</code>的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是<code>返回值是self, 参数为需要操作的值的block</code>. 下面我们来看一下Masonry中链式编程的应用.</p>
 <h2 id="Masonry中的应用"><a href="#Masonry中的应用" class="headerlink" title="Masonry中的应用"></a>Masonry中的应用</h2><p>Masonry的使用大致如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">UIView *demo = [[UIView alloc] init];</div><div class="line">[self.view addSubview:demo];</div><div class="line">[demo mas_updateConstraints:^(MASConstraintMaker *make) &#123;</div><div class="line">   make.left.equalTo(self.mas_left).offset(16);</div><div class="line">   make.centerY.equalTo(self.mas_centerY).offset(0);</div><div class="line">   make.width.height.equalTo(@(200));</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<pre><code class="oc">UIView *demo = [[UIView alloc] init];
+[self.view addSubview:demo];
+[demo mas_updateConstraints:^(MASConstraintMaker *make) {
+   make.left.equalTo(self.mas_left).offset(16);
+   make.centerY.equalTo(self.mas_centerY).offset(0);
+   make.width.height.equalTo(@(200));
+}];
+</code></pre>
 <p>这里只简单分析一下他链式编程的实现. 我们先看下<code>mas_makeConstraints</code>方法.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (NSArray *)mas_makeConstraints:(void(^)(MASConstraintMaker *))block &#123;</div><div class="line">    self.translatesAutoresizingMaskIntoConstraints = NO;</div><div class="line">    MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:self];</div><div class="line">    block(constraintMaker);</div><div class="line">    return [constraintMaker install];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code class="oc">- (NSArray *)mas_makeConstraints:(void(^)(MASConstraintMaker *))block {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:self];
+    block(constraintMaker);
+    return [constraintMaker install];
+}
+</code></pre>
 <p>这里一共有三步:</p>
 <ol>
 <li>创建一个<code>MASConstraintMaker</code>对象<code>constraintMaker</code>.</li>
@@ -241,7 +254,27 @@ ga('send', 'pageview');
 <li>调用<code>[constraintMaker install]</code>方法, 先遍历卸载之前的约束, 再安装新的约束, 最后返回包含所有约束的数组.</li>
 </ol>
 <p>下面我们再看一下添加约束的步骤, 以<code>make.width.height.equalTo(@(200))</code>为例.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@implementation MASConstraint</div><div class="line">- (MASConstraint *)width &#123;</div><div class="line">    return [self addConstraintWithLayoutAttribute:NSLayoutAttributeWidth];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (MASConstraint *)height &#123;</div><div class="line">    return [self addConstraintWithLayoutAttribute:NSLayoutAttributeHeight];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (MASConstraint * (^)(id))equalTo &#123;</div><div class="line">    return ^id(id attribute) &#123;</div><div class="line">        return self.equalToWithRelation(attribute, NSLayoutRelationEqual);</div><div class="line">    &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute &#123;</div><div class="line">    return [self constraint:nil addConstraintWithLayoutAttribute:layoutAttribute];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="oc">@implementation MASConstraint
+- (MASConstraint *)width {
+    return [self addConstraintWithLayoutAttribute:NSLayoutAttributeWidth];
+}
+
+- (MASConstraint *)height {
+    return [self addConstraintWithLayoutAttribute:NSLayoutAttributeHeight];
+}
+
+- (MASConstraint * (^)(id))equalTo {
+    return ^id(id attribute) {
+        return self.equalToWithRelation(attribute, NSLayoutRelationEqual);
+    };
+}
+
+- (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
+    return [self constraint:nil addConstraintWithLayoutAttribute:layoutAttribute];
+}
+
+@end
+</code></pre>
 <p>我们可以发现, <code>width</code>和<code>height</code>方法的返回值都是<code>MASConstraint</code>对象, 方法内部封装了 一些内部实现, 这样就可以无限的<code>.</code>下去.<br><code>equalTo</code>这样的方法需要通过<code>()</code>的方式传参进去, 并且还行要能一直<code>.</code>下去. 通过<code>()</code>的方式传参只有通过block, 想持续<code>.</code>必须返回<code>MASConstraint</code>对象, 所以<code>equalTo</code>的返回值是一个block<code>MASConstraint * (^)(id)</code>(返回值是self, 并且还有参数).</p>
 <p>总结一下核心就是:</p>
 <ul>
@@ -249,12 +282,46 @@ ga('send', 'pageview');
 <li>方法返回值必须是block, block的返回值是方法调用者(一般就是self), block的参数是传入的需要操作的内容.</li>
 </ul>
 <h2 id="链式编程的Demo"><a href="#链式编程的Demo" class="headerlink" title="链式编程的Demo"></a>链式编程的Demo</h2><p>我们以完成一个计算器的Demo为例. 我们新建一个<code>Caculator</code>类来做计算, 实现<code>add</code>方法如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@interface Caculator : NSObject</div><div class="line"></div><div class="line">@property (nonatomic, assign) NSInteger result;//结果</div><div class="line"></div><div class="line">//返回值是block(Caculator *(^)(NSInteger number)), 该block的返回值是Caculator*, 参数为NSInteger类型</div><div class="line">- (Caculator *(^)(NSInteger number))add;</div><div class="line">@end</div><div class="line"></div><div class="line"></div><div class="line">@implementation Caculator</div><div class="line"></div><div class="line">- (Caculator *(^)(NSInteger number))add &#123;</div><div class="line">    return ^Caculator *(NSInteger number) &#123;</div><div class="line">        self.result += number;</div><div class="line">        return self;</div><div class="line">    &#125;;</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="oc">@interface Caculator : NSObject
+
+@property (nonatomic, assign) NSInteger result;//结果
+
+//返回值是block(Caculator *(^)(NSInteger number)), 该block的返回值是Caculator*, 参数为NSInteger类型
+- (Caculator *(^)(NSInteger number))add;
+@end
+
+
+@implementation Caculator
+
+- (Caculator *(^)(NSInteger number))add {
+    return ^Caculator *(NSInteger number) {
+        self.result += number;
+        return self;
+    };
+}
+@end
+</code></pre>
 <p>要实现类似Masonry的调用方式, 就要再封装一层:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@interface NSObject (Calculator)</div><div class="line"></div><div class="line">+ (NSInteger)makeCaculators:(void(^)(Caculator *make))block;</div><div class="line">@end</div><div class="line"></div><div class="line"></div><div class="line">@implementation NSObject (Calculator)</div><div class="line"></div><div class="line">+ (NSInteger)makeCaculators:(void(^)(Caculator *make))block &#123;</div><div class="line">    Caculator *mgr = [[Caculator alloc] init];</div><div class="line">    block(mgr);</div><div class="line">    return mgr.result;</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="oc">@interface NSObject (Calculator)
+
++ (NSInteger)makeCaculators:(void(^)(Caculator *make))block;
+@end
+
+
+@implementation NSObject (Calculator)
+
++ (NSInteger)makeCaculators:(void(^)(Caculator *make))block {
+    Caculator *mgr = [[Caculator alloc] init];
+    block(mgr);
+    return mgr.result;
+}
+@end
+</code></pre>
 <p>在计算时调用这个方法，创建计算制造者，然后调用传入的block, 并且返回结果.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSInteger result = [NSObject makeCaculators:^(Caculator *make) &#123;</div><div class="line">    make.add(4).multiply(5).minus(4).divide(8).add(13);</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
-<hr>
+<pre><code>NSInteger result = [NSObject makeCaculators:^(Caculator *make) {
+    make.add(4).multiply(5).minus(4).divide(8).add(13);
+}];
+</code></pre><hr>
 <p>完整Demo地址在<a href="https://github.com/HChong3210/MethodChaining" target="_blank" rel="noopener">这里</a>. <a href="https://www.jianshu.com/p/f53a3182f659" target="_blank" rel="noopener">这篇</a>循序渐进, 写的也不错.</p>
 
     

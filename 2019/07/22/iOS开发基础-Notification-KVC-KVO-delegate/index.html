@@ -234,11 +234,39 @@ ga('send', 'pageview');
       <p>KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.<br>KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.<br>KVC/KVO是观察者模式的一种实现, 而delegate是代理模式和通知模式在iOS中的具体实现, NSNotification则是发布-订阅模式的一种实现. 网上有很多人说，观察者模式和发布-订阅模式是两种不同的设计模式，它们压根就是两码事，不能混为一谈。也有很多人说，两者其实都是观察者模式，只是实现手段有点不一样罢了，本质是一样的。我认为发布-订阅模式只是观察者模式的一种实现手段, 它本质还是观察者模式. </p>
 <h1 id="1-kVC"><a href="#1-kVC" class="headerlink" title="1 kVC"></a>1 kVC</h1><p>全称是Key-value coding, 翻译成键值编码。它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制. KVC 机制是由 NSKeyValueCoding 协议定义的.</p>
 <p>KVC中以字符串的形式向对象发送消息, 这个字符串是我们关注的属性的关键. 常见的的基本调用如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">**设置值**</div><div class="line">// value的值为OC对象，如果是基本数据类型要包装成NSNumber</div><div class="line">- (void)setValue:(id)value forKey:(NSString *)key;</div><div class="line">// keyPath键路径，类型为xx.xx</div><div class="line">- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;</div><div class="line">// 它的默认实现是抛出异常，可以重写这个函数做错误处理。</div><div class="line">- (void)setValue:(id)value forUndefinedKey:(NSString *)key;</div><div class="line"></div><div class="line">**获取值**</div><div class="line">- (id)valueForKey:(NSString *)key;</div><div class="line">- (id)valueForKeyPath:(NSString *)keyPath;</div><div class="line">// 如果Key不存在，且没有KVC无法搜索到任何和Key有关的字段或者属性，则会调用这个方法，默认是抛出异常</div><div class="line">- (id)valueForUndefinedKey:(NSString *)key;</div><div class="line"></div><div class="line">**其他**</div><div class="line">// 允许直接访问实例变量，默认返回YES。如果某个类重写了这个方法，且返回NO，则KVC不可以访问该类。</div><div class="line">+ (BOOL)accessInstanceVariablesDirectly;</div><div class="line">// 这是集合操作的API，里面还有一系列这样的API，如果属性是一个NSMutableArray，那么可以用这个方法来返回</div><div class="line">- (NSMutableArray *)mutableArrayValueForKey:(NSString *)key;</div><div class="line">// 如果你在setValue方法时面给Value传nil，则会调用这个方法</div><div class="line">- (void)setNilValueForKey:(NSString *)key;</div><div class="line">// 输入一组key，返回该组key对应的Value，再转成字典返回，用于将Model转到字典。</div><div class="line">- (NSDictionary *)dictionaryWithValuesForKeys:(NSArray *)keys;</div><div class="line">// KVC提供属性值确认的API，它可以用来检查set的值是否正确、为不正确的值做一个替换值或者拒绝设置新值并返回错误原因。</div><div class="line">- (BOOL)validateValue:(id)ioValue forKey:(NSString *)inKey error:(NSError)outError;</div></pre></td></tr></table></figure>
-<p>keyPath方法是集成了key的所有功能，也就是说对一个对象的一般属性进行赋值、取值，两个方法是通用的，都可以实现。但是对对象中的对象进的属性行赋值，只有keyPath能够实现.</p>
-<h2 id="1-1-KVC内部原理"><a href="#1-1-KVC内部原理" class="headerlink" title="1.1 KVC内部原理"></a>1.1 KVC内部原理</h2><p>比如说如下的一行KVC的代码：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];</div></pre></td></tr></table></figure></p>
-<p>就会被编译器处理成：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);</div><div class="line">IMP method = objc_msg_lookup (site-&gt;isa,sel);</div><div class="line">method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);</div></pre></td></tr></table></figure></p>
-<p>这下KVC内部的实现就很清楚的清楚了, 一个对象在调用setValue的时候:</p>
+<pre><code>**设置值**
+// value的值为OC对象，如果是基本数据类型要包装成NSNumber
+- (void)setValue:(id)value forKey:(NSString *)key;
+// keyPath键路径，类型为xx.xx
+- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;
+// 它的默认实现是抛出异常，可以重写这个函数做错误处理。
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key;
+
+**获取值**
+- (id)valueForKey:(NSString *)key;
+- (id)valueForKeyPath:(NSString *)keyPath;
+// 如果Key不存在，且没有KVC无法搜索到任何和Key有关的字段或者属性，则会调用这个方法，默认是抛出异常
+- (id)valueForUndefinedKey:(NSString *)key;
+
+**其他**
+// 允许直接访问实例变量，默认返回YES。如果某个类重写了这个方法，且返回NO，则KVC不可以访问该类。
++ (BOOL)accessInstanceVariablesDirectly;
+// 这是集合操作的API，里面还有一系列这样的API，如果属性是一个NSMutableArray，那么可以用这个方法来返回
+- (NSMutableArray *)mutableArrayValueForKey:(NSString *)key;
+// 如果你在setValue方法时面给Value传nil，则会调用这个方法
+- (void)setNilValueForKey:(NSString *)key;
+// 输入一组key，返回该组key对应的Value，再转成字典返回，用于将Model转到字典。
+- (NSDictionary *)dictionaryWithValuesForKeys:(NSArray *)keys;
+// KVC提供属性值确认的API，它可以用来检查set的值是否正确、为不正确的值做一个替换值或者拒绝设置新值并返回错误原因。
+- (BOOL)validateValue:(id)ioValue forKey:(NSString *)inKey error:(NSError)outError;
+</code></pre><p>keyPath方法是集成了key的所有功能，也就是说对一个对象的一般属性进行赋值、取值，两个方法是通用的，都可以实现。但是对对象中的对象进的属性行赋值，只有keyPath能够实现.</p>
+<h2 id="1-1-KVC内部原理"><a href="#1-1-KVC内部原理" class="headerlink" title="1.1 KVC内部原理"></a>1.1 KVC内部原理</h2><p>比如说如下的一行KVC的代码：</p>
+<pre><code>[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];
+</code></pre><p>就会被编译器处理成：</p>
+<pre><code>SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);
+IMP method = objc_msg_lookup (site-&gt;isa,sel);
+method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
+</code></pre><p>这下KVC内部的实现就很清楚的清楚了, 一个对象在调用setValue的时候:</p>
 <ol>
 <li>首先根据方法名找到运行方法的时候所需要的环境参数.</li>
 <li>他会从自己isa指针结合环境参数, 找到具体的方法实现的接口.</li>
@@ -263,8 +291,52 @@ ga('send', 'pageview');
 <h2 id="1-2-KVC常见实践"><a href="#1-2-KVC常见实践" class="headerlink" title="1.2 KVC常见实践"></a>1.2 KVC常见实践</h2><p>这里是一些常见的KVC的实践.</p>
 <h3 id="1-2-1-修改和访问私有属性私有变量"><a href="#1-2-1-修改和访问私有属性私有变量" class="headerlink" title="1.2.1 修改和访问私有属性私有变量"></a>1.2.1 修改和访问私有属性私有变量</h3><p>对于类里的私有属性，Objective-C是无法直接访问的，但是KVC可以通过key, keypath做到.</p>
 <h3 id="1-2-2-动态取值和设置值"><a href="#1-2-2-动态取值和设置值" class="headerlink" title="1.2.2 动态取值和设置值"></a>1.2.2 动态取值和设置值</h3><p>利用KVC动态的取值和设值是最基本的用途.</p>
-<h3 id="1-2-3-Model和字典转换"><a href="#1-2-3-Model和字典转换" class="headerlink" title="1.2.3 Model和字典转换"></a>1.2.3 Model和字典转换</h3><p>利用runtime来获取成员属性, 通过KVC来赋值. 下面是一个简单的Demo.<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (instancetype)modelWithDict:(NSDictionary *)dict &#123;</div><div class="line">    id objc = [[self alloc] init];</div><div class="line">    /*</div><div class="line">     遍历模型中所有成员属性，去字典中查找</div><div class="line">     属性定义在类中，类有个属性列表（数组）</div><div class="line">     */</div><div class="line">    </div><div class="line">    //遍历模型所有成员属性</div><div class="line">    /*ivar表示成员属性</div><div class="line">     &#123;</div><div class="line">     _ID;//这个才叫成员属性，成员属性对应属性</div><div class="line">     &#125;</div><div class="line">     class_copyIvarList：把成员属性列表复制一份</div><div class="line">     Ivar * 表示指向Ivar数组的指针</div><div class="line">     */</div><div class="line">    unsigned int count;</div><div class="line">    Ivar *ivarList = class_copyIvarList([self class], &amp;count);</div><div class="line">    for (int i = 0; i &lt; count; i ++) &#123;</div><div class="line">        Ivar ivar = ivarList[i];</div><div class="line">        NSString *propertyName = [NSString stringWithUTF8String:ivar_getName(ivar)];</div><div class="line">        NSString *propertyType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];</div><div class="line">        NSString *key = [propertyName substringFromIndex:1];</div><div class="line">        id value = dict[key];</div><div class="line">        //也有存在类型是NSDictionary但是不想转成模型的情况</div><div class="line">        //二级转换</div><div class="line">        //值是字典，并且成员属性不是字典的时候需要转模型</div><div class="line">        if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![propertyType containsString:@&quot;NS&quot;]) &#123;</div><div class="line">            //转换成哪个类型</div><div class="line">            </div><div class="line">            //得到的propertyType是@&quot;User&quot;这样的一个字符串，所以需要先做截取</div><div class="line">            NSString *typeString = [propertyType substringFromIndex:2];</div><div class="line">            typeString = [typeString substringToIndex:typeString.length - 1];</div><div class="line">            //获取需要转换类的类对象</div><div class="line">            Class modelClass = NSClassFromString(typeString);</div><div class="line">            if (modelClass) &#123;</div><div class="line">                value = [modelClass modelWithDict:value];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        if (value) &#123;</div><div class="line">            [objc setValue:value forKey:key];</div><div class="line">        &#125;   </div><div class="line">    &#125;</div><div class="line">    return objc;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="1-2-4-操作集合"><a href="#1-2-4-操作集合" class="headerlink" title="1.2.4 操作集合"></a>1.2.4 操作集合</h3><p>Apple对KVC的valueForKey:方法作了一些特殊的实现，比如说NSArray和NSSet这样的容器类就实现了这些方法。所以可以用KVC很方便地操作集合.</p>
+<h3 id="1-2-3-Model和字典转换"><a href="#1-2-3-Model和字典转换" class="headerlink" title="1.2.3 Model和字典转换"></a>1.2.3 Model和字典转换</h3><p>利用runtime来获取成员属性, 通过KVC来赋值. 下面是一个简单的Demo.</p>
+<pre><code>+ (instancetype)modelWithDict:(NSDictionary *)dict {
+    id objc = [[self alloc] init];
+    /*
+     遍历模型中所有成员属性，去字典中查找
+     属性定义在类中，类有个属性列表（数组）
+     */
+
+    //遍历模型所有成员属性
+    /*ivar表示成员属性
+     {
+     _ID;//这个才叫成员属性，成员属性对应属性
+     }
+     class_copyIvarList：把成员属性列表复制一份
+     Ivar * 表示指向Ivar数组的指针
+     */
+    unsigned int count;
+    Ivar *ivarList = class_copyIvarList([self class], &amp;count);
+    for (int i = 0; i &lt; count; i ++) {
+        Ivar ivar = ivarList[i];
+        NSString *propertyName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+        NSString *propertyType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+        NSString *key = [propertyName substringFromIndex:1];
+        id value = dict[key];
+        //也有存在类型是NSDictionary但是不想转成模型的情况
+        //二级转换
+        //值是字典，并且成员属性不是字典的时候需要转模型
+        if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![propertyType containsString:@&quot;NS&quot;]) {
+            //转换成哪个类型
+
+            //得到的propertyType是@&quot;User&quot;这样的一个字符串，所以需要先做截取
+            NSString *typeString = [propertyType substringFromIndex:2];
+            typeString = [typeString substringToIndex:typeString.length - 1];
+            //获取需要转换类的类对象
+            Class modelClass = NSClassFromString(typeString);
+            if (modelClass) {
+                value = [modelClass modelWithDict:value];
+            }
+        }
+        if (value) {
+            [objc setValue:value forKey:key];
+        }   
+    }
+    return objc;
+}
+</code></pre><h3 id="1-2-4-操作集合"><a href="#1-2-4-操作集合" class="headerlink" title="1.2.4 操作集合"></a>1.2.4 操作集合</h3><p>Apple对KVC的valueForKey:方法作了一些特殊的实现，比如说NSArray和NSSet这样的容器类就实现了这些方法。所以可以用KVC很方便地操作集合.</p>
 <p><img src="https://segmentfault.com/img/remote/1460000013476170" alt="集合运算符"><br>上面表达式主要分为三部分，left部分是要操作的集合对象，如果调用KVC的对象本来就是集合对象，则left可以为空。中间部分是表达式，表达式一般以@符号开头。后面是进行运算的属性。</p>
 <p>集合运算符主要分为三类：</p>
 <ul>
@@ -274,8 +346,24 @@ ga('send', 'pageview');
 </ul>
 <p><a href="https://segmentfault.com/a/1190000013476163#articleHeader4" target="_blank" rel="noopener">这里</a>有一个很好的操作集合的例子.</p>
 <h3 id="1-2-5-利用KVC高阶消息传递"><a href="#1-2-5-利用KVC高阶消息传递" class="headerlink" title="1.2.5 利用KVC高阶消息传递"></a>1.2.5 利用KVC高阶消息传递</h3><p>当对容器类使用KVC时，valueForKey:将会被传递给容器中的每一个对象，而不是容器本身进行操作。结果会被添加进返回的容器中，这样，开发者可以很方便的操作集合来返回另一个集合.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">int main(int argc, const char * argv[]) &#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line">        </div><div class="line">       NSArray* arrStr = @[@&quot;english&quot;,@&quot;franch&quot;,@&quot;chinese&quot;];</div><div class="line">       NSArray* arrCapStrLength = [arrStr valueForKeyPath:@&quot;capitalizedString.length&quot;];</div><div class="line">        for (NSNumber* length  in arrCapStrLength) &#123;</div><div class="line">            NSLog(@&quot;%ld&quot;,(long)length.integerValue);</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//打印结果</div><div class="line">7</div><div class="line">6</div><div class="line">7</div></pre></td></tr></table></figure>
-<h1 id="2-KVO"><a href="#2-KVO" class="headerlink" title="2 KVO"></a>2 KVO</h1><p>之前总结过关于KVO的相关, 可以看<a href="http://hchong.net/2018/01/24/KVO%E8%AF%A6%E8%A7%A3/">这里</a></p>
+<pre><code>int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+
+       NSArray* arrStr = @[@&quot;english&quot;,@&quot;franch&quot;,@&quot;chinese&quot;];
+       NSArray* arrCapStrLength = [arrStr valueForKeyPath:@&quot;capitalizedString.length&quot;];
+        for (NSNumber* length  in arrCapStrLength) {
+            NSLog(@&quot;%ld&quot;,(long)length.integerValue);
+        }
+
+    }
+    return 0;
+}
+
+//打印结果
+7
+6
+7
+</code></pre><h1 id="2-KVO"><a href="#2-KVO" class="headerlink" title="2 KVO"></a>2 KVO</h1><p>之前总结过关于KVO的相关, 可以看<a href="http://hchong.net/2018/01/24/KVO%E8%AF%A6%E8%A7%A3/">这里</a></p>
 <p>通过KVC修改属性会触发KVO, 是因为内部触发了setter方法. </p>
 <p>通过KVC修改成员变量也会触发KVO, 是因为通过KVC修改成员变量的值, 系统内部帮助我们调用了willChangeValueForKey和didChangeValueForKey这两个方法, 并且在didChangeValueForKey 内部调用了 observeValueForKeyPath:方法.</p>
 <h1 id="3-Notification"><a href="#3-Notification" class="headerlink" title="3 Notification"></a>3 Notification</h1><ul>

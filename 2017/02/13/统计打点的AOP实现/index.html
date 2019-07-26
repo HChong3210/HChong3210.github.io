@@ -246,51 +246,162 @@ ga('send', 'pageview');
 </ol>
 <p>我们新建两个类, 一个用来记录Hook的类<code>HYZTrackList</code>, Hook的方法和与之对应的事件ID. 另外一个类<code>HYZTrackManager</code>, 用来实现埋点事件的具体操作方法.</p>
 <h2 id="简单埋点的实现"><a href="#简单埋点的实现" class="headerlink" title="简单埋点的实现"></a>简单埋点的实现</h2><p>我们在<code>HYZTrackList</code>中实现<code>trackList</code>方法, 返回一个数组. 数组的元素是一个个的字典, 用对记录每一个事件的相关信息.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (NSArray *)trackList &#123;</div><div class="line">    NSArray *trackList = @[</div><div class="line">  //=======================================简单埋点==========================================</div><div class="line">                           //HYZViewController1简单埋点点击事件</div><div class="line">                           @&#123;kClassName:@&quot;HYZViewController1&quot;,</div><div class="line">                             kHookFunction:@&quot;simpleTrack:para2:&quot;,</div><div class="line">                             kEventType:HYZViewController1SimpleButtonClick,</div><div class="line">                             kIsLightEvent:@(YES)&#125;,</div><div class="line">                           //HYZViewController1复杂埋点点击事件</div><div class="line">                           @&#123;kClassName:@&quot;HYZViewController1&quot;,</div><div class="line">                             kHookFunction:@&quot;blockButtonAction:&quot;,</div><div class="line">                             kEventType:HYZViewController1BlockButtonClick,</div><div class="line">                             kIsLightEvent:@(YES)&#125;,</div><div class="line">                           //HYZViewController1block埋点点击事件</div><div class="line">                           @&#123;kClassName:@&quot;HYZViewController1&quot;,</div><div class="line">                             kHookFunction:@&quot;complexButtonAction:&quot;,</div><div class="line">                             kEventType:HYZViewController1ComplexButtonClick,</div><div class="line">                             kIsLightEvent:@(YES)&#125;,</div><div class="line">                           </div><div class="line">//=======================================复杂埋点==========================================</div><div class="line">                           @&#123;kClassName:@&quot;HYZViewController3&quot;,</div><div class="line">                             kHookFunction:@&quot;trackWithTag:&quot;,</div><div class="line">                             kHandlerBlock:@&quot;HYZViewController3TrackHandleBlock&quot;,</div><div class="line">                             kIsLightEvent:@(NO)&#125;];</div><div class="line">    return trackList;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如上所示, 我们是要记录<code>HYZViewController1</code>类里面的<code>simpleTrack:para2:</code>方法的点击事件, 事件ID是<code>HYZViewController1SimpleButtonClick</code>.<br>我们在<code>APPDelegate</code>的<code>application:didFinishLaunchingWithOptions:</code>方法中, 来hook所有的在<code>trackList</code>中记录的方法.<br>在``中, 实现如下相关代码.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (void)setup &#123;</div><div class="line">    //实现和替换hook的block方法</div><div class="line">    NSMutableDictionary *blockDict = [[NSMutableDictionary alloc] init];</div><div class="line">    [HYZTrackManager weightEventEntry:blockDict];</div><div class="line">    </div><div class="line">    [[HYZTrackList trackList] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) &#123;</div><div class="line">        BOOL isLightEvent = [obj[kIsLightEvent] boolValue];</div><div class="line">        NSString *className = obj[kClassName];</div><div class="line">        NSString *functionName = obj[kHookFunction];</div><div class="line">        NSString *eventName = obj[kEventType];</div><div class="line">        Class class = NSClassFromString(className);</div><div class="line">        SEL selector = NSSelectorFromString(functionName);</div><div class="line">        if (isLightEvent == YES) &#123;</div><div class="line">            if (!functionName) &#123;</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">            [HYZTrackManager lightTrackTarget:class selector:selector functionName:functionName trackId:eventName];</div><div class="line">        &#125; else &#123;</div><div class="line">            NSString *blockName = obj[kHandlerBlock];</div><div class="line">            id handleBlock = [blockDict objectForKey:blockName];</div><div class="line">            if (!handleBlock) &#123;</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">            [HYZTrackManager complexTrackTarget:class selector:selector usingBlock:handleBlock];</div><div class="line">        &#125;</div><div class="line">    &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>针对简单埋点, 我们直接使用</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//简单埋点虽然可以拿到对应方法的参数, 但是如果需要把该参数传到埋点请求的网络事件中的话, 必须使用复杂埋点来处理</div><div class="line">+ (void)lightTrackTarget:(Class)target selector:(SEL)selector functionName:(NSString *)functionName trackId:(NSString *)trackId &#123;</div><div class="line">    NSError *error;</div><div class="line">    NSInteger functionParamCount = [[functionName componentsSeparatedByString:@&quot;:&quot;] count] - 1;</div><div class="line">    switch (functionParamCount) &#123;</div><div class="line">        case 0: &#123;</div><div class="line">            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo)&#123;</div><div class="line">                [HYZTrackManager trackRequestWithTrackId:trackId, nil];</div><div class="line">            &#125;error:&amp;error];</div><div class="line">        &#125;</div><div class="line">            break;</div><div class="line">        case 1: &#123;</div><div class="line">            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1)&#123;</div><div class="line">                [HYZTrackManager trackRequestWithTrackId:trackId, p1, nil];</div><div class="line">            &#125;error:&amp;error];</div><div class="line">        &#125;</div><div class="line">            break;</div><div class="line">        case 2: &#123;</div><div class="line">            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1, id p2)&#123;</div><div class="line">                [HYZTrackManager trackRequestWithTrackId:trackId, p1, p2, nil];</div><div class="line">            &#125;error:&amp;error];</div><div class="line">        &#125;</div><div class="line">            break;</div><div class="line">        case 3: &#123;</div><div class="line">            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1, id p2, id p3)&#123;</div><div class="line">                [HYZTrackManager trackRequestWithTrackId:trackId, p1, p2, p3, nil];</div><div class="line">            &#125;error:&amp;error];</div><div class="line">        &#125;</div><div class="line">            break;</div><div class="line">        case 4: &#123;</div><div class="line">            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1, id p2, id p3, id p4)&#123;</div><div class="line">                [HYZTrackManager trackRequestWithTrackId:trackId, p1, p2, p3, p4, nil];</div><div class="line">            &#125;error:&amp;error];</div><div class="line">        &#125;</div><div class="line">            break;</div><div class="line">        default:</div><div class="line">            break;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>简单埋点虽然也可以拿到Hook的方法的参数, 但是由于通用性, 所以不能用来传递可变的参数.</p>
-<p>真正的埋点请求是这样的</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+ (void)trackRequestWithTrackId:(NSString *)trackId, ... NS_REQUIRES_NIL_TERMINATION&#123;</div><div class="line">    // 定义一个指向个数可变的参数列表指针；</div><div class="line">    va_list args;</div><div class="line">    // 用于存放取出的参数</div><div class="line">    NSString *arg;</div><div class="line">    // 初始化变量刚定义的va_list变量，这个宏的第二个参数是第一个可变参数的前一个参数，是一个固定的参数</div><div class="line">    va_start(args, trackId);</div><div class="line">    // 遍历全部参数 va_arg返回可变的参数(a_arg的第二个参数是你要返回的参数的类型)</div><div class="line">    while ((arg = va_arg(args, NSString *))) &#123;</div><div class="line">        NSLog(@&quot;%@&quot;, arg);</div><div class="line">    &#125;</div><div class="line">    // 清空参数列表，并置参数指针args无效</div><div class="line">    va_end(args);</div><div class="line">    NSLog(@&quot;此处用来实现埋点事件记录%@的网络请求&quot;, trackId);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>至此, 实现了简单埋点的方法Hook.</p>
-<h2 id="复杂埋点"><a href="#复杂埋点" class="headerlink" title="复杂埋点"></a>复杂埋点</h2><p>复杂埋点, 因为要传参数进来, 所以我们利用<code>+ (id&lt;AspectToken&gt;)aspect_hookSelector:(SEL)selector withOptions:(AspectOptions)options usingBlock:(id)block error:(NSError **)error;</code>可以传block参数来实现.<br>首先, 我们在<code>HYZTrackList</code>中把类名, 方法名和需要定义的Block关联起来,如下所示.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&#123;kClassName:@&quot;HYZViewController3&quot;,</div><div class="line">kHookFunction:@&quot;trackWithTag:&quot;,</div><div class="line">kHandlerBlock:@&quot;HYZViewController3TrackHandleBlock&quot;,</div><div class="line">kIsLightEvent:@(NO)&#125;</div><div class="line">``` </div><div class="line">在`APPDelegate`中初始化时, 需要在`HYZTrackManager`中实现Block的定义,</div></pre></td></tr></table></figure>
-<p>//hook的block在这里定义和实现</p>
-<ul>
-<li>(void)weightEventEntry:(NSMutableDictionary*)blockDict{<br>  [HYZTrackManager trackButtonAction:blockDict];<br>}</li>
-</ul>
-<p>//block的内部实现</p>
-<ul>
-<li>(void)trackButtonAction:(NSMutableDictionary *)blockDict {<br>  void(^HYZViewController3TrackHandleBlock)(id, NSInteger tag) = ^(id <aspectinfo>aspectInfo, NSInteger tag) {<pre><code>switch (tag) {
-        case 1: {
-            [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
-        }
-        break;
-        case 2: {
-            [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
-        }
-        break;
-        case 3: {
-            [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
-        }
-        break;
-        case 4: {
-            [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
-        }
-        break;
-    default:
-        break;
+<pre><code>+ (NSArray *)trackList {
+    NSArray *trackList = @[
+  //=======================================简单埋点==========================================
+                           //HYZViewController1简单埋点点击事件
+                           @{kClassName:@&quot;HYZViewController1&quot;,
+                             kHookFunction:@&quot;simpleTrack:para2:&quot;,
+                             kEventType:HYZViewController1SimpleButtonClick,
+                             kIsLightEvent:@(YES)},
+                           //HYZViewController1复杂埋点点击事件
+                           @{kClassName:@&quot;HYZViewController1&quot;,
+                             kHookFunction:@&quot;blockButtonAction:&quot;,
+                             kEventType:HYZViewController1BlockButtonClick,
+                             kIsLightEvent:@(YES)},
+                           //HYZViewController1block埋点点击事件
+                           @{kClassName:@&quot;HYZViewController1&quot;,
+                             kHookFunction:@&quot;complexButtonAction:&quot;,
+                             kEventType:HYZViewController1ComplexButtonClick,
+                             kIsLightEvent:@(YES)},
+
+//=======================================复杂埋点==========================================
+                           @{kClassName:@&quot;HYZViewController3&quot;,
+                             kHookFunction:@&quot;trackWithTag:&quot;,
+                             kHandlerBlock:@&quot;HYZViewController3TrackHandleBlock&quot;,
+                             kIsLightEvent:@(NO)}];
+    return trackList;
 }
-</code></pre>  };<br>  [blockDict setObject:[HYZViewController3TrackHandleBlock copy] forKey:@”HYZViewController3TrackHandleBlock”];<br>}<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">然后Hook原方法;</div></pre></td></tr></table></figure>
-</aspectinfo></li>
-</ul>
-<p>//复杂的埋点,</p>
-<ul>
-<li>(void)complexTrackTarget:(Class)target selector:(SEL)selector usingBlock:(id)block {<br>  NSError *error;<br>  [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:block error:&amp;error];<br>}<br>```</li>
-</ul>
-<p><a href="https://github.com/HChong3210/AOPTrack" target="_blank" rel="noopener">Demo</a><br>参考资料: </p>
+</code></pre><p>如上所示, 我们是要记录<code>HYZViewController1</code>类里面的<code>simpleTrack:para2:</code>方法的点击事件, 事件ID是<code>HYZViewController1SimpleButtonClick</code>.<br>我们在<code>APPDelegate</code>的<code>application:didFinishLaunchingWithOptions:</code>方法中, 来hook所有的在<code>trackList</code>中记录的方法.<br>在``中, 实现如下相关代码.</p>
+<pre><code>+ (void)setup {
+    //实现和替换hook的block方法
+    NSMutableDictionary *blockDict = [[NSMutableDictionary alloc] init];
+    [HYZTrackManager weightEventEntry:blockDict];
+
+    [[HYZTrackList trackList] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        BOOL isLightEvent = [obj[kIsLightEvent] boolValue];
+        NSString *className = obj[kClassName];
+        NSString *functionName = obj[kHookFunction];
+        NSString *eventName = obj[kEventType];
+        Class class = NSClassFromString(className);
+        SEL selector = NSSelectorFromString(functionName);
+        if (isLightEvent == YES) {
+            if (!functionName) {
+                return;
+            }
+            [HYZTrackManager lightTrackTarget:class selector:selector functionName:functionName trackId:eventName];
+        } else {
+            NSString *blockName = obj[kHandlerBlock];
+            id handleBlock = [blockDict objectForKey:blockName];
+            if (!handleBlock) {
+                return;
+            }
+            [HYZTrackManager complexTrackTarget:class selector:selector usingBlock:handleBlock];
+        }
+    }];
+}
+</code></pre><p>针对简单埋点, 我们直接使用</p>
+<pre><code>//简单埋点虽然可以拿到对应方法的参数, 但是如果需要把该参数传到埋点请求的网络事件中的话, 必须使用复杂埋点来处理
++ (void)lightTrackTarget:(Class)target selector:(SEL)selector functionName:(NSString *)functionName trackId:(NSString *)trackId {
+    NSError *error;
+    NSInteger functionParamCount = [[functionName componentsSeparatedByString:@&quot;:&quot;] count] - 1;
+    switch (functionParamCount) {
+        case 0: {
+            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo){
+                [HYZTrackManager trackRequestWithTrackId:trackId, nil];
+            }error:&amp;error];
+        }
+            break;
+        case 1: {
+            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1){
+                [HYZTrackManager trackRequestWithTrackId:trackId, p1, nil];
+            }error:&amp;error];
+        }
+            break;
+        case 2: {
+            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1, id p2){
+                [HYZTrackManager trackRequestWithTrackId:trackId, p1, p2, nil];
+            }error:&amp;error];
+        }
+            break;
+        case 3: {
+            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1, id p2, id p3){
+                [HYZTrackManager trackRequestWithTrackId:trackId, p1, p2, p3, nil];
+            }error:&amp;error];
+        }
+            break;
+        case 4: {
+            [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:^(id&lt;AspectInfo&gt; aspectInfo, id p1, id p2, id p3, id p4){
+                [HYZTrackManager trackRequestWithTrackId:trackId, p1, p2, p3, p4, nil];
+            }error:&amp;error];
+        }
+            break;
+        default:
+            break;
+    }
+}
+</code></pre><p>简单埋点虽然也可以拿到Hook的方法的参数, 但是由于通用性, 所以不能用来传递可变的参数.</p>
+<p>真正的埋点请求是这样的</p>
+<pre><code>+ (void)trackRequestWithTrackId:(NSString *)trackId, ... NS_REQUIRES_NIL_TERMINATION{
+    // 定义一个指向个数可变的参数列表指针；
+    va_list args;
+    // 用于存放取出的参数
+    NSString *arg;
+    // 初始化变量刚定义的va_list变量，这个宏的第二个参数是第一个可变参数的前一个参数，是一个固定的参数
+    va_start(args, trackId);
+    // 遍历全部参数 va_arg返回可变的参数(a_arg的第二个参数是你要返回的参数的类型)
+    while ((arg = va_arg(args, NSString *))) {
+        NSLog(@&quot;%@&quot;, arg);
+    }
+    // 清空参数列表，并置参数指针args无效
+    va_end(args);
+    NSLog(@&quot;此处用来实现埋点事件记录%@的网络请求&quot;, trackId);
+}
+</code></pre><p>至此, 实现了简单埋点的方法Hook.</p>
+<h2 id="复杂埋点"><a href="#复杂埋点" class="headerlink" title="复杂埋点"></a>复杂埋点</h2><p>复杂埋点, 因为要传参数进来, 所以我们利用<code>+ (id&lt;AspectToken&gt;)aspect_hookSelector:(SEL)selector withOptions:(AspectOptions)options usingBlock:(id)block error:(NSError **)error;</code>可以传block参数来实现.<br>首先, 我们在<code>HYZTrackList</code>中把类名, 方法名和需要定义的Block关联起来,如下所示.</p>
+<pre><code>{kClassName:@&quot;HYZViewController3&quot;,
+kHookFunction:@&quot;trackWithTag:&quot;,
+kHandlerBlock:@&quot;HYZViewController3TrackHandleBlock&quot;,
+kIsLightEvent:@(NO)}
+</code></pre><p>在<code>APPDelegate</code>中初始化时, 需要在<code>HYZTrackManager</code>中实现Block的定义, </p>
+<pre><code>//hook的block在这里定义和实现
++ (void)weightEventEntry:(NSMutableDictionary*)blockDict{
+    [HYZTrackManager trackButtonAction:blockDict];
+}
+
+//block的内部实现
++ (void)trackButtonAction:(NSMutableDictionary *)blockDict {
+    void(^HYZViewController3TrackHandleBlock)(id, NSInteger tag) = ^(id &lt;AspectInfo&gt;aspectInfo, NSInteger tag) {
+        switch (tag) {
+                case 1: {
+                    [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
+                }
+                break;
+                case 2: {
+                    [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
+                }
+                break;
+                case 3: {
+                    [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
+                }
+                break;
+                case 4: {
+                    [HYZTrackManager trackRequestWithTrackId:[NSString stringWithFormat:@&quot;%ld&quot;, tag], nil];
+                }
+                break;
+            default:
+                break;
+        }
+    };
+    [blockDict setObject:[HYZViewController3TrackHandleBlock copy] forKey:@&quot;HYZViewController3TrackHandleBlock&quot;];
+}
+</code></pre><p>然后Hook原方法;</p>
+<pre><code>//复杂的埋点,
++ (void)complexTrackTarget:(Class)target selector:(SEL)selector usingBlock:(id)block {
+    NSError *error;
+    [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:block error:&amp;error];
+}
+</code></pre><p><a href="https://github.com/HChong3210/AOPTrack" target="_blank" rel="noopener">Demo</a><br>参考资料: </p>
 <ol>
 <li><a href="http://www.jianshu.com/p/dc9dca24d5de" target="_blank" rel="noopener">iOS 如何实现Aspect Oriented Programming</a></li>
 <li><a href="http://www.vienta.me/2016/09/21/AOP%E5%9C%A8iOS%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%80%E7%BB%9F%E8%AE%A1%E5%9F%8B%E7%82%B9/" target="_blank" rel="noopener">AOP在iOS中的实践——统计埋点</a></li>

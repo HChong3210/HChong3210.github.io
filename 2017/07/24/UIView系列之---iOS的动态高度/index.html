@@ -257,8 +257,21 @@ ga('send', 'pageview');
 <h3 id="Leaf-level-views高度计算"><a href="#Leaf-level-views高度计算" class="headerlink" title="Leaf-level views高度计算"></a>Leaf-level views高度计算</h3><p>这类的view往往能够直接计算出content(譬如UILabel的text, UIButton的title, UIImageView的image)的大小. 以UILabel为例:</p>
 <p>假设我们已经设置了UILabel的x, y值约束, 没有设置与size有关的约束. 如果我们要根据UILabel的文本内容来计算最合适的size, 我们可以自定义一个Custom Label, 继承于UILabel, 在Custom Label中重写<code>- (CGSize)intrinsicContentSize</code>方法. 返回我们希望返回的size. 在需要使用UILabel的地方我们就可以通过使用Custom Label来实现搞得的正确计算. </p>
 <p>关于<code>intrinsicContentSize</code>方法的理解是, Auto Layout System在layout时, 不知道该为view分配多大的size, 因此回调view的<code>intrinsicContentSize</code>方法, 该方法会给auto layout system一个合适的size, system根据此size对view的大小进行设置; </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@interface CustomLabel : UILabel</div><div class="line">    </div><div class="line">@end</div><div class="line">    </div><div class="line">@implementation CustomLabel</div><div class="line">    </div><div class="line">- (CGSize)intrinsicContentSize &#123;</div><div class="line">    CGSize size = [super intrinsicContentSize];</div><div class="line">    size.width  += 20;</div><div class="line">    size.height += 20;</div><div class="line">    return size;</div><div class="line">&#125;</div><div class="line">    </div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>以上如果是单行label的话, 实现起来没问题. 但是如果label一行显示不下需要换行的话, 那事情就没这么简单了. 但是怎么计算多行label的高度呢? 有以下几种方法: </p>
+<pre><code>@interface CustomLabel : UILabel
+
+@end
+
+@implementation CustomLabel
+
+- (CGSize)intrinsicContentSize {
+    CGSize size = [super intrinsicContentSize];
+    size.width  += 20;
+    size.height += 20;
+    return size;
+}
+
+@end
+</code></pre><p>以上如果是单行label的话, 实现起来没问题. 但是如果label一行显示不下需要换行的话, 那事情就没这么简单了. 但是怎么计算多行label的高度呢? 有以下几种方法: </p>
 <p>下面几种方法都需要我们首先设置<code>preferredMaxLayoutWidth</code>, 也就是UILabel的Width最大值, label会根据这个最大值来换行. 再设置<code>numberOfLines = 0</code>, 来实现换行. ==注意:== <code>preferredMaxLayoutWidth</code>适用于没有指定UILabel的Width的情况, 如果设置了Width的约束, 又设置了<code>preferredMaxLayoutWidth</code>. 那么计算size会以<code>preferredMaxLayoutWidth</code>为准, 显示则以Width的约束为准.</p>
 <ol>
 <li><p><code>boundingRectWithSize:options:attributes:context:</code></p>
@@ -278,16 +291,27 @@ ga('send', 'pageview');
 <p>calls sizeThatFits: with current view bounds and changes bounds size. </p>
 </blockquote>
 <p> <code>sizeToFit</code>内部会调用<code>sizeThatFits:</code>方法, 然后改变调用者的size. sizeToFit的伪代码大致如下：</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">// calls sizeThatFits</div><div class="line">CGSize size = [self sizeThatFits:self.bounds.size];</div><div class="line">// change bounds size</div><div class="line">CGRect bounds = self.bounds;</div><div class="line">bounds.size.width = size.width;</div><div class="line">bounds.size.height = size.width;</div><div class="line">self.bounds = bounds;</div></pre></td></tr></table></figure>
-</li>
+<pre><code>// calls sizeThatFits
+CGSize size = [self sizeThatFits:self.bounds.size];
+// change bounds size
+CGRect bounds = self.bounds;
+bounds.size.width = size.width;
+bounds.size.height = size.width;
+self.bounds = bounds;
+</code></pre></li>
 <li><p><span id="systemLayoutSizeFittingSize">systemLayoutSizeFittingSize</span> </p>
 <p> <code>systemLayoutSizeFittingSize</code>, 它也是UIView的方法, 是AutoLayout诞生后的产物. 所以使用它的前提是需要展示内容的控件(这里指的就是UILabel)必须约束完美. 不然就不会起作用。而且必须要设置UILabel的<code>preferredMaxLayoutWidth</code>属性.<br> 这个属性非常重要, 它影响着layout. 如果设置了<code>preferredMaxLayoutWidth</code>, 当内容超过约束区域, 就会自动换行并且更新约束. 在良好约束的前提下, <code>systemLayoutSizeFittingSize</code>同样接受一个CGSize, 不同的是这次不用计算了, 直接使用系统提供的Fitting Size即可:</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">const CGSize UILayoutFittingCompressedSize; //在保证适当尺寸的前提下尽量压缩CGSize的大小</div><div class="line">const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽量扩充CGSize的大小</div></pre></td></tr></table></figure>
-<p> 所以为了刚好将UILabel的内容显示完全，应该使用UILayoutFittingCompressedSize。代码如下：</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)layoutSubviews &#123;</div><div class="line">    [super layoutSubviews];</div><div class="line">    self.label.preferredMaxLayoutWidth = CGRectGetWidth(self.label.bounds);</div><div class="line">    CGSize size = [self.label systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];</div><div class="line">    self.labelConstraintHeight.constant = size.height + (2 * MARGIN);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p> 需要注意的是: 约束的上下左右一定要写好, 但是不能约束UILabel的高度. 否则可能会导致返回的CGRect不准确. <code>numberOfLines = 0</code> 让Label可以显示多行内容. 设置<code>preferredMaxLayoutWidth</code>属性, 使UILabel能自适应多行内容. <code>UILayoutFittingCompressedSize</code> 使用这个参数会返回符合条件最合适的Size. 最后也要加上边距, 主要是因为这里我们在内部计算UILabel的Size, 而如果在外部对View调用<code>systemLayoutSizeFittingSize</code>方法, 就会得到整个View视图的Size. </p>
+<pre><code>const CGSize UILayoutFittingCompressedSize; //在保证适当尺寸的前提下尽量压缩CGSize的大小
+const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽量扩充CGSize的大小
+</code></pre><p> 所以为了刚好将UILabel的内容显示完全，应该使用UILayoutFittingCompressedSize。代码如下：</p>
+<p> ```</p>
 </li>
 </ol>
+<ul>
+<li><p>(void)layoutSubviews {<br>  [super layoutSubviews];<br>  self.label.preferredMaxLayoutWidth = CGRectGetWidth(self.label.bounds);<br>  CGSize size = [self.label systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];<br>  self.labelConstraintHeight.constant = size.height + (2 * MARGIN);<br>}<br>  ```</p>
+<p>  需要注意的是: 约束的上下左右一定要写好, 但是不能约束UILabel的高度. 否则可能会导致返回的CGRect不准确. <code>numberOfLines = 0</code> 让Label可以显示多行内容. 设置<code>preferredMaxLayoutWidth</code>属性, 使UILabel能自适应多行内容. <code>UILayoutFittingCompressedSize</code> 使用这个参数会返回符合条件最合适的Size. 最后也要加上边距, 主要是因为这里我们在内部计算UILabel的Size, 而如果在外部对View调用<code>systemLayoutSizeFittingSize</code>方法, 就会得到整个View视图的Size. </p>
+</li>
+</ul>
 <p><code>sizeThatFits:</code>和<code>boundingRectWithSize:options:attributes:context:</code>这两个API也可以在传统布局(基于Frame)的情况下使用. </p>
 <h3 id="非Leaf-level-views高度计算"><a href="#非Leaf-level-views高度计算" class="headerlink" title="非Leaf-level views高度计算"></a>非Leaf-level views高度计算</h3><p>以UITextView显示文本为例, 让其能够自适应文本, 即根据文本自动调整其大小; 由于<code>intrinsicContentSize</code>的特性, 当其内部含有subView时返回值是(-1, -1), 无法向auto layout system传递我们想要传达的值, 我们可以使用<a href="#sizeThatFits">sizeThatFits</a>或者<a href="#sizeToFit">sizeToFit</a>来计算或者改变UITextView的大小. </p>
 <p>==这里需要注意的是:== 当调用<code>sizeThatFits:</code>的size=(width, height)，当width/height的值为0时，width/height就被认为是无穷大, size就不能被正常的显示. 所以区别于UILabel, 我们的约束一定要设置好Width和height, 否则使用<code>sizeToFit</code>也不能正确计算出. </p>
@@ -319,8 +343,78 @@ ga('send', 'pageview');
 </ol>
 <h3 id="Cell的动态高度计算"><a href="#Cell的动态高度计算" class="headerlink" title="Cell的动态高度计算"></a>Cell的动态高度计算</h3><p>对于使用auto layout机制布局的view, auto layout system会在布局过程中综合各种约束的考虑为之设置一个size, 在布局完成后, 该size的值即为view.frame.size的值; 这包含的另外一层意思, 即在布局完成前, 我们是不能通过view.frame.size准确获取view的size的. 但有时候, 我们需要在auto layout system对view完成布局前就知道它的size, <code>systemLayoutSizeFittingSize:</code>方法正是能够满足这种要求的API. <code>systemLayoutSizeFittingSize:</code>方法会根据其constraints返回一个合适的size值. </p>
 <p>在这里看一下比较知名的cell高度计算库<a href="https://github.com/forkingdog/UITableView-FDTemplateLayoutCell" target="_blank" rel="noopener">UITableView-FDTemplateLayoutCell</a>的核心高度计算方法, 大体上和我们所使用的方法差不多. Auto layout mode using <code>-systemLayoutSizeFittingSize:</code>, Frame layout mode using <code>-sizeThatFits:</code>. </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (CGFloat)fd_systemFittingHeightForConfiguratedCell:(UITableViewCell *)cell &#123;</div><div class="line">    CGFloat contentViewWidth = CGRectGetWidth(self.frame);</div><div class="line">    </div><div class="line">    // If a cell has accessory view or system accessory type, its content view&apos;s width is smaller</div><div class="line">    // than cell&apos;s by some fixed values.</div><div class="line">    if (cell.accessoryView) &#123;</div><div class="line">        contentViewWidth -= 16 + CGRectGetWidth(cell.accessoryView.frame);</div><div class="line">    &#125; else &#123;</div><div class="line">        static const CGFloat systemAccessoryWidths[] = &#123;</div><div class="line">            [UITableViewCellAccessoryNone] = 0,</div><div class="line">            [UITableViewCellAccessoryDisclosureIndicator] = 34,</div><div class="line">            [UITableViewCellAccessoryDetailDisclosureButton] = 68,</div><div class="line">            [UITableViewCellAccessoryCheckmark] = 40,</div><div class="line">            [UITableViewCellAccessoryDetailButton] = 48</div><div class="line">        &#125;;</div><div class="line">        contentViewWidth -= systemAccessoryWidths[cell.accessoryType];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    // If not using auto layout, you have to override &quot;-sizeThatFits:&quot; to provide a fitting size by yourself.</div><div class="line">    // This is the same height calculation passes used in iOS8 self-sizing cell&apos;s implementation.</div><div class="line">    //</div><div class="line">    // 1. Try &quot;- systemLayoutSizeFittingSize:&quot; first. (skip this step if &apos;fd_enforceFrameLayout&apos; set to YES.)</div><div class="line">    // 2. Warning once if step 1 still returns 0 when using AutoLayout</div><div class="line">    // 3. Try &quot;- sizeThatFits:&quot; if step 1 returns 0</div><div class="line">    // 4. Use a valid height or default row height (44) if not exist one</div><div class="line">    </div><div class="line">    CGFloat fittingHeight = 0;</div><div class="line">    </div><div class="line">    if (!cell.fd_enforceFrameLayout &amp;&amp; contentViewWidth &gt; 0) &#123;</div><div class="line">        // Add a hard width constraint to make dynamic content views (like labels) expand vertically instead</div><div class="line">        // of growing horizontally, in a flow-layout manner.</div><div class="line">        NSLayoutConstraint *widthFenceConstraint = [NSLayoutConstraint constraintWithItem:cell.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:contentViewWidth];</div><div class="line">        [cell.contentView addConstraint:widthFenceConstraint];</div><div class="line">        </div><div class="line">        // Auto layout engine does its math</div><div class="line">        fittingHeight = [cell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;</div><div class="line">        [cell.contentView removeConstraint:widthFenceConstraint];</div><div class="line">        </div><div class="line">        [self fd_debugLog:[NSString stringWithFormat:@&quot;calculate using system fitting size (AutoLayout) - %@&quot;, @(fittingHeight)]];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    if (fittingHeight == 0) &#123;</div><div class="line">#if DEBUG</div><div class="line">        // Warn if using AutoLayout but get zero height.</div><div class="line">        if (cell.contentView.constraints.count &gt; 0) &#123;</div><div class="line">            if (!objc_getAssociatedObject(self, _cmd)) &#123;</div><div class="line">                NSLog(@&quot;[FDTemplateLayoutCell] Warning once only: Cannot get a proper cell height (now 0) from &apos;- systemFittingSize:&apos;(AutoLayout). You should check how constraints are built in cell, making it into &apos;self-sizing&apos; cell.&quot;);</div><div class="line">                objc_setAssociatedObject(self, _cmd, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">#endif</div><div class="line">        // Try &apos;- sizeThatFits:&apos; for frame layout.</div><div class="line">        // Note: fitting height should not include separator view.</div><div class="line">        fittingHeight = [cell sizeThatFits:CGSizeMake(contentViewWidth, 0)].height;</div><div class="line">        </div><div class="line">        [self fd_debugLog:[NSString stringWithFormat:@&quot;calculate using sizeThatFits - %@&quot;, @(fittingHeight)]];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    // Still zero height after all above.</div><div class="line">    if (fittingHeight == 0) &#123;</div><div class="line">        // Use default row height.</div><div class="line">        fittingHeight = 44;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    // Add 1px extra space for separator line if needed, simulating default UITableViewCell.</div><div class="line">    if (self.separatorStyle != UITableViewCellSeparatorStyleNone) &#123;</div><div class="line">        fittingHeight += 1.0 / [UIScreen mainScreen].scale;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    return fittingHeight;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="noopener">这篇文章</a>也有一些常见cell布局的高度计算方法, 可以参考下.</p>
+<pre><code>- (CGFloat)fd_systemFittingHeightForConfiguratedCell:(UITableViewCell *)cell {
+    CGFloat contentViewWidth = CGRectGetWidth(self.frame);
+
+    // If a cell has accessory view or system accessory type, its content view&#39;s width is smaller
+    // than cell&#39;s by some fixed values.
+    if (cell.accessoryView) {
+        contentViewWidth -= 16 + CGRectGetWidth(cell.accessoryView.frame);
+    } else {
+        static const CGFloat systemAccessoryWidths[] = {
+            [UITableViewCellAccessoryNone] = 0,
+            [UITableViewCellAccessoryDisclosureIndicator] = 34,
+            [UITableViewCellAccessoryDetailDisclosureButton] = 68,
+            [UITableViewCellAccessoryCheckmark] = 40,
+            [UITableViewCellAccessoryDetailButton] = 48
+        };
+        contentViewWidth -= systemAccessoryWidths[cell.accessoryType];
+    }
+
+    // If not using auto layout, you have to override &quot;-sizeThatFits:&quot; to provide a fitting size by yourself.
+    // This is the same height calculation passes used in iOS8 self-sizing cell&#39;s implementation.
+    //
+    // 1. Try &quot;- systemLayoutSizeFittingSize:&quot; first. (skip this step if &#39;fd_enforceFrameLayout&#39; set to YES.)
+    // 2. Warning once if step 1 still returns 0 when using AutoLayout
+    // 3. Try &quot;- sizeThatFits:&quot; if step 1 returns 0
+    // 4. Use a valid height or default row height (44) if not exist one
+
+    CGFloat fittingHeight = 0;
+
+    if (!cell.fd_enforceFrameLayout &amp;&amp; contentViewWidth &gt; 0) {
+        // Add a hard width constraint to make dynamic content views (like labels) expand vertically instead
+        // of growing horizontally, in a flow-layout manner.
+        NSLayoutConstraint *widthFenceConstraint = [NSLayoutConstraint constraintWithItem:cell.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:contentViewWidth];
+        [cell.contentView addConstraint:widthFenceConstraint];
+
+        // Auto layout engine does its math
+        fittingHeight = [cell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
+        [cell.contentView removeConstraint:widthFenceConstraint];
+
+        [self fd_debugLog:[NSString stringWithFormat:@&quot;calculate using system fitting size (AutoLayout) - %@&quot;, @(fittingHeight)]];
+    }
+
+    if (fittingHeight == 0) {
+#if DEBUG
+        // Warn if using AutoLayout but get zero height.
+        if (cell.contentView.constraints.count &gt; 0) {
+            if (!objc_getAssociatedObject(self, _cmd)) {
+                NSLog(@&quot;[FDTemplateLayoutCell] Warning once only: Cannot get a proper cell height (now 0) from &#39;- systemFittingSize:&#39;(AutoLayout). You should check how constraints are built in cell, making it into &#39;self-sizing&#39; cell.&quot;);
+                objc_setAssociatedObject(self, _cmd, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            }
+        }
+#endif
+        // Try &#39;- sizeThatFits:&#39; for frame layout.
+        // Note: fitting height should not include separator view.
+        fittingHeight = [cell sizeThatFits:CGSizeMake(contentViewWidth, 0)].height;
+
+        [self fd_debugLog:[NSString stringWithFormat:@&quot;calculate using sizeThatFits - %@&quot;, @(fittingHeight)]];
+    }
+
+    // Still zero height after all above.
+    if (fittingHeight == 0) {
+        // Use default row height.
+        fittingHeight = 44;
+    }
+
+    // Add 1px extra space for separator line if needed, simulating default UITableViewCell.
+    if (self.separatorStyle != UITableViewCellSeparatorStyleNone) {
+        fittingHeight += 1.0 / [UIScreen mainScreen].scale;
+    }
+
+    return fittingHeight;
+}
+</code></pre><p><a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="noopener">这篇文章</a>也有一些常见cell布局的高度计算方法, 可以参考下.</p>
 <hr>
 <p>参考资料:</p>
 <p>1.<a href="http://zhangbuhuai.com/beginning-auto-layout-part-1/" target="_blank" rel="noopener">深入理解Auto Layout</a>.</p>

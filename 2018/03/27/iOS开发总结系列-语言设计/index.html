@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#1">
+  <meta name="description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-语言设计">
 <meta property="og:url" content="http://hchong.net/2018/03/27/iOS开发总结系列-语言设计/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
+<meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; } 通过指针偏移量来获取每个元素, 同">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2018-04-01T14:24:03.645Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-语言设计">
-<meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) &amp;#123;    int c = 0;    while (*s[c] != `\0`)&amp;#123;        c++:    &amp;#125;    return c;&amp;#125; 通过指">
+<meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; } 通过指针偏移量来获取每个元素, 同">
 
   
 
@@ -231,8 +231,14 @@ ga('send', 'pageview');
     
       <p>这里主要是一些语言设计方面的常见问题.</p>
 <h2 id="NSString如何计算字符的个数"><a href="#NSString如何计算字符的个数" class="headerlink" title="NSString如何计算字符的个数"></a>NSString如何计算字符的个数</h2><p>首先我们要知道字符串末尾会自动加上一个<code>\0</code>, 因此我们可以设计这么一个函数: </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">int string_length(char *s) &#123;</div><div class="line">    int c = 0;</div><div class="line">    while (*s[c] != `\0`)&#123;</div><div class="line">        c++:</div><div class="line">    &#125;</div><div class="line">    return c;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>通过指针偏移量来获取每个元素, 同<code>\0</code>比较, 相等时的指针偏移量就是字符串元素的个数.</p>
+<pre><code>int string_length(char *s) {
+    int c = 0;
+    while (*s[c] != `\0`){
+        c++:
+    }
+    return c;
+}
+</code></pre><p>通过指针偏移量来获取每个元素, 同<code>\0</code>比较, 相等时的指针偏移量就是字符串元素的个数.</p>
 <h2 id="NSUserDefaults性能优化"><a href="#NSUserDefaults性能优化" class="headerlink" title="NSUserDefaults性能优化"></a>NSUserDefaults性能优化</h2><p>当使用NSUserDefaults写入文件后, 值会被存放到Library/Preferences/com.xxx.AppName.plist文件里(com.xxx.AppName是应用的标识符). 这个文件是个plist文件, 因此, 它可以存放plist可以存放的数据类型: NSData, NSString, NSNumber, NSDate, NSArray, 或者NSDictionary.<br>它是针对每个应用适用的, 只作用于自身应用内. sandbox的安全机制保证, 它不能修改其他应用的值, 也不会被其他应用修改.</p>
 <p>NSUserDefaults是个单例, 而且它访问的文件也只有一个, NSUserDefaults帮我们做了一层优化. NSUserDefaults是带缓存的, NSUserDefaults会把访问到的key缓存到内存里, 下次再访问时, 如果内存中命中就直接访问, 如果未命中再从文件中载入. 应用会时不时调用[defaults synchronize]方法来保证内存与文件中的数据的一致性, 有时在写入一个值后也最好调用下这个方法来保证数据真正写入文件.</p>
 <p>我们不能在一个地方大规模写入NSUserDefaults, 性能会有很大影响. 用plist文件读入内存在访问的瓶颈主要在读入的过程中, 如果文件很大会比较耗时, 但是一旦载好, 在内存中读取就很快; 但是, 对内存值的写入则会造成内存与文件数据不一致, 这时为了保证数据一致性就要写入文件, 写入后又要读入内存, 这就导致延迟.</p>

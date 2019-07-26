@@ -245,11 +245,104 @@ ga('send', 'pageview');
 <li>此时原数组的左边部分的哨兵i实际就是原i, 哨兵j实际就是i-1.</li>
 <li>此时原数组的右边部分的哨兵i实际就是原i+1, 哨兵j实际就是原j.</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)quickSortArray:(NSMutableArray *)array formLeft:(NSInteger)left right:(NSInteger)right &#123;</div><div class="line">    if (left &gt;= right) &#123;</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    NSInteger i = left;</div><div class="line">    NSInteger j = right;</div><div class="line">    //记录比较基准数</div><div class="line">    NSInteger key = [array[i] integerValue];</div><div class="line">    </div><div class="line">    while (i &lt; j) &#123;</div><div class="line">        //从右基准数开始向左递减, 直到一个数小于基准数(先从右边开始遍历是为了保持基准数不变)</div><div class="line">        while (i &lt; j &amp;&amp; [array[j] integerValue] &gt;= key) &#123;</div><div class="line">            j--;</div><div class="line">        &#125;</div><div class="line">        //从左基准位置开始向右递增, 直到遇到一个数大于基准数</div><div class="line">        while (i &lt; j &amp;&amp; [array[i] integerValue] &lt;= key) &#123;</div><div class="line">            i++;</div><div class="line">        &#125;</div><div class="line">        //交换两个数在数组中的位置</div><div class="line">        if (i &lt; j) &#123;</div><div class="line">            array[i] = @([array[i] integerValue] + [array[j] integerValue]);</div><div class="line">            array[j] = @([array[i] integerValue] - [array[j] integerValue]);</div><div class="line">            array[i] = @([array[i] integerValue] - [array[j] integerValue]);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //此时, 两个基准数相等, 将基准数归位</div><div class="line">    array[left] = array[i];</div><div class="line">    array[i] = @(key);</div><div class="line">    </div><div class="line">    //递归处理基准数左边</div><div class="line">    [self quickSortArray:array formLeft:left right:i - 1];</div><div class="line">    //递归处理基准数右边</div><div class="line">    [self quickSortArray:array formLeft:i + 1 right:right];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><p>归并排序是建立在归并操作上的一种有效的排序算法, 该算法是采用分治法(Divide and Conquer)的一个非常典型的应用. 他的时间复杂度是O(nlogn).</p>
+<pre><code>- (void)quickSortArray:(NSMutableArray *)array formLeft:(NSInteger)left right:(NSInteger)right {
+    if (left &gt;= right) {
+        return;
+    }
+    NSInteger i = left;
+    NSInteger j = right;
+    //记录比较基准数
+    NSInteger key = [array[i] integerValue];
+
+    while (i &lt; j) {
+        //从右基准数开始向左递减, 直到一个数小于基准数(先从右边开始遍历是为了保持基准数不变)
+        while (i &lt; j &amp;&amp; [array[j] integerValue] &gt;= key) {
+            j--;
+        }
+        //从左基准位置开始向右递增, 直到遇到一个数大于基准数
+        while (i &lt; j &amp;&amp; [array[i] integerValue] &lt;= key) {
+            i++;
+        }
+        //交换两个数在数组中的位置
+        if (i &lt; j) {
+            array[i] = @([array[i] integerValue] + [array[j] integerValue]);
+            array[j] = @([array[i] integerValue] - [array[j] integerValue]);
+            array[i] = @([array[i] integerValue] - [array[j] integerValue]);
+        }
+    }
+
+    //此时, 两个基准数相等, 将基准数归位
+    array[left] = array[i];
+    array[i] = @(key);
+
+    //递归处理基准数左边
+    [self quickSortArray:array formLeft:left right:i - 1];
+    //递归处理基准数右边
+    [self quickSortArray:array formLeft:i + 1 right:right];
+}
+</code></pre><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><p>归并排序是建立在归并操作上的一种有效的排序算法, 该算法是采用分治法(Divide and Conquer)的一个非常典型的应用. 他的时间复杂度是O(nlogn).</p>
 <p>它的原理是假设初始序列含有n个记录, 则可以看成是n个有序的子序列, 每个子序列的长度为1, 然后两两归并, 得到n/2个长度为2或者1的有序子序列; 再两两归并, 如此反复, 直到得到一个长度为n的有序序列为止, 这种排序方法称为归并排序.<br><img src="https://img-blog.csdn.net/20160908095240209" alt="归并排序"></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (void)mergeSortArray:(NSMutableArray *)array &#123;</div><div class="line">  //创建一个副本数组</div><div class="line">  NSMutableArray * auxiliaryArray = [[NSMutableArray alloc]initWithCapacity:array.count];</div><div class="line"></div><div class="line">  //对数组进行第一次二分，初始范围为0到array.count-1</div><div class="line">  [self mergeSort:array auxiliary:auxiliaryArray low:0 high:array.count-1];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)mergeSort:(NSMutableArray *)array auxiliary:(NSMutableArray *)auxiliaryArray low:(int)low high:(int)high &#123;</div><div class="line">  //递归跳出判断</div><div class="line">  if (low&gt;=high) &#123;</div><div class="line">    return;</div><div class="line">  &#125;</div><div class="line">  //对分组进行二分</div><div class="line">  int middle = (high - low)/2 + low;</div><div class="line"></div><div class="line">  //对左侧的分组进行递归二分 low为第一个元素索引，middle为最后一个元素索引</div><div class="line">  [self mergeSort:array auxiliary:auxiliaryArray low:low high:middle];</div><div class="line"></div><div class="line">  //对右侧的分组进行递归二分 middle+1为第一个元素的索引，high为最后一个元素的索引</div><div class="line">  [self mergeSort:array auxiliary:auxiliaryArray low:middle + 1 high:high];</div><div class="line"></div><div class="line">  //对每个有序数组进行回归合并</div><div class="line">  [self merge:array auxiliary:auxiliaryArray low:low middel:middle high:high];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)merge:(NSMutableArray *)array auxiliary:(NSMutableArray *)auxiliaryArray low:(int)low middel:(int)middle high:(int)high &#123;</div><div class="line">  //将数组元素复制到副本</div><div class="line">  for (int i=low; i&lt;=high; i++) &#123;</div><div class="line">    auxiliaryArray[i] = array[i];</div><div class="line">  &#125;</div><div class="line">  //左侧数组标记</div><div class="line">  int leftIndex = low;</div><div class="line">  //右侧数组标记</div><div class="line">  int rightIndex = middle + 1;</div><div class="line"></div><div class="line">  //比较完成后比较小的元素要放的位置标记</div><div class="line">  int currentIndex = low;</div><div class="line"></div><div class="line">  while (leftIndex &lt;= middle &amp;&amp; rightIndex &lt;= high) &#123;</div><div class="line">    //此处是使用NSNumber进行的比较，你也可以转成NSInteger再比较</div><div class="line">    if ([auxiliaryArray[leftIndex] compare:auxiliaryArray[rightIndex]]!=NSOrderedDescending) &#123;</div><div class="line">        //左侧标记的元素小于等于右侧标记的元素</div><div class="line">        array[currentIndex] = auxiliaryArray[leftIndex];</div><div class="line">        currentIndex++;</div><div class="line">        leftIndex++;</div><div class="line">    &#125;else&#123;</div><div class="line">        //右侧标记的元素小于左侧标记的元素</div><div class="line">        array[currentIndex] = auxiliaryArray[rightIndex];</div><div class="line">        currentIndex++;</div><div class="line">        rightIndex++;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  //如果完成后左侧数组有剩余</div><div class="line">  if (leftIndex &lt;= middle) &#123;</div><div class="line">     for (int i = 0; i&lt;=middle - leftIndex; i++) &#123;</div><div class="line">        array[currentIndex +i] = auxiliaryArray[leftIndex +i ];</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
-<hr>
+<pre><code>- (void)mergeSortArray:(NSMutableArray *)array {
+  //创建一个副本数组
+  NSMutableArray * auxiliaryArray = [[NSMutableArray alloc]initWithCapacity:array.count];
+
+  //对数组进行第一次二分，初始范围为0到array.count-1
+  [self mergeSort:array auxiliary:auxiliaryArray low:0 high:array.count-1];
+}
+
+- (void)mergeSort:(NSMutableArray *)array auxiliary:(NSMutableArray *)auxiliaryArray low:(int)low high:(int)high {
+  //递归跳出判断
+  if (low&gt;=high) {
+    return;
+  }
+  //对分组进行二分
+  int middle = (high - low)/2 + low;
+
+  //对左侧的分组进行递归二分 low为第一个元素索引，middle为最后一个元素索引
+  [self mergeSort:array auxiliary:auxiliaryArray low:low high:middle];
+
+  //对右侧的分组进行递归二分 middle+1为第一个元素的索引，high为最后一个元素的索引
+  [self mergeSort:array auxiliary:auxiliaryArray low:middle + 1 high:high];
+
+  //对每个有序数组进行回归合并
+  [self merge:array auxiliary:auxiliaryArray low:low middel:middle high:high];
+}
+
+- (void)merge:(NSMutableArray *)array auxiliary:(NSMutableArray *)auxiliaryArray low:(int)low middel:(int)middle high:(int)high {
+  //将数组元素复制到副本
+  for (int i=low; i&lt;=high; i++) {
+    auxiliaryArray[i] = array[i];
+  }
+  //左侧数组标记
+  int leftIndex = low;
+  //右侧数组标记
+  int rightIndex = middle + 1;
+
+  //比较完成后比较小的元素要放的位置标记
+  int currentIndex = low;
+
+  while (leftIndex &lt;= middle &amp;&amp; rightIndex &lt;= high) {
+    //此处是使用NSNumber进行的比较，你也可以转成NSInteger再比较
+    if ([auxiliaryArray[leftIndex] compare:auxiliaryArray[rightIndex]]!=NSOrderedDescending) {
+        //左侧标记的元素小于等于右侧标记的元素
+        array[currentIndex] = auxiliaryArray[leftIndex];
+        currentIndex++;
+        leftIndex++;
+    }else{
+        //右侧标记的元素小于左侧标记的元素
+        array[currentIndex] = auxiliaryArray[rightIndex];
+        currentIndex++;
+        rightIndex++;
+    }
+  }
+  //如果完成后左侧数组有剩余
+  if (leftIndex &lt;= middle) {
+     for (int i = 0; i&lt;=middle - leftIndex; i++) {
+        array[currentIndex +i] = auxiliaryArray[leftIndex +i ];
+    }
+  }
+ }
+</code></pre><hr>
 <p>参考资料:<br>1.<a href="https://www.jianshu.com/p/8fce5bfb0013" target="_blank" rel="noopener">归并排序</a></p>
 
     

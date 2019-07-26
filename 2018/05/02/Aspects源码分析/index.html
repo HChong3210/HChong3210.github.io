@@ -243,20 +243,148 @@ ga('send', 'pageview');
 <li><code>forwardInvocation</code>, 消息的重定向, 在此可以获得该次调用的所有参数和调用对象, 并随意重新组装, 十分灵活.</li>
 </ol>
 <p>Aspects 的方案就是, 对于待Hook的 selector, 将其指向 <code>objc_msgForward / _objc_msgForward_stret</code>, 同时生成一个新的 <code>aliasSelector</code> 指向原来的 IMP. 并且 hook 住 <code>forwardInvocation</code> 函数, 使他指向自己的实现. 当被 hook 的 selector 被执行的时候, 原 selector 的IMP则会统一指向 <code>objc_msgForward / _objc_msgForward_stret</code>, 启动消息转发流程, 从而进入 forwardInvocation. 同时由于 forwardInvocation 的指向也被修改了, 因此会转入新的 forwardInvocation 函数, 在里面执行需要嵌入的附加代码, 完成之后, 再转回原来的 IMP. 下面是相应的代码:  </p>
-<h2 id="添加一个aspect"><a href="#添加一个aspect" class="headerlink" title="添加一个aspect"></a>添加一个aspect</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static id aspect_add(id self, SEL selector, AspectOptions options, id block, NSError **error) &#123;</div><div class="line">    NSCParameterAssert(self);</div><div class="line">    NSCParameterAssert(selector);</div><div class="line">    NSCParameterAssert(block);</div><div class="line"></div><div class="line">    __block AspectIdentifier *identifier = nil;</div><div class="line">    aspect_performLocked(^&#123;</div><div class="line">        //判断能否被Hook</div><div class="line">        if (aspect_isSelectorAllowedAndTrack(self, selector, options, error)) &#123;</div><div class="line">            //记录相关的数据结构</div><div class="line">            AspectsContainer *aspectContainer = aspect_getContainerForObject(self, selector);</div><div class="line">            identifier = [AspectIdentifier identifierWithSelector:selector object:self options:options block:block error:error];</div><div class="line">            if (identifier) &#123;</div><div class="line">                [aspectContainer addAspect:identifier withOptions:options];</div><div class="line"></div><div class="line">                // Modify the class to allow message interception. Hook的核心方法</div><div class="line">                aspect_prepareClassAndHookSelector(self, selector, error);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    return identifier;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="添加一个aspect"><a href="#添加一个aspect" class="headerlink" title="添加一个aspect"></a>添加一个aspect</h2><pre><code class="OC">static id aspect_add(id self, SEL selector, AspectOptions options, id block, NSError **error) {
+    NSCParameterAssert(self);
+    NSCParameterAssert(selector);
+    NSCParameterAssert(block);
+
+    __block AspectIdentifier *identifier = nil;
+    aspect_performLocked(^{
+        //判断能否被Hook
+        if (aspect_isSelectorAllowedAndTrack(self, selector, options, error)) {
+            //记录相关的数据结构
+            AspectsContainer *aspectContainer = aspect_getContainerForObject(self, selector);
+            identifier = [AspectIdentifier identifierWithSelector:selector object:self options:options block:block error:error];
+            if (identifier) {
+                [aspectContainer addAspect:identifier withOptions:options];
+
+                // Modify the class to allow message interception. Hook的核心方法
+                aspect_prepareClassAndHookSelector(self, selector, error);
+            }
+        }
+    });
+    return identifier;
+}
+</code></pre>
 <p>所有的核心方法都被封装到这个核心的static方法里面, 这里面主要做了三个操作: </p>
 <ol>
 <li>判断能否Hook. 这里是有一个类似于黑名单和是否已经被Hook过的判断, 例如<code>retain</code>, <code>dealloc</code>等. 对于类对象还要确保同一个类继承关系层级中, 只能被 hook 一次, 因此这里需要判断子类, 父类有没有被 hook, 之所以做这样的实现, 主要是为了避免出现死循环的出现.</li>
 <li>记录数据结构.</li>
 <li>swizzling的核心. 一个是对对象的 forwardInvocation 进行 swizzling, 另一个是对传入的 selector 进行 swizzling. swizzling forwardInvocation主要在 <code>aspect_hookClass</code>方法中进行. swizzling selector主要在 <code>aspect_getMsgForwardIMP</code>方法中进行.</li>
 </ol>
-<h2 id="swizzling-forwardInvocation"><a href="#swizzling-forwardInvocation" class="headerlink" title="swizzling forwardInvocation"></a>swizzling forwardInvocation</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static Class aspect_hookClass(NSObject *self, NSError **error) &#123;</div><div class="line">    NSCParameterAssert(self);</div><div class="line">	Class statedClass = self.class;</div><div class="line">	Class baseClass = object_getClass(self);</div><div class="line">	NSString *className = NSStringFromClass(baseClass);</div><div class="line"></div><div class="line">    // Already subclassed</div><div class="line">	if ([className hasSuffix:AspectsSubclassSuffix]) &#123;</div><div class="line">		return baseClass;</div><div class="line"></div><div class="line">        // We swizzle a class object, not a single object.</div><div class="line">	&#125;else if (class_isMetaClass(baseClass)) &#123;</div><div class="line">        return aspect_swizzleClassInPlace((Class)self);</div><div class="line">        // Probably a KVO&apos;ed class. Swizzle in place. Also swizzle meta classes in place.</div><div class="line">    &#125;else if (statedClass != baseClass) &#123;</div><div class="line">        return aspect_swizzleClassInPlace(baseClass);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // Default case. Create dynamic subclass.</div><div class="line">	const char *subclassName = [className stringByAppendingString:AspectsSubclassSuffix].UTF8String;</div><div class="line">	Class subclass = objc_getClass(subclassName);</div><div class="line"></div><div class="line">	if (subclass == nil) &#123;</div><div class="line">		subclass = objc_allocateClassPair(baseClass, subclassName, 0);</div><div class="line">		if (subclass == nil) &#123;</div><div class="line">            NSString *errrorDesc = [NSString stringWithFormat:@&quot;objc_allocateClassPair failed to allocate class %s.&quot;, subclassName];</div><div class="line">            AspectError(AspectErrorFailedToAllocateClassPair, errrorDesc);</div><div class="line">            return nil;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">		aspect_swizzleForwardInvocation(subclass);</div><div class="line">		aspect_hookedGetClass(subclass, statedClass);</div><div class="line">		aspect_hookedGetClass(object_getClass(subclass), statedClass);</div><div class="line">		objc_registerClassPair(subclass);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	object_setClass(self, subclass);</div><div class="line">	return subclass;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>源代码中并没有直接 swizzling 对象的 forwardInvocation 方法, 而是动态生成一个当前对象的子类, 并将当前对象与子类关联, 然后替换子类的 forwardInvocation 方法(这里具体方法就是调用了 object_setClass(self, subclass), 将当前对象 isa 指针指向了 subclass, 同时修改了 subclass 以及其 subclass metaclass 的 class 方法, 使他返回当前对象的 class, 类似于 kvo 的实现. </p>
+<h2 id="swizzling-forwardInvocation"><a href="#swizzling-forwardInvocation" class="headerlink" title="swizzling forwardInvocation"></a>swizzling forwardInvocation</h2><pre><code>static Class aspect_hookClass(NSObject *self, NSError **error) {
+    NSCParameterAssert(self);
+    Class statedClass = self.class;
+    Class baseClass = object_getClass(self);
+    NSString *className = NSStringFromClass(baseClass);
+
+    // Already subclassed
+    if ([className hasSuffix:AspectsSubclassSuffix]) {
+        return baseClass;
+
+        // We swizzle a class object, not a single object.
+    }else if (class_isMetaClass(baseClass)) {
+        return aspect_swizzleClassInPlace((Class)self);
+        // Probably a KVO&#39;ed class. Swizzle in place. Also swizzle meta classes in place.
+    }else if (statedClass != baseClass) {
+        return aspect_swizzleClassInPlace(baseClass);
+    }
+
+    // Default case. Create dynamic subclass.
+    const char *subclassName = [className stringByAppendingString:AspectsSubclassSuffix].UTF8String;
+    Class subclass = objc_getClass(subclassName);
+
+    if (subclass == nil) {
+        subclass = objc_allocateClassPair(baseClass, subclassName, 0);
+        if (subclass == nil) {
+            NSString *errrorDesc = [NSString stringWithFormat:@&quot;objc_allocateClassPair failed to allocate class %s.&quot;, subclassName];
+            AspectError(AspectErrorFailedToAllocateClassPair, errrorDesc);
+            return nil;
+        }
+
+        aspect_swizzleForwardInvocation(subclass);
+        aspect_hookedGetClass(subclass, statedClass);
+        aspect_hookedGetClass(object_getClass(subclass), statedClass);
+        objc_registerClassPair(subclass);
+    }
+
+    object_setClass(self, subclass);
+    return subclass;
+}
+</code></pre><p>源代码中并没有直接 swizzling 对象的 forwardInvocation 方法, 而是动态生成一个当前对象的子类, 并将当前对象与子类关联, 然后替换子类的 forwardInvocation 方法(这里具体方法就是调用了 object_setClass(self, subclass), 将当前对象 isa 指针指向了 subclass, 同时修改了 subclass 以及其 subclass metaclass 的 class 方法, 使他返回当前对象的 class, 类似于 kvo 的实现. </p>
 <p>将当前对象变成一个 subclass 的实例, 同时对于外部使用者而言, 又能把它继续当成原对象在使用, 而且所有的 swizzling 操作都发生在子类, 这样做的好处是你不需要去更改对象本身的类, 也就是, 当你在 remove aspects 的时候, 如果发现当前对象的 aspect 都被移除了, 那么, 你可以将 isa 指针重新指回对象本身的类, 从而消除了该对象的 swizzling, 同时也不会影响到其他该类的不同对象). 对于每一个对象而言, 这样的动态对象只会生成一次, 这里 aspect_swizzlingForwardInvocation 将使得 forwardInvocation 方法指向 aspects 自己的实现逻辑.</p>
-<h2 id="swizzling-selector"><a href="#swizzling-selector" class="headerlink" title="swizzling selector"></a>swizzling selector</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static void aspect_prepareClassAndHookSelector(NSObject *self, SEL selector, NSError **error) &#123;</div><div class="line">    NSCParameterAssert(selector);</div><div class="line">    //swizzling forwardInvocation</div><div class="line">    Class klass = aspect_hookClass(self, error);</div><div class="line">    Method targetMethod = class_getInstanceMethod(klass, selector);</div><div class="line">    IMP targetMethodIMP = method_getImplementation(targetMethod);</div><div class="line">    if (!aspect_isMsgForwardIMP(targetMethodIMP)) &#123;</div><div class="line">        // Make a method alias for the existing method implementation, it not already copied.</div><div class="line">        const char *typeEncoding = method_getTypeEncoding(targetMethod);</div><div class="line">        SEL aliasSelector = aspect_aliasForSelector(selector);</div><div class="line">        if (![klass instancesRespondToSelector:aliasSelector]) &#123;</div><div class="line">            __unused BOOL addedAlias = class_addMethod(klass, aliasSelector, method_getImplementation(targetMethod), typeEncoding);</div><div class="line">            NSCAssert(addedAlias, @&quot;Original implementation for %@ is already copied to %@ on %@&quot;, NSStringFromSelector(selector), NSStringFromSelector(aliasSelector), klass);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // swizzling selector</div><div class="line">        class_replaceMethod(klass, selector, aspect_getMsgForwardIMP(self, selector), typeEncoding);</div><div class="line">        AspectLog(@&quot;Aspects: Installed hook for -[%@ %@].&quot;, klass, NSStringFromSelector(selector));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="swizzling-selector"><a href="#swizzling-selector" class="headerlink" title="swizzling selector"></a>swizzling selector</h2><pre><code class="OC">static void aspect_prepareClassAndHookSelector(NSObject *self, SEL selector, NSError **error) {
+    NSCParameterAssert(selector);
+    //swizzling forwardInvocation
+    Class klass = aspect_hookClass(self, error);
+    Method targetMethod = class_getInstanceMethod(klass, selector);
+    IMP targetMethodIMP = method_getImplementation(targetMethod);
+    if (!aspect_isMsgForwardIMP(targetMethodIMP)) {
+        // Make a method alias for the existing method implementation, it not already copied.
+        const char *typeEncoding = method_getTypeEncoding(targetMethod);
+        SEL aliasSelector = aspect_aliasForSelector(selector);
+        if (![klass instancesRespondToSelector:aliasSelector]) {
+            __unused BOOL addedAlias = class_addMethod(klass, aliasSelector, method_getImplementation(targetMethod), typeEncoding);
+            NSCAssert(addedAlias, @&quot;Original implementation for %@ is already copied to %@ on %@&quot;, NSStringFromSelector(selector), NSStringFromSelector(aliasSelector), klass);
+        }
+
+        // swizzling selector
+        class_replaceMethod(klass, selector, aspect_getMsgForwardIMP(self, selector), typeEncoding);
+        AspectLog(@&quot;Aspects: Installed hook for -[%@ %@].&quot;, klass, NSStringFromSelector(selector));
+    }
+}
+</code></pre>
 <p>当 forwradInvocation 被 hook 之后，接下来, 将对传入的 selector 进行 hook, 这里的做法是, 将 selector 指向了转发 IMP, 同时生成一个 aliasSelector, 指向了原来的 IMP, 同时为了放在重复 hook, 做了一个判断, 如果发现 selector 已经指向了转发 IMP, 那就就不需要进行交换了.</p>
 <h2 id="被Hook的ForwardInvocation的处理"><a href="#被Hook的ForwardInvocation的处理" class="headerlink" title="被Hook的ForwardInvocation的处理"></a>被Hook的ForwardInvocation的处理</h2><p>在<code>aspect_swizzleForwardInvocation</code> -&gt; <code>aspect_swizzleForwardInvocation</code>可以发现, 最终 ForwardInvocation 被指向 <code>__ASPECTS_ARE_BEING_CALLED__</code>. </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static void __ASPECTS_ARE_BEING_CALLED__(__unsafe_unretained NSObject *self, SEL selector, NSInvocation *invocation) &#123;</div><div class="line">    NSCParameterAssert(self);</div><div class="line">    NSCParameterAssert(invocation);</div><div class="line">    SEL originalSelector = invocation.selector;</div><div class="line">	SEL aliasSelector = aspect_aliasForSelector(invocation.selector);</div><div class="line">    invocation.selector = aliasSelector;</div><div class="line">    AspectsContainer *objectContainer = objc_getAssociatedObject(self, aliasSelector);</div><div class="line">    AspectsContainer *classContainer = aspect_getContainerForClass(object_getClass(self), aliasSelector);</div><div class="line">    AspectInfo *info = [[AspectInfo alloc] initWithInstance:self invocation:invocation];</div><div class="line">    NSArray *aspectsToRemove = nil;</div><div class="line"></div><div class="line">    // Before hooks.</div><div class="line">    aspect_invoke(classContainer.beforeAspects, info);</div><div class="line">    aspect_invoke(objectContainer.beforeAspects, info);</div><div class="line"></div><div class="line">    // Instead hooks.</div><div class="line">    BOOL respondsToAlias = YES;</div><div class="line">    if (objectContainer.insteadAspects.count || classContainer.insteadAspects.count) &#123;</div><div class="line">        aspect_invoke(classContainer.insteadAspects, info);</div><div class="line">        aspect_invoke(objectContainer.insteadAspects, info);</div><div class="line">    &#125;else &#123;</div><div class="line">        Class klass = object_getClass(invocation.target);</div><div class="line">        do &#123;</div><div class="line">            if ((respondsToAlias = [klass instancesRespondToSelector:aliasSelector])) &#123;</div><div class="line">                [invocation invoke];</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;while (!respondsToAlias &amp;&amp; (klass = class_getSuperclass(klass)));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // After hooks.</div><div class="line">    aspect_invoke(classContainer.afterAspects, info);</div><div class="line">    aspect_invoke(objectContainer.afterAspects, info);</div><div class="line"></div><div class="line">    // If no hooks are installed, call original implementation (usually to throw an exception)</div><div class="line">    if (!respondsToAlias) &#123;</div><div class="line">        invocation.selector = originalSelector;</div><div class="line">        SEL originalForwardInvocationSEL = NSSelectorFromString(AspectsForwardInvocationSelectorName);</div><div class="line">        if ([self respondsToSelector:originalForwardInvocationSEL]) &#123;</div><div class="line">            ((void( *)(id, SEL, NSInvocation *))objc_msgSend)(self, originalForwardInvocationSEL, invocation);</div><div class="line">        &#125;else &#123;</div><div class="line">            [self doesNotRecognizeSelector:invocation.selector];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // Remove any hooks that are queued for deregistration.</div><div class="line">    [aspectsToRemove makeObjectsPerformSelector:@selector(remove)];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code class="OC">static void __ASPECTS_ARE_BEING_CALLED__(__unsafe_unretained NSObject *self, SEL selector, NSInvocation *invocation) {
+    NSCParameterAssert(self);
+    NSCParameterAssert(invocation);
+    SEL originalSelector = invocation.selector;
+    SEL aliasSelector = aspect_aliasForSelector(invocation.selector);
+    invocation.selector = aliasSelector;
+    AspectsContainer *objectContainer = objc_getAssociatedObject(self, aliasSelector);
+    AspectsContainer *classContainer = aspect_getContainerForClass(object_getClass(self), aliasSelector);
+    AspectInfo *info = [[AspectInfo alloc] initWithInstance:self invocation:invocation];
+    NSArray *aspectsToRemove = nil;
+
+    // Before hooks.
+    aspect_invoke(classContainer.beforeAspects, info);
+    aspect_invoke(objectContainer.beforeAspects, info);
+
+    // Instead hooks.
+    BOOL respondsToAlias = YES;
+    if (objectContainer.insteadAspects.count || classContainer.insteadAspects.count) {
+        aspect_invoke(classContainer.insteadAspects, info);
+        aspect_invoke(objectContainer.insteadAspects, info);
+    }else {
+        Class klass = object_getClass(invocation.target);
+        do {
+            if ((respondsToAlias = [klass instancesRespondToSelector:aliasSelector])) {
+                [invocation invoke];
+                break;
+            }
+        }while (!respondsToAlias &amp;&amp; (klass = class_getSuperclass(klass)));
+    }
+
+    // After hooks.
+    aspect_invoke(classContainer.afterAspects, info);
+    aspect_invoke(objectContainer.afterAspects, info);
+
+    // If no hooks are installed, call original implementation (usually to throw an exception)
+    if (!respondsToAlias) {
+        invocation.selector = originalSelector;
+        SEL originalForwardInvocationSEL = NSSelectorFromString(AspectsForwardInvocationSelectorName);
+        if ([self respondsToSelector:originalForwardInvocationSEL]) {
+            ((void( *)(id, SEL, NSInvocation *))objc_msgSend)(self, originalForwardInvocationSEL, invocation);
+        }else {
+            [self doesNotRecognizeSelector:invocation.selector];
+        }
+    }
+
+    // Remove any hooks that are queued for deregistration.
+    [aspectsToRemove makeObjectsPerformSelector:@selector(remove)];
+}
+</code></pre>
 <hr>
 <p>参考资料:<br>1.<a href="http://www.tanhao.me/code/160723.html/" target="_blank" rel="noopener">Method Swizzling的各种姿势</a></p>
 <p>2.<a href="http://wereadteam.github.io/2016/06/30/Aspects/" target="_blank" rel="noopener">面向切面编程之 Aspects 源码解析及应用</a></p>

@@ -239,10 +239,18 @@ ga('send', 'pageview');
 </ul>
 <p>下面我们来分析下他其中的实现. 本文是对大神博客的理解和拾遗. </p>
 <h2 id="AutoreleasePoolPage"><a href="#AutoreleasePoolPage" class="headerlink" title="AutoreleasePoolPage"></a>AutoreleasePoolPage</h2><p>ARC下我们使用<code>@autoreleasepool{}</code>来使用一个AutoreleasePool, 随后编译器将其改写成下面的样子: </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">void *context = objc_autoreleasePoolPush();</div><div class="line">// &#123;&#125;中的代码</div><div class="line">objc_autoreleasePoolPop(context);</div></pre></td></tr></table></figure>
-<p>而这两个函数都是对AutoreleasePoolPage的简单封装, 所以核心在AutoreleasePoolPage. AutoreleasePoolPage是一个C++类. </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">magic_t const magic;</div><div class="line">id *next;</div><div class="line">pthread_t const thread;</div><div class="line">AutoreleasePoolPage * const parent;</div><div class="line">AutoreleasePoolPage *child;</div><div class="line">uint32_t const depth;</div><div class="line">uint32_t hiwat;</div></pre></td></tr></table></figure>
-<p>他并没有单独的节后是由若干个AutoreleasePoolPage以双向链表的形式组合而成. AutoreleasePool是按线程一一对应的. AutoreleasePoolPage每个对象会开辟4096字节内存(也就是虚拟内存一页的大小), 除了上面的实例变量所占空间, 剩下的空间全部用来储存autorelease对象的地址. <code>id *next</code>指针作为游标指向栈顶最新add进来的autorelease对象的下一个位置. 一个AutoreleasePoolPage的空间被占满时, 会新建一个AutoreleasePoolPage对象, 连接链表, 后来的autorelease对象在新的page加入.</p>
+<pre><code>void *context = objc_autoreleasePoolPush();
+// {}中的代码
+objc_autoreleasePoolPop(context);
+</code></pre><p>而这两个函数都是对AutoreleasePoolPage的简单封装, 所以核心在AutoreleasePoolPage. AutoreleasePoolPage是一个C++类. </p>
+<pre><code>magic_t const magic;
+id *next;
+pthread_t const thread;
+AutoreleasePoolPage * const parent;
+AutoreleasePoolPage *child;
+uint32_t const depth;
+uint32_t hiwat;
+</code></pre><p>他并没有单独的节后是由若干个AutoreleasePoolPage以双向链表的形式组合而成. AutoreleasePool是按线程一一对应的. AutoreleasePoolPage每个对象会开辟4096字节内存(也就是虚拟内存一页的大小), 除了上面的实例变量所占空间, 剩下的空间全部用来储存autorelease对象的地址. <code>id *next</code>指针作为游标指向栈顶最新add进来的autorelease对象的下一个位置. 一个AutoreleasePoolPage的空间被占满时, 会新建一个AutoreleasePoolPage对象, 连接链表, 后来的autorelease对象在新的page加入.</p>
 <p>下面是AutoreleasePoolPage中存储数据的示例,<br><img src="http://ww2.sinaimg.cn/mw690/51530583gw1elj5gvphtqj20dy0cx756.jpg" alt="AutoreleasePoolPage存储示例"><br>如果这一页满了的话(next指针马上指向栈顶), 这是就要建立下一页page对象, 与这一页链表链接完成后, 新page的next指针被初始化在栈底, 然后继续向栈中添加对象.<br>所以, 向一个对象发送- autorelease消息, 就是将这个对象加入到当前AutoreleasePoolPage的栈顶next指针指向的位置.</p>
 <h2 id="释放时刻"><a href="#释放时刻" class="headerlink" title="释放时刻"></a>释放时刻</h2><p>AutoreleasePool 是在两次 RunLoop 之间释放, 系统会把需要 release 的对象集中释放掉.</p>
 <p>每次调用<code>objc_autoreleasePoolPush</code>时, runtime就向AutoreleasePoolPage中add一个哨兵对象, 值为nil. objc_autoreleasePoolPush的返回值正是这个哨兵对象的地址, 被objc_autoreleasePoolPop(哨兵对象)作为入参.</p>

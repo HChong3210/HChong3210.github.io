@@ -242,16 +242,37 @@ ga('send', 'pageview');
 <p>一个<code>NSObject</code>对象要想使用这两个函数, 必须实现<code>NSCopying</code>协议和<code>NSMutableCopying</code>协议, 并且分别实现<code>- (id)copyWithZone:(nullable NSZone *)zone;</code>和<code>- (id)mutableCopyWithZone:(nullable NSZone *)zone;</code>方法.但是常见的<code>NSString</code>, <code>NSArray</code>, <code>NADictionary</code>等常用的系统提供的结构体都已经实现. </p>
 <h3 id="系统的非容器类对象"><a href="#系统的非容器类对象" class="headerlink" title="系统的非容器类对象"></a>系统的非容器类对象</h3><p>这里指的是<code>NSString</code>, <code>NSNumber</code>等等一类的对象.下面以<code>NSString</code>为例.</p>
 <p>对<code>NSString</code>进行copy和mutableCop操作:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSString *originString = @&quot;origin&quot;;</div><div class="line">NSString *originStringCopy = [originString copy];</div><div class="line">NSMutableString *originStringMutableCopy = [originString mutableCopy];</div><div class="line">NSLog(@&quot;%p, %p, %p&quot;, originString, originStringCopy, originStringMutableCopy);</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSString *originString = @&quot;origin&quot;;
+NSString *originStringCopy = [originString copy];
+NSMutableString *originStringMutableCopy = [originString mutableCopy];
+NSLog(@&quot;%p, %p, %p&quot;, originString, originStringCopy, originStringMutableCopy);
+</code></pre>
 <p>内存地址分别是:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">(lldb) p originString</div><div class="line">(__NSCFConstantString *) $0 = 0x0000000108dd8190 @&quot;origin&quot;</div><div class="line">(lldb) p originStringCopy</div><div class="line">(__NSCFConstantString *) $1 = 0x0000000108dd8190 @&quot;origin&quot;</div><div class="line">(lldb) p originStringMutableCopy</div><div class="line">(__NSCFString *) $2 = 0x0000608000262800 @&quot;origin&quot;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">(lldb) p originString
+(__NSCFConstantString *) $0 = 0x0000000108dd8190 @&quot;origin&quot;
+(lldb) p originStringCopy
+(__NSCFConstantString *) $1 = 0x0000000108dd8190 @&quot;origin&quot;
+(lldb) p originStringMutableCopy
+(__NSCFString *) $2 = 0x0000608000262800 @&quot;origin&quot;
+</code></pre>
 <hr>
 <p>对<code>NSMutableString</code>进行copy和mutableCopy操作:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSMutableString *mutableOriginString = [NSMutableString stringWithString:@&quot;mutableOrigin&quot;];</div><div class="line">NSString *mutableOriginStringCopy = [mutableOriginString copy];</div><div class="line">NSMutableString *mutableOriginStringMutableCopy = [mutableOriginString mutableCopy];</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSMutableString *mutableOriginString = [NSMutableString stringWithString:@&quot;mutableOrigin&quot;];
+NSString *mutableOriginStringCopy = [mutableOriginString copy];
+NSMutableString *mutableOriginStringMutableCopy = [mutableOriginString mutableCopy];
+</code></pre>
 <p>内存地址分别是:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">(lldb) p mutableOriginString</div><div class="line">(__NSCFString *) $0 = 0x000060800026aa40 @&quot;mutableOrigin&quot;</div><div class="line">(lldb) p mutableOriginStringCopy</div><div class="line">(__NSCFString *) $1 = 0x0000608000222340 @&quot;mutableOrigin&quot;</div><div class="line">(lldb) p mutableOriginStringMutableCopy</div><div class="line">(__NSCFString *) $2 = 0x000060800026a700 @&quot;mutableOrigin&quot;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">(lldb) p mutableOriginString
+(__NSCFString *) $0 = 0x000060800026aa40 @&quot;mutableOrigin&quot;
+(lldb) p mutableOriginStringCopy
+(__NSCFString *) $1 = 0x0000608000222340 @&quot;mutableOrigin&quot;
+(lldb) p mutableOriginStringMutableCopy
+(__NSCFString *) $2 = 0x000060800026a700 @&quot;mutableOrigin&quot;
+</code></pre>
 <p>这里要注意的是:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSMutableString *mutableOriginStringCopy = [mutableOriginString copy];</div><div class="line">[mutableOriginStringCopy appendString:@&quot;123&quot;];</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSMutableString *mutableOriginStringCopy = [mutableOriginString copy];
+[mutableOriginStringCopy appendString:@&quot;123&quot;];
+</code></pre>
 <p>这样写是会crash的, 因为copy生成的是imutable对象, 不管声明是什么样的, 依旧是imutable的.</p>
 <p><strong>综上, 对于系统的非容器类对象:</strong></p>
 <ul>
@@ -260,18 +281,49 @@ ga('send', 'pageview');
 </ul>
 <h3 id="系统的容器类对象"><a href="#系统的容器类对象" class="headerlink" title="系统的容器类对象"></a>系统的容器类对象</h3><p>容器类对象指的是<code>NSArray</code>, <code>NSDictionary</code>, <code>NSSet</code>等系统提供的结构体, 下面以<code>NSArray</code>为例.</p>
 <p>对<code>NSArray</code>进行copy操作:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSArray *originArray = [NSArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;,nil];</div><div class="line">NSArray *originArrayCopy = [originArray copy];</div><div class="line">NSMutableArray *originArrayMutableCopy = [originArray mutableCopy];</div><div class="line">for (NSInteger i = 0; i &lt; originArray.count; i++) &#123;</div><div class="line">    NSLog(@&quot;originArray--%p&quot;, originArray[i]);</div><div class="line">    NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);</div><div class="line">    NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSArray *originArray = [NSArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;,nil];
+NSArray *originArrayCopy = [originArray copy];
+NSMutableArray *originArrayMutableCopy = [originArray mutableCopy];
+for (NSInteger i = 0; i &lt; originArray.count; i++) {
+    NSLog(@&quot;originArray--%p&quot;, originArray[i]);
+    NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);
+    NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);
+}
+</code></pre>
 <p>内存地址分别是:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">(lldb) p originArray</div><div class="line">(__NSArrayI *) $0 = 0x00006080002405a0 @&quot;3 elements&quot;</div><div class="line">(lldb) p originArrayCopy</div><div class="line">(__NSArrayI *) $1 = 0x00006080002405a0 @&quot;3 elements&quot;</div><div class="line">(lldb) p originArrayMutableCopy</div><div class="line">(__NSArrayM *) $2 = 0x00006080002403c0 @&quot;3 elements&quot;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">(lldb) p originArray
+(__NSArrayI *) $0 = 0x00006080002405a0 @&quot;3 elements&quot;
+(lldb) p originArrayCopy
+(__NSArrayI *) $1 = 0x00006080002405a0 @&quot;3 elements&quot;
+(lldb) p originArrayMutableCopy
+(__NSArrayM *) $2 = 0x00006080002403c0 @&quot;3 elements&quot;
+</code></pre>
 <p>可以看出, copy是浅复制, mutableCopy是深复制. 需要注意的是,mutableCopy的对象是一个可变对象,  数组内元素全都是浅复制.</p>
 <hr>
 <p>对<code>NSMutableArray</code>进行copy和mutableCopy操作:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];</div><div class="line">NSArray *originArrayCopy = [originArray copy];</div><div class="line">NSMutableArray *originArrayMutableCopy = [originArray mutableCopy];</div><div class="line">for (NSInteger i = 0; i &lt; originArray.count; i++) &#123;</div><div class="line">    NSLog(@&quot;originArray--%p&quot;, originArray[i]);</div><div class="line">    NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);</div><div class="line">    NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];
+NSArray *originArrayCopy = [originArray copy];
+NSMutableArray *originArrayMutableCopy = [originArray mutableCopy];
+for (NSInteger i = 0; i &lt; originArray.count; i++) {
+    NSLog(@&quot;originArray--%p&quot;, originArray[i]);
+    NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);
+    NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);
+}
+</code></pre>
 <p>打印内存地址如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">(lldb) p originArray</div><div class="line">(__NSArrayM *) $0 = 0x000060800005eae0 @&quot;3 elements&quot;</div><div class="line">(lldb) p originArrayCopy</div><div class="line">(__NSArrayI *) $1 = 0x000060800005e9f0 @&quot;3 elements&quot;</div><div class="line">(lldb) p originArrayMutableCopy</div><div class="line">(__NSArrayM *) $2 = 0x000060800005e900 @&quot;3 elements&quot;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">(lldb) p originArray
+(__NSArrayM *) $0 = 0x000060800005eae0 @&quot;3 elements&quot;
+(lldb) p originArrayCopy
+(__NSArrayI *) $1 = 0x000060800005e9f0 @&quot;3 elements&quot;
+(lldb) p originArrayMutableCopy
+(__NSArrayM *) $2 = 0x000060800005e900 @&quot;3 elements&quot;
+</code></pre>
 <p>可以发现可以看出, copy是浅复制, mutableCopy是深复制. 数组内元素都是浅复制.</p>
 <p>需要注意的是, mutable对象copy的对象是imutable对象, 如果当做可变对象来用是会崩溃的.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];</div><div class="line">NSMutableArray *originArrayCopy1 = [originArray copy];</div><div class="line">[originArrayCopy1 addObject:@&quot;d&quot;];//crash</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];
+NSMutableArray *originArrayCopy1 = [originArray copy];
+[originArrayCopy1 addObject:@&quot;d&quot;];//crash
+</code></pre>
 <p>综上, 对于容器类对象:</p>
 <ul>
 <li><strong>如果对一不可变对象复制, copy是指针复制(浅复制), mutableCopy是内容复制(深复制).</strong></li>
@@ -279,30 +331,94 @@ ga('send', 'pageview');
 <li><strong>元素对象是浅复制.</strong></li>
 </ul>
 <h3 id="系统类对象的完全深复制"><a href="#系统类对象的完全深复制" class="headerlink" title="系统类对象的完全深复制"></a>系统类对象的完全深复制</h3><p>对于容器类对象而言, 元素对象始终是浅复制, 要想深复制可通过如下方法:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">NSArray *array = [NSArray arrayWithObjects:[NSMutableString stringWithString:@&quot;a&quot;],[NSString stringWithString:@&quot;b&quot;],@&quot;c&quot;,nil];</div><div class="line">NSArray *deepCopyArray=[[NSArray alloc] initWithArray: array copyItems: YES];</div><div class="line">NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject: array]];</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">NSArray *array = [NSArray arrayWithObjects:[NSMutableString stringWithString:@&quot;a&quot;],[NSString stringWithString:@&quot;b&quot;],@&quot;c&quot;,nil];
+NSArray *deepCopyArray=[[NSArray alloc] initWithArray: array copyItems: YES];
+NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject: array]];
+</code></pre>
 <p>打印元素内存地址可以发现, trueDeepCopyArray的元素都是深复制, 而deepCopyArray由于第一个元素是可变对象, 所以是深复制, 其他的元素都是浅复制.</p>
 <p><strong>综上, 要想实现容器对象所有元素的深复制, 只能通过归档来实现.</strong></p>
 <blockquote>
 <p>If you need a true deep copy, such as when you have an array of arrays, you can archive and then unarchive the collection, provided the contents all conform to the <code>NSCoding</code> protocol</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">@protocol NSCoding</div><div class="line"></div><div class="line">- (void)encodeWithCoder:(NSCoder *)aCoder;</div><div class="line">- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder; // NS_DESIGNATED_INITIALIZER</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">@protocol NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder; // NS_DESIGNATED_INITIALIZER
+
+@end
+</code></pre>
 <h3 id="自定义对象"><a href="#自定义对象" class="headerlink" title="自定义对象"></a>自定义对象</h3><p>对于自定义对象, 我们要实现<code>NSCopying</code>, <code>NSMutableCopying</code>协议, 这样我们就能调用copy和mutableCopy了.假设有一个<code>Person</code>类, 继承于<code>NSObject</code>.</p>
 <p><code>person.h</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line">@interface Person : NSobject</div><div class="line"></div><div class="line">@property (nonatomic, assign) NSInteger age;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">#import &lt;Foundation/Foundation.h&gt;
+@interface Person : NSobject
+
+@property (nonatomic, assign) NSInteger age;
+@end
+</code></pre>
 <p><code>person.m</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">#import &quot;Person.h&quot;</div><div class="line">@interface Person()&lt;NSCopying&gt;</div><div class="line">@end</div><div class="line"></div><div class="line">@implementation Person</div><div class="line">  </div><div class="line">- (id)copyWithZone:(NSZone *)zone &#123;</div><div class="line">	Person *person = [[Person allocWithZone:zone] init];</div><div class="line">  	person.age = self.age;</div><div class="line">    return person;</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">
+#import &quot;Person.h&quot;
+@interface Person()&lt;NSCopying&gt;
+@end
+
+@implementation Person
+
+- (id)copyWithZone:(NSZone *)zone {
+    Person *person = [[Person allocWithZone:zone] init];
+      person.age = self.age;
+    return person;
+}
+@end
+</code></pre>
 <p>这样当我们在外面调用的时候:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Person *p = [[Person alloc] init];</div><div class="line">p.age = 20;</div><div class="line"></div><div class="line">Person *copyP = [p copy];</div><div class="line">NSLog(@&quot;p = %p copyP = %p&quot;, p, copyP);</div><div class="line">NSLog(@&quot;age = %ld&quot;, copyP.age);</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">Person *p = [[Person alloc] init];
+p.age = 20;
+
+Person *copyP = [p copy];
+NSLog(@&quot;p = %p copyP = %p&quot;, p, copyP);
+NSLog(@&quot;age = %ld&quot;, copyP.age);
+</code></pre>
 <p>通过打印地址:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">(lldb) p p</div><div class="line">(Person *) $0 = 0x000060800002a1e0</div><div class="line">(lldb) p copyP</div><div class="line">(Person *) $1 = 0x000060800002a2e0</div><div class="line">(lldb) p p.age</div><div class="line">(NSInteger) $2 = 20</div><div class="line">(lldb) p copyP.age</div><div class="line">(NSInteger) $4 = 20</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">(lldb) p p
+(Person *) $0 = 0x000060800002a1e0
+(lldb) p copyP
+(Person *) $1 = 0x000060800002a2e0
+(lldb) p p.age
+(NSInteger) $2 = 20
+(lldb) p copyP.age
+(NSInteger) $4 = 20
+</code></pre>
 <p>我们可以发现, 自定义对象内部的属性都被浅拷贝, 自定义对象本身被深拷贝.</p>
 <p>需要注意的是, 如果我们的自定义对象不实现<code>NSCopying</code>协议而直接copy时, 是会crash的.</p>
 <h2 id="属性修饰之copy与strong"><a href="#属性修饰之copy与strong" class="headerlink" title="属性修饰之copy与strong"></a>属性修饰之copy与strong</h2><p>我们新建一个<code>Person</code>类, 添加几个属性来看一下copy和strong对属性使用的影响.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"></div><div class="line">@interface Person : NSObject</div><div class="line"></div><div class="line">@property (nonatomic, strong) NSString *strongName;</div><div class="line">@property (nonatomic, copy) NSString *copyName;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">#import &lt;Foundation/Foundation.h&gt;
+
+@interface Person : NSObject
+
+@property (nonatomic, strong) NSString *strongName;
+@property (nonatomic, copy) NSString *copyName;
+
+@end
+</code></pre>
 <p>在外面调用<code>Person</code>类, 代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Person *person = [[Person alloc] init];</div><div class="line">NSMutableString *testString = [NSMutableString stringWithString:@&quot;test&quot;];</div><div class="line">person.nameCopy = testString;</div><div class="line">person.nameStrong = testString;</div><div class="line">[testString appendString:@&quot;copy&amp;&amp;strong&quot;];</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">Person *person = [[Person alloc] init];
+NSMutableString *testString = [NSMutableString stringWithString:@&quot;test&quot;];
+person.nameCopy = testString;
+person.nameStrong = testString;
+[testString appendString:@&quot;copy&amp;&amp;strong&quot;];
+</code></pre>
 <p>打印<code>testString</code>改变前后属性</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">//testString改变前</div><div class="line">(lldb) p person.nameCopy</div><div class="line">(NSTaggedPointerString *) $1 = 0xa000000747365744 @&quot;test&quot;</div><div class="line">(lldb) p person.nameStrong</div><div class="line">(__NSCFString *) $2 = 0x0000600000260540 @&quot;test&quot;</div><div class="line">//testString改变后</div><div class="line">(lldb) p person.nameCopy</div><div class="line">(NSTaggedPointerString *) $3 = 0xa000000747365744 @&quot;test&quot;</div><div class="line">(lldb) p person.nameStrong</div><div class="line">(__NSCFString *) $4 = 0x0000600000260540 @&quot;testcopy&amp;&amp;strong&quot;</div></pre></td></tr></table></figure>
+<pre><code class="objective-c">//testString改变前
+(lldb) p person.nameCopy
+(NSTaggedPointerString *) $1 = 0xa000000747365744 @&quot;test&quot;
+(lldb) p person.nameStrong
+(__NSCFString *) $2 = 0x0000600000260540 @&quot;test&quot;
+//testString改变后
+(lldb) p person.nameCopy
+(NSTaggedPointerString *) $3 = 0xa000000747365744 @&quot;test&quot;
+(lldb) p person.nameStrong
+(__NSCFString *) $4 = 0x0000600000260540 @&quot;testcopy&amp;&amp;strong&quot;
+</code></pre>
 <p>由以上可以看出:</p>
 <p>对源头是<code>NSMutableString</code>的字符串，strong仅仅是指针引用，增加了引用计数器，这样源头改变的时候，用这种strong方式声明的变量（无论被赋值的变量是可变的还是不可变的，它也会跟着改变, 相当于浅拷贝; 而copy属性则是对源字符串做了次深拷贝，产生一个新的对象，且copy属性对象指向这个新的对象。另外需要注意的是，这个copy属性对象的类型始终是<code>NSString</code>，而不是<code>NSMutableString</code>，因此其是不可变的。</p>
 <p>当源字符串是<code>NSString</code>时，由于字符串是不可变的，所以，不管是strong还是copy属性的对象，都是指向源对象，copy操作只是做了次浅拷贝。</p>

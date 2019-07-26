@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://blog.joyingx.me/images/20150503/4.jpg">
 <meta property="og:image" content="http://blog.joyingx.me/images/20150503/5.jpg">
-<meta property="og:updated_time" content="2019-07-25T09:00:55.553Z">
+<meta property="og:updated_time" content="2019-07-26T03:29:49.282Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发基础-NSDictionary &amp; NSMutableArray内部实现">
 <meta name="twitter:description" content="dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. 这里讲解的十分详细, 此处我们对主要流程做一个概述. 1 NSDictionaryFoundation框架下提供了很多高级数据结构, 这些都是对Core Foundation下的封装, 例如NSDictionary就是对_CFDictionary的">
@@ -234,7 +234,19 @@ ga('send', 'pageview');
     
       <p>dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. <a href="https://blog.csdn.net/Deft_MKJing/article/details/82732833" target="_blank" rel="noopener">这里</a>讲解的十分详细, 此处我们对主要流程做一个概述.</p>
 <h1 id="1-NSDictionary"><a href="#1-NSDictionary" class="headerlink" title="1 NSDictionary"></a>1 NSDictionary</h1><p>Foundation框架下提供了很多高级数据结构, 这些都是对Core Foundation下的封装, 例如NSDictionary就是对_CFDictionary的封装.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">struct __CFDictionary &#123;</div><div class="line">    CFRuntimeBase _base;</div><div class="line">    CFIndex _count;</div><div class="line">    CFIndex _capacity;</div><div class="line">    CFIndex _bucketsNum;</div><div class="line">    uintptr_t _marker;</div><div class="line">    void *_context;</div><div class="line">    CFIndex _deletes;</div><div class="line">    CFOptionFlags _xflags;</div><div class="line">    const void **_keys;	</div><div class="line">    const void **_values;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<pre><code class="C">struct __CFDictionary {
+    CFRuntimeBase _base;
+    CFIndex _count;
+    CFIndex _capacity;
+    CFIndex _bucketsNum;
+    uintptr_t _marker;
+    void *_context;
+    CFIndex _deletes;
+    CFOptionFlags _xflags;
+    const void **_keys;    
+    const void **_values;
+};
+</code></pre>
 <p>根据数据结构可以发现dictionary内部使用了两个指针数组分别来保存keys和values, dictionary采用的是连续存储的方式存储键值对. Apple给的查询复杂度可以快至O(1), 下面我们就来分析下是如何做到的. </p>
 <h1 id="1-1-原理分析"><a href="#1-1-原理分析" class="headerlink" title="1.1 原理分析"></a>1.1 原理分析</h1><p>创建N个空桶，N为排序数组中最大值加一。然后遍历排序数组，以元素值为下标，将其放入对应的桶中. 如果少量数据，可以根据数组里面的最大值+1创建出那么多空桶，然后遍历，根据索引在空桶的值上累加，最后遍历空桶（已装载），根据值遍历出对应的下标.</p>
 <p>虽然这样做效率非常高，但是如果数据过大，内存吃不消，这样就有了哈希排序的介绍。例如一组数据，我们可以根据hash算法后取模的值进行空桶排列，但是如果两个值例如 101和11 % 10都是余1，会被放入同一个桶里面，这样就会有需要二次排列。虽然这个排序效率并不高，因此哈希化就变成了数据存储的一种设计.</p>

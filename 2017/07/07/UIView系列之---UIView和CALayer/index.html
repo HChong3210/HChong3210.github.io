@@ -236,12 +236,16 @@ ga('send', 'pageview');
 <li><p><code>UIView</code>主要是对显示内容的管理, 而<code>CALayer</code>则主要侧重显示内容的绘制. 访问<code>UIVIew</code>的与绘图和跟坐标有关的属性, 例如<code>frame</code>, <code>bounds</code>等, 实际上内部都是在访问它所包含的CALayer的相关属性. <code>UIView</code>的<code>frame</code>实际是<code>layer</code>的<code>frame</code>, <code>center</code>, <code>bounds</code>实际也是只是内部<code>layer</code>相对应属性的<code>get</code>和<code>set</code>方法, 当你改变一个<code>view</code>的<code>frame</code>的时候, 你其实改变的是内部<code>layer</code>的<code>frame</code>. CALayer的frame由<code>anchorPoint</code>, <code>position</code>, <code>bounds</code>, <code>transform</code>共同决定. <code>UIView</code>的创建, 实际上是一系列<code>UILayer</code>创建的过程.</p>
 </li>
 <li><p><code>UIView</code>有个重要属性<code>layer</code>. 可以返回它的主<code>CALayer</code>实例. 所有从UIView继承来的对象都继承了这个属性. 这意味着你可以在所有的<code>UIVIew</code>子类上增加动画, 旋转, 缩放等<code>CALayer</code>支持的操作. <code>UIView</code>的<code>layerClass</code>方法, 可以返回主<code>layer</code>所使用的类, <code>UIView</code>的子类可以通过重载这个方法, 来让<code>UIView</code>使用不同的CALayer来显示. 代码示例：</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (class)layerClass &#123;</div><div class="line">    return ([CAEAGLLayer class]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
+<pre><code> - (class)layerClass {
+     return ([CAEAGLLayer class]);
+ }
+</code></pre></li>
 <li><p><code>UIView</code>的主<code>CALayer</code>是类似于<code>subviews</code>的树形结构, 我们可以通过给主<code>layer</code>添加子<code>layer</code>来完成特殊的绘制效果.</p>
 <p> 在<code>view</code>上添加一个黑色透明<code>layer</code>层的示例代码:</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">grayCover = [[CALayer alloc] init];</div><div class="line">grayCover.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2] CGColor];</div><div class="line">[self.layer addSubLayer:grayCover];</div></pre></td></tr></table></figure>
-</li>
+<pre><code> grayCover = [[CALayer alloc] init];
+ grayCover.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2] CGColor];
+ [self.layer addSubLayer:grayCover];
+</code></pre></li>
 <li><p><code>UIView</code>的内部, 有三个<code>layer tree</code>: 1.逻辑树, 这里是代码可以操纵的. 2.动画树, 是一个中间层, 系统就在这一层上通过逻辑树来更改属性, 进行各种渲染操作. 3.显示树, 其内容就是当前正被显示在屏幕上得内容. </p>
 </li>
 <li><p><code>UIView</code>实际上是<code>CALayer</code>的<code>CALayerDelegate</code>, 通过实现一系列的代理方法来显示<code>CALayer</code>绘制的内容.</p>

@@ -254,11 +254,36 @@ ga('send', 'pageview');
 <h3 id="URL-Scheme方式跳转"><a href="#URL-Scheme方式跳转" class="headerlink" title="URL Scheme方式跳转"></a>URL Scheme方式跳转</h3><p>以A-&gt;B为例, 来说明下如何跳转.<br>首先我们需要分别在两个App的info.plist里面添加对应的URL types - URL Schemes, 如图所示:</p>
 <p><img src="http://img.souche.com/f2e/2b762dfb368b3b50621cd5c39b51a86e.png" alt="添加URL types"></p>
 <p>A的URL Schemes是APPA, B的URL Schemes是APPB. 由于iOS9引入了白名单的概念,<br>如果使用 canOpenURL:方法, 该方法所涉及到的 URL Schemes 必须在”Info.plist”中将它们列为白名单, 否则<code>canOpenURL</code>返回<code>NO</code>, 不能正常跳转. 所以要在A中添加B的URL Schemes, B中添加A的Schemes. key叫做<code>LSApplicationQueriesSchemes</code>, 键值内容是上一步对应应用程序的URL Schemes. </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"></div><div class="line">- jumpToAppB:(id)sender &#123;</div><div class="line">   // 1.获取应用程序App-B的URL Scheme</div><div class="line">   NSURL *appBUrl = [NSURL URLWithString:@&quot;zacharyB1://&quot;];</div><div class="line">   // 2.判断手机中是否安装了对应程序</div><div class="line">   if ([[UIApplication sharedApplication] canOpenURL:appBUrl]) &#123;</div><div class="line">       // 3. 打开应用程序App-B</div><div class="line">       //[[UIApplication sharedApplication] openURL:appBUrl];//iOS 9之后被废弃</div><div class="line">       [[UIApplication sharedApplication] openURL:appBUrl options:@&#123;UIApplicationOpenURLOptionUniversalLinksOnly : @YES&#125; completionHandler:^(BOOL success) &#123;</div><div class="line">            </div><div class="line">        &#125;];</div><div class="line">   &#125; else &#123;</div><div class="line">       NSLog(@&quot;没有安装&quot;);</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
+<pre><code>
+- jumpToAppB:(id)sender {
+   // 1.获取应用程序App-B的URL Scheme
+   NSURL *appBUrl = [NSURL URLWithString:@&quot;zacharyB1://&quot;];
+   // 2.判断手机中是否安装了对应程序
+   if ([[UIApplication sharedApplication] canOpenURL:appBUrl]) {
+       // 3. 打开应用程序App-B
+       //[[UIApplication sharedApplication] openURL:appBUrl];//iOS 9之后被废弃
+       [[UIApplication sharedApplication] openURL:appBUrl options:@{UIApplicationOpenURLOptionUniversalLinksOnly : @YES} completionHandler:^(BOOL success) {
+
+        }];
+   } else {
+       NSLog(@&quot;没有安装&quot;);
+   }
+}
+</code></pre><p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
 <p>至此, 就可以正常跳转了, 如果我们不希望某个APP通过URL Scheme的方式打开我们的应用, 我们可以在<code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</code>方法中判断指定的Scheme然后返回<code>NO</code>, 如下所示, 只有<code>com.tencent.weixin</code>的Scheme才能打开我们的APP. </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation &#123;</div><div class="line">    NSLog(@&quot;sourceApplication: %@&quot;, sourceApplication);</div><div class="line">    NSLog(@&quot;URL scheme:%@&quot;, [url scheme]);</div><div class="line">    NSLog(@&quot;URL query: %@&quot;, [url query]);</div><div class="line"></div><div class="line">    if ([sourceApplication isEqualToString:@&quot;com.tencent.weixin&quot;])&#123;</div><div class="line">        // 允许打开</div><div class="line">        return YES;</div><div class="line">    &#125;else&#123;</div><div class="line">        return NO;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="Universal-Links方式跳转"><a href="#Universal-Links方式跳转" class="headerlink" title="Universal Links方式跳转"></a>Universal Links方式跳转</h3><p>使用这个功能可以使我们的App通过HTTP链接来启动App, 通用链接就是HTTP协议的普通URL, 通过在服务器上配置一些文件, 配合应用. 实现客户点击网页链接之后直接打开应用. 客户在微信\QQ中点击链接时不再需要点击右上’在Safari浏览器打开’才能打开软件, 实现客户操作的无缝跳转, 让客户体验更加连贯, 更顺畅. </p>
+<pre><code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    NSLog(@&quot;sourceApplication: %@&quot;, sourceApplication);
+    NSLog(@&quot;URL scheme:%@&quot;, [url scheme]);
+    NSLog(@&quot;URL query: %@&quot;, [url query]);
+
+    if ([sourceApplication isEqualToString:@&quot;com.tencent.weixin&quot;]){
+        // 允许打开
+        return YES;
+    }else{
+        return NO;
+    }
+}
+</code></pre><h3 id="Universal-Links方式跳转"><a href="#Universal-Links方式跳转" class="headerlink" title="Universal Links方式跳转"></a>Universal Links方式跳转</h3><p>使用这个功能可以使我们的App通过HTTP链接来启动App, 通用链接就是HTTP协议的普通URL, 通过在服务器上配置一些文件, 配合应用. 实现客户点击网页链接之后直接打开应用. 客户在微信\QQ中点击链接时不再需要点击右上’在Safari浏览器打开’才能打开软件, 实现客户操作的无缝跳转, 让客户体验更加连贯, 更顺畅. </p>
 <ol>
 <li><p>如果安装过App, 不管在微信里面http链接还是在Safari浏览器, 还是其他第三方浏览器, 都可以打开App. </p>
 </li>
@@ -298,17 +323,117 @@ ga('send', 'pageview');
 </li>
 <li><p>有一个<code>HCModuleProtocol</code>协议, 里面有几个必须要实现的方法.</p>
 <p> 如果某个类想要通过协议被跳转就必须实现该协议, 并且实现协议中的<code>@required</code>方法. <code>@optional</code>方法根据实际需要选择实现.</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">   HCModuleProtocol.h</div><div class="line">   </div><div class="line">   @required</div><div class="line">   /**</div><div class="line">   该方法返回当前类的标签, 该标签是当前类的唯一标识, 不可重复</div><div class="line">   @return 字符串类型</div><div class="line">   */</div><div class="line">   + (NSString *)moduleName;</div><div class="line"></div><div class="line">   @optional</div><div class="line">   /**</div><div class="line">   如果是通过push方式打开, 就实现该方法, 返回当前类的self</div><div class="line">   </div><div class="line">   @param params 传入的参数</div><div class="line">   @param callback 传入的block回调</div><div class="line">   @return 实现跳转协议类的self</div><div class="line">   */</div><div class="line">   - (id)open:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;</div><div class="line">   </div><div class="line">   /**</div><div class="line">如果是通过present方式打开, 就实现该方法, 返回当前类的self</div><div class="line">      </div><div class="line">   @param params 传入的参数</div><div class="line">   @param callback 传入的block回调</div><div class="line">   @return 实现跳转协议类的self</div><div class="line">   */</div><div class="line">   - (id)open_present:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;</div></pre></td></tr></table></figure>
-</li>
+<pre><code> HCModuleProtocol.h
+
+ @required
+ /**
+ 该方法返回当前类的标签, 该标签是当前类的唯一标识, 不可重复
+ @return 字符串类型
+ */
+ + (NSString *)moduleName;
+
+ @optional
+ /**
+ 如果是通过push方式打开, 就实现该方法, 返回当前类的self
+
+ @param params 传入的参数
+ @param callback 传入的block回调
+ @return 实现跳转协议类的self
+ */
+ - (id)open:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;
+
+ /**
+如果是通过present方式打开, 就实现该方法, 返回当前类的self
+
+ @param params 传入的参数
+ @param callback 传入的block回调
+ @return 实现跳转协议类的self
+ */
+ - (id)open_present:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;
+</code></pre></li>
 <li><p><code>HCModuleCore</code>是个单例, 在初始化的时候, 通过runtime提供的方法把遵守``的类名缓存起来, 缓存信息存储在单例中, 存在于整个APP的生命周期中.</p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">    HCModuleCore.m</div><div class="line">    </div><div class="line">    + (instancetype)moduleCore &#123;</div><div class="line">        static HCModuleCore *moduleCore;</div><div class="line">        static dispatch_once_t onceToken;</div><div class="line">        dispatch_once(&amp;onceToken, ^&#123;</div><div class="line">            moduleCore = [[HCModuleCore alloc] init];</div><div class="line">        &#125;);</div><div class="line">        return moduleCore;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    - (instancetype)init &#123;</div><div class="line">        self = [super init];</div><div class="line">        if (self) &#123;</div><div class="line">            [self cacheModuleProrocolClasses];</div><div class="line">        &#125;</div><div class="line">        return self;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    /**</div><div class="line">    把遵守HCModuleProtocol的类缓存起来</div><div class="line">    */</div><div class="line">    - (void)cacheModuleProrocolClasses &#123;</div><div class="line">        if (_cache.count != 0) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        NSMutableDictionary *tmpCache = [NSMutableDictionary dictionary];</div><div class="line">        Class *classes;</div><div class="line">        unsigned int outCount;</div><div class="line">        classes = objc_copyClassList(&amp;outCount);//获取全部类</div><div class="line">        for (int i = 0; i &lt; outCount; i++) &#123;</div><div class="line">            Class class = classes[i];</div><div class="line">        </div><div class="line">            //实现了HCModuleProtocol的类</div><div class="line">            if (class_conformsToProtocol(class, @protocol(HCModuleProtocol))) &#123;</div><div class="line">                NSString *moduleName = [class moduleName];</div><div class="line">                //重复检查</div><div class="line">                NSCAssert([tmpCache objectForKey:moduleName] == nil, @&quot;in class %@, module %@ has defined, please check!&quot;, NSStringFromClass(class), moduleName);</div><div class="line">                [tmpCache setObject:NSStringFromClass(class) forKey:moduleName];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        free(classes);</div><div class="line">        self.cache = [tmpCache copy];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
+<pre><code> HCModuleCore.m
+
+ + (instancetype)moduleCore {
+     static HCModuleCore *moduleCore;
+     static dispatch_once_t onceToken;
+     dispatch_once(&amp;onceToken, ^{
+         moduleCore = [[HCModuleCore alloc] init];
+     });
+     return moduleCore;
+ }
+
+ - (instancetype)init {
+     self = [super init];
+     if (self) {
+         [self cacheModuleProrocolClasses];
+     }
+     return self;
+ }
+
+ /**
+ 把遵守HCModuleProtocol的类缓存起来
+ */
+ - (void)cacheModuleProrocolClasses {
+     if (_cache.count != 0) {
+         return;
+     }
+     NSMutableDictionary *tmpCache = [NSMutableDictionary dictionary];
+     Class *classes;
+     unsigned int outCount;
+     classes = objc_copyClassList(&amp;outCount);//获取全部类
+     for (int i = 0; i &lt; outCount; i++) {
+         Class class = classes[i];
+
+         //实现了HCModuleProtocol的类
+         if (class_conformsToProtocol(class, @protocol(HCModuleProtocol))) {
+             NSString *moduleName = [class moduleName];
+             //重复检查
+             NSCAssert([tmpCache objectForKey:moduleName] == nil, @&quot;in class %@, module %@ has defined, please check!&quot;, NSStringFromClass(class), moduleName);
+             [tmpCache setObject:NSStringFromClass(class) forKey:moduleName];
+         }
+     }
+     free(classes);
+     self.cache = [tmpCache copy];
+}
+</code></pre></li>
 <li><p>主要是通过传入的moduleName或者URl来获取到被打开页面的唯一标识, 再通过唯一标识从单例中缓存的遵守跳转协议的类中去找. 如果找到的话, <code>performSelector:withObject:withObject:</code>方法的返回值是响应的方法的返回值, 通过该函数获取到被跳转的类的实例. </p>
- <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">    HCModuleCore.m</div><div class="line">    </div><div class="line">    //根据moduleName返回对应注册的类</div><div class="line">    - (id)moduleName:(NSString *)moduleName openWithParams:(NSDictionary *)params callback:(void(^)(NSDictionary *moduleInfo))callback &#123;</div><div class="line">        NSCAssert(moduleName != nil, @&quot;moduleName can not be nil!&quot;);</div><div class="line">        id module = [self moduleName:moduleName performSelectorName:@&quot;open:callback:&quot; withParams:params callback:callback];</div><div class="line">        if (module == nil) &#123;</div><div class="line">            module = [self moduleName:moduleName performSelectorName:@&quot;open_present:callback:&quot; withParams:params callback:callback];</div><div class="line">        &#125;</div><div class="line">        return module;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    //获取缓存起来的响应相应协议方法的类</div><div class="line">    - (id)moduleName:(NSString *)moduleName performSelectorName:(NSString *)selectorName withParams:(NSDictionary *)params callback:(void(^)(NSDictionary *moduleInfo))callback &#123;</div><div class="line">        NSCAssert(moduleName != nil &amp;&amp; selectorName != nil, @&quot;moduleName and selectorName can not be nil!&quot;);</div><div class="line">        id module;</div><div class="line">        NSString *clsName = self.cache[moduleName];</div><div class="line">        if (clsName.length) &#123;</div><div class="line">            Class class = NSClassFromString(clsName);//根据缓存的类名字创建类</div><div class="line">            SEL selec = NSSelectorFromString(selectorName);</div><div class="line">            if (class) &#123;</div><div class="line">                id target = [[class alloc] init];//初始化一个类的对象</div><div class="line">                if ([target respondsToSelector:selec]) &#123;</div><div class="line">#pragma clang diagnostic push</div><div class="line">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</div><div class="line">                    //performSelector:withObject:withObject:的返回值是响应的方法的返回值</div><div class="line">                    module = [target performSelector:selec withObject:params withObject:callback];</div><div class="line">#pragma clang diagnostic pop</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return module;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<pre><code> HCModuleCore.m
+
+ //根据moduleName返回对应注册的类
+ - (id)moduleName:(NSString *)moduleName openWithParams:(NSDictionary *)params callback:(void(^)(NSDictionary *moduleInfo))callback {
+     NSCAssert(moduleName != nil, @&quot;moduleName can not be nil!&quot;);
+     id module = [self moduleName:moduleName performSelectorName:@&quot;open:callback:&quot; withParams:params callback:callback];
+     if (module == nil) {
+         module = [self moduleName:moduleName performSelectorName:@&quot;open_present:callback:&quot; withParams:params callback:callback];
+     }
+     return module;
+ }
+
+ //获取缓存起来的响应相应协议方法的类
+ - (id)moduleName:(NSString *)moduleName performSelectorName:(NSString *)selectorName withParams:(NSDictionary *)params callback:(void(^)(NSDictionary *moduleInfo))callback {
+     NSCAssert(moduleName != nil &amp;&amp; selectorName != nil, @&quot;moduleName and selectorName can not be nil!&quot;);
+     id module;
+     NSString *clsName = self.cache[moduleName];
+     if (clsName.length) {
+         Class class = NSClassFromString(clsName);//根据缓存的类名字创建类
+         SEL selec = NSSelectorFromString(selectorName);
+         if (class) {
+             id target = [[class alloc] init];//初始化一个类的对象
+             if ([target respondsToSelector:selec]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;
+                 //performSelector:withObject:withObject:的返回值是响应的方法的返回值
+                 module = [target performSelector:selec withObject:params withObject:callback];
+#pragma clang diagnostic pop
+             }
+         }
+     }
+     return module;
+ }
+</code></pre></li>
+<li><p>然后有两个category, 分别是<code>UINavigationController+HCModuleCore</code>和<code>UIViewController+HCModuleCore</code>. 分别对应push和present的情况. 因为上面已经拿到了要跳转到的页面的实例, 这里就可以通过push或者present的方法跳转过去.   </p>
 </li>
-</ol>
-<ol>
-<li>然后有两个category, 分别是<code>UINavigationController+HCModuleCore</code>和<code>UIViewController+HCModuleCore</code>. 分别对应push和present的情况. 因为上面已经拿到了要跳转到的页面的实例, 这里就可以通过push或者present的方法跳转过去.   </li>
 </ol>
 <h2 id="远程调用和本地调用的区分以及安全防范"><a href="#远程调用和本地调用的区分以及安全防范" class="headerlink" title="远程调用和本地调用的区分以及安全防范"></a>远程调用和本地调用的区分以及安全防范</h2><p>远程调用和本地调用, 如果是其他APP打开本地APP可以通过设置白名单的方式, 因为每个APP的Scheme都是不同的, 如果是网络层面上劫持协议, 可以通过HTTPS的方式来防止网络劫持.</p>
 <h2 id="模块间的方法调用"><a href="#模块间的方法调用" class="headerlink" title="模块间的方法调用"></a>模块间的方法调用</h2><p>我们可以选择对外暴露一个方法, 方法有两个参数, 一个是ModuleName, 一个是要执行的方法. 这样我们可以根据ModuleName在注册的类中找到这个类的实例, 然后通过NSInvocation来调用将要执行的方法.</p>

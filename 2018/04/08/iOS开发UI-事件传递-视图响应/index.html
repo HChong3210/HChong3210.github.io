@@ -248,8 +248,27 @@ ga('send', 'pageview');
 <p>如果UIView的<code>userInteractionEnabled = NO</code>, 或者<code>hidden = YES</code>, 或者透明度&lt;0.01则不能接受触摸事件. 注意父控件的hidden属性和透明度alpha属性都会影响他的子控件.</p>
 <h2 id="2-1-寻找最合适View的底层实现"><a href="#2-1-寻找最合适View的底层实现" class="headerlink" title="2.1 寻找最合适View的底层实现"></a>2.1 寻找最合适View的底层实现</h2><p>寻找最合适的View用到了两个重要方法: <code>hitTest:withEvent:</code> 和 <code>pointInside:withEvent:</code>.</p>
 <h2 id="2-2-hitTest-withEvent"><a href="#2-2-hitTest-withEvent" class="headerlink" title="2.2 hitTest:withEvent:"></a>2.2 hitTest:withEvent:</h2><p>只要事件一传递给一个控件, 这个控件就会调用他自己的<code>hitTest:withEvent:</code>方法. 他的作用就是寻找并返回最合适的view(能够响应事件的那个最合适的view). <em>不管这个控件能不能处理事件, 也不管触摸点在不在这个控件上, 事件都会先传递给这个控件, 随后再调用 <code>hitTest:withEvent:</code>方法.</em></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">底层具体实现如下: </div><div class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event &#123;</div><div class="line">    // 1.判断当前控件能否接收事件</div><div class="line">    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;</div><div class="line">    // 2. 判断点在不在当前控件</div><div class="line">    if ([self pointInside:point withEvent:event] == NO) return nil;</div><div class="line">    // 3.从后往前遍历自己的子控件</div><div class="line">    NSInteger count = self.subviews.count;</div><div class="line">    for (NSInteger i = count - 1; i &gt;= 0; i--) &#123;</div><div class="line">        UIView *childView = self.subviews[i];</div><div class="line">        // 把当前控件上的坐标系转换成子控件上的坐标系</div><div class="line">        CGPoint childP = [self convertPoint:point toView:childView];</div><div class="line">        UIView *fitView = [childView hitTest:childP withEvent:event];</div><div class="line">        if (fitView) &#123; // 寻找到最合适的view</div><div class="line">            return fitView;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    // 循环结束,表示没有比自己更合适的view</div><div class="line">    return self;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>事件传递给窗口或者控件后, 就调用<code>hitTest:withEvent:</code>寻找最合适的View. 所以是先传递事件, 再根据事件在自己身上找到最合适的View. 不管子控件是不是最合适的View, 系统都会先把事件传递给子控件, 经过子控件的<code>hitTest:withEvent:</code>验证后才知道有没有最合适的View. 所以如果确定最终父控件是最合适的view, 那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的.</p>
+<pre><code>底层具体实现如下: 
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    // 1.判断当前控件能否接收事件
+    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;
+    // 2. 判断点在不在当前控件
+    if ([self pointInside:point withEvent:event] == NO) return nil;
+    // 3.从后往前遍历自己的子控件
+    NSInteger count = self.subviews.count;
+    for (NSInteger i = count - 1; i &gt;= 0; i--) {
+        UIView *childView = self.subviews[i];
+        // 把当前控件上的坐标系转换成子控件上的坐标系
+        CGPoint childP = [self convertPoint:point toView:childView];
+        UIView *fitView = [childView hitTest:childP withEvent:event];
+        if (fitView) { // 寻找到最合适的view
+            return fitView;
+        }
+    }
+    // 循环结束,表示没有比自己更合适的view
+    return self;
+}
+</code></pre><p>事件传递给窗口或者控件后, 就调用<code>hitTest:withEvent:</code>寻找最合适的View. 所以是先传递事件, 再根据事件在自己身上找到最合适的View. 不管子控件是不是最合适的View, 系统都会先把事件传递给子控件, 经过子控件的<code>hitTest:withEvent:</code>验证后才知道有没有最合适的View. 所以如果确定最终父控件是最合适的view, 那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的.</p>
 <p>一般我们在父控件的hitTest:withEvent:中返回子控件作为最合适的view. 例如: 当遍历子控件时, 如果触摸点不在子控件A自己身上而是在子控件B身上, 还要要求返回子控件A作为最合适的view, 采用返回自己的方法可能会导致还没有来得及遍历A自己, 就有可能已经遍历了点真正所在的view, 也就是B. 这就导致了返回的不是自己而是触摸点真正所在的view, 所以还是建议在父控件的hitTest:withEvent:中返回子控件作为最合适的view.</p>
 <h2 id="2-3-pointInside-withEvent"><a href="#2-3-pointInside-withEvent" class="headerlink" title="2.3 pointInside:withEvent:"></a>2.3 pointInside:withEvent:</h2><p>pointInside:withEvent:方法判断点在不在当前view上(方法调用者的坐标系上)如果返回YES, 代表点在方法调用者的坐标系上; 返回NO代表点不在方法调用者的坐标系上, 那么方法调用者也就不能处理事件.</p>
 <h1 id="3-事件传递的总结"><a href="#3-事件传递的总结" class="headerlink" title="3 事件传递的总结"></a>3 事件传递的总结</h1><p>由上面可知: 事件的传递顺序应该如下:<br>产生触摸事件 -&gt; <code>UIApplication</code>事件队列 -&gt; <code>[UIWindow hitTest:withEvent:]</code> -&gt; 返回更合适的view -&gt; 子控件<code>[hitTest:withEvent:]</code> -&gt; 返回最合适的view</p>
@@ -277,9 +296,29 @@ ga('send', 'pageview');
 <p>事件的传递是从上到下(父控件到子控件), 事件的响应是从下到上(顺着响应者链条向上传递: 子控件到父控件).</p>
 <h1 id="6-常见用法"><a href="#6-常见用法" class="headerlink" title="6. 常见用法"></a>6. 常见用法</h1><p>下面是事件传递和视图响应中的一些常见用法</p>
 <h2 id="6-1-一个事件多个对象处理"><a href="#6-1-一个事件多个对象处理" class="headerlink" title="6.1 一个事件多个对象处理"></a>6.1 一个事件多个对象处理</h2><p>事件的响应是顺着响应者链条向上传递的, 即从子控件传递给父控件, touch方法默认不处理事件, 而是把事件顺着响应者链条传递给上一个响应者. 这样我们就可以依托这个原理, 让一个事件多个控件响应.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">-(void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event &#123;</div><div class="line">  NSLog(@&quot;-- dosomething&quot;);</div><div class="line">  [super touchesBegan:touches withEvent:event];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="6-2-扩大view的点击区域"><a href="#6-2-扩大view的点击区域" class="headerlink" title="6.2 扩大view的点击区域"></a>6.2 扩大view的点击区域</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">底层具体实现如下: </div><div class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event &#123;</div><div class="line">    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;</div><div class="line">    CGRect touchRect = CGRectInset(self.bounds, -10, -10);</div><div class="line">    if (CGRectContainsPoint(touchRect, point)) &#123;</div><div class="line">        NSInteger count = self.subviews.count;</div><div class="line">        for (NSInteger i = count - 1; i &gt;= 0; i--) &#123;</div><div class="line">            UIView *childView = self.subviews[i];</div><div class="line">            CGPoint childP = [self convertPoint:point toView:childView];</div><div class="line">            UIView *fitView = [childView hitTest:childP withEvent:event];</div><div class="line">            if (fitView) &#123;</div><div class="line">                return fitView;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        return self;</div><div class="line">    &#125;</div><div class="line">    return nil;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<hr>
+<pre><code>-(void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event {
+  NSLog(@&quot;-- dosomething&quot;);
+  [super touchesBegan:touches withEvent:event];
+}
+</code></pre><h2 id="6-2-扩大view的点击区域"><a href="#6-2-扩大view的点击区域" class="headerlink" title="6.2 扩大view的点击区域"></a>6.2 扩大view的点击区域</h2><pre><code>底层具体实现如下: 
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;
+    CGRect touchRect = CGRectInset(self.bounds, -10, -10);
+    if (CGRectContainsPoint(touchRect, point)) {
+        NSInteger count = self.subviews.count;
+        for (NSInteger i = count - 1; i &gt;= 0; i--) {
+            UIView *childView = self.subviews[i];
+            CGPoint childP = [self convertPoint:point toView:childView];
+            UIView *fitView = [childView hitTest:childP withEvent:event];
+            if (fitView) {
+                return fitView;
+            }
+        }
+        return self;
+    }
+    return nil;
+}
+</code></pre><hr>
 <p>参考资料:<br>1.<a href="http://blog.flight.dev.qunar.com/2016/10/28/ios-event-mechanism-summary/" target="_blank" rel="noopener">iOS事件传递及响应</a></p>
 <p>2.<a href="https://zhoon.github.io/ios/2015/04/12/ios-event.html" target="_blank" rel="noopener">深入浅出iOS事件机制</a></p>
 <p>3.<a href="https://www.jianshu.com/p/2e074db792ba" target="_blank" rel="noopener">史上最详细的iOS之事件的传递</a></p>

@@ -267,8 +267,15 @@ ga('send', 'pageview');
 <li><code>git show ${Git对象的HASH值}</code>, 用于展示某个快照的所有代码变动.</li>
 <li><code>git commit-tree ${目录结构Git对象的HASH} -p ${基于本次结构Git对象的HASH值}</code>. -p参数用来指定父节点, 也就是本次快照所基于的快照.</li>
 <li>100  644, 表明这是一个普通文件. 其他可用的模式有：100 755 表示可执行文件, 120 000 表示符号链接. 文件模式是从常规的 UNIX 文件模式中参考来的.</li>
-<li>Git的对象存储大致如下, 是通过Ruby脚本来实现的<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">content = &quot;what is up, doc?&quot;</div><div class="line">header = &quot;blob(数据对象) #&#123;content.length&#125;\0&quot;</div><div class="line"></div><div class="line">store = header + content</div><div class="line">sha1 = Digest::SHA1.hexdigest(store)</div><div class="line">zlib_content = Zlib::Deflate.deflate(store)</div><div class="line">将zlib_content写入磁盘, 命名为sha1</div></pre></td></tr></table></figure>
-</li>
+<li><p>Git的对象存储大致如下, 是通过Ruby脚本来实现的</p>
+<pre><code>content = &quot;what is up, doc?&quot;
+header = &quot;blob(数据对象) #{content.length}\0&quot;
+
+store = header + content
+sha1 = Digest::SHA1.hexdigest(store)
+zlib_content = Zlib::Deflate.deflate(store)
+将zlib_content写入磁盘, 命名为sha1
+</code></pre></li>
 </ol>
 <hr>
 <p>参考资料:</p>
