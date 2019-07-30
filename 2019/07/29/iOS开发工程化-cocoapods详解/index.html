@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="本文主要讲解cocoapods的相关知识, 关于cocoapods的实践, 可以参考这里. 1 源码分析pod的使用主要在 pod install 和 pod update, 我们可以在cocoapods的1.7.5版本中查看入口的源码. def install!   prepare   resolve_dependencies   download_dependencies   validate">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-30T03:36:51.096Z">
+<meta property="og:updated_time" content="2019-07-30T07:44:45.432Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发工程化-cocoapods详解">
 <meta name="twitter:description" content="本文主要讲解cocoapods的相关知识, 关于cocoapods的实践, 可以参考这里. 1 源码分析pod的使用主要在 pod install 和 pod update, 我们可以在cocoapods的1.7.5版本中查看入口的源码. def install!   prepare   resolve_dependencies   download_dependencies   validate">
@@ -435,8 +435,14 @@ end
 </li>
 </ul>
 <h1 id="2-实践-amp-私有Pod"><a href="#2-实践-amp-私有Pod" class="headerlink" title="2 实践 &amp; 私有Pod"></a>2 实践 &amp; 私有Pod</h1><p>可以参考之前的<a href="http://hchong.net/2017/05/24/Cocoapods%E5%AE%9E%E8%B7%B5/">总结</a></p>
-<h1 id="3-二进制方案"><a href="#3-二进制方案" class="headerlink" title="3 二进制方案"></a>3 二进制方案</h1><h1 id="4-常见问题"><a href="#4-常见问题" class="headerlink" title="4 常见问题"></a>4 常见问题</h1><hr>
-<p>参考资料:<br>1.<a href="https://draveness.me/cocoapods" target="_blank" rel="noopener">CocoaPods 都做了什么?</a><br>2.<a href="http://silentcat.top/2018/09/04/Cocoapods%E6%BA%90%E7%A0%81%E6%B5%85%E8%B0%88/" target="_blank" rel="noopener">Cocoapods源码浅谈</a><br>3.<a href="http://blog.startry.com/2015/09/29/Something-about-Pod-Install-And-Pod-Update/" target="_blank" rel="noopener">pod install和pod update背后那点事</a><br>4.<a href="https://github.com/CocoaPods/CocoaPods/blob/1.7.5/lib/cocoapods/installer.rb" target="_blank" rel="noopener">cocoapods源码</a></p>
+<h1 id="3-二进制方案"><a href="#3-二进制方案" class="headerlink" title="3 二进制方案"></a>3 二进制方案</h1><p><a href="https://dmanager.github.io/ios/2019/01/21/%E5%9F%BA%E4%BA%8ECocoaPods%E7%9A%84%E7%BB%84%E4%BB%B6%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8C%96%E5%AE%9E%E8%B7%B5/" target="_blank" rel="noopener">这里</a></p>
+<p><a href="https://www.jianshu.com/p/5338bc626eaf" target="_blank" rel="noopener">这里</a>是业界比较完善的解决方案</p>
+<ul>
+<li>主要的思路就是在创建pod的时候会同时存在源码和framework两种形态的包(可以通过新建target或者新建工程两种方式) </li>
+<li>在podspec中根据传入的参数来指定如何在源码和二进制中切换.</li>
+</ul>
+<h1 id="4-常见问题"><a href="#4-常见问题" class="headerlink" title="4 常见问题"></a>4 常见问题</h1><hr>
+<p>参考资料:<br>1.<a href="https://draveness.me/cocoapods" target="_blank" rel="noopener">CocoaPods 都做了什么?</a><br>2.<a href="http://silentcat.top/2018/09/04/Cocoapods%E6%BA%90%E7%A0%81%E6%B5%85%E8%B0%88/" target="_blank" rel="noopener">Cocoapods源码浅谈</a><br>3.<a href="http://blog.startry.com/2015/09/29/Something-about-Pod-Install-And-Pod-Update/" target="_blank" rel="noopener">pod install和pod update背后那点事</a><br>4.<a href="https://github.com/CocoaPods/CocoaPods/blob/1.7.5/lib/cocoapods/installer.rb" target="_blank" rel="noopener">cocoapods源码</a><br>5.<a href="https://juejin.im/post/5cbec5fb5188250aa21919d0" target="_blank" rel="noopener">Cocoapods 二进制</a><br>6.<a href="https://dmanager.github.io/ios/2019/01/21/%E5%9F%BA%E4%BA%8ECocoaPods%E7%9A%84%E7%BB%84%E4%BB%B6%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8C%96%E5%AE%9E%E8%B7%B5/" target="_blank" rel="noopener">基于 CocoaPods 的组件二进制化实践</a><br>7.<a href="https://www.jianshu.com/p/5338bc626eaf" target="_blank" rel="noopener">iOS CocoaPods组件平滑二进制化解决方案</a><br>8.<a href="https://www.jianshu.com/p/85c97dc9ab83" target="_blank" rel="noopener">iOS CocoaPods组件平滑二进制化解决方案及详细教程二之subspecs篇</a></p>
 
     
     <span class="asdf">
