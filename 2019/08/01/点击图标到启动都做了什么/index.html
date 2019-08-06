@@ -22,20 +22,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C" />
+    <meta name="keywords" content="基础知识," />
   
 
-  <meta name="description" content="记录一下开发过程中遇到的问题">
+  <meta name="description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指， App 点击启动前，它的进程不在系统里，需要系统新创建一个进程分配给它启动的情况。这是一次完整的启动过程。 热启动是指 ，App 在冷启动后用户将 App 退后台，在 App 的进程还在系统里的情况下，用户重新启动进入 App 的过程，这个过程做的事情非">
+<meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="点击图标到启动都做了什么">
 <meta property="og:url" content="http://hchong.net/2019/08/01/点击图标到启动都做了什么/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="记录一下开发过程中遇到的问题">
+<meta property="og:description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指， App 点击启动前，它的进程不在系统里，需要系统新创建一个进程分配给它启动的情况。这是一次完整的启动过程。 热启动是指 ，App 在冷启动后用户将 App 退后台，在 App 的进程还在系统里的情况下，用户重新启动进入 App 的过程，这个过程做的事情非常少。  一般而言，App 的启动时间，指的是从用户点击 App 开始到用户看到">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-01T12:32:16.546Z">
+<meta property="og:updated_time" content="2019-08-02T12:51:41.889Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="点击图标到启动都做了什么">
-<meta name="twitter:description" content="记录一下开发过程中遇到的问题">
+<meta name="twitter:description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指， App 点击启动前，它的进程不在系统里，需要系统新创建一个进程分配给它启动的情况。这是一次完整的启动过程。 热启动是指 ，App 在冷启动后用户将 App 退后台，在 App 的进程还在系统里的情况下，用户重新启动进入 App 的过程，这个过程做的事情非常少。  一般而言，App 的启动时间，指的是从用户点击 App 开始到用户看到">
 
   
 
@@ -181,6 +182,11 @@ ga('send', 'pageview');
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-main-函数执行前"><span class="toc-text">1 main()函数执行前</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-main-函数执行后"><span class="toc-text">2 main()函数执行后</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-首屏渲染完成后"><span class="toc-text">3 首屏渲染完成后</span></a></li></ol>
+  </div>
+
 
 
 <div class="content content-post LEFT">
@@ -202,6 +208,11 @@ ga('send', 'pageview');
       
 
       
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
 
 
       
@@ -218,7 +229,20 @@ ga('send', 'pageview');
 
   <div class="article-content">
     
-      
+      <p>一般情况下, App 的启动分为冷启动和热启动.</p>
+<ul>
+<li>冷启动是指， App 点击启动前，它的进程不在系统里，需要系统新创建一个进程分配给它启动的情况。这是一次完整的启动过程。</li>
+<li>热启动是指 ，App 在冷启动后用户将 App 退后台，在 App 的进程还在系统里的情况下，用户重新启动进入 App 的过程，这个过程做的事情非常少。</li>
+</ul>
+<p>一般而言，App 的启动时间，指的是从用户点击 App 开始到用户看到第一个界面之间的时间, 总结来说, Appde启动主要包括三个阶段:</p>
+<ul>
+<li>main()函数执行前</li>
+<li>main()函数执行后</li>
+<li>首屏渲染完成后</li>
+</ul>
+<h1 id="1-main-函数执行前"><a href="#1-main-函数执行前" class="headerlink" title="1 main()函数执行前"></a>1 main()函数执行前</h1><h1 id="2-main-函数执行后"><a href="#2-main-函数执行后" class="headerlink" title="2 main()函数执行后"></a>2 main()函数执行后</h1><h1 id="3-首屏渲染完成后"><a href="#3-首屏渲染完成后" class="headerlink" title="3 首屏渲染完成后"></a>3 首屏渲染完成后</h1><hr>
+<p>参考资料:<br>1.<a href="https://blog.sunnyxx.com/2014/08/30/objc-pre-main/" target="_blank" rel="noopener">iOS 程序 main 函数之前发生了什么</a></p>
+
     
     <span class="asdf">
       <style type="text/css">
