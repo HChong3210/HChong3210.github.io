@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>UINavigationController对布局的影响 | HChong的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="基础知识," />
+  
+
+  <meta name="description" content="iOS7 之后，所有的 UINavigationBar 默认都是透明的了，同时 View Controller 全部都使用全屏的 layout。为了提供更多调整 view 的选项，苹果又引入了 edgesForExtendedLayout， extendedLayoutIncludesOpaqueBars，automa">
+<meta name="keywords" content="基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UINavigationController对布局的影响">
+<meta property="og:url" content="http://hchong.net/2019/08/13/UINavigationController对布局的影响/index.html">
+<meta property="og:site_name" content="HChong的博客地址">
+<meta property="og:description" content="iOS7 之后，所有的 UINavigationBar 默认都是透明的了，同时 View Controller 全部都使用全屏的 layout。为了提供更多调整 view 的选项，苹果又引入了 edgesForExtendedLayout， extendedLayoutIncludesOpaqueBars，automaticallyAdjustsScrollViewInsets 这几个属性用于控制">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-13T03:29:48.361Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UINavigationController对布局的影响">
+<meta name="twitter:description" content="iOS7 之后，所有的 UINavigationBar 默认都是透明的了，同时 View Controller 全部都使用全屏的 layout。为了提供更多调整 view 的选项，苹果又引入了 edgesForExtendedLayout， extendedLayoutIncludesOpaqueBars，automaticallyAdjustsScrollViewInsets 这几个属性用于控制">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-143601576-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?fbe237c14d5a4a92186f32fb70f9d87d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+
+<body>
+
+
+  
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header LEFT">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-新建一个空工程"><span class="toc-text">1. 新建一个空工程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Apple的解决方案"><span class="toc-text">2. Apple的解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-edgesForExtendedLayout"><span class="toc-text">2.1 edgesForExtendedLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-navigationBar-translucent"><span class="toc-text">2.2 navigationBar.translucent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-extendedLayoutIncludesOpaqueBars"><span class="toc-text">2.3 extendedLayoutIncludesOpaqueBars</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-automaticallyAdjustsScrollViewInsets"><span class="toc-text">2.4 automaticallyAdjustsScrollViewInsets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-坑"><span class="toc-text">2.5 坑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-总结"><span class="toc-text">3. 总结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post LEFT">
+   <article id="post-UINavigationController对布局的影响" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">UINavigationController对布局的影响</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.08.13</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>iOS7 之后，所有的 UINavigationBar 默认都是透明的了，同时 View Controller 全部都使用全屏的 layout。为了提供更多调整 view 的选项，苹果又引入了 edgesForExtendedLayout， extendedLayoutIncludesOpaqueBars，automaticallyAdjustsScrollViewInsets 这几个属性用于控制 VC 的 view layout. 下面就来详细说一下他们对页面布局的影响.</p>
+<h1 id="1-新建一个空工程"><a href="#1-新建一个空工程" class="headerlink" title="1. 新建一个空工程"></a>1. 新建一个空工程</h1><p>创建一个 Single View 的工程，设置 Navigation Controller 和 rootViewController, 运行结果可以看到:</p>
+<ul>
+<li>导航栏式透明的, 这就是iOS 7之后的毛玻璃效果</li>
+<li>View 是在全屏幕范围内进行布局的.</li>
+</ul>
+<p>这就导致: </p>
+<ul>
+<li>我们可以透过导航栏看到下层的背景色</li>
+<li>如果我们添加一个控件的frame为<code>CGRectMake(0, 0, 100, 40)</code>就会导致完全被导航栏挡住. 想解决这个问题，最简单的办法就是调整 Label 的 frame. 但是Apple已经提供了解决方案.</li>
+</ul>
+<h1 id="2-Apple的解决方案"><a href="#2-Apple的解决方案" class="headerlink" title="2. Apple的解决方案"></a>2. Apple的解决方案</h1><p>针对这种情况, Apple提供了下面几个属性来解决这种问题.</p>
+<h2 id="2-1-edgesForExtendedLayout"><a href="#2-1-edgesForExtendedLayout" class="headerlink" title="2.1 edgesForExtendedLayout"></a>2.1 edgesForExtendedLayout</h2><p>edgesForExtendedLayout属性指示了下层 view 扩展 layout 的方向, 系统默认值为<code>UIRectEdgeAll</code>, 就是会向各个方向扩展(其实在这里能扩展的方向也只有上方). 我们可以通过更改这个属性解决上面的问题.</p>
+<ul>
+<li>在navigationBar透明的情况下, 控制器的根View会向四周延伸, 我们可以通过设置<code>edgesForExtendedLayout</code>来控制延伸情况.</li>
+<li>在navigationBar不透明的情况下, 控制器的根View不会向四周延伸.</li>
+</ul>
+<h2 id="2-2-navigationBar-translucent"><a href="#2-2-navigationBar-translucent" class="headerlink" title="2.2 navigationBar.translucent"></a>2.2 navigationBar.translucent</h2><p>translucent属性值会决定导航栏是否有半透明效果. translucent为NO, 意味着导航栏为非透明. 我们可以通过更改这个属性解决问题.</p>
+<p>translucent会受navigationBar的backgroudImage属性的影响。也就是说当你使用了一张自定义图片作为navigationBar的背景图时，translucent的值将由系统根据该图片是否颜色值透明，来推断translucent是YES还是NO.</p>
+<pre><code class="OC">UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+nav.navigationBar.translucent = NO;
+</code></pre>
+<p>当navigationBar.translucent = NO时，两种方式给NavigationBar设置颜色:</p>
+<pre><code class="OC">self.navigationController.navigationBar.tintColor = [UIColor redColor];
+
+[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@&quot;1.png&quot;] forBarMetrics:(UIBarMetricsDefault)];
+</code></pre>
+<h2 id="2-3-extendedLayoutIncludesOpaqueBars"><a href="#2-3-extendedLayoutIncludesOpaqueBars" class="headerlink" title="2.3 extendedLayoutIncludesOpaqueBars"></a>2.3 extendedLayoutIncludesOpaqueBars</h2><p>该属性的意思为在bar不透明的情况下根View是否进行延伸, 该属性只能使用在bar不透明的情况下, 在navgationBar透明的情况下, 设置无效.</p>
+<p>在navgationBar不透明的情况下edgesForExtendedLayout与extendedLayoutIncludesOpaqueBars需要配合使用才可以达到想要的效果.</p>
+<ul>
+<li>UIRectEdgeNone + YES, view不会向四周延伸</li>
+<li>UIRectEdgeAll + NO, view不会向四周延伸 </li>
+<li>UIRectEdgeAll + YES, view会向四周延伸 </li>
+<li>UIRectEdgeNone + NO, view不会向四周延伸</li>
+</ul>
+<h2 id="2-4-automaticallyAdjustsScrollViewInsets"><a href="#2-4-automaticallyAdjustsScrollViewInsets" class="headerlink" title="2.4 automaticallyAdjustsScrollViewInsets"></a>2.4 automaticallyAdjustsScrollViewInsets</h2><p>scrollView和其子类是否有系统自动调整子控件位置(即如果scrollView被bar遮挡时, 子控件自动下移一定距离, 保证内容不会被覆盖).</p>
+<ul>
+<li>scrollView与其子类必须放在控制器的根View上并且automaticallyAdjustsScrollViewInsets设置为YES时, 系统才会为我们自动调整</li>
+<li>在iOS11中automaticallyAdjustsScrollViewInsets已经失效了, 被替换成需scrollView中的contentInsetAdjustmentBehavior参数</li>
+<li>以tableView为例，当你使用默认的创建方式，也就是UIRectEdgeAll+导航栏半透明的情况下，首行cell的位置将处于导航栏下方，也就是屏幕坐标系的(0, 64)位置处，但是此时上滑将会形成穿透效果导航栏的效果.</li>
+</ul>
+<h2 id="2-5-坑"><a href="#2-5-坑" class="headerlink" title="2.5 坑"></a>2.5 坑</h2><p>对于导航控制器中的各个childViewController，是共用同一个的navigationBar。当你在一个childViewController中自定义了navigationBar的背景图片，或是直接改变了translucent属性，此时再push或pop到另一个childViewController时，更改导航栏的半透明效果可能会影响到页面的布局起始位置，从而发生视图发生跳动，出现“意外”的上下偏移.</p>
+<p>例如: 从一个设置了导航栏不透明的控制器A, pop回到一个原本设置了导航栏透明的控制器B时, B页面发生了下移.</p>
+<p>为避免该情况, 应该将控制器B的extendedLayoutIncludesOpaqueBars设置为YES; 或是当B页面viewWillAppear:时, 再度将导航栏设置为半透明效果.</p>
+<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><pre><code class="OC">self.navigationController.navigationBar.translucent = NO;
+self.extendedLayoutIncludesOpaqueBars = NO;
+self.edgesForExtendedLayout = UIRectEdgeNone;
+</code></pre>
+<ul>
+<li>NO + NO + UIRectEdgeNone, 从导航栏下开始计算</li>
+<li>NO + NO + UIRectEdgeAll, 从导航栏下开始计算</li>
+<li>NO + YES + UIRectEdgeNone, 从导航栏下开始计算</li>
+<li>NO + YES + UIRectEdgeAll, 从屏幕顶端开始计算, 导航栏不透明</li>
+<li>YES + NO + UIRectEdgeNone, 从导航栏下开始计算, 但是导航栏是透明色, 会显示底色(黑色)</li>
+<li>YES + NO + UIRectEdgeAll, 从屏幕顶端开始计算, 导航栏是透明色, 显示页面背景色</li>
+<li>YES + YES + UIRectEdgeNone, 从导航栏下开始计算, 导航栏是透明色, 会显示底色(黑色)</li>
+<li>YES + YES + UIRectEdgeAll, 从屏幕顶端开始计算, 导航栏是透明色, 显示页面背景色</li>
+</ul>
+<p>总结效果如下:</p>
+<ol>
+<li><code>navigationBar.translucent = NO</code>时, 导航栏不透明, <code>extendedLayoutIncludesOpaqueBars</code>属性生效, 当<code>extendedLayoutIncludesOpaqueBars = YES &amp;&amp; UIRectEdgeAll</code>时从屏幕下开始计算, 其他均是从导航栏下开始计算</li>
+<li><code>navigationBar.translucent = YES</code>时, <code>extendedLayoutIncludesOpaqueBars</code>属性不生效, 只有当<code>UIRectEdgeAll</code>时从屏幕顶端开始计算, 其他均从导航栏下开始计算.</li>
+</ol>
+<hr>
+<p>参考资料:<br>1.<a href="https://www.cnblogs.com/Zp3sss/p/9108613.html" target="_blank" rel="noopener">屏幕适配</a><br>2.<a href="https://skyline75489.github.io/post/2015-11-27_uinavigation_bar_frame_affect.html" target="_blank" rel="noopener">UINavigationBar 透明设置以及对 frame 的影响</a><br>3.<a href="https://youshaoduo.com/2017/12/13/26/" target="_blank" rel="noopener">影响导航控制器中页面布局的几个属性</a></p>
+
+    
+    <span class="asdf">
+      <style type="text/css">
+      asdf{margin-top:20}
+      </style>
+      </span>
+  </div>
+  
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/08/01/点击图标到启动都做了什么/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+  
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  
+</article>
+
+
+   
+
+</div>
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

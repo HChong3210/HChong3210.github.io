@@ -33,12 +33,15 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="本文将从下面几个方面来阐述iOS上面的UI绘制过程, 以及UI性能优化的技巧. 1 渲染过程中硬件相关这篇文章讲解的非常详细渲染过程中硬件, 下面就只大概讲解一下常用的概念. 1.1 CPU &amp;amp; GPU可视化应用程序都是由 CPU 和 GPU 协作执行的. CPU 内部采用的是流水线结构, 使其拥有一定程度的并行计算能力. GPU 是一种可进行绘图运算工作的专用微处理器, 是一个被高度优化">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-screen-scan.png">
+<meta property="og:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-renderIng-gpu-internal-structure.png">
+<meta property="og:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/ios-vsync-off.jpg">
 <meta property="og:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/ios-rendering-framework-relationship.png">
-<meta property="og:updated_time" content="2019-07-25T12:11:39.620Z">
+<meta property="og:updated_time" content="2019-08-12T09:08:00.944Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发UI-UI绘制原理">
 <meta name="twitter:description" content="本文将从下面几个方面来阐述iOS上面的UI绘制过程, 以及UI性能优化的技巧. 1 渲染过程中硬件相关这篇文章讲解的非常详细渲染过程中硬件, 下面就只大概讲解一下常用的概念. 1.1 CPU &amp;amp; GPU可视化应用程序都是由 CPU 和 GPU 协作执行的. CPU 内部采用的是流水线结构, 使其拥有一定程度的并行计算能力. GPU 是一种可进行绘图运算工作的专用微处理器, 是一个被高度优化">
-<meta name="twitter:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/ios-rendering-framework-relationship.png">
+<meta name="twitter:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-screen-scan.png">
 
   
 
@@ -267,9 +270,9 @@ ga('send', 'pageview');
 <li>GPU 将显存结果传回主存</li>
 </ol>
 <h1 id="2-屏幕显示图像原理"><a href="#2-屏幕显示图像原理" class="headerlink" title="2 屏幕显示图像原理"></a>2 屏幕显示图像原理</h1><h2 id="2-1-屏幕图像显示原理"><a href="#2-1-屏幕图像显示原理" class="headerlink" title="2.1 屏幕图像显示原理"></a>2.1 屏幕图像显示原理</h2><p>图像想显示到屏幕上使人肉眼可见都需借助像素的力量. 简单地说, 每个像素由红，绿，蓝三种颜色组成, 它们密集的排布在手机屏幕上, 将任何图形通过不同的色值表现出来. 计算机显示的流程大致可以描述为将图像转化为一系列像素点的排列然后打印在屏幕上.</p>
-<p>介绍屏幕图像显示的原理，需要先从 CRT 显示器原理说起，如下图所示。CRT 的电子枪从上到下逐行扫描，扫描完成后显示器就呈现一帧画面。然后电子枪回到初始位置进行下一次扫描。为了同步显示器的显示过程和系统的视频控制器，显示器会用硬件时钟产生一系列的定时信号。当电子枪换行进行扫描时，显示器会发出一个水平同步信号（horizonal synchronization），简称 HSync；而当一帧画面绘制完成后，电子枪回复到原位，准备画下一帧前，显示器会发出一个垂直同步信号（vertical synchronization），简称 VSync。显示器通常以固定频率进行刷新，这个刷新率就是 VSync 信号产生的频率。虽然现在的显示器基本都是液晶显示屏了，但其原理基本一致, 如下图所示:<br><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-screen-scan.png?x-oss-process=image/resize,w_400" target="_blank" rel="noopener">扫描图</a></p>
-<h2 id="2-2-CPU、GPU、显示器工作方式"><a href="#2-2-CPU、GPU、显示器工作方式" class="headerlink" title="2.2 CPU、GPU、显示器工作方式"></a>2.2 CPU、GPU、显示器工作方式</h2><p>CPU 计算好显示内容提交至 GPU，GPU 渲染完成后将渲染结果存入帧缓冲区，视频控制器会按照 VSync 信号逐帧读取帧缓冲区的数据，经过数据转换后最终由显示器进行显示. 下图所示为常见的 CPU、GPU、显示器工作方式:<br><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-renderIng-gpu-internal-structure.png?x-oss-process=image/resize,w_500" target="_blank" rel="noopener">协同工作图</a></p>
-<h2 id="2-3-帧缓冲-amp-垂直同步"><a href="#2-3-帧缓冲-amp-垂直同步" class="headerlink" title="2.3 帧缓冲 &amp; 垂直同步"></a>2.3 帧缓冲 &amp; 垂直同步</h2><p>最简单的情况下，帧缓冲区只有一个。此时，帧缓冲区的读取和刷新都都会有比较大的效率问题。为了解决效率问题，GPU 通常会引入两个缓冲区，即 双缓冲机制。在这种情况下，GPU 会预先渲染一帧放入一个缓冲区中，用于视频控制器的读取。当下一帧渲染完毕后，GPU 会直接把视频控制器的指针指向第二个缓冲器。<br>双缓冲虽然能解决效率问题，但会引入一个新的问题。当视频控制器还未读取完成时，即屏幕内容刚显示一半时，GPU 将新的一帧内容提交到帧缓冲区并把两个缓冲区进行交换后，视频控制器就会把新的一帧数据的下半段显示到屏幕上，造成画面撕裂现象，如下图：<br><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/ios-vsync-off.jpg?x-oss-process=image/resize,w_500" target="_blank" rel="noopener">画面撕裂</a><br>为了解决这个问题，GPU 通常有一个机制叫做垂直同步（简写也是 V-Sync），当开启垂直同步后，GPU 会等待显示器的 VSync 信号发出后，才进行新的一帧渲染和缓冲区更新。这样能解决画面撕裂现象，也增加了画面流畅度，但需要消费更多的计算资源，也会带来部分延迟。</p>
+<p>介绍屏幕图像显示的原理，需要先从 CRT 显示器原理说起，如下图所示。CRT 的电子枪从上到下逐行扫描，扫描完成后显示器就呈现一帧画面。然后电子枪回到初始位置进行下一次扫描。为了同步显示器的显示过程和系统的视频控制器，显示器会用硬件时钟产生一系列的定时信号。当电子枪换行进行扫描时，显示器会发出一个水平同步信号（horizonal synchronization），简称 HSync；而当一帧画面绘制完成后，电子枪回复到原位，准备画下一帧前，显示器会发出一个垂直同步信号（vertical synchronization），简称 VSync。显示器通常以固定频率进行刷新，这个刷新率就是 VSync 信号产生的频率。虽然现在的显示器基本都是液晶显示屏了，但其原理基本一致, 如下图所示:<br><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-screen-scan.png" alt="扫描图"></p>
+<h2 id="2-2-CPU、GPU、显示器工作方式"><a href="#2-2-CPU、GPU、显示器工作方式" class="headerlink" title="2.2 CPU、GPU、显示器工作方式"></a>2.2 CPU、GPU、显示器工作方式</h2><p>CPU 计算好显示内容提交至 GPU，GPU 渲染完成后将渲染结果存入帧缓冲区，视频控制器会按照 VSync 信号逐帧读取帧缓冲区的数据，经过数据转换后最终由显示器进行显示. 下图所示为常见的 CPU、GPU、显示器工作方式:<br><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/ios-renderIng-gpu-internal-structure.png" alt="协同工作图"></p>
+<h2 id="2-3-帧缓冲-amp-垂直同步"><a href="#2-3-帧缓冲-amp-垂直同步" class="headerlink" title="2.3 帧缓冲 &amp; 垂直同步"></a>2.3 帧缓冲 &amp; 垂直同步</h2><p>最简单的情况下，帧缓冲区只有一个。此时，帧缓冲区的读取和刷新都都会有比较大的效率问题。为了解决效率问题，GPU 通常会引入两个缓冲区，即 双缓冲机制。在这种情况下，GPU 会预先渲染一帧放入一个缓冲区中，用于视频控制器的读取。当下一帧渲染完毕后，GPU 会直接把视频控制器的指针指向第二个缓冲器。<br>双缓冲虽然能解决效率问题，但会引入一个新的问题。当视频控制器还未读取完成时，即屏幕内容刚显示一半时，GPU 将新的一帧内容提交到帧缓冲区并把两个缓冲区进行交换后，视频控制器就会把新的一帧数据的下半段显示到屏幕上，造成画面撕裂现象，如下图：<br><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/ios-vsync-off.jpg" alt="画面撕裂"><br>为了解决这个问题，GPU 通常有一个机制叫做垂直同步（简写也是 V-Sync），当开启垂直同步后，GPU 会等待显示器的 VSync 信号发出后，才进行新的一帧渲染和缓冲区更新。这样能解决画面撕裂现象，也增加了画面流畅度，但需要消费更多的计算资源，也会带来部分延迟。</p>
 <p>iOS 设备会始终使用双缓存，并开启垂直同步。而安卓设备直到 4.1 版本，Google 才开始引入这种机制，目前安卓系统是三缓存+垂直同步。</p>
 <h1 id="3-iOS图像渲染原理"><a href="#3-iOS图像渲染原理" class="headerlink" title="3 iOS图像渲染原理"></a>3 iOS图像渲染原理</h1><p>这里主要介绍 iOS 开发过程中图形渲染原理. 首先介绍几个概念.</p>
 <blockquote>
