@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指, App 点击启动前, 它的进程不在系统里, 需要系统新创建一个进程分配给它启动的情况. 这是一次完整的启动过程. 热启动是指, App 在冷启动后用户将 App 退后台, 在 App 的进程还在系统里的情况下, 用户重新启动进入 App 的过程, 这个过程做的事情非常少.   一般而言, App 的启动时间, 指的是从用户点击 Ap">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-23T11:35:28.668Z">
+<meta property="og:updated_time" content="2019-09-26T13:03:34.406Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="点击图标到启动都做了什么">
 <meta name="twitter:description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指, App 点击启动前, 它的进程不在系统里, 需要系统新创建一个进程分配给它启动的情况. 这是一次完整的启动过程. 热启动是指, App 在冷启动后用户将 App 退后台, 在 App 的进程还在系统里的情况下, 用户重新启动进入 App 的过程, 这个过程做的事情非常少.   一般而言, App 的启动时间, 指的是从用户点击 Ap">
@@ -184,7 +184,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-main-函数执行前"><span class="toc-text">1 main()函数执行前</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-Mach-O"><span class="toc-text">1.1 Mach-O</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-dyld"><span class="toc-text">1.2 dyld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3"><span class="toc-text">1.3</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-main-函数执行后"><span class="toc-text">2 main()函数执行后</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-首屏渲染完成后"><span class="toc-text">3 首屏渲染完成后</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-启动优化"><span class="toc-text">4 启动优化</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-main-函数执行前"><span class="toc-text">1 main()函数执行前</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-Mach-O"><span class="toc-text">1.1 Mach-O</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-dyld"><span class="toc-text">1.2 dyld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-dyld加载动态库"><span class="toc-text">1.3 dyld加载动态库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-main-函数执行后"><span class="toc-text">2 main()函数执行后</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-首屏渲染完成后"><span class="toc-text">3 首屏渲染完成后</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-启动优化"><span class="toc-text">4 启动优化</span></a></li></ol>
   </div>
 
 
@@ -245,18 +245,26 @@ ga('send', 'pageview');
 <li>真正的加载过程从exec()函数开始, exec()是一个系统调用. 操作系统首先会创建一个进程, 再为进程分配一段内存空间.</li>
 <li>把App对应的可执行文件（Mach-O格式）加载到内存空间.</li>
 <li>读取dyld路径, 加载动态链接库dyld到内存, 运行dyld动态连接器.</li>
-<li>dyld 加载程序所需的动态库</li>
+<li>dyld 加载程序所需的动态库(load dylibs image)</li>
 <li>dyld 对程序进行 rebase 以及 bind 操作</li>
 <li>Objc setup</li>
 <li>Initializers</li>
 </ol>
-<h2 id="1-1-Mach-O"><a href="#1-1-Mach-O" class="headerlink" title="1.1 Mach-O"></a>1.1 Mach-O</h2><p>Mach-O文件格式是 OS X 与 iOS 系统上的可执行文件格式, 类似于windows的 PE 文件. 我们编译产生的.o文件、程序可执行文件和各种库等都是Mach-O文件. Mach-O文件主要有3部分组成: </p>
+<h2 id="1-1-Mach-O"><a href="#1-1-Mach-O" class="headerlink" title="1.1 Mach-O"></a>1.1 Mach-O</h2><p>Mach-O文件格式是 OS X 与 iOS 系统上的可执行文件格式, 类似于windows的 PE格式, linux上的elf格式. 我们编译产生的.o文件、程序可执行文件和各种库等都是Mach-O文件. mach-o文件类型分为:</p>
+<ul>
+<li>Executable: 应用的主要二进制</li>
+<li>Dylib Library: 动态链接库(又称DSO或DLL), 例如.so文件. .so文件是linux的可执行文件, 可以用于多个进程的共享使用.</li>
+<li>Static Library: 静态链接库, 例如.a文件. .a文件实质上就是.o文件打了个包, 一般把它叫做静态库文件</li>
+<li>Bundle: 不能被链接的Dylib, 只能在运行时使用dlopen( )加载, 可当做macOS的插件</li>
+<li>Relocatable Object File: 可重定向文件类型, 例如.o文件. .o文件是源码编译出的二进制文件</li>
+</ul>
+<p>Mach-O文件主要有3部分组成: </p>
 <ul>
 <li>Header: 保存了一些基本信息，包括了该文件运行的平台、文件类型、LoadCommands的个数等等。Headers的主要作用就是帮助系统迅速的定位Mach-O文件的运行环境，文件类型。保存了一些dyld重要的加载参数</li>
 <li>LoadCommands: 可以理解为加载命令，在加载Mach-O文件时会使用这里的数据来确定内存的分布以及相关的加载命令。比如我们的main函数的加载地址，程序所需的dyld的文件路径，以及相关依赖库的文件路径。</li>
 <li>Data: 每一个segment的具体数据都保存在这里, 这里包含了具体的代码、数据等等.</li>
 </ul>
-<h2 id="1-2-dyld"><a href="#1-2-dyld" class="headerlink" title="1.2 dyld"></a>1.2 dyld</h2><p>dyld(the dynamic link editor) Apple 的动态链接器, 系统内核做好启动程序的初始准备后, 交给 dyld 负责. 对 dyld 作用顺序的概括如下: </p>
+<h2 id="1-2-dyld"><a href="#1-2-dyld" class="headerlink" title="1.2 dyld"></a>1.2 dyld</h2><p>dyld(the dynamic link editor) Apple的动态链接器, 系统内核做好启动程序的初始准备后, 交给 dyld 负责. 对 dyld 作用顺序的概括如下: </p>
 <ol>
 <li>从内核留下的原始调用栈引导和启动自己</li>
 <li>将程序依赖的动态链接库递归加载进内存，当然这里有缓存机制</li>
@@ -267,10 +275,11 @@ ga('send', 'pageview');
 <li>程序main函数 return 后执行 static terminator</li>
 <li>某些场景下 main 函数结束后调 libSystem 的 _exit 函数</li>
 </ol>
-<h2 id="1-3"><a href="#1-3" class="headerlink" title="1.3"></a>1.3</h2><h1 id="2-main-函数执行后"><a href="#2-main-函数执行后" class="headerlink" title="2 main()函数执行后"></a>2 main()函数执行后</h1><p>main()函数之后指的是从main()开始，到appDelegate的<code>didFinishLaunchingWithOptions</code>方法执行完毕.</p>
+<h2 id="1-3-dyld加载动态库"><a href="#1-3-dyld加载动态库" class="headerlink" title="1.3 dyld加载动态库"></a>1.3 dyld加载动态库</h2><p>dyld会首先读取mach-o文件的 Header 和 load commands, 就知道了这个可执行文件依赖的动态库.</p>
+<h1 id="2-main-函数执行后"><a href="#2-main-函数执行后" class="headerlink" title="2 main()函数执行后"></a>2 main()函数执行后</h1><p>main()函数之后指的是从main()开始，到appDelegate的<code>didFinishLaunchingWithOptions</code>方法执行完毕.</p>
 <h1 id="3-首屏渲染完成后"><a href="#3-首屏渲染完成后" class="headerlink" title="3 首屏渲染完成后"></a>3 首屏渲染完成后</h1><p>此处就是APP启动后的业务逻辑, 有可能有定位, 网络请求, I/O操作, 性能监控, 基础配置, 自定义配置, 统计上报等功能.</p>
 <h1 id="4-启动优化"><a href="#4-启动优化" class="headerlink" title="4 启动优化"></a>4 启动优化</h1><hr>
-<p>参考资料:<br>1.<a href="https://blog.sunnyxx.com/2014/08/30/objc-pre-main/" target="_blank" rel="noopener">iOS 程序 main 函数之前发生了什么</a></p>
+<p>参考资料:<br>1.<a href="https://blog.sunnyxx.com/2014/08/30/objc-pre-main/" target="_blank" rel="noopener">iOS 程序 main 函数之前发生了什么</a><br>2.<a href="https://juejin.im/post/5a687e2cf265da3e4f0a579b" target="_blank" rel="noopener">iOS开发 APP启动main()调用之前的加载过程</a><br>3.<a href="http://www.narutoyq.cc/ios-launch/" target="_blank" rel="noopener">iOS App 启动流程</a><br>4.<a href="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time/" target="_blank" rel="noopener">优化 App 的启动时间</a><br>5.<a href="https://techblog.toutiao.com/2017/07/05/session413/" target="_blank" rel="noopener">App 启动时间：过去，现在和未来</a><br>6.<a href="https://www.jianshu.com/p/bf9684a2a35f" target="_blank" rel="noopener">深入理解iOS App的启动过程</a><br>7.<a href="https://tech.meituan.com/2018/12/06/waimai-ios-optimizing-startup.html" target="_blank" rel="noopener">美团外卖iOS App冷启动治理</a><br>8.<a href="https://www.jianshu.com/p/229dd6190b95" target="_blank" rel="noopener">iOS-APP的启动流程和生命周期</a><br>9.<a href="https://juejin.im/post/5a687e2cf265da3e4f0a579b" target="_blank" rel="noopener">iOS 程序启动流程解密</a><br>10.<a href="https://blog.csdn.net/hello_hwc/article/details/78317863" target="_blank" rel="noopener">深入理解iOS App的启动过程</a><br>11.<a href="https://www.jianshu.com/p/71c75c287d26" target="_blank" rel="noopener">从Mach-O到iOS Library</a><br>12.<a href="https://www.jianshu.com/p/229dd6190b95" target="_blank" rel="noopener">iOS-APP的启动流程和生命周期</a><br>13.<a href="https://segmentfault.com/a/1190000007769327" target="_blank" rel="noopener">dyld 加载 Mach-O</a></p>
 
     
     <span class="asdf">
