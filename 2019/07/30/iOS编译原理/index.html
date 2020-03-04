@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="1 编译器把一种编程语言(原始语言)转换为另一种编程语言(目标语言)的程序叫做编译器. 大多数编译器由两部分组成: 前端和后端.  前端负责词法分析，语法分析，生成中间代码； 后端以中间代码作为输入，进行行架构无关的代码优化，接着针对不同架构生成不同的机器码。  前后端依赖统一格式的中间代码(IR), 使得前后端可以独">
+  <meta name="description" content="1 编译器把一种编程语言(原始语言)转换为另一种编程语言(目标语言)的程序叫做编译器. 大多数编译器由两部分组成: 前端和后端.  前端负责词法分析，语法分析，生成中间代码； 后端以中间代码作为输入，进行行架构无关的代码优化，接着针对不同架构生成不同的机器码。  前后端依赖统一格式的中间代码(IR), 使得前后端可以独立的变化. 新增一门语言只需要修改前端, 而新增一个CPU架构只需要修改后端即可">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS编译原理">
@@ -104,7 +104,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -256,8 +256,7 @@ int &#39;int&#39;        Loc=&lt;main.m:14:10&gt;
 identifier &#39;argc&#39;     [LeadingSpace]    Loc=&lt;main.m:14:14&gt;
 comma &#39;,&#39;        Loc=&lt;main.m:14:18&gt;
 char &#39;char&#39;     [LeadingSpace]    Loc=&lt;main.m:14:20&gt;
-star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;
-</code></pre>
+star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;</code></pre>
 <h3 id="1-2-3-语法分析-semantic-analysis"><a href="#1-2-3-语法分析-semantic-analysis" class="headerlink" title="1.2.3 语法分析(semantic analysis)"></a>1.2.3 语法分析(semantic analysis)</h3><p>词法分析的Token流会被解析成一颗抽象语法树(abstract syntax tree - AST). 在这里面每一节点也都标记了其在源码中的位置.</p>
 <p>有了抽象语法树，clang就可以对这个树进行分析，找出代码中的错误。比如类型不匹配，亦或Objective C中向target发送了一个未实现的消息.</p>
 <p>AST是开发者编写clang插件主要交互的数据结构，clang也提供很多API去读取AST.<a href="https://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="noopener">Introduction to the Clang AST</a></p>
@@ -267,11 +266,15 @@ star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;
 <li><p>当在代码中使用 ARC 时，编译器在编译期间，会做许多的类型检查. 最常见的是检查程序是否发送正确的消息给正确的对象，是否在正确的值上调用了正常函数。如果你给一个单纯的 NSObject* 对象发送了一个 hello 消息，那么 clang 就会报错，同样，给属性设置一个与其自身类型不相符的对象，编译器会给出一个可能使用不正确的警告.</p>
 <blockquote>
 <p>一般会把类型分为两类：动态的和静态的。动态的在运行时做检查，静态的在编译时做检查。以往，编写代码时可以向任意对象发送任何消息，在运行时，才会检查对象是否能够响应这些消息。由于只是在运行时做此类检查，所以叫做动态类型。</p>
+</blockquote>
+<blockquote>
 <p>至于静态类型，是在编译时做检查。当在代码中使用 ARC 时，编译器在编译期间，会做许多的类型检查：因为编译器需要知道哪个对象该如何使用。</p>
 </blockquote>
 </li>
-<li>检查是否有定义了，但是从未使用过的变量</li>
-<li>检查在 你的初始化方法中中调用 self 之前, 是否已经调用 [self initWith…] 或 [super init] 了</li>
+<li><p>检查是否有定义了，但是从未使用过的变量</p>
+</li>
+<li><p>检查在 你的初始化方法中中调用 self 之前, 是否已经调用 [self initWith…] 或 [super init] 了</p>
+</li>
 </ul>
 <p>此处遍历语法树，最终生成LLVM IR代码。<em>LLVM IR是前端的输出，后端的输入. Objective C代码在这一步会进行runtime的桥接：property合成，ARC处理等</em></p>
 <p>LLVM 会去做些优化工作, 在 Xcode 的编译设置里也可以设置优化级别-01，-03，-0s，还可以写些自己的 Pass. </p>
@@ -319,13 +322,12 @@ star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;
 <p>Objective C的方法要到运行时才会报错，因为Objective C是一门动态语言，编译器无法确定对应的方法名(SEL)在运行时到底有没有实现(IMP).</p>
 <p>日常开发中，两种常见的头文件引入方式:</p>
 <pre><code class="OC">#include &quot;CustomClass.h&quot; //自定义
-#include &lt;Foundation/Foundation.h&gt; //系统或者内部framework
-</code></pre>
+#include &lt;Foundation/Foundation.h&gt; //系统或者内部framework</code></pre>
 <p>这里有个文件类型叫做heademap, headermap是帮助编译器找到头文件的辅助文件: 存储这头文件到其物理路径的映射关系.</p>
 <ul>
 <li>clang发现#import “TestView.h”的时候, 先在headermap(Demo-generated-files.hmap,Demo-project-headers.hmap)里查找, 如果headermap文件找不到，接着在own target的framework里找</li>
 <li>系统的头文件查找的时候也是优先headermap，headermap查找不到会查找own target framework，最后查找SDK目录</li>
-<li>以#import <foundation foundation.h="">为例，在SDK目录查找时首先查找framework是否存在, 如果framework存在，再在headers目录里查找头文件是否存在</foundation></li>
+<li>以#import &lt;Foundation/Foundation.h&gt;为例，在SDK目录查找时首先查找framework是否存在, 如果framework存在，再在headers目录里查找头文件是否存在</li>
 </ul>
 <p><a href="">#import””与#import&lt;&gt;的区别</a></p>
 <h1 id="5-Clang-Module"><a href="#5-Clang-Module" class="headerlink" title="5 Clang Module"></a>5 Clang Module</h1><p>传统的#include/#import都是文本语义: 预处理器在处理的时候会把这一行替换成对应头文件的文本, 这样就导致:</p>
@@ -355,7 +357,7 @@ star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;
 <li>静态库(.a)，由ar命令打包的一组.o文件，链接的时候会把具体的代码拷贝到最后的mach-o</li>
 <li>tbd，只包含符号的库文件</li>
 </ul>
-<p>以打印<code>hello world</code>为例, 在.o文件中字符串”hello world\n”作为一个符号(l<em>.str)被引用，汇编代码读取的时候按照l</em>.str所在的页加上偏移量的方式读取，然后调用printf符号。到这一步，CPU还不知道怎么执行，因为还有两个问题没解决:</p>
+<p>以打印<code>hello world</code>为例, 在.o文件中字符串”hello world\n”作为一个符号(l_.str)被引用，汇编代码读取的时候按照l_.str所在的页加上偏移量的方式读取，然后调用printf符号。到这一步，CPU还不知道怎么执行，因为还有两个问题没解决:</p>
 <ul>
 <li>l_.str在可执行文件的哪个位置？</li>
 <li>printf函数来自哪里</li>

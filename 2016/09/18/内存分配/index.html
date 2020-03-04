@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="iOS开发的内存分配计算机系统中, 应用程序的数据都保存在内存中, 不同类型的数据, 保存的区域不同. RAM ROM RAM: 运行内存, 不能掉电存储.ROM: 存储型内存, 可以掉电存储, 例如内存卡, FLash.    由于RAM类型不具备掉电存储的能力, 所以App程序一般存放在RMO中. RAM的访问速度">
+  <meta name="description" content="iOS开发的内存分配计算机系统中, 应用程序的数据都保存在内存中, 不同类型的数据, 保存的区域不同. RAM ROM RAM: 运行内存, 不能掉电存储.ROM: 存储型内存, 可以掉电存储, 例如内存卡, FLash.    由于RAM类型不具备掉电存储的能力, 所以App程序一般存放在RMO中. RAM的访问速度和价格都高于ROM.  App程序启动 App程序启动, 系统会把开启的那个Ap">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内存分配">
@@ -104,7 +104,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -261,8 +261,7 @@ ga('send', 'pageview');
 </ul>
 <h3 id="全局区-static"><a href="#全局区-static" class="headerlink" title="全局区(static)"></a>全局区(static)</h3><p>全局区也叫作静态区. 全局变量和静态变量在内存中是放在一起的, 初始化的全局变量和静态变量放在一块区域, 未初始化的全局变量和静态变量放在相邻的另一块区域. 程序结束后由系统释放</p>
 <pre><code>int a;//未初始化的
-int b = 10;//初始化的
-</code></pre><h3 id="常量区"><a href="#常量区" class="headerlink" title="常量区"></a>常量区</h3><p>常量字符串就存放在这里, 程序结束后由系统自己释放.</p>
+int b = 10;//初始化的</code></pre><h3 id="常量区"><a href="#常量区" class="headerlink" title="常量区"></a>常量区</h3><p>常量字符串就存放在这里, 程序结束后由系统自己释放.</p>
 <h3 id="代码区"><a href="#代码区" class="headerlink" title="代码区"></a>代码区</h3><p>代码区也叫作函数区, 存放函数的二进制代码, App的代码. 程序结束后由系统释放</p>
 <h2 id="内存申请后的系统响应"><a href="#内存申请后的系统响应" class="headerlink" title="内存申请后的系统响应"></a>内存申请后的系统响应</h2><p>1.栈: 存储的函数在执行的时候都会向操作系统索要资源, 栈区就是函数运行时的内训, 栈区中的变量由编译器负责释放和分配, 内存随着函数的运行和结束而分配和释放, 由系统完成. 只要剩余的栈空间大于申请空间, 系统将会为程序提供内存, 否则将报异常提示栈溢出.<br>2.堆: 操作系统有一个记录空闲地址的链表, 当系统收到程序申请时, 会遍历该链表, 寻找第一个空间大于所申请空间的堆节点, 然后将该节点从空闲节点链表中删除, 并将该节点的空间分配给程序. 由于找到的堆节点大小不一定正合适, 系统会将多余的那部分重新放入空闲链表.</p>
 <h2 id="申请内存后系统的响应"><a href="#申请内存后系统的响应" class="headerlink" title="申请内存后系统的响应"></a>申请内存后系统的响应</h2><ol>

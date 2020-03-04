@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="本文主要讲解cocoapods的相关知识, 关于cocoapods的实践, 可以参考这里. 1 源码分析pod的使用主要在 pod install 和 pod update, 我们可以在cocoapods的1.7.5版本中查看入口的源码. def install!   prepare   resolve_depende">
+  <meta name="description" content="本文主要讲解cocoapods的相关知识, 关于cocoapods的实践, 可以参考这里. 1 源码分析pod的使用主要在 pod install 和 pod update, 我们可以在cocoapods的1.7.5版本中查看入口的源码. def install!   prepare   resolve_dependencies   download_dependencies   validate">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发工程化-cocoapods详解">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -184,7 +184,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-源码分析"><span class="toc-text">1 源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-准备阶段"><span class="toc-text">1.1 准备阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-查找依赖库"><span class="toc-text">1.2 查找依赖库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-下载依赖文件"><span class="toc-text">1.3 下载依赖文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-检验target"><span class="toc-text">1.4 检验target</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-生成Pods工程"><span class="toc-text">1.5 生成Pods工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-整合project文件"><span class="toc-text">1.6 整合project文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7-执行安装后操作"><span class="toc-text">1.7 执行安装后操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8-总结"><span class="toc-text">1.8 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-实践-amp-私有Pod"><span class="toc-text">2 实践 & 私有Pod</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-二进制方案"><span class="toc-text">3 二进制方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-常见问题"><span class="toc-text">4 常见问题</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-源码分析"><span class="toc-text">1 源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-准备阶段"><span class="toc-text">1.1 准备阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-查找依赖库"><span class="toc-text">1.2 查找依赖库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-下载依赖文件"><span class="toc-text">1.3 下载依赖文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-检验target"><span class="toc-text">1.4 检验target</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-生成Pods工程"><span class="toc-text">1.5 生成Pods工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-整合project文件"><span class="toc-text">1.6 整合project文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7-执行安装后操作"><span class="toc-text">1.7 执行安装后操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8-总结"><span class="toc-text">1.8 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-实践-amp-私有Pod"><span class="toc-text">2 实践 &amp; 私有Pod</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-二进制方案"><span class="toc-text">3 二进制方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-常见问题"><span class="toc-text">4 常见问题</span></a></li></ol>
   </div>
 
 
@@ -243,8 +243,7 @@ ga('send', 'pageview');
     UI.section &#39;Skipping User Project Integration&#39;
   end
   perform_post_install_actions
-end
-</code></pre>
+end</code></pre>
 <p>分析源码可以发现, install的执行分为如下几个步骤: <em>准备阶段, 查找依赖库, 下载依赖文件, 检验target, 生成pod工程, 整合project文件, 执行安装后操作</em>, 下面会逐步讲解一下.</p>
 <h2 id="1-1-准备阶段"><a href="#1-1-准备阶段" class="headerlink" title="1.1 准备阶段"></a>1.1 准备阶段</h2><pre><code class="ruby">def prepare
   # Raise if pwd is inside Pods
@@ -259,8 +258,7 @@ end
     ensure_plugins_are_installed!
     run_plugins_pre_install_hooks
   end
-end
-</code></pre>
+end</code></pre>
 <p>我们可以看到, 准备阶段(prepare)主要做了以下事情:</p>
 <ul>
 <li>检查podfile.lock的写入的cocoapods版本和当前cocoapods版本是否一致，如果不一致将会重塑工程，将除了Podfile、Podfile.lock、Workspace以外的其他关联和依赖全部重置</li>
@@ -288,8 +286,7 @@ end
   end if deployment?
 
   analyzer
-end
-</code></pre>
+end</code></pre>
 <p>我们可以看到, 查找依赖库(resolve_dependencies)主要做了以下事情:</p>
 <ul>
 <li>遍历注册的所有插件，其中通过HooksManager.register方法注册name为:source_provider的插件</li>
@@ -305,8 +302,7 @@ end
     run_podfile_pre_install_hooks
     clean_pod_sources
   end
-end
-</code></pre>
+end</code></pre>
 <p>我们可以看到, 下载依赖文件(download_dependencies)主要做了以下事情:</p>
 <ul>
 <li>下载安装Pods依赖库源文件</li>
@@ -316,8 +312,7 @@ end
 <h2 id="1-4-检验target"><a href="#1-4-检验target" class="headerlink" title="1.4 检验target"></a>1.4 检验target</h2><pre><code class="ruby">def validate_targets
   validator = Xcode::TargetValidator.new(aggregate_targets, pod_targets)
   validator.validate!
-end
-</code></pre>
+end</code></pre>
 <p>检验target(validate_targets), 主要做了以下事情:</p>
 <ul>
 <li>检测是否有多重引用 framework 或者 library 的情况(Framework的名字是否冲突, 如果冲突会抛出<code>frameworks with conflicting names</code>异常)</li>
@@ -340,8 +335,7 @@ end
 
   update_project_cache(cache_analysis_result, target_installation_results)
   write_lockfiles
-end
-</code></pre>
+end</code></pre>
 <p>生成Pods工程(generate_pods_project), 主要做了:</p>
 <ul>
 <li>调用Podfile中post_install钩子方法</li>
@@ -355,8 +349,7 @@ end
                                            :use_input_output_paths =&gt; !installation_options.disable_input_output_paths?)
     integrator.integrate!
   end
-end
-</code></pre>
+end</code></pre>
 <p>整合project文件(integrate_user_project), 主要做了:</p>
 <ul>
 <li>创建.xcworkspace文件</li>
@@ -369,8 +362,7 @@ end
   warn_for_deprecations
   warn_for_installed_script_phases
   print_post_install_message
-end
-</code></pre>
+end</code></pre>
 <p>执行安装后操作(perform_post_install_actions), 主要做了以下操作:</p>
 <ul>
 <li>unLock Pods库下的文件</li>

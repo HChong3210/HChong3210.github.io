@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="这里主要是一些计算机的基础知识部分, 在平常业务中不怎么用, 但是对深入了解计算机原理有很大帮助. HTTP请求中的GET和POSTGET和POST是网络请求到的两种基本方式.GET把参数包含在URL中, POST通过request body传递参数.GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的">
+  <meta name="description" content="这里主要是一些计算机的基础知识部分, 在平常业务中不怎么用, 但是对深入了解计算机原理有很大帮助. HTTP请求中的GET和POSTGET和POST是网络请求到的两种基本方式.GET把参数包含在URL中, POST通过request body传递参数.GET在浏览器回退时是无害, 而POST会再次提交请求.GET产生的URL地址可以保存为书签, 而POST不可以.GET请求会被浏览器主动cache">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-网络编程">
@@ -106,7 +106,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -316,7 +316,7 @@ ga('send', 'pageview');
 <li>网关的IP地址</li>
 <li>DNS的IP地址</li>
 </ul>
-<p>我们在浏览器里面输入了一个网址www.google.com, 这意味着浏览器要向Google发送一个网页请求的数据包. </p>
+<p>我们在浏览器里面输入了一个网址<a href="http://www.google.com" target="_blank" rel="noopener">www.google.com</a>, 这意味着浏览器要向Google发送一个网页请求的数据包. </p>
 <ol>
 <li>我们知道了网址但是不知道IP地址, 那么我们就需要DNS协议帮助我们将网址转换为IP地址. 于是我们想DNS服务器(DNS的IP地址, 端口是53)发送一个DNS数据包, DNS服务器告诉我们Google的IP地址, 于是我们知道了Google的IP地址.</li>
 <li>接下来, 我们要判断Google的IP地址是不是和本机的IP地址在同一个子网络里面, 这里我们要用到子网掩码. 我们通过子网掩码分别对本机IP地址和Google的IP地址做&amp;运算, 如果结果不同就表示不在同一个自网络. 很显然我们和Google的IP地址不在同一个自网络. 因此, 我们要向Google发送数据包, 必须通过网关转发. 也就是说, 接收方的MAC地址将是网关的MAC地址.</li>

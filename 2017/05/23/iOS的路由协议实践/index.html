@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="模块化,路由," />
+    <meta name="keywords" content="模块化,路由,">
   
 
-  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得">
+  <meta name="description" content="iOS的路由协议实践路由协议, 是组件化的核心所在. 组件化, 实际就会把代码拆分为一个一个的模块, 无论采用Pod的方式,  文件夹分割的方式, 还是静态库的方式, 实质都是把代码分为一个个的模块. 如何在模块之间和应用之间通信, 就是路由协议需要考虑的问题. 关于路由协议, 冰霜的这篇博客写的实在是太详细了, 看得是男默女泪, 简直是业界良心. 简单说来, 路由协议跳转主要解决这几类问题:">
 <meta name="keywords" content="模块化,路由">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS的路由协议实践">
@@ -105,7 +105,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -268,8 +268,7 @@ ga('send', 'pageview');
    } else {
        NSLog(@&quot;没有安装&quot;);
    }
-}
-</code></pre><p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
+}</code></pre><p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
 <p>至此, 就可以正常跳转了, 如果我们不希望某个APP通过URL Scheme的方式打开我们的应用, 我们可以在<code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</code>方法中判断指定的Scheme然后返回<code>NO</code>, 如下所示, 只有<code>com.tencent.weixin</code>的Scheme才能打开我们的APP. </p>
 <pre><code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     NSLog(@&quot;sourceApplication: %@&quot;, sourceApplication);
@@ -395,8 +394,7 @@ ga('send', 'pageview');
      }
      free(classes);
      self.cache = [tmpCache copy];
-}
-</code></pre></li>
+}</code></pre></li>
 <li><p>主要是通过传入的moduleName或者URl来获取到被打开页面的唯一标识, 再通过唯一标识从单例中缓存的遵守跳转协议的类中去找. 如果找到的话, <code>performSelector:withObject:withObject:</code>方法的返回值是响应的方法的返回值, 通过该函数获取到被跳转的类的实例. </p>
 <pre><code> HCModuleCore.m
 
@@ -430,8 +428,7 @@ ga('send', 'pageview');
          }
      }
      return module;
- }
-</code></pre></li>
+ }</code></pre></li>
 <li><p>然后有两个category, 分别是<code>UINavigationController+HCModuleCore</code>和<code>UIViewController+HCModuleCore</code>. 分别对应push和present的情况. 因为上面已经拿到了要跳转到的页面的实例, 这里就可以通过push或者present的方法跳转过去.   </p>
 </li>
 </ol>

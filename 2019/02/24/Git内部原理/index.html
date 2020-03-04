@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="git基本原理常见的git工作流如下, 来分解下看常见的工作流背后的逻辑.  git hash-object -w ${要保存的文件} =&amp;gt; 生成要保存的文件(Git对象)的HASH值 git update-index --add --cacheinfo 100644 ${Git对象的HASH值} ${要">
+  <meta name="description" content="git基本原理常见的git工作流如下, 来分解下看常见的工作流背后的逻辑.  git hash-object -w ${要保存的文件} =&amp;gt; 生成要保存的文件(Git对象)的HASH值 git update-index --add --cacheinfo 100644 ${Git对象的HASH值} ${要保存的文件} =&amp;gt; 向暂存区保存文件 git write-tree =&amp;gt; 生">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git内部原理">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -258,15 +258,24 @@ ga('send', 'pageview');
 <h2 id="branch"><a href="#branch" class="headerlink" title="branch"></a>branch</h2><p>分支（branch）就是指向某个快照的指针, 分支名就是指针名, 但是HASH值不便于记忆, 所以我们概念中的branch就是分支名的别名. 分支还会自动更新, 如果当前分支有新的快照, 指针就会自动指向它. 比如, master 分支就是有一个叫做 master 指针, 它指向的快照就是 master 分支的当前快照.<br>Git 有一个特殊指针HEAD, 总是指向当前分支的最近一次快照. 另外, Git 还提供简写方式, <code>HEAD^</code>指向 HEAD的前一个快照(父节点). <code>HEAD~6</code>则是HEAD之前的第6个快照.<br>每一个分支指针都是一个文本文件, 保存在.git/refs/heads/目录, 该文件的内容就是它所指向的快照的二进制对象名(哈希值).</p>
 <h2 id="tag"><a href="#tag" class="headerlink" title="tag"></a>tag</h2><p><strong>Tag对象</strong>是一种对象, Tag 对象指向一个 commit 而不是一个 tree. 它就像是一个分支引用, 但是不会变化——永远指向同一个 commit, 仅仅是提供一个更加友好的名字.</p>
 <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><ol>
-<li><code>git add -all(git add .)</code>相当于对目录下的所有文件遍历并且做了上面的操作.</li>
-<li><code>git cat-file -p ${Git对象的HASH值}</code>用来查看二进制文件的原始内容.</li>
-<li>每次生成Git对象, 实际是对有变动的文件做的全量的快照(当前的目录结构, 以及每个文件对应的二进制对象).</li>
-<li>通过<code>git config user.name ${用户名}</code>, <code>git config user.email ${Email 地址}</code>来设置是谁提交的记录.</li>
-<li><code>git log --stat ${Git对象的HASH值}</code>, 也可以查看快照在当前分支上的变动信息.</li>
-<li><code>git checkout ${Git对象的HASH值}</code>, 用于切换到某个快照.</li>
-<li><code>git show ${Git对象的HASH值}</code>, 用于展示某个快照的所有代码变动.</li>
-<li><code>git commit-tree ${目录结构Git对象的HASH} -p ${基于本次结构Git对象的HASH值}</code>. -p参数用来指定父节点, 也就是本次快照所基于的快照.</li>
-<li>100  644, 表明这是一个普通文件. 其他可用的模式有：100 755 表示可执行文件, 120 000 表示符号链接. 文件模式是从常规的 UNIX 文件模式中参考来的.</li>
+<li><p><code>git add -all(git add .)</code>相当于对目录下的所有文件遍历并且做了上面的操作.</p>
+</li>
+<li><p><code>git cat-file -p ${Git对象的HASH值}</code>用来查看二进制文件的原始内容.</p>
+</li>
+<li><p>每次生成Git对象, 实际是对有变动的文件做的全量的快照(当前的目录结构, 以及每个文件对应的二进制对象).</p>
+</li>
+<li><p>通过<code>git config user.name ${用户名}</code>, <code>git config user.email ${Email 地址}</code>来设置是谁提交的记录.</p>
+</li>
+<li><p><code>git log --stat ${Git对象的HASH值}</code>, 也可以查看快照在当前分支上的变动信息.</p>
+</li>
+<li><p><code>git checkout ${Git对象的HASH值}</code>, 用于切换到某个快照.</p>
+</li>
+<li><p><code>git show ${Git对象的HASH值}</code>, 用于展示某个快照的所有代码变动.</p>
+</li>
+<li><p><code>git commit-tree ${目录结构Git对象的HASH} -p ${基于本次结构Git对象的HASH值}</code>. -p参数用来指定父节点, 也就是本次快照所基于的快照.</p>
+</li>
+<li><p>100  644, 表明这是一个普通文件. 其他可用的模式有：100 755 表示可执行文件, 120 000 表示符号链接. 文件模式是从常规的 UNIX 文件模式中参考来的.</p>
+</li>
 <li><p>Git的对象存储大致如下, 是通过Ruby脚本来实现的</p>
 <pre><code>content = &quot;what is up, doc?&quot;
 header = &quot;blob(数据对象) #{content.length}\0&quot;
@@ -274,8 +283,7 @@ header = &quot;blob(数据对象) #{content.length}\0&quot;
 store = header + content
 sha1 = Digest::SHA1.hexdigest(store)
 zlib_content = Zlib::Deflate.deflate(store)
-将zlib_content写入磁盘, 命名为sha1
-</code></pre></li>
+将zlib_content写入磁盘, 命名为sha1</code></pre></li>
 </ol>
 <hr>
 <p>参考资料:</p>

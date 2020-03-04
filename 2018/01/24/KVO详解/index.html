@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识,Runtime," />
+    <meta name="keywords" content="基础知识,Runtime,">
   
 
-  <meta name="description" content="KVO用法与自定义实现KVO用法KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者: - (void)addO">
+  <meta name="description" content="KVO用法与自定义实现KVO用法KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知. KVO的用法在这里不做叙述, 十分简单. 首先注册, 添加一个观察者: - (void)addObserver:(NSObject *)observer          fo">
 <meta name="keywords" content="基础知识,Runtime">
 <meta property="og:type" content="article">
 <meta property="og:title" content="KVO用法与自定义实现">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -233,34 +233,48 @@ ga('send', 'pageview');
 <pre><code>- (void)addObserver:(NSObject *)observer
          forKeyPath:(NSString *)keyPath
             options:(NSKeyValueObservingOptions)options
-            context:(void *)context
-</code></pre><blockquote>
+            context:(void *)context</code></pre><blockquote>
 <ul>
-<li><p>observer: 观察者，负责处理监听事件的对象, 注册 KVO 通知的对象。观察者必须实现 key-value observing 方法 observeValueForKeyPath:ofObject:change:context:</p>
-</li>
-<li><p>keyPath: 要监听的属性, 观察者的属性的 keypath，相对于接受者，值不能是 nil。</p>
-</li>
-<li><p>options: 观察的选项(观察新、旧值，也可以都观察), NSKeyValueObservingOptions 的组合，它指定了观察通知中包含了什么，可以查看 “NSKeyValueObservingOptions”。</p>
-</li>
-<li><p>context: 上下文，用于传递数据，可以利用上下文区分不同的监听, 在 observeValueForKeyPath:ofObject:change:context: 传给 observer 参数的随机数据</p>
-</li>
+<li>observer: 观察者，负责处理监听事件的对象, 注册 KVO 通知的对象。观察者必须实现 key-value observing 方法 observeValueForKeyPath:ofObject:change:context:</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>keyPath: 要监听的属性, 观察者的属性的 keypath，相对于接受者，值不能是 nil。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>options: 观察的选项(观察新、旧值，也可以都观察), NSKeyValueObservingOptions 的组合，它指定了观察通知中包含了什么，可以查看 “NSKeyValueObservingOptions”。</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>context: 上下文，用于传递数据，可以利用上下文区分不同的监听, 在 observeValueForKeyPath:ofObject:change:context: 传给 observer 参数的随机数据</li>
 </ul>
 </blockquote>
 <p>当 keyPath 的值改变的时候这个方法会被调用:</p>
 <pre><code>- (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
-                       context:(void *)context
-</code></pre><blockquote>
+                       context:(void *)context</code></pre><blockquote>
 <ul>
-<li><p>keyPath 监听的属性名</p>
-</li>
-<li><p>object  属性所属的对象</p>
-</li>
-<li><p>change  属性的修改情况（属性原来的值<code>oldValue</code>、属性最新的值<code>newValue</code>）</p>
-</li>
-<li><p>context 传递的上下文数据，与监听的时候传递的一致，可以利用上下文区分不同的监听</p>
-</li>
+<li>keyPath 监听的属性名</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>object  属性所属的对象</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>change  属性的修改情况（属性原来的值<code>oldValue</code>、属性最新的值<code>newValue</code>）</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>context 传递的上下文数据，与监听的时候传递的一致，可以利用上下文区分不同的监听</li>
 </ul>
 </blockquote>
 <p>当一个观察者完成了监听一个对象的改变, 经常在 <code>-observeValueForKeyPath:ofObject:change:context:</code>，或者 <code>-dealloc</code> 中调用注销监听的方法:</p>
@@ -270,14 +284,19 @@ ga('send', 'pageview');
 <p>这里有几个特殊的方法需要着重说明一下, </p>
 <pre><code>- (void)willChangeValueForKey:(NSString *)key;
 - (void)didChangeValueForKey:(NSString *)key;
-+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key;
-</code></pre><p><code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>默认是在setter方法中实现的, 用KVO做键值观察后, 系统会在运行时重写属性的set方法, 并且在赋值前后分别调用.</p>
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key;</code></pre><p><code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>默认是在setter方法中实现的, 用KVO做键值观察后, 系统会在运行时重写属性的set方法, 并且在赋值前后分别调用.</p>
 <p><code>automaticallyNotifiesObserversForKey:</code>控制是否自动发送通知, 如果返回NO, KVO无法自动运作, 需手动触发.</p>
 <h2 id="KVO的原理"><a href="#KVO的原理" class="headerlink" title="KVO的原理"></a>KVO的原理</h2><p>KVO 的实现也依赖于 Objective-C 强大的 Runtime. Apple 的文档有简单提到过 KVO 的实现: </p>
 <blockquote>
 <p>Automatic key-value observing is implemented using a technique called isa-swizzling.</p>
+</blockquote>
+<blockquote>
 <p>The isa pointer, as the name suggests, points to the object’s class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.</p>
+</blockquote>
+<blockquote>
 <p>When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.</p>
+</blockquote>
+<blockquote>
 <p>You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.</p>
 </blockquote>
 <p>概述下KVO的实现就是: </p>
@@ -294,8 +313,7 @@ if (![className hasPrefix:kHCKVOClassPrefix]) {
     class = [self makeKvoClassWithOriginalClassName:className];
     //为观测的对象设置一个指定的类
     object_setClass(self, class);
-}
-</code></pre></li>
+}</code></pre></li>
 <li><p>为新的子类添加set方法</p>
 <pre><code> //2.为新的子类添加set方法
 //2.1得到Setter方法
@@ -310,19 +328,16 @@ if (!setterMethod) {
 if (![self hasSelector:setterSelector]) {
     const char *types = method_getTypeEncoding(setterMethod);
     class_addMethod(class, setterSelector, (IMP)kvo_setter, types);
-}
-</code></pre></li>
+}</code></pre></li>
 <li><p>改变isa指针, 指向新的子类</p>
 <pre><code>//3改变isa指针，指向子类
-object_setClass(self, class);
-</code></pre></li>
+object_setClass(self, class);</code></pre></li>
 <li><p>保存set, get方法, 保存block</p>
 <pre><code>//保存set、get方法名
     objc_setAssociatedObject(self, kHCKVO_getter_key, key, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, kHCKVO_setter_key, setterForGetter(key), OBJC_ASSOCIATION_COPY_NONATOMIC);
     //保存block
-    objc_setAssociatedObject(self, kHCKVO_block_key, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
-</code></pre></li>
+    objc_setAssociatedObject(self, kHCKVO_block_key, block, OBJC_ASSOCIATION_COPY_NONATOMIC);</code></pre></li>
 </ol>
 <p>这里面主要的难点在重写属性的set方法, 代码如下:</p>
 <pre><code>//新类的set方法
@@ -370,8 +385,7 @@ static void kvo_setter(id self, SEL _cmd, id newValue) {
     //取出block
     HCObservingBlock block = objc_getAssociatedObject(self, kHCKVO_block_key);
     block(self, getterName, oldValue, newValue);
-}
-</code></pre><p>其中, 关于调用父类的set方法有两种方式. 一种是直接向新类的superClass发送消息, 另外一种是先改变isa指向superclass, 调用完set方法后重新再改变isa指向新类.</p>
+}</code></pre><p>其中, 关于调用父类的set方法有两种方式. 一种是直接向新类的superClass发送消息, 另外一种是先改变isa指向superclass, 调用完set方法后重新再改变isa指向新类.</p>
 <h2 id="如何实现系统自带的KVO"><a href="#如何实现系统自带的KVO" class="headerlink" title="如何实现系统自带的KVO"></a>如何实现系统自带的KVO</h2><p>系统自带KVO的实现方法和自定义带block回调的KVO的实现方法一样, 不同的是我们在重写新类的set方法中不是调用父类的set方法, 而是调用父类的<code>observeValueForKeyPath: ofObject: change: context:</code>方法.</p>
 <hr>
 <p>完整代码查看<a href="https://github.com/HChong3210/HCKVO" target="_blank" rel="noopener">这里</a></p>

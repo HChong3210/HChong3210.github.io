@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="自动化打包,Target,解决方案," />
+    <meta name="keywords" content="自动化打包,Target,解决方案,">
   
 
-  <meta name="description" content="Xcode自动化打包脚本自动化打包脚本是配合多渠道包和多环境包的自动化实现使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁. 打包的基本思路这里说一下打包脚本的基本实现思路:  需要传入的参数有Scheme(用来指">
+  <meta name="description" content="Xcode自动化打包脚本自动化打包脚本是配合多渠道包和多环境包的自动化实现使用的, 实际上脚本语言都可以做到, 我这里选用了Shell和Python两种实现方式. 对比下来发现, Python更好懂一点, 但是Shell更加简洁. 打包的基本思路这里说一下打包脚本的基本实现思路:  需要传入的参数有Scheme(用来指定打哪个环境的包), 如果使用Fir来作为内测分发工具的话, 还需要传入Fir的">
 <meta name="keywords" content="自动化打包,Target,解决方案">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xcode自动化打包脚本">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -245,8 +245,7 @@ ga('send', 'pageview');
 <li>通过<code>sudo gem install CFPropertyList</code>, <code>rvm list</code>, <code>rvm use system</code>来解决, Python或者Shell都可以使用这种方式.</li>
 <li>Shell下还有另外的解决方案, 在shell脚本前加入如下代码, 指定路径.<pre><code>[[ -s &quot;$HOME/.rvm/scripts/rvm&quot; ]] &amp;&amp; source &quot;$HOME/.rvm/scripts/rvm&quot;
 rvm use system
-xcodebuild &quot;$@&quot;
-</code></pre></li>
+xcodebuild &quot;$@&quot;</code></pre></li>
 </ol>
 </li>
 </ol>
@@ -304,8 +303,7 @@ xcodebuild &quot;$@&quot;
         &lt;key&gt;uploadBitcode&lt;/key&gt;
         &lt;false/&gt;
     &lt;/dict&gt;
-&lt;/plist&gt;
-</code></pre><hr>
+&lt;/plist&gt;</code></pre><hr>
 <p><a href="https://github.com/HChong3210/buildScript.git" target="_blank" rel="noopener">附件下载</a></p>
 <hr>
 <p>参考文章:</p>

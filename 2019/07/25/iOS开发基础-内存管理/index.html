@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. 1 内存分配关于内存分配可以看之前的总结; 2 引用计数原理ARC是编译器（时）特性，而不是运行时特性，更不是垃圾回收器(GC). Objc是通过引用计数来管理内存, Cocoa为我们提供了这些内存管理的准则:  自己生成的对象, 自己持">
+  <meta name="description" content="内存管理是开发的基本功之一, 下面将从以下几个方面来聊一下iOS开发的内存管理. 1 内存分配关于内存分配可以看之前的总结; 2 引用计数原理ARC是编译器（时）特性，而不是运行时特性，更不是垃圾回收器(GC). Objc是通过引用计数来管理内存, Cocoa为我们提供了这些内存管理的准则:  自己生成的对象, 自己持有. 非自己生成的对象, 自己也能持有. 不在需要自己持有对象的时候, 释放.">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发基础-内存管理">
@@ -109,7 +109,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -266,8 +266,7 @@ objc_object::isTaggedPointer()
 #else
     return false;
 #endif
-}
-</code></pre><p>id 其实就是 <code>objc_object *</code> 的简写（<code>typedef struct objc_object *id;</code>），它的 <code>isTaggedPointer()</code> 方法经常会在操作引用计数时用到, 因为这决定了存储引用计数的策略.</p>
+}</code></pre><p>id 其实就是 <code>objc_object *</code> 的简写（<code>typedef struct objc_object *id;</code>），它的 <code>isTaggedPointer()</code> 方法经常会在操作引用计数时用到, 因为这决定了存储引用计数的策略.</p>
 <h3 id="2-1-2-isa指针"><a href="#2-1-2-isa指针" class="headerlink" title="2.1.2 isa指针"></a>2.1.2 isa指针</h3><p>用 64 bit 存储一个内存地址显然是种浪费，毕竟很少有那么大内存的设备。于是可以优化存储方案，用一部分额外空间存储其他内容。isa 指针第一位为 1 即表示使用优化的 isa 指针.</p>
 <p>在 64 位环境下，优化的 isa 指针并不是就一定会存储引用计数. has_sidetable_rc 的值如果为 1，那么引用计数会存储在一个叫 SideTable 的类的属性中，后面会详细讲.</p>
 <h3 id="2-1-3-散列表-哈希表"><a href="#2-1-3-散列表-哈希表" class="headerlink" title="2.1.3 散列表(哈希表)"></a>2.1.3 散列表(哈希表)</h3><p>散列表（Hash table，也叫哈希表), 是根据键（Key）而直接访问在内存存储位置的数据结构。也就是说，它通过计算一个关于键值的函数，将所需查询的数据映射到表中一个位置来访问记录，这加快了查找速度。这个映射函数称做散列函数，存放记录的数组称做散列表.</p>
@@ -276,11 +275,9 @@ objc_object::isTaggedPointer()
 <h3 id="2-2-1-SideTable"><a href="#2-2-1-SideTable" class="headerlink" title="2.2.1 SideTable"></a>2.2.1 SideTable</h3><p>再介绍下 SideTable 这个类，它用于管理引用计数表(哈希表)和 weak 表，并使用 spinlock_lock 自旋锁来防止操作表结构时可能的竞态条件。它用一个 64*128 大小的 uint8_t 静态数组作为 buffer 来保存所有的 SideTable 实例。并提供三个公有属性:</p>
 <pre><code class="C">spinlock_t slock;//保证原子操作的自选锁
 RefcountMap refcnts;//保存引用计数的散列表
-weak_table_t weak_table;//保存 weak 引用的全局散列表
-</code></pre>
+weak_table_t weak_table;//保存 weak 引用的全局散列表</code></pre>
 <p>还提供了一个工厂方法，用于根据对象的地址在 buffer 中寻找对应的 SideTable 实例:</p>
-<pre><code class="C">static SideTable *tableForPointer(const void *p)
-</code></pre>
+<pre><code class="C">static SideTable *tableForPointer(const void *p)</code></pre>
 <h3 id="2-2-2-weak表"><a href="#2-2-2-weak表" class="headerlink" title="2.2.2 weak表"></a>2.2.2 weak表</h3><p>weak 表的作用是在对象执行 dealloc 的时候将所有指向该对象的 weak 指针的值设为 nil，避免悬空指针。苹果使用一个全局的 weak 表来保存所有的 weak 引用。并将对象作为键，weak_entry_t 作为值。weak_entry_t 中保存了所有指向该对象的 weak 指针。</p>
 <p>这是 weak 表的结构:</p>
 <pre><code>struct weak_table_t {
@@ -288,9 +285,8 @@ weak_table_t weak_table;//保存 weak 引用的全局散列表
     size_t    num_entries;
     uintptr_t mask;
     uintptr_t max_hash_displacement;
-};
-</code></pre><h2 id="2-3-获取引用计数"><a href="#2-3-获取引用计数" class="headerlink" title="2.3 获取引用计数"></a>2.3 获取引用计数</h2><p>在非 ARC 环境可以使用 retainCount 方法获取某个对象的引用计数，其会调用 objc_object 的 rootRetainCount() 方法.</p>
-<p>在 ARC 时代除了使用 Core Foundation 库的 CFGetRetainCount() 方法，也可以使用 Runtime 的 _objc_rootRetainCount(id obj) 方法来获取引用计数，此时需要引入 <objc runtime.h=""> 头文件。这个函数也是调用 objc_object 的 rootRetainCount() 方法.</objc></p>
+};</code></pre><h2 id="2-3-获取引用计数"><a href="#2-3-获取引用计数" class="headerlink" title="2.3 获取引用计数"></a>2.3 获取引用计数</h2><p>在非 ARC 环境可以使用 retainCount 方法获取某个对象的引用计数，其会调用 objc_object 的 rootRetainCount() 方法.</p>
+<p>在 ARC 时代除了使用 Core Foundation 库的 CFGetRetainCount() 方法，也可以使用 Runtime 的 _objc_rootRetainCount(id obj) 方法来获取引用计数，此时需要引入 &lt;objc/runtime.h&gt; 头文件。这个函数也是调用 objc_object 的 rootRetainCount() 方法.</p>
 <p>rootRetainCount()的内部实现也是参考引用计数的存储:</p>
 <ul>
 <li>TaggedPointer 直接通过对象内存地址获取引用计数.</li>
@@ -303,8 +299,7 @@ weak_table_t weak_table;//保存 weak 引用的全局散列表
 <p>alloc 和 new 最终都会调用 callAlloc，默认使用 Objective-C 2.0 且忽视垃圾回收和 NSZone，那么后续的调用顺序依次是为：</p>
 <pre><code class="C">class_createInstance()
 _class_createInstanceFromZone()
-calloc()
-</code></pre>
+calloc()</code></pre>
 <p>calloc() 函数相比于 malloc() 函数的优点是它将分配的内存区域初始化为0，相当于 malloc() 后再用 memset() 方法初始化一遍。</p>
 <p>copy 和 mutableCopy 都是基于 NSCopying 和 NSMutableCopying 方法约定，分别调用各类自己实现的 copyWithZone: 和 mutableCopyWithZone: 方法。这些方法无论实现方式是深拷贝还是浅拷贝，都会增加引用计数。（有些类的策略是懒拷贝，只增加引用计数但并不真的拷贝，等对象内容发生变化时再拷贝一份出来，比如 NSArray）。</p>
 <p>retain 方法加符号断点会发现 alloc, new, copy, mutableCopy 这四个方法都会通过 Core Foundation 的 CFBasicHashAddValue() 函数来调用 retain 方法。其实 CF 有个修改和查看引用计数的入口函数 __CFDoExternRefOperation.</p>
@@ -371,13 +366,14 @@ calloc()
 <p>Tagged Pointer通过在其最后一个 bit 位设置一个特殊标记，用于将数据直接保存在指针本身中。因为Tagged Pointer并不是真正的对象，我们在使用时需要注意不要直接访问其 isa 变量.</p>
 <h2 id="6-3-Toll-Free-Bridge"><a href="#6-3-Toll-Free-Bridge" class="headerlink" title="6.3 Toll-Free Bridge"></a>6.3 Toll-Free Bridge</h2><p><a href="http://hchong.net/2018/05/07/OC%E4%B8%AD%E7%9A%84%E6%A1%A5%E6%8E%A5Toll-Free%20Bridging/">这里</a>可以看到之前总结的关于OC中内存管理的桥接机制.</p>
 <ul>
-<li><strong>bridge: 通过 </strong>bridge 桥接，id 和 void * 就能够相互转换. __bridge 为直接转换, 不会对引用计数做特殊处理.</li>
-<li>__bridge_retained &amp; CFBridgingRetain: 表示将指针类型转变的同时, 将内存管理的责任由原来的Objective-C交给Core Foundation来处理.</li>
+<li><p>__bridge: 通过 __bridge 桥接，id 和 void * 就能够相互转换. __bridge 为直接转换, 不会对引用计数做特殊处理.</p>
+</li>
+<li><p>__bridge_retained &amp; CFBridgingRetain: 表示将指针类型转变的同时, 将内存管理的责任由原来的Objective-C交给Core Foundation来处理.</p>
+</li>
 <li><p>bridge_transfer &amp; CFBridgingRelease: 与上面的__bridge_retained相反, 它表示将管理的责任由Core Foundation转交给Objective-C, 即将管理方式由MRC转变为ARC.</p>
 <pre><code>  id obj = (id)p;
   [obj retain];
-  [(id)p release];
-</code></pre></li>
+  [(id)p release];</code></pre></li>
 </ul>
 <hr>
 <p>参考资料:<br>1.<a href="https://www.jianshu.com/p/32265cbb2a26" target="_blank" rel="noopener">自动释放池的前世今生 —- 深入解析 Autoreleasepool</a><br>2.<a href="http://yulingtianxia.com/blog/2015/12/06/The-Principle-of-Refenrence-Counting/" target="_blank" rel="noopener">Objective-C 引用计数原理</a><br>3.<a href="http://sindrilin.com/runtime/2016/12/23/%E9%97%B2%E8%81%8A%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86" target="_blank" rel="noopener">闲聊内存管理</a><br>4.<a href="https://blog.devtang.com/2016/07/30/ios-memory-management/" target="_blank" rel="noopener">理解 iOS 的内存管理</a><br>5.<a href="https://juejin.im/post/5abe543bf265da23784064dd" target="_blank" rel="noopener">iOS内存管理详解</a><br>6.<a href="http://zhoulingyu.com/2017/02/15/Advanced-iOS-Study-objc-Memory-2/" target="_blank" rel="noopener">iOS进阶——iOS（Objective-C）内存管理·二</a><br>7.<a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">黑幕背后的Autorelease</a><br>8.<a href="http://blog.devtang.com/2014/05/30/understand-tagged-pointer/" target="_blank" rel="noopener">深入理解Tagged Pointer</a><br>9.<a href="http://blog.leichunfeng.com/blog/2015/05/31/objective-c-autorelease-pool-implementation-principle/" target="_blank" rel="noopener">Objective-C Autorelease Pool 的实现原理</a><br>10.<a href="http://blog.tracyone.com/tags/ARC/" target="_blank" rel="noopener">深入浅出ARC(上,中,下)</a><br>11.<a href="https://solacode.github.io/2015/10/20/iOS%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9AToll-Free-Bridging/" target="_blank" rel="noopener">iOS渐入佳境之内存管理机制（三）：Toll-Free Bridging</a></p>

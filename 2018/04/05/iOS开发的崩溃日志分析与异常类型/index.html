@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="崩溃分析崩溃日志如何得到crash report 当一个iOS应用程序崩溃时, 系统会创建一份crash日志保存在设备上. 这份crash日志记录着应用程序崩溃时的信息, 通常包含着每个执行线程的栈调用信息(低内存闪退日志例外). 如果设备就在身边, 可以连接设备, 打开Xcode - Window - Organiz">
+  <meta name="description" content="崩溃分析崩溃日志如何得到crash report 当一个iOS应用程序崩溃时, 系统会创建一份crash日志保存在设备上. 这份crash日志记录着应用程序崩溃时的信息, 通常包含着每个执行线程的栈调用信息(低内存闪退日志例外). 如果设备就在身边, 可以连接设备, 打开Xcode - Window - Organizer, 在左侧面板中选择Device Logs(可以选择具体设备的Device">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发的崩溃日志分析与异常类型">
@@ -104,7 +104,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -275,7 +275,7 @@ ga('send', 'pageview');
 <li>SIGBUS: 总线错误信号（SIGBUG）代表无效内存访问，即访问的内存是一个无效的内存地址。也就是说，那个地址指向的位置根本不是物理内存地址（它可能是某个硬件芯片的地址）。SIGSEGV和SIGBUS都羽毛球EXC_BAD_ACCESS的子类型。</li>
 <li>SIGTRAP: SIGTRAP代表陷阱信号。它并不是一个真正的崩溃信号。它会在处理器执行trap指令发送。LLDB调试器通常会处理此信号，并在指定的断点处停止运行。如果你收到了原因不明的SIGTRAP，先清除上次的输出，然后重新进行构建通常能解决这个问题。</li>
 <li>EXC_ARITHETIC: 当要除零时，应用会收到EXC_ARITHMETIC信号。这个错误应该很容易解决.</li>
-<li>SIGILL: SIGILL代表signal illegal instruction(非法指令信号)。当在处理器上执行非法指令时，它就会发生。执行非法指令是指，将函数指针会给另外一个函数时，该函数指针由于某种原因是坏的，指向了一段已经释放的内存或是一个数据段。有时你收到的是EXC_BAD<em>INSTRUCTION而不是SIGILL，虽然它们是一回事，不过EXC</em>*等同于此信号不依赖体系结构。</li>
+<li>SIGILL: SIGILL代表signal illegal instruction(非法指令信号)。当在处理器上执行非法指令时，它就会发生。执行非法指令是指，将函数指针会给另外一个函数时，该函数指针由于某种原因是坏的，指向了一段已经释放的内存或是一个数据段。有时你收到的是EXC_BAD_INSTRUCTION而不是SIGILL，虽然它们是一回事，不过EXC_*等同于此信号不依赖体系结构。</li>
 <li>SIGABRT: SIGABRT代表SIGNAL ABORT（中止信号）。当操作系统发现不安全的情况时，它能够对这种情况进行更多的控制；必要的话，它能要求进程进行清理工作。在调试造成此信号的底层错误时，并没有什么妙招。Cocos2d或UIKit等框架通常会在特定的前提条件没有满足或一些糟糕的情况出现时调用C函数abort（由它来发送此信号）。当SIGABRT出现时，控制台通常会输出大量的信息，说明具体哪里出错了。由于它是可控制的崩溃，所以可以在LLDB控制台上键入bt命令打印出回溯信息</li>
 </ul>
 <p>更多的SIGABRT信号类型看<a href="http://www.iosxxx.com/blog/2015-08-29-iosyi-chang-bu-huo.html" target="_blank" rel="noopener">这里</a>.</p>

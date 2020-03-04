@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="链式编程是将多个操作, 通过.的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是返回值是self, 参数为需要操作的值的block. 下面我们来看一下Masonry中链式编程的应用. Masonry中的应用Masonry的使用大致如下 UIView *demo = [[UI">
+  <meta name="description" content="链式编程是将多个操作, 通过.的形式连接在一起, 形成一句话, 以增强代码的阅读性. 链式编程的核心在于, 方法的返回值必须是返回值是self, 参数为需要操作的值的block. 下面我们来看一下Masonry中链式编程的应用. Masonry中的应用Masonry的使用大致如下 UIView *demo = [[UIView alloc] init]; [self.view addSubview">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="链式编程实践">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -237,16 +237,14 @@ ga('send', 'pageview');
    make.left.equalTo(self.mas_left).offset(16);
    make.centerY.equalTo(self.mas_centerY).offset(0);
    make.width.height.equalTo(@(200));
-}];
-</code></pre>
+}];</code></pre>
 <p>这里只简单分析一下他链式编程的实现. 我们先看下<code>mas_makeConstraints</code>方法.</p>
 <pre><code class="oc">- (NSArray *)mas_makeConstraints:(void(^)(MASConstraintMaker *))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:self];
     block(constraintMaker);
     return [constraintMaker install];
-}
-</code></pre>
+}</code></pre>
 <p>这里一共有三步:</p>
 <ol>
 <li>创建一个<code>MASConstraintMaker</code>对象<code>constraintMaker</code>.</li>
@@ -273,8 +271,7 @@ ga('send', 'pageview');
     return [self constraint:nil addConstraintWithLayoutAttribute:layoutAttribute];
 }
 
-@end
-</code></pre>
+@end</code></pre>
 <p>我们可以发现, <code>width</code>和<code>height</code>方法的返回值都是<code>MASConstraint</code>对象, 方法内部封装了 一些内部实现, 这样就可以无限的<code>.</code>下去.<br><code>equalTo</code>这样的方法需要通过<code>()</code>的方式传参进去, 并且还行要能一直<code>.</code>下去. 通过<code>()</code>的方式传参只有通过block, 想持续<code>.</code>必须返回<code>MASConstraint</code>对象, 所以<code>equalTo</code>的返回值是一个block<code>MASConstraint * (^)(id)</code>(返回值是self, 并且还有参数).</p>
 <p>总结一下核心就是:</p>
 <ul>
@@ -299,8 +296,7 @@ ga('send', 'pageview');
         return self;
     };
 }
-@end
-</code></pre>
+@end</code></pre>
 <p>要实现类似Masonry的调用方式, 就要再封装一层:</p>
 <pre><code class="oc">@interface NSObject (Calculator)
 
@@ -315,13 +311,11 @@ ga('send', 'pageview');
     block(mgr);
     return mgr.result;
 }
-@end
-</code></pre>
+@end</code></pre>
 <p>在计算时调用这个方法，创建计算制造者，然后调用传入的block, 并且返回结果.</p>
 <pre><code>NSInteger result = [NSObject makeCaculators:^(Caculator *make) {
     make.add(4).multiply(5).minus(4).divide(8).add(13);
-}];
-</code></pre><hr>
+}];</code></pre><hr>
 <p>完整Demo地址在<a href="https://github.com/HChong3210/MethodChaining" target="_blank" rel="noopener">这里</a>. <a href="https://www.jianshu.com/p/f53a3182f659" target="_blank" rel="noopener">这篇</a>循序渐进, 写的也不错.</p>
 
     

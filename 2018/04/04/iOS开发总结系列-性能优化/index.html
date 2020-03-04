@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="这里主要记录一下APP开发中, 经常遇到的一些性能问题, 以及优化的建议. 卡顿优化通常来说, 计算机系统中 CPU、GPU、显示器是以上面这种方式协同工作的. CPU 计算好显示内容提交到 GPU, GPU 渲染完成后将渲染结果放入帧缓冲区, 随后视频控制器会按照 VSync 信号逐行读取帧缓冲区的数据, 经过可能的">
+  <meta name="description" content="这里主要记录一下APP开发中, 经常遇到的一些性能问题, 以及优化的建议. 卡顿优化通常来说, 计算机系统中 CPU、GPU、显示器是以上面这种方式协同工作的. CPU 计算好显示内容提交到 GPU, GPU 渲染完成后将渲染结果放入帧缓冲区, 随后视频控制器会按照 VSync 信号逐行读取帧缓冲区的数据, 经过可能的数模转换传递给显示器显示. CPU主要责任 对象创建: 对象的创建会分配内存,">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-性能优化">
@@ -33,7 +33,7 @@
 <meta property="og:site_name" content="HChong的博客地址">
 <meta property="og:description" content="这里主要记录一下APP开发中, 经常遇到的一些性能问题, 以及优化的建议. 卡顿优化通常来说, 计算机系统中 CPU、GPU、显示器是以上面这种方式协同工作的. CPU 计算好显示内容提交到 GPU, GPU 渲染完成后将渲染结果放入帧缓冲区, 随后视频控制器会按照 VSync 信号逐行读取帧缓冲区的数据, 经过可能的数模转换传递给显示器显示. CPU主要责任 对象创建: 对象的创建会分配内存,">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-07T14:38:26.536Z">
+<meta property="og:updated_time" content="2020-01-08T03:46:32.965Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-性能优化">
 <meta name="twitter:description" content="这里主要记录一下APP开发中, 经常遇到的一些性能问题, 以及优化的建议. 卡顿优化通常来说, 计算机系统中 CPU、GPU、显示器是以上面这种方式协同工作的. CPU 计算好显示内容提交到 GPU, GPU 渲染完成后将渲染结果放入帧缓冲区, 随后视频控制器会按照 VSync 信号逐行读取帧缓冲区的数据, 经过可能的数模转换传递给显示器显示. CPU主要责任 对象创建: 对象的创建会分配内存,">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -293,6 +293,7 @@ ga('send', 'pageview');
 <p>参考资料:<br>1.<a href="https://blog.ibireme.com/2015/11/12/smooth_user_interfaces_for_ios/" target="_blank" rel="noopener">iOS 保持界面流畅的技巧</a></p>
 <p>2.<a href="https://techblog.toutiao.com/2017/01/17/iosspeed/#more" target="_blank" rel="noopener">今日头条iOS客户端启动速度优化</a></p>
 <p>3.<a href="https://github.com/skyming/iOS-Performance-Optimization" target="_blank" rel="noopener">iOS-Performance-Optimization</a></p>
+<p>4.<a href="https://juejin.im/entry/5d61559e5188253cf525cc2c" target="_blank" rel="noopener">Archive、ipa 和 App 包瘦身</a></p>
 
     
     <span class="asdf">

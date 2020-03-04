@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
+  <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
+  <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- <link<! rel="stylesheet" href="/path/to/styles/default.css"> -->
+  <!-- <script src="/path/to/highlight.pack.js"></script> -->
+  <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+
+
+  <meta charset="utf-8">
+  
+  <title>ffmpeg与ijkplayer在iOS中的应用指南 | HChong的博客地址</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="ffmpeg,ijkplayer,音视频开发,">
+  
+
+  <meta name="description" content="1 ffmpeg与ijkplayer的介绍1.1 ffmpegffmpeg 理解成一套音视频解决方案，使用 C语言 开发的开源程序，并且免费、开源、跨平台，它提供了录制、转换以及流化音视频，编码，特效，视音频操作等功能，包含了非常先进的音频/视频编解码库.  可以实现播放歌曲、视频, 甚至通过命令实现对 视频文件的转码、混合、剪辑, 采集等各种复杂处理. 1.2 ijkplayerijkplaye">
+<meta name="keywords" content="ffmpeg,ijkplayer,音视频开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ffmpeg与ijkplayer在iOS中的应用指南">
+<meta property="og:url" content="http://hchong.net/2019/10/16/ffmpeg在iOS中的应用指南/index.html">
+<meta property="og:site_name" content="HChong的博客地址">
+<meta property="og:description" content="1 ffmpeg与ijkplayer的介绍1.1 ffmpegffmpeg 理解成一套音视频解决方案，使用 C语言 开发的开源程序，并且免费、开源、跨平台，它提供了录制、转换以及流化音视频，编码，特效，视音频操作等功能，包含了非常先进的音频/视频编解码库.  可以实现播放歌曲、视频, 甚至通过命令实现对 视频文件的转码、混合、剪辑, 采集等各种复杂处理. 1.2 ijkplayerijkplaye">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-06T07:43:30.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ffmpeg与ijkplayer在iOS中的应用指南">
+<meta name="twitter:description" content="1 ffmpeg与ijkplayer的介绍1.1 ffmpegffmpeg 理解成一套音视频解决方案，使用 C语言 开发的开源程序，并且免费、开源、跨平台，它提供了录制、转换以及流化音视频，编码，特效，视音频操作等功能，包含了非常先进的音频/视频编解码库.  可以实现播放歌曲、视频, 甚至通过命令实现对 视频文件的转码、混合、剪辑, 采集等各种复杂处理. 1.2 ijkplayerijkplaye">
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-143601576-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?fbe237c14d5a4a92186f32fb70f9d87d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><span id="toolbox-mobile" class="toolbox-mobile">戳我</span>
+  
+
+  <div class="post-header LEFT">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">戳我</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="ROUND_RECT"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-ffmpeg与ijkplayer的介绍"><span class="toc-text">1 ffmpeg与ijkplayer的介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-ffmpeg"><span class="toc-text">1.1 ffmpeg</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-ijkplayer"><span class="toc-text">1.2 ijkplayer</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-ffmpeg的使用"><span class="toc-text">2 ffmpeg的使用</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post LEFT">
+   <article id="post-ffmpeg在iOS中的应用指南" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">ffmpeg与ijkplayer在iOS中的应用指南</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.10.16</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>HChong</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/ffmpeg/">ffmpeg</a> / <a class="article-category-link" href="/categories/ffmpeg/ijkplayer/">ijkplayer</a> / <a class="article-category-link" href="/categories/ffmpeg/ijkplayer/音视频开发/">音视频开发</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h1 id="1-ffmpeg与ijkplayer的介绍"><a href="#1-ffmpeg与ijkplayer的介绍" class="headerlink" title="1 ffmpeg与ijkplayer的介绍"></a>1 ffmpeg与ijkplayer的介绍</h1><h2 id="1-1-ffmpeg"><a href="#1-1-ffmpeg" class="headerlink" title="1.1 ffmpeg"></a>1.1 ffmpeg</h2><p>ffmpeg 理解成一套音视频解决方案，使用 C语言 开发的开源程序，并且免费、开源、跨平台，它提供了录制、转换以及流化音视频，编码，特效，视音频操作等功能，包含了非常先进的音频/视频编解码库. </p>
+<p>可以实现播放歌曲、视频, 甚至通过命令实现对 视频文件的转码、混合、剪辑, 采集等各<br>种复杂处理.</p>
+<h2 id="1-2-ijkplayer"><a href="#1-2-ijkplayer" class="headerlink" title="1.2 ijkplayer"></a>1.2 ijkplayer</h2><p>ijkplayer是业内很知名的音视频播放框架, 由B站开发并在GitHub开源, 底层使用ffmpeg来进行音视频的编解码处理. 市面上第三方的播放器的播放内核均使用的ijkplayer.</p>
+<h1 id="2-ffmpeg的使用"><a href="#2-ffmpeg的使用" class="headerlink" title="2 ffmpeg的使用"></a>2 ffmpeg的使用</h1>
+    
+    <span class="asdf">
+      <style type="text/css">
+      asdf{margin-top:20}
+      </style>
+      </span>
+  </div>
+  
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/08/13/UINavigationController对布局的影响/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+  
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  
+</article>
+
+
+   
+
+</div>
+
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="ROUND_RECT"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '46ee1ac76ef8ec89628d',
+  clientSecret: '504604af3c2054d744fef5c3932174d1c29a4d5b',
+  repo: 'HChong3210.github.io',
+  owner: 'HChong3210',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: decodeURI(location.pathname),
+  admin: 'HChong3210',
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

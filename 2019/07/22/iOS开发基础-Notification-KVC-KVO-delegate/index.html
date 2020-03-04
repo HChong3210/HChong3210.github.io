@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.KVC/KVO是观察者">
+  <meta name="description" content="KVC是Key-Value Coding的简称，它是一种可以直接通过字符串的名字(key)来访问类属性的机制。而不是通过调用Setter、Getter方法访问.KVO是Key-Value Observing的简称. 它是一种键值观察的机制，在更改一个对象的指定属性时, 另外的指定对象能够得到通知.KVC/KVO是观察者模式的一种实现, 而delegate是代理模式和通知模式在iOS中的具体实现,">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发基础-Notification &amp; KVC &amp; KVO &amp; delegate">
@@ -104,7 +104,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -258,15 +258,12 @@ ga('send', 'pageview');
 // 输入一组key，返回该组key对应的Value，再转成字典返回，用于将Model转到字典。
 - (NSDictionary *)dictionaryWithValuesForKeys:(NSArray *)keys;
 // KVC提供属性值确认的API，它可以用来检查set的值是否正确、为不正确的值做一个替换值或者拒绝设置新值并返回错误原因。
-- (BOOL)validateValue:(id)ioValue forKey:(NSString *)inKey error:(NSError)outError;
-</code></pre><p>keyPath方法是集成了key的所有功能，也就是说对一个对象的一般属性进行赋值、取值，两个方法是通用的，都可以实现。但是对对象中的对象进的属性行赋值，只有keyPath能够实现.</p>
+- (BOOL)validateValue:(id)ioValue forKey:(NSString *)inKey error:(NSError)outError;</code></pre><p>keyPath方法是集成了key的所有功能，也就是说对一个对象的一般属性进行赋值、取值，两个方法是通用的，都可以实现。但是对对象中的对象进的属性行赋值，只有keyPath能够实现.</p>
 <h2 id="1-1-KVC内部原理"><a href="#1-1-KVC内部原理" class="headerlink" title="1.1 KVC内部原理"></a>1.1 KVC内部原理</h2><p>比如说如下的一行KVC的代码：</p>
-<pre><code>[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];
-</code></pre><p>就会被编译器处理成：</p>
+<pre><code>[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];</code></pre><p>就会被编译器处理成：</p>
 <pre><code>SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);
 IMP method = objc_msg_lookup (site-&gt;isa,sel);
-method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
-</code></pre><p>这下KVC内部的实现就很清楚的清楚了, 一个对象在调用setValue的时候:</p>
+method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);</code></pre><p>这下KVC内部的实现就很清楚的清楚了, 一个对象在调用setValue的时候:</p>
 <ol>
 <li>首先根据方法名找到运行方法的时候所需要的环境参数.</li>
 <li>他会从自己isa指针结合环境参数, 找到具体的方法实现的接口.</li>
@@ -274,18 +271,18 @@ method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
 </ol>
 <p>下面我们再看一下KVC中设置值和获取值的流程:</p>
 <h3 id="1-1-1-KVC设置值的流程"><a href="#1-1-1-KVC设置值的流程" class="headerlink" title="1.1.1 KVC设置值的流程"></a>1.1.1 KVC设置值的流程</h3><ol>
-<li>首先搜索同名的setter方法(无@synthsize情况下, 因为@synthsize告诉编译器生成set<key>:格式的setter方法).</key></li>
-<li>上面的setter方法没找到，如果类方法accessInstanceVariablesDirectly返回YES。那么按_<key>，_is<key>，<key>，is<key>的顺序在类中查找实例变量。（NSKeyValueCodingCatogery中实现的类方法，默认实现为返回YES）</key></key></key></key></li>
+<li>首先搜索同名的setter方法(无@synthsize情况下, 因为@synthsize告诉编译器生成set<Key>:格式的setter方法).</li>
+<li>上面的setter方法没找到，如果类方法accessInstanceVariablesDirectly返回YES。那么按_<key>，_is<Key>，<key>，is<key>的顺序在类中查找实例变量。（NSKeyValueCodingCatogery中实现的类方法，默认实现为返回YES）</li>
 <li>如果找到设置成员的值, 如果没有调用<code>setValue:forUndefinedKey:</code>.</li>
 </ol>
 <p>注意: 通常情况下，KVC不允许在调用setValue：属性值 forKey：(或者keyPath)时对非对象传递一个nil的值。很简单，因为值类型是不能为nil的。如果你不小心传了，KVC会调用setNilValueForKey:方法。这个方法默认是抛出异常，所以一般而言最好还是重写这个方法。</p>
 <h3 id="1-1-2-KVC取值的流程"><a href="#1-1-2-KVC取值的流程" class="headerlink" title="1.1.2 KVC取值的流程"></a>1.1.2 KVC取值的流程</h3><ol>
-<li>首先按get<key>、<key>、is<key>的顺序查找getter方法(无@synthsize情况下, 因为@synthsize告诉编译器自动生成key:格式的getter方法). 如果是bool、int等基础数据类型，会做NSNumber的转换.</key></key></key></li>
-<li>上面的getter没有找到，查找countOf<key>、objectIn<key>AtIndex:、<key>AtIndexes格式的方法。</key></key></key></li>
-<li>如果countOf<key>和另外两个方法中的一个找到，那么就会返回一个可以响应NSArray所有方法的代理集合(collection proxy object)。发送给这个代理集合(collection proxy object)的NSArray消息方法，就会以countOf<key>、objectIn<key>AtIndex:、<key>AtIndexes这几个方法组合的形式调用。还有一个可选的get<key>:range:方法</key></key></key></key></key></li>
-<li>还没查到，那么查找countOf<key>、enumeratorOf<key>、memberOf<key>:格式的方法</key></key></key></li>
-<li>如果这三个方法都找到，那么就返回一个可以响应NSSet所有方法的代理集合(collection proxy object)。发送给这个代理集合(collection proxy object)的NSSet消息方法，就会以countOf<key>、enumeratorOf<key>、memberOf<key>:组合的形式调用</key></key></key></li>
-<li>还是没查到，那么如果类方法accessInstanceVariablesDirectly返回YES，那么按_<key>，_is<key>，<key>，is<key>的顺序直接搜索成员名</key></key></key></key></li>
+<li>首先按get<Key>、<key>、is<Key>的顺序查找getter方法(无@synthsize情况下, 因为@synthsize告诉编译器自动生成key:格式的getter方法). 如果是bool、int等基础数据类型，会做NSNumber的转换.</li>
+<li>上面的getter没有找到，查找countOf<Key>、objectIn<Key>AtIndex:、<Key>AtIndexes格式的方法。</li>
+<li>如果countOf<Key>和另外两个方法中的一个找到，那么就会返回一个可以响应NSArray所有方法的代理集合(collection proxy object)。发送给这个代理集合(collection proxy object)的NSArray消息方法，就会以countOf<Key>、objectIn<Key>AtIndex:、<Key>AtIndexes这几个方法组合的形式调用。还有一个可选的get<Key>:range:方法</li>
+<li>还没查到，那么查找countOf<Key>、enumeratorOf<Key>、memberOf<Key>:格式的方法</li>
+<li>如果这三个方法都找到，那么就返回一个可以响应NSSet所有方法的代理集合(collection proxy object)。发送给这个代理集合(collection proxy object)的NSSet消息方法，就会以countOf<Key>、enumeratorOf<Key>、memberOf<Key>:组合的形式调用</li>
+<li>还是没查到，那么如果类方法accessInstanceVariablesDirectly返回YES，那么按_<key>，_is<Key>，<key>，is<key>的顺序直接搜索成员名</li>
 <li>再没查到，调用valueForUndefinedKey:。</li>
 </ol>
 <h2 id="1-2-KVC常见实践"><a href="#1-2-KVC常见实践" class="headerlink" title="1.2 KVC常见实践"></a>1.2 KVC常见实践</h2><p>这里是一些常见的KVC的实践.</p>
@@ -335,8 +332,7 @@ method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
         }   
     }
     return objc;
-}
-</code></pre><h3 id="1-2-4-操作集合"><a href="#1-2-4-操作集合" class="headerlink" title="1.2.4 操作集合"></a>1.2.4 操作集合</h3><p>Apple对KVC的valueForKey:方法作了一些特殊的实现，比如说NSArray和NSSet这样的容器类就实现了这些方法。所以可以用KVC很方便地操作集合.</p>
+}</code></pre><h3 id="1-2-4-操作集合"><a href="#1-2-4-操作集合" class="headerlink" title="1.2.4 操作集合"></a>1.2.4 操作集合</h3><p>Apple对KVC的valueForKey:方法作了一些特殊的实现，比如说NSArray和NSSet这样的容器类就实现了这些方法。所以可以用KVC很方便地操作集合.</p>
 <p><img src="https://segmentfault.com/img/remote/1460000013476170" alt="集合运算符"><br>上面表达式主要分为三部分，left部分是要操作的集合对象，如果调用KVC的对象本来就是集合对象，则left可以为空。中间部分是表达式，表达式一般以@符号开头。后面是进行运算的属性。</p>
 <p>集合运算符主要分为三类：</p>
 <ul>
@@ -362,8 +358,7 @@ method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
 //打印结果
 7
 6
-7
-</code></pre><h1 id="2-KVO"><a href="#2-KVO" class="headerlink" title="2 KVO"></a>2 KVO</h1><p>之前总结过关于KVO的相关, 可以看<a href="http://hchong.net/2018/01/24/KVO%E8%AF%A6%E8%A7%A3/">这里</a></p>
+7</code></pre><h1 id="2-KVO"><a href="#2-KVO" class="headerlink" title="2 KVO"></a>2 KVO</h1><p>之前总结过关于KVO的相关, 可以看<a href="http://hchong.net/2018/01/24/KVO%E8%AF%A6%E8%A7%A3/">这里</a></p>
 <p>通过KVC修改属性会触发KVO, 是因为内部触发了setter方法. </p>
 <p>通过KVC修改成员变量也会触发KVO, 是因为通过KVC修改成员变量的值, 系统内部帮助我们调用了willChangeValueForKey和didChangeValueForKey这两个方法, 并且在didChangeValueForKey 内部调用了 observeValueForKeyPath:方法.</p>
 <h1 id="3-Notification"><a href="#3-Notification" class="headerlink" title="3 Notification"></a>3 Notification</h1><ul>

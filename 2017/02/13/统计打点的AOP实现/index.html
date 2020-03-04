@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="解决方案,AOP,统计打点," />
+    <meta name="keywords" content="解决方案,AOP,统计打点,">
   
 
-  <meta name="description" content="统计打点的AOP实现每一个App, 必然会有大量的分析数据来统计用户行为. 而这些统计对应在客户端就是, 统计打点, 又称埋点.关于埋点的本质, 我理解的就是用户出发一个行为后, 调用一个特定的接口. 服务端拿到我们的请求后, 根据客户端传的参数也就是事件ID来区分是什么操作(注意, 这里的事件ID是具有唯一性的, 不">
+  <meta name="description" content="统计打点的AOP实现每一个App, 必然会有大量的分析数据来统计用户行为. 而这些统计对应在客户端就是, 统计打点, 又称埋点.关于埋点的本质, 我理解的就是用户出发一个行为后, 调用一个特定的接口. 服务端拿到我们的请求后, 根据客户端传的参数也就是事件ID来区分是什么操作(注意, 这里的事件ID是具有唯一性的, 不同的ID对应用户不同的操作). 有时也可能会需要其他的信息, 比如操作人的ID等">
 <meta name="keywords" content="解决方案,AOP,统计打点">
 <meta property="og:type" content="article">
 <meta property="og:title" content="统计打点的AOP实现">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -271,8 +271,7 @@ ga('send', 'pageview');
                              kHandlerBlock:@&quot;HYZViewController3TrackHandleBlock&quot;,
                              kIsLightEvent:@(NO)}];
     return trackList;
-}
-</code></pre><p>如上所示, 我们是要记录<code>HYZViewController1</code>类里面的<code>simpleTrack:para2:</code>方法的点击事件, 事件ID是<code>HYZViewController1SimpleButtonClick</code>.<br>我们在<code>APPDelegate</code>的<code>application:didFinishLaunchingWithOptions:</code>方法中, 来hook所有的在<code>trackList</code>中记录的方法.<br>在``中, 实现如下相关代码.</p>
+}</code></pre><p>如上所示, 我们是要记录<code>HYZViewController1</code>类里面的<code>simpleTrack:para2:</code>方法的点击事件, 事件ID是<code>HYZViewController1SimpleButtonClick</code>.<br>我们在<code>APPDelegate</code>的<code>application:didFinishLaunchingWithOptions:</code>方法中, 来hook所有的在<code>trackList</code>中记录的方法.<br>在``中, 实现如下相关代码.</p>
 <pre><code>+ (void)setup {
     //实现和替换hook的block方法
     NSMutableDictionary *blockDict = [[NSMutableDictionary alloc] init];
@@ -299,8 +298,7 @@ ga('send', 'pageview');
             [HYZTrackManager complexTrackTarget:class selector:selector usingBlock:handleBlock];
         }
     }];
-}
-</code></pre><p>针对简单埋点, 我们直接使用</p>
+}</code></pre><p>针对简单埋点, 我们直接使用</p>
 <pre><code>//简单埋点虽然可以拿到对应方法的参数, 但是如果需要把该参数传到埋点请求的网络事件中的话, 必须使用复杂埋点来处理
 + (void)lightTrackTarget:(Class)target selector:(SEL)selector functionName:(NSString *)functionName trackId:(NSString *)trackId {
     NSError *error;
@@ -356,14 +354,12 @@ ga('send', 'pageview');
     // 清空参数列表，并置参数指针args无效
     va_end(args);
     NSLog(@&quot;此处用来实现埋点事件记录%@的网络请求&quot;, trackId);
-}
-</code></pre><p>至此, 实现了简单埋点的方法Hook.</p>
+}</code></pre><p>至此, 实现了简单埋点的方法Hook.</p>
 <h2 id="复杂埋点"><a href="#复杂埋点" class="headerlink" title="复杂埋点"></a>复杂埋点</h2><p>复杂埋点, 因为要传参数进来, 所以我们利用<code>+ (id&lt;AspectToken&gt;)aspect_hookSelector:(SEL)selector withOptions:(AspectOptions)options usingBlock:(id)block error:(NSError **)error;</code>可以传block参数来实现.<br>首先, 我们在<code>HYZTrackList</code>中把类名, 方法名和需要定义的Block关联起来,如下所示.</p>
 <pre><code>{kClassName:@&quot;HYZViewController3&quot;,
 kHookFunction:@&quot;trackWithTag:&quot;,
 kHandlerBlock:@&quot;HYZViewController3TrackHandleBlock&quot;,
-kIsLightEvent:@(NO)}
-</code></pre><p>在<code>APPDelegate</code>中初始化时, 需要在<code>HYZTrackManager</code>中实现Block的定义, </p>
+kIsLightEvent:@(NO)}</code></pre><p>在<code>APPDelegate</code>中初始化时, 需要在<code>HYZTrackManager</code>中实现Block的定义, </p>
 <pre><code>//hook的block在这里定义和实现
 + (void)weightEventEntry:(NSMutableDictionary*)blockDict{
     [HYZTrackManager trackButtonAction:blockDict];
@@ -394,14 +390,12 @@ kIsLightEvent:@(NO)}
         }
     };
     [blockDict setObject:[HYZViewController3TrackHandleBlock copy] forKey:@&quot;HYZViewController3TrackHandleBlock&quot;];
-}
-</code></pre><p>然后Hook原方法;</p>
+}</code></pre><p>然后Hook原方法;</p>
 <pre><code>//复杂的埋点,
 + (void)complexTrackTarget:(Class)target selector:(SEL)selector usingBlock:(id)block {
     NSError *error;
     [target aspect_hookSelector:selector withOptions:AspectPositionAfter usingBlock:block error:&amp;error];
-}
-</code></pre><p><a href="https://github.com/HChong3210/AOPTrack" target="_blank" rel="noopener">Demo</a><br>参考资料: </p>
+}</code></pre><p><a href="https://github.com/HChong3210/AOPTrack" target="_blank" rel="noopener">Demo</a><br>参考资料: </p>
 <ol>
 <li><a href="http://www.jianshu.com/p/dc9dca24d5de" target="_blank" rel="noopener">iOS 如何实现Aspect Oriented Programming</a></li>
 <li><a href="http://www.vienta.me/2016/09/21/AOP%E5%9C%A8iOS%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5%E4%B8%80%E7%BB%9F%E8%AE%A1%E5%9F%8B%E7%82%B9/" target="_blank" rel="noopener">AOP在iOS中的实践——统计埋点</a></li>

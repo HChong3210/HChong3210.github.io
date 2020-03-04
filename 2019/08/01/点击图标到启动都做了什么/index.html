@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指, App 点击启动前, 它的进程不在系统里, 需要系统新创建一个进程分配给它启动的情况. 这是一次完整的启动过程. 热启动是指, App 在冷启动后用户将 App 退后台, 在 App 的进程还在系统里的情况下, 用户重新启动进入 App 的过程, 这个过">
+  <meta name="description" content="一般情况下, App 的启动分为冷启动和热启动.  冷启动是指, App 点击启动前, 它的进程不在系统里, 需要系统新创建一个进程分配给它启动的情况. 这是一次完整的启动过程. 热启动是指, App 在冷启动后用户将 App 退后台, 在 App 的进程还在系统里的情况下, 用户重新启动进入 App 的过程, 这个过程做的事情非常少.   一般而言, App 的启动时间, 指的是从用户点击 Ap">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="点击图标到启动都做了什么">
@@ -104,7 +104,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -186,7 +186,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-main-函数执行前"><span class="toc-text">1 main()函数执行前</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-Mach-O"><span class="toc-text">1.1 Mach-O</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-dyld"><span class="toc-text">1.2 dyld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-1-load-dylibs"><span class="toc-text">1.2.1 load dylibs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-2-rebase-amp-amp-bind"><span class="toc-text">1.2.2 rebase && bind</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-3-ObjC-SetUp"><span class="toc-text">1.2.3 ObjC SetUp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-4-initializers"><span class="toc-text">1.2.4 initializers</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-main-函数"><span class="toc-text">2 main()函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-首屏渲染"><span class="toc-text">3 首屏渲染</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-启动优化"><span class="toc-text">4 启动优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-load-dylibs阶段"><span class="toc-text">4.1 load dylibs阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-Rebase-amp-amp-Binding"><span class="toc-text">4.2 Rebase && Binding</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-ObjC-SetUp"><span class="toc-text">4.3 ObjC SetUp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-4-initializers"><span class="toc-text">4.4 initializers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-5-main"><span class="toc-text">4.5 main()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-6-首屏渲染"><span class="toc-text">4.6 首屏渲染</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-优化实践"><span class="toc-text">5. 优化实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-pre-main阶段的优化实践"><span class="toc-text">5.1 pre-main阶段的优化实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-业务优化"><span class="toc-text">5.2 业务优化</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-main-函数执行前"><span class="toc-text">1 main()函数执行前</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-Mach-O"><span class="toc-text">1.1 Mach-O</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-dyld"><span class="toc-text">1.2 dyld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-1-load-dylibs"><span class="toc-text">1.2.1 load dylibs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-2-rebase-amp-amp-bind"><span class="toc-text">1.2.2 rebase &amp;&amp; bind</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-3-ObjC-SetUp"><span class="toc-text">1.2.3 ObjC SetUp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-4-initializers"><span class="toc-text">1.2.4 initializers</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-main-函数"><span class="toc-text">2 main()函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-首屏渲染"><span class="toc-text">3 首屏渲染</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-启动优化"><span class="toc-text">4 启动优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-load-dylibs阶段"><span class="toc-text">4.1 load dylibs阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-Rebase-amp-amp-Binding"><span class="toc-text">4.2 Rebase &amp;&amp; Binding</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-ObjC-SetUp"><span class="toc-text">4.3 ObjC SetUp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-4-initializers"><span class="toc-text">4.4 initializers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-5-main"><span class="toc-text">4.5 main()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-6-首屏渲染"><span class="toc-text">4.6 首屏渲染</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-优化实践"><span class="toc-text">5. 优化实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-pre-main阶段的优化实践"><span class="toc-text">5.1 pre-main阶段的优化实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-业务优化"><span class="toc-text">5.2 业务优化</span></a></li></ol></li></ol>
   </div>
 
 

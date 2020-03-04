@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,16 +22,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Charles,iOS逆向," />
+    <meta name="keywords" content="Charles,iOS逆向,">
   
 
-  <meta name="description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:  通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版">
+  <meta name="description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:  通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.  准备工作 安装Charles. 为了Charles能够抓取H">
 <meta name="keywords" content="Charles,iOS逆向">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS逆向-下载历史版本">
 <meta property="og:url" content="http://hchong.net/2017/04/06/iOS逆向-下载历史版本/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:  通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的. 准备工作 安装Charles. 为了Charles能够抓取HT">
+<meta property="og:description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:  通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.  准备工作 安装Charles. 为了Charles能够抓取H">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4m4udoqj30zo0iwdhx.jpg">
 <meta property="og:image" content="https://ww2.sinaimg.cn/large/006tKfTcgy1fel4n5nyodj30f707e74h.jpg">
@@ -44,7 +44,7 @@
 <meta property="og:updated_time" content="2017-04-13T08:29:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS逆向-下载历史版本">
-<meta name="twitter:description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:  通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的. 准备工作 安装Charles. 为了Charles能够抓取HT">
+<meta name="twitter:description" content="iOS逆向-下载历史版本目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.原理如下:  通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.  准备工作 安装Charles. 为了Charles能够抓取H">
 <meta name="twitter:image" content="https://ww3.sinaimg.cn/large/006tKfTcgy1fel4m4udoqj30zo0iwdhx.jpg">
 
   
@@ -111,7 +111,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -241,11 +241,11 @@ ga('send', 'pageview');
       <h1 id="iOS逆向-下载历史版本"><a href="#iOS逆向-下载历史版本" class="headerlink" title="iOS逆向-下载历史版本"></a>iOS逆向-下载历史版本</h1><p>目前App Store默认只能下载最新版, 而我们的目的是要能够下载到App Store中的历史版, 那就要借助一些其他工具来实现.<br>原理如下:</p>
 <blockquote>
 <p>通过Charles来获取下载链接, 通过分析来得到每个版本在连接中所对应的字段, 再通过Charles来截取和替换下载链接中的参数, 来达到下载特定版本App的目的.</p>
+</blockquote>
 <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
 <li>安装Charles.</li>
 <li>为了Charles能够抓取HTTPS类型的链接, 需要安装Charles的证书, 参考这里<a href="http://hchong.net/2017/02/28/Charles%E6%8A%93%E5%8C%85Https%E8%AF%B7%E6%B1%82/">Charles抓包HTTPS请求</a>.</li>
 </ol>
-</blockquote>
 <h2 id="开始抓包"><a href="#开始抓包" class="headerlink" title="开始抓包"></a>开始抓包</h2><p>安装了Charles之后, 我们就可以获取App的下载链接了, 并且从中分析出我们需要的参数.</p>
 <h3 id="获取APP的下载链接和版本号对应的参数"><a href="#获取APP的下载链接和版本号对应的参数" class="headerlink" title="获取APP的下载链接和版本号对应的参数"></a>获取APP的下载链接和版本号对应的参数</h3><p>下面我们以iOS上一款比较好用的看书软件<em>追书神器</em>为例来说明.</p>
 <ol>

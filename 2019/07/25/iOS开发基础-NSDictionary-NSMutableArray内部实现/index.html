@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. 这里讲解的十分详细, 此处我们对主要流程做一个概述. 1 NSDictionaryFoundation框架下提供了很多高级数据结构, 这些都是对Core Foundat">
+  <meta name="description" content="dictionary(map)和array是常见的数据结构, 下面我们来看下iOS中NSDictionary和NSMutableArray的内部实现. 这里讲解的十分详细, 此处我们对主要流程做一个概述. 1 NSDictionaryFoundation框架下提供了很多高级数据结构, 这些都是对Core Foundation下的封装, 例如NSDictionary就是对_CFDictionary的">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发基础-NSDictionary &amp; NSMutableArray内部实现">
@@ -105,7 +105,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -245,8 +245,7 @@ ga('send', 'pageview');
     CFOptionFlags _xflags;
     const void **_keys;    
     const void **_values;
-};
-</code></pre>
+};</code></pre>
 <p>根据数据结构可以发现dictionary内部使用了两个指针数组分别来保存keys和values, dictionary采用的是连续存储的方式存储键值对. Apple给的查询复杂度可以快至O(1), 下面我们就来分析下是如何做到的. </p>
 <h1 id="1-1-原理分析"><a href="#1-1-原理分析" class="headerlink" title="1.1 原理分析"></a>1.1 原理分析</h1><p>创建N个空桶，N为排序数组中最大值加一。然后遍历排序数组，以元素值为下标，将其放入对应的桶中. 如果少量数据，可以根据数组里面的最大值+1创建出那么多空桶，然后遍历，根据索引在空桶的值上累加，最后遍历空桶（已装载），根据值遍历出对应的下标.</p>
 <p>虽然这样做效率非常高，但是如果数据过大，内存吃不消，这样就有了哈希排序的介绍。例如一组数据，我们可以根据hash算法后取模的值进行空桶排列，但是如果两个值例如 101和11 % 10都是余1，会被放入同一个桶里面，这样就会有需要二次排列。虽然这个排序效率并不高，因此哈希化就变成了数据存储的一种设计.</p>

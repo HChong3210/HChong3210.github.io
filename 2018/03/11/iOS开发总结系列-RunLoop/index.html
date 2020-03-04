@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识," />
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="这篇主要是RunLoop相关的知识, 具体关于RunLoop可以看RunLoop用法与分析 RunLoop和线程是什么关系普通线程执行的任务是一条直线, 任务执行完就释放掉. RunLoop可以理解为特殊的线程, 这个现成不断的循环. 每个线程, 包括程序的主线程（main thread）都有与之相应的run loop">
+  <meta name="description" content="这篇主要是RunLoop相关的知识, 具体关于RunLoop可以看RunLoop用法与分析 RunLoop和线程是什么关系普通线程执行的任务是一条直线, 任务执行完就释放掉. RunLoop可以理解为特殊的线程, 这个现成不断的循环. 每个线程, 包括程序的主线程（main thread）都有与之相应的run loop对象. 他们之间的关系(CFDictionarySetValue(loopsDi">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-RunLoop">
@@ -104,7 +104,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -249,8 +249,7 @@ ga('send', 'pageview');
                                      target:self
                                    selector:@selector(timerTick)
                                    userInfo:nil
-                                    repeats:YES];
-</code></pre><p>这个问题有两个解决方案:</p>
+                                    repeats:YES];</code></pre><p>这个问题有两个解决方案:</p>
 <ol>
 <li><p>我们使用创建一个NSTimer对象, 我们把它添加到当前的RunLoop中去, 指定他的Mode为NSRunLoopCommonModes, 或者分别加入到NSDefaultRunLoopMode和UITrackingRunLoopMode中.</p>
 <pre><code> NSTimer *timer = [NSTimer timerWithTimeInterval:1.0
@@ -262,8 +261,7 @@ ga('send', 'pageview');
  [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
  [[NSRunLoop mainRunLoop] addTimer:timer forMode: UITrackingRunLoopMode];
  //加入CommonMode中
- [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-</code></pre></li>
+ [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];</code></pre></li>
 <li><p>使用GCD定时器</p>
 <pre><code> @property (nonatomic, strong) dispatch_source_t timer;
 
@@ -283,31 +281,40 @@ ga('send', 'pageview');
      NSLog(@&quot;------------%@&quot;, [NSThread currentThread]);
  });
  // 启动定时器
- dispatch_resume(self.timer);
-</code></pre><h2 id="猜想runloop内部是如何实现的"><a href="#猜想runloop内部是如何实现的" class="headerlink" title="猜想runloop内部是如何实现的"></a>猜想runloop内部是如何实现的</h2><p><img src="https://blog.ibireme.com/wp-content/uploads/2015/05/RunLoop_1.png" alt="RunLoop内部逻辑"></p>
+ dispatch_resume(self.timer);</code></pre><h2 id="猜想runloop内部是如何实现的"><a href="#猜想runloop内部是如何实现的" class="headerlink" title="猜想runloop内部是如何实现的"></a>猜想runloop内部是如何实现的</h2><p><img src="https://blog.ibireme.com/wp-content/uploads/2015/05/RunLoop_1.png" alt="RunLoop内部逻辑"></p>
 </li>
 <li><p>通知观察者, RunLoop已经启动.</p>
 </li>
-<li>通知观察者, 将要处理定时器.</li>
-<li>通知观察者, 将要处理Source0(即将启动的非基于端口的源).</li>
-<li>启动任何准备好的Source0(非基于端口的源).</li>
-<li>如果有任何Source1(基于端口的源)准备好并且处于等待状态, 立即启动, 并进入步骤9.</li>
-<li>通知所有观察者, 线程即将进入休眠.</li>
-<li>线程处于休眠状态, 直到遇到下列事件中的任意一个:<ul>
+<li><p>通知观察者, 将要处理定时器.</p>
+</li>
+<li><p>通知观察者, 将要处理Source0(即将启动的非基于端口的源).</p>
+</li>
+<li><p>启动任何准备好的Source0(非基于端口的源).</p>
+</li>
+<li><p>如果有任何Source1(基于端口的源)准备好并且处于等待状态, 立即启动, 并进入步骤9.</p>
+</li>
+<li><p>通知所有观察者, 线程即将进入休眠.</p>
+</li>
+<li><p>线程处于休眠状态, 直到遇到下列事件中的任意一个:</p>
+<ul>
 <li>某一事件到达Source0(非基于端口的源)</li>
 <li>NSTimer定时器启动</li>
 <li>RunLoop设置的时间已经超时</li>
 <li>RunLoop被外部手动显示唤醒.</li>
 </ul>
 </li>
-<li>通知观察者, 线程刚被唤醒</li>
-<li>处理唤醒时收到的事件:<ul>
+<li><p>通知观察者, 线程刚被唤醒</p>
+</li>
+<li><p>处理唤醒时收到的事件:</p>
+<ul>
 <li>如果是定时器启动, 处理定时器并重启RunLoop, 进入步骤2</li>
 <li>如果是输入源启动, 传递相应的消息</li>
 <li>如果是RunLoop被显式唤醒(Source1), 重启RunLoop, 进入步骤2</li>
 </ul>
 </li>
-<li>通知观察者RunLoop即将结束.<br>详细内容参考<a href="http://hchong.net/2017/12/11/RunLoop%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">RunLoop用法与分析</a>.<h2 id="autoreleasepool如何实现-一个autoreleasepool对象何时释放"><a href="#autoreleasepool如何实现-一个autoreleasepool对象何时释放" class="headerlink" title="autoreleasepool如何实现, 一个autoreleasepool对象何时释放"></a>autoreleasepool如何实现, 一个autoreleasepool对象何时释放</h2>可以看<a href="https://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">这里</a>, <a href="https://draveness.me/autoreleasepool" target="_blank" rel="noopener">这里</a>, <a href="http://hchong.net/2018/03/23/Autoreleasepool%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">这里</a></li>
+<li><p>通知观察者RunLoop即将结束.<br>详细内容参考<a href="http://hchong.net/2017/12/11/RunLoop%E7%94%A8%E6%B3%95%E4%B8%8E%E5%88%86%E6%9E%90/">RunLoop用法与分析</a>.</p>
+<h2 id="autoreleasepool如何实现-一个autoreleasepool对象何时释放"><a href="#autoreleasepool如何实现-一个autoreleasepool对象何时释放" class="headerlink" title="autoreleasepool如何实现, 一个autoreleasepool对象何时释放"></a>autoreleasepool如何实现, 一个autoreleasepool对象何时释放</h2><p>可以看<a href="https://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="noopener">这里</a>, <a href="https://draveness.me/autoreleasepool" target="_blank" rel="noopener">这里</a>, <a href="http://hchong.net/2018/03/23/Autoreleasepool%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">这里</a></p>
+</li>
 </ol>
 <p>autoreleasepool实际上被两个函数<code>objc_autoreleasePoolPush()</code>和<code>objc_autoreleasePoolPop()</code>包括, 这两个函数的实质又是AutoreleasePoolPage.<br>AutoreleasePoolPage是一个双向链表, 存储了对象的内存地址. AutoreleasePoolPage里面有个next指针, 当向一个对象发送- autorelease消息, 就是将这个对象加入到当前AutoreleasePoolPage的栈顶next指针指向的位置.<br>每次调用<code>objc_autoreleasePoolPush()</code>, runtime就向链表中插入一个哨兵对象(nil), <code>objc_autoreleasePoolPush()</code>的返回值正是这个哨兵对象的地址. <code>objc_autoreleasePoolPop()</code>的入参也是这个哨兵对象的地址, 根据传入的哨兵对象地址找到哨兵对象所处的page, 在当前page中(从最新加入的对象一直向前清理, 可以向前跨越若干个page, 直到哨兵所在的page), 将晚于哨兵对象插入的所有autorelease对象都发送一次<code>- release</code>消息, 并向回移动next指针到正确位置.</p>
 <p>在没有手加Autorelease Pool的情况下, Autorelease对象是在当前的runloop迭代结束时释放的, 而它能够释放的原因是系统在每个runloop迭代中都加入了自动释放池Push和Pop.</p>

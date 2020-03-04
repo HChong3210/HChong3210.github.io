@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="重构,架构," />
+    <meta name="keywords" content="重构,架构,">
   
 
-  <meta name="description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长.  重复代码坏味道行列中 ,最常见的就是Duplicate">
+  <meta name="description" content="常见的代码”坏味道”正所谓优雅的代码是相似的, 不优雅的代码却各有各的丑. 最近在拜读&amp;lt;重构- 改善既有代码的设计&amp;gt;一书, 虽然书中大量示例是用Java编写的, 但是也给了我很多启发.见贤思齐, 耗时把感想记录下来, 督促自己的成长.  重复代码坏味道行列中 ,最常见的就是Duplicated Code. 如果你在一个以上的地点看到相同的程序结构, 那么可以肯定: 把他们合而为一, 会">
 <meta name="keywords" content="重构,架构">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常见的代码&quot;坏味道&quot;">
@@ -102,7 +102,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -248,6 +248,8 @@ ga('send', 'pageview');
 </ol>
 <blockquote>
 <p>函数上移(Pull Up Method): 若干个身处子类中的函数, 他们又可以通过某种形式的参数调整成为相同的函数. 这时候, 最简单的方法就是首先分别调整这些函数的参数, 然后再将他们概括到父类中去. 特殊情况: 当子类的函数覆写了父类的函数, 但却仍然做相同的工作.</p>
+</blockquote>
+<blockquote>
 <p>塑造模板函数(Form Template Method): 两个函数以相同顺序执行大致相近的操作, 但是各操作不完全相同. 这种情况下我们可以将执行操作的序列移至父类, 并借助多态保证各操仍得以保持差异性.</p>
 </blockquote>
 <h2 id="过长函数-Long-Method"><a href="#过长函数-Long-Method" class="headerlink" title="过长函数(Long Method)"></a><strong>过长函数(Long Method)</strong></h2><p>程序愈长愈难理解.<br>我们应该积极地分解函数, 只要你感觉需要在一个地方加注释, 我们就要把需要说明的东西写进一个独立函数, 并以其用途(而非实现手法)命名. 哪怕替换后的函数调用动作比函数自身还长, 只要函数名称能够解释其用途, 我们就应该毫不犹豫地那么做, 关键不在于函数的长度, 而在于”做什么”和”如何做”之间的语义距离.</p>

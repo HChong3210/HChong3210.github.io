@@ -4,7 +4,7 @@
   <html class="light page-post">
 
 
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- 代码块的高亮 -->
   <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css">
   <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
@@ -22,10 +22,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="RN," />
+    <meta name="keywords" content="RN,">
   
 
-  <meta name="description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX">
+  <meta name="description" content="背景介绍前端大致的开发流程就是:  用 HTML 创建 DOM, 构建整个网页的布局, 结构 用 CSS 控制 DOM 的样式, 比如字体, 字号, 颜色, 居中等 用 JavaScript 接受用户事件, 动态的操控 DOM  在React中, 我们使用JSX语法, 它是一种 JavaScript 语法拓展. JSX 允许我们写 HTML 标签或 React 标签, 它们终将被转换成原生的 Ja">
 <meta name="keywords" content="RN">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React Native源码解析">
@@ -105,7 +105,7 @@ ga('send', 'pageview');
   
 
 </head>
-
+</html>
 <body>
 
 
@@ -276,15 +276,15 @@ ga('send', 'pageview');
 <li>处理结束后在回调中注册RCTDisplayLink到JS专用线程对应的RunLoop中. 然后发送 RCTJavaScriptDidLoadNotification 通知.</li>
 <li>接收通知的地方有三个, 分别是隐藏self.window, 同步所有的设置, 新建一个RCTRootContentView.</li>
 <li>在创建RCTRootContentView对象时, 会通过通知传过来的参数获取前面我们创建的RCTBridge中的RCTUIManager(管理UI组件). 并且把RCTRootContentView对象注册为RootView. 并且把它添加到_viewRegistry中去(这是一个字典, 所有注册过的View都在这里面, key是一个reactTag). </li>
-<li>在创建RCTRootContentView对象时, 也会创建一个RCTTouchHandler, 用来处理事件. 详见<a href="#React Native事件处理">这里</a>.</li>
-<li>RCTRootContentView对象创建完成后, 执行RCTRootContentView -&gt; runApplication方法. 通知JS运行APP, 来渲染控件. 详见<a href="#React Native页面渲染">这里</a>.</li>
+<li>在创建RCTRootContentView对象时, 也会创建一个RCTTouchHandler, 用来处理事件. 详见[这里](#React Native事件处理).</li>
+<li>RCTRootContentView对象创建完成后, 执行RCTRootContentView -&gt; runApplication方法. 通知JS运行APP, 来渲染控件. 详见[这里](#React Native页面渲染).</li>
 <li>RCTBridge -&gt; enqueueJSCall, 通过桥接对象让JS调用 APPRegistry. </li>
 <li>RCTBatchedBridge -&gt; _actuallyInvokeAndProcessModule, 通过批量桥架让JS执行AppRegistry方法.</li>
 <li>RCTJSCExecutor -&gt; _executeJSCall, 让JS执行者调用JS代码.</li>
 <li>执行完JS代码后, 会返回一个数组, 这个数组里面是OC要执行的操作(包含 RCTBridgeFieldRequestModuleIDs = 0, RCTBridgeFieldMethodIDs,  RCTBridgeFieldParams, RCTBridgeFieldCallID). 然后把数组传递给RCTBatchedBridge -&gt; _processResponse. </li>
 <li>在这里面执行RCTBatchedBridge -&gt; handleBuffer方法, 这个方法最终会便利数组依次调用RCTBatchedBridge -&gt; callNativeModule方法.</li>
 </ul>
-<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a><span id="React Native页面渲染">React Native页面渲染</span></h1><p><em>每一个 js render() 方法中的 component 都对应于 native 中的一个 RCTView. 在渲染前, js 会循环取出各个 component. 然后通过 UIManager (NativeModules 中的一项) 的 createView 方法, 通过 BatchedBridge 调用 native 端的 RCTUIManager 的同名方法, 创建与 component 相对应的类. 对于触摸事件也是类似的. native 端通过 bridge 将触摸事件传给 js, js 在找到对应 component 后, 响应各个触摸事件.</em></p>
+<h1 id="React-Native页面渲染"><a href="#React-Native页面渲染" class="headerlink" title="React Native页面渲染"></a><span id = 'React Native页面渲染'>React Native页面渲染</span></h1><p><em>每一个 js render() 方法中的 component 都对应于 native 中的一个 RCTView. 在渲染前, js 会循环取出各个 component. 然后通过 UIManager (NativeModules 中的一项) 的 createView 方法, 通过 BatchedBridge 调用 native 端的 RCTUIManager 的同名方法, 创建与 component 相对应的类. 对于触摸事件也是类似的. native 端通过 bridge 将触摸事件传给 js, js 在找到对应 component 后, 响应各个触摸事件.</em></p>
 <ul>
 <li>RCTRootContentView -&gt; runApplication, 通知JS运行APP.</li>
 <li>在 native 调用 <code>-enqueueJSCall:method:args:completion</code> 后, 我们最终调用JS中 AppRegistry 的 runApplication方法. 下面这些都是JS线程中JS调用OC的方法.<ul>
@@ -304,7 +304,7 @@ ga('send', 'pageview');
 </li>
 <li>完成UI渲染.</li>
 </ul>
-<h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a><span id="React Native事件处理">React Native事件处理</span></h1><ul>
+<h1 id="React-Native事件处理"><a href="#React-Native事件处理" class="headerlink" title="React Native事件处理"></a><span id = 'React Native事件处理'>React Native事件处理</span></h1><ul>
 <li>在创建 RCTRootContentView 时内部会 创建一个 RCTTouchHandler. RCTTouchHandler继承于 UIGestureRecognizer 内部实现了touchBegin等触摸方法, 用来处理触摸事件. RCTTouchHandler被添加到 RCTRootContentView 上面.</li>
 <li>创建 RCTTouchHandler 时, 内部会创建 RCTEventDispatcher. </li>
 <li>当原生的Touchs事件被触发, 会在里面调用 RCTEventDispatcher -&gt; sendEvent. 让事件分发对象调用发送事件对象, 并且内部会把事件保存到_eventQueue.</li>
@@ -317,8 +317,7 @@ ga('send', 'pageview');
 <pre><code>#define RCT_EXPORT_MODULE(js_name) \
 RCT_EXTERN void RCTRegisterModule(Class); \
 + (NSString *)moduleName { return @#js_name; } \
-+ (void)load { RCTRegisterModule(self); }
-</code></pre><p>可以看到添加 RCT_EXPORT_MODULE 宏, 相当定义了load, moduleName方法. 正是在load方法中调用了 RCTRegisterModule 方法注册 Module. 注意过多的load方法是会影响APP的启动速度的. RCTRegisterModule 只是简单收集所有需要曝露给 JS 的类. </p>
++ (void)load { RCTRegisterModule(self); }</code></pre><p>可以看到添加 RCT_EXPORT_MODULE 宏, 相当定义了load, moduleName方法. 正是在load方法中调用了 RCTRegisterModule 方法注册 Module. 注意过多的load方法是会影响APP的启动速度的. RCTRegisterModule 只是简单收集所有需要曝露给 JS 的类. </p>
 <pre><code>#define RCT_EXPORT_METHOD(method) \
   RCT_REMAP_METHOD(, method)
 
@@ -330,8 +329,7 @@ RCT_EXTERN void RCTRegisterModule(Class); \
   + (NSArray&lt;NSString *&gt; *)RCT_CONCAT(__rct_export__, \
     RCT_CONCAT(js_name, RCT_CONCAT(__LINE__, __COUNTER__))) { \
     return @[@#js_name, @#method]; \
-  }
-</code></pre><p>可以看到通过宏添加了一个新方法, 其命名规则: <code>__rct_export__ + __LINE__ + __COUNTER__</code>. 同时注意到, 所有曝露给 JS 的方法返回值都是 void, 要返回结果时, 需通过 callback 方式实现.</p>
+  }  </code></pre><p>可以看到通过宏添加了一个新方法, 其命名规则: <code>__rct_export__ + __LINE__ + __COUNTER__</code>. 同时注意到, 所有曝露给 JS 的方法返回值都是 void, 要返回结果时, 需通过 callback 方式实现.</p>
 <p>在RN初始化过程中会调用 RCTBatchedBridge -&gt; -initModulesWithDispatchGroup:方法, 这个方法中会调用如下代码: </p>
 <pre><code>  for (Class moduleClass in RCTGetModuleClasses()) {
     NSString *moduleName = RCTBridgeModuleNameForClass(moduleClass);
@@ -375,8 +373,7 @@ void RCTRegisterModule(Class moduleClass)
 
   // Register module
   [RCTModuleClasses addObject:moduleClass];
-}
-</code></pre><p>暴露给 JS 的类被 RCT_EXPORT_MODULE 宏注册. 暴露给 JavaScript 的方法被 RCT_EXPORT_METHOD 宏为函数名加上了 <code>__rct_export__</code> 前缀, 通过 runtime 获取类的函数列表. 至此, 所有需要曝露给 JS 的 module , Method都已注册完成, 并以RCTModuleData格式存储在 RCTCxxBridge 中. Bridge 持有一个数组, 数组中保存了所有的模块的 RCTModuleData 对象. 只要给定 ModuleId 和 MethodId 就可以唯一确定要调用的方法.</p>
+}</code></pre><p>暴露给 JS 的类被 RCT_EXPORT_MODULE 宏注册. 暴露给 JavaScript 的方法被 RCT_EXPORT_METHOD 宏为函数名加上了 <code>__rct_export__</code> 前缀, 通过 runtime 获取类的函数列表. 至此, 所有需要曝露给 JS 的 module , Method都已注册完成, 并以RCTModuleData格式存储在 RCTCxxBridge 中. Bridge 持有一个数组, 数组中保存了所有的模块的 RCTModuleData 对象. 只要给定 ModuleId 和 MethodId 就可以唯一确定要调用的方法.</p>
 <p>在 React Native 中, Objective-C 和 JavaScript 的交互都是通过传递 ModuleId、MethodId 和 Arguments 进行的.</p>
 <p>Objective-C 调用 JavaScript 代码时:</p>
 <ul>
