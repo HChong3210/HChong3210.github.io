@@ -17,26 +17,25 @@
 
   <meta charset="utf-8">
   
-  <title>JavaScript第二弹 | HChong的博客地址</title>
+  <title>Crash的捕获与处理 | HChong的博客地址</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="基础知识,JavaScript,">
+    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C">
   
 
-  <meta name="description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串和OC的没什么太大的区别, 这里只说几点比较特殊的.  可以使用反引号` ... `来标记一串带符号的文本, 例如  al">
-<meta name="keywords" content="基础知识,JavaScript">
+  <meta name="description" content="记录一下开发过程中遇到的问题">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JavaScript第二弹">
-<meta property="og:url" content="http://hchong.net/2017/08/22/JavaScript第二弹/index.html">
+<meta property="og:title" content="Crash的捕获与处理">
+<meta property="og:url" content="http://hchong.net/2020/03/04/Crash的捕获与处理/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串和OC的没什么太大的区别, 这里只说几点比较特殊的.  可以使用反引号` ... `来标记一串带符号的文本, 例如  al">
+<meta property="og:description" content="记录一下开发过程中遇到的问题">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-08-25T15:01:00.000Z">
+<meta property="og:updated_time" content="2020-03-04T08:35:43.173Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JavaScript第二弹">
-<meta name="twitter:description" content="JavaScript第二弹第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象.   在 JavaScript中，对象的定义是拥有属性和方法的数据.严格来讲, JavaScript中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.  字符串和OC的没什么太大的区别, 这里只说几点比较特殊的.  可以使用反引号` ... `来标记一串带符号的文本, 例如  al">
+<meta name="twitter:title" content="Crash的捕获与处理">
+<meta name="twitter:description" content="记录一下开发过程中遇到的问题">
 
   
 
@@ -182,22 +181,17 @@ ga('send', 'pageview');
 </div>
 
 
-  <div id="toc" class="toc-article">
-    <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JavaScript第二弹"><span class="toc-text">JavaScript第二弹</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#字符串"><span class="toc-text">字符串</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数组"><span class="toc-text">数组</span></a></li></ol></li></ol>
-  </div>
-
 
 
 <div class="content content-post LEFT">
-   <article id="post-JavaScript第二弹" class="article article-type-post" itemprop="blogPost">
+   <article id="post-Crash的捕获与处理" class="article article-type-post" itemprop="blogPost">
   <header class="article-header">
-    <h1 class="post-title">JavaScript第二弹</h1>
+    <h1 class="post-title">Crash的捕获与处理</h1>
 
     <div class="article-meta">
       <span>
         <i class="icon-calendar"></i>
-        <span>2017.08.22</span>
+        <span>2020.03.04</span>
       </span>
 
       
@@ -208,11 +202,6 @@ ga('send', 'pageview');
       
 
       
-  <span class="article-category">
-    <i class="icon-list"></i>
-    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
-  </span>
-
 
 
       
@@ -229,42 +218,7 @@ ga('send', 'pageview');
 
   <div class="article-content">
     
-      <h1 id="JavaScript第二弹"><a href="#JavaScript第二弹" class="headerlink" title="JavaScript第二弹"></a>JavaScript第二弹</h1><p>第一弹主要是一些基本语法, 数据类型和变量. 这一弹来说一下字符串, 数组和对象. </p>
-<blockquote>
-<p>在 <code>JavaScript</code>中，对象的定义是拥有属性和方法的数据.<br>严格来讲, <code>JavaScript</code>中的所有事物都是对象：字符串, 数字, 数组, 日期，等等.</p>
-</blockquote>
-<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>和OC的没什么太大的区别, 这里只说几点比较特殊的.</p>
-<ul>
-<li>可以使用反引号` <code>...</code> `来标记一串带符号的文本, 例如</li>
-</ul>
-<pre><code>alert(`你好, 
-哈哈`);
-</code></pre><p>中间的所有符号都会被保留下来, </p>
-<ul>
-<li>还可以在在` <code>你好 + ${string}</code> `来拼接字符串, 其中<code>${String}</code>代表一个叫做<code>String</code>的变量</li>
-</ul>
-<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>区别于OC的数组, <code>JavaScript</code>的<code>Array</code>可以包含任意的数据类型, 通过索引来访问每个元素.</p>
-<p>Array属性:</p>
-<blockquote>
-<p>constructor 返回对创建此对象的数组函数的引用.<br>length 设置或返回数组中元素的数目.<br>prototype 使您有能力向对象添加属性和方法.</p>
-</blockquote>
-<p>Array 对象方法:</p>
-<blockquote>
-<p>indexOf() 搜索一个指定的元素的位置.<br>concat() 连接两个或更多的数组，并返回结果.<br>join() 把数组的所有元素放入一个字符串.元素通过指定的分隔符进行分隔.<br>pop() 删除并返回数组的最后一个元素<br>push() 向数组的末尾添加一个或更多元素，并返回新的长度.<br>shift() 删除并返回数组的第一个元素.<br>unshift() 向数组的开头添加一个或更多元素，并返回新的长度.<br>reverse() 颠倒数组中元素的顺序.<br>slice() 从某个已有的数组返回选定的元素.<br>sort() 对数组的元素进行排序.<br>splice(loc, len, newElement, …) 删除元素，并向数组添加新元素.<br>toSource() 返回该对象的源代码.<br>toString() 把数组转换为字符串，并返回结果.<br>toLocaleString() 把数组转换为本地数组，并返回结果.<br>valueOf() 返回数组对象的原始值.</p>
-</blockquote>
-<p>在这里需要注意, 直接使用<code>arr.length</code>是会改变原<code>arr</code>的长度的, 没有被赋值的元素就会变为<code>undefined</code>, 直接通过索引赋值, 也会出现这个问题. 例如:</p>
-<pre><code>var arr1 = [1, 2, 3];
-arr1.length; // 3
-arr1.length = 6;
-arr1; // arr1变为[1, 2, 3, undefined, undefined, undefined]
-arr1.length = 2;
-arr1; // arr1变为[1, 2]
-
-var arr2 = [1, 2, 3];
-arr2[5] = &#39;x&#39;;
-arr2; // arr2变为[1, 2, 3, undefined, undefined, &#39;x&#39;]
-</code></pre><p>大多数其他编程语言不允许直接改变数组的大小，越界访问索引会报错。然而，JavaScript的Array却不会有任何错误。在编写代码时，不建议直接修改Array的大小，访问索引时要确保索引不会越界.</p>
-
+      
     
     <span class="asdf">
       <style type="text/css">
@@ -274,10 +228,10 @@ arr2; // arr2变为[1, 2, 3, undefined, undefined, &#39;x&#39;]
   </div>
   
   <div class="box-prev-next clearfix">
-    <a class="show pull-left" href="/2017/08/18/JavaScript第一弹/">
+    <a class="show pull-left" href="/2019/10/16/ffmpeg在iOS中的应用指南/">
         <i class="icon icon-angle-left"></i>
     </a>
-    <a class="show pull-right" href="/2017/11/21/iOS多线程/">
+    <a class="hide pull-right" href="/">
         <i class="icon icon-angle-right"></i>
     </a>
   </div>
@@ -471,24 +425,7 @@ gitalk.render('gitalk-container')
       // load success
     });
   }
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 </body>
 </html>

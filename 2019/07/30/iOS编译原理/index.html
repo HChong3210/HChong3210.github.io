@@ -256,7 +256,8 @@ int &#39;int&#39;        Loc=&lt;main.m:14:10&gt;
 identifier &#39;argc&#39;     [LeadingSpace]    Loc=&lt;main.m:14:14&gt;
 comma &#39;,&#39;        Loc=&lt;main.m:14:18&gt;
 char &#39;char&#39;     [LeadingSpace]    Loc=&lt;main.m:14:20&gt;
-star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;</code></pre>
+star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;
+</code></pre>
 <h3 id="1-2-3-语法分析-semantic-analysis"><a href="#1-2-3-语法分析-semantic-analysis" class="headerlink" title="1.2.3 语法分析(semantic analysis)"></a>1.2.3 语法分析(semantic analysis)</h3><p>词法分析的Token流会被解析成一颗抽象语法树(abstract syntax tree - AST). 在这里面每一节点也都标记了其在源码中的位置.</p>
 <p>有了抽象语法树，clang就可以对这个树进行分析，找出代码中的错误。比如类型不匹配，亦或Objective C中向target发送了一个未实现的消息.</p>
 <p>AST是开发者编写clang插件主要交互的数据结构，clang也提供很多API去读取AST.<a href="https://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="noopener">Introduction to the Clang AST</a></p>
@@ -271,10 +272,8 @@ star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;</code></pre>
 <p>至于静态类型，是在编译时做检查。当在代码中使用 ARC 时，编译器在编译期间，会做许多的类型检查：因为编译器需要知道哪个对象该如何使用。</p>
 </blockquote>
 </li>
-<li><p>检查是否有定义了，但是从未使用过的变量</p>
-</li>
-<li><p>检查在 你的初始化方法中中调用 self 之前, 是否已经调用 [self initWith…] 或 [super init] 了</p>
-</li>
+<li>检查是否有定义了，但是从未使用过的变量</li>
+<li>检查在 你的初始化方法中中调用 self 之前, 是否已经调用 [self initWith…] 或 [super init] 了</li>
 </ul>
 <p>此处遍历语法树，最终生成LLVM IR代码。<em>LLVM IR是前端的输出，后端的输入. Objective C代码在这一步会进行runtime的桥接：property合成，ARC处理等</em></p>
 <p>LLVM 会去做些优化工作, 在 Xcode 的编译设置里也可以设置优化级别-01，-03，-0s，还可以写些自己的 Pass. </p>
@@ -322,14 +321,15 @@ star &#39;*&#39;     [LeadingSpace]    Loc=&lt;main.m:14:25&gt;</code></pre>
 <p>Objective C的方法要到运行时才会报错，因为Objective C是一门动态语言，编译器无法确定对应的方法名(SEL)在运行时到底有没有实现(IMP).</p>
 <p>日常开发中，两种常见的头文件引入方式:</p>
 <pre><code class="OC">#include &quot;CustomClass.h&quot; //自定义
-#include &lt;Foundation/Foundation.h&gt; //系统或者内部framework</code></pre>
+#include &lt;Foundation/Foundation.h&gt; //系统或者内部framework
+</code></pre>
 <p>这里有个文件类型叫做heademap, headermap是帮助编译器找到头文件的辅助文件: 存储这头文件到其物理路径的映射关系.</p>
 <ul>
 <li>clang发现#import “TestView.h”的时候, 先在headermap(Demo-generated-files.hmap,Demo-project-headers.hmap)里查找, 如果headermap文件找不到，接着在own target的framework里找</li>
 <li>系统的头文件查找的时候也是优先headermap，headermap查找不到会查找own target framework，最后查找SDK目录</li>
 <li>以#import &lt;Foundation/Foundation.h&gt;为例，在SDK目录查找时首先查找framework是否存在, 如果framework存在，再在headers目录里查找头文件是否存在</li>
 </ul>
-<p><a href="">#import””与#import&lt;&gt;的区别</a></p>
+<p><a href>#import””与#import&lt;&gt;的区别</a></p>
 <h1 id="5-Clang-Module"><a href="#5-Clang-Module" class="headerlink" title="5 Clang Module"></a>5 Clang Module</h1><p>传统的#include/#import都是文本语义: 预处理器在处理的时候会把这一行替换成对应头文件的文本, 这样就导致:</p>
 <ul>
 <li>大量的预处理消耗。假如有N个头文件，每个头文件又#include了M个头文件，那么整个预处理的消耗是N*M。</li>

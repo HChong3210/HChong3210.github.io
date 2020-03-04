@@ -239,7 +239,8 @@ target &#39;Demo&#39; do
     pod &#39;AFNetworking&#39;
     pod &#39;SDWebImage&#39;
     pod &#39;Masonry&#39;
-end</code></pre>
+end
+</code></pre>
 <p><code>source</code>: Specifies the location of specs. spec的地址.</p>
 <p><code>platform</code>: Specifies the platform for which a static library should be built. 指定构建静态库的平台.</p>
 <p><code>target</code>: Defines a CocoaPods target and scopes dependencies defined within the given block. A target should correspond to an Xcode target. By default the target includes the dependencies defined outside of the block, unless instructed not to inherit them. 定义了CocoaPods在指定target的依赖, 此处的Target应该与Xcode目标相对应。默认情况下，除非表明不继承它们, 否则Target包括在块外部定义的依赖项.</p>
@@ -354,7 +355,8 @@ Sending stats
       - Masonry, 1.0.2
       - SDWebImage, 4.1.0
 
--&gt; Pod installation complete! There are 3 dependencies from the Podfile and 3 total pods installed.</code></pre><p>先看我们工程的变化, 可以发现工程里面多了三个文件, 一个<code>XXX.xcworkspace</code>文件, 一个<code>Podfile.lock</code>文件, 还有一个<code>Pods</code>文件夹. 我们在通过终端输出的命令来分析, 为什么会生成这几个文件, 以及他们的作用.</p>
+-&gt; Pod installation complete! There are 3 dependencies from the Podfile and 3 total pods installed.
+</code></pre><p>先看我们工程的变化, 可以发现工程里面多了三个文件, 一个<code>XXX.xcworkspace</code>文件, 一个<code>Podfile.lock</code>文件, 还有一个<code>Pods</code>文件夹. 我们在通过终端输出的命令来分析, 为什么会生成这几个文件, 以及他们的作用.</p>
 <ol>
 <li>Analyzing dependencies. 弄清楚声明了哪些第三方库.在加载 <code>podspecs</code> 过程中，<code>CocoaPods</code> 就建立了包括版本信息在内的所有的第三方库的列表。<code>Podspecs</code> 被存储在本地路径 <code>~/.cocoapods</code> 中.</li>
 <li>Inspecting targets to integrate. 检查目标集成.</li>
@@ -392,7 +394,8 @@ Sending stats
 ├── Specs
     └── [SPEC_NAME]
         └── [VERSION]
-            └── [SPEC_NAME].podspec</code></pre><p>如果你要创建私有Pod, 那么你的<code>Spec Repo</code>的远端地址就必须是私有的. 反之如果你要创建一个公有的Pod, 那么就可以使用GitHub来托管你的代码. 当你创建好远端的仓库之后, 执行<code>pod repo add [Spec Repo的仓库名] [Spec Repo的git地址]</code>来把远端的仓库clone到本地. 注意, 这里<code>[Spec Repo的仓库名]</code>不一定是远端Git仓库的名字, 而是clone到本地后, 本地文件加的名字, 但是这个名字会在后面提交<code>PodSpec</code>文件时用到.</p>
+            └── [SPEC_NAME].podspec
+</code></pre><p>如果你要创建私有Pod, 那么你的<code>Spec Repo</code>的远端地址就必须是私有的. 反之如果你要创建一个公有的Pod, 那么就可以使用GitHub来托管你的代码. 当你创建好远端的仓库之后, 执行<code>pod repo add [Spec Repo的仓库名] [Spec Repo的git地址]</code>来把远端的仓库clone到本地. 注意, 这里<code>[Spec Repo的仓库名]</code>不一定是远端Git仓库的名字, 而是clone到本地后, 本地文件加的名字, 但是这个名字会在后面提交<code>PodSpec</code>文件时用到.</p>
 <h2 id="2-2-创建Pod工程文件"><a href="#2-2-创建Pod工程文件" class="headerlink" title="2.2 创建Pod工程文件"></a>2.2 创建Pod工程文件</h2><p>我们在你需要创建Pod的目录下使用<code>pod lib create [Pod名称]</code>来创建对应的Pod模板.  实际上该命令行隐藏了默认参数, 参数补全后应该是<code>pod lib create ProjectName --template-url=https://github.com/CocoaPods/pod-template.git</code>. </p>
 <p>接下来会问你四个问题:</p>
 <ol>
@@ -420,11 +423,13 @@ Sending stats
   │   ├── Assets
   │   └── Classes
   │     └── RemoveMe.[swift/m]
-  └── README.md</code></pre><p>接下来, 我们需要创建第二个Git地址, 用来保存Pod的实现代码. 我们进入到Pod文件夹的根目录下, 使用如下代码来关联Pod到远端仓库:</p>
+  └── README.md
+</code></pre><p>接下来, 我们需要创建第二个Git地址, 用来保存Pod的实现代码. 我们进入到Pod文件夹的根目录下, 使用如下代码来关联Pod到远端仓库:</p>
 <pre><code>$ git add .
 $ git commit -s -m &quot;Initial Commit of Library&quot;
 $ git remote add origin [Pod的远端地址]           #添加远端仓库
-$ git push origin master     #提交到远端仓库</code></pre><h2 id="2-3-编辑Pod文件"><a href="#2-3-编辑Pod文件" class="headerlink" title="2.3 编辑Pod文件"></a>2.3 编辑Pod文件</h2><p>Pod文件就是这个Pod要实现功能的具体逻辑, 在主工程根目录下面有一个和Pod同名的文件夹, 里面有两个子文件夹. 一个是<code>Assets</code>, 一个是<code>Classes</code>.</p>
+$ git push origin master     #提交到远端仓库
+</code></pre><h2 id="2-3-编辑Pod文件"><a href="#2-3-编辑Pod文件" class="headerlink" title="2.3 编辑Pod文件"></a>2.3 编辑Pod文件</h2><p>Pod文件就是这个Pod要实现功能的具体逻辑, 在主工程根目录下面有一个和Pod同名的文件夹, 里面有两个子文件夹. 一个是<code>Assets</code>, 一个是<code>Classes</code>.</p>
 <ul>
 <li>Assets文件主要用来存放资源文件, 例如图片资源和XIB文件.</li>
 <li>Classes则存放主要的功能代码, 类.</li>
@@ -471,14 +476,16 @@ $ git push origin master     #提交到远端仓库</code></pre><h2 id="2-3-编�
   s.dependency &#39;AFNetworking&#39;, &#39;~&gt; 2.3&#39;
   s.dependency &#39;SDWebImage&#39;
 
-end</code></pre><h2 id="2-5-提交Pod文件"><a href="#2-5-提交Pod文件" class="headerlink" title="2.5 提交Pod文件"></a>2.5 提交Pod文件</h2><p>Pod文件编辑好后, 我们要把代码提交到远端服务器, 我们就使用正常的方式来提交代码, 并且给代码打上Tag, * 注意, 这里的Tag必须和<code>Podspec</code>文件中的Pod版本号一致 *, 因为Podspec会根据Tag从远端来找相应的代码, 否则会出现版本和代码不匹配的现象.</p>
+end
+</code></pre><h2 id="2-5-提交Pod文件"><a href="#2-5-提交Pod文件" class="headerlink" title="2.5 提交Pod文件"></a>2.5 提交Pod文件</h2><p>Pod文件编辑好后, 我们要把代码提交到远端服务器, 我们就使用正常的方式来提交代码, 并且给代码打上Tag, <em> 注意, 这里的Tag必须和<code>Podspec</code>文件中的Pod版本号一致 </em>, 因为Podspec会根据Tag从远端来找相应的代码, 否则会出现版本和代码不匹配的现象.</p>
 <p>如果不使用Sourcetree这样的GUI工具, 可以参考下面的Git代码:</p>
 <pre><code># 在根目录下
 git status
 git add .
 git tag -m &#39;备注&#39; 版本号
 git commit -s -m &#39;备注&#39; 
-git push origin master —tags</code></pre><h2 id="2-6-提交Podspec文件"><a href="#2-6-提交Podspec文件" class="headerlink" title="2.6 提交Podspec文件"></a>2.6 提交Podspec文件</h2><p>提交完Pod文件后, 我们只用把<code>Podspec</code>文件也提交上去, 这样就可以在Cocoapods中简历起来索引, 找到自己的Pod了. </p>
+git push origin master —tags
+</code></pre><h2 id="2-6-提交Podspec文件"><a href="#2-6-提交Podspec文件" class="headerlink" title="2.6 提交Podspec文件"></a>2.6 提交Podspec文件</h2><p>提交完Pod文件后, 我们只用把<code>Podspec</code>文件也提交上去, 这样就可以在Cocoapods中简历起来索引, 找到自己的Pod了. </p>
 <p>在提交之前我们可以在根目录下使用<code>pod lib lint</code>命令来验证是否编译通过. 也可以直接提交<code>pod repo push [你clone到本地的Spec Repo的仓库名] [Pod名称].podspec      --use-libraries --allow-warnings --sources=&#39;[Podspec远端地址],https://github.com/CocoaPods/Specs&#39; --verbose</code></p>
 <h2 id="2-7-subspec的使用"><a href="#2-7-subspec的使用" class="headerlink" title="2.7 subspec的使用"></a>2.7 subspec的使用</h2><p>有时一个Pod太大了, 而我们又用不到全部的内容, 这时我们就可以使用subspec来解决这个问题. 我们可以在Pod文件夹中, 使用文件夹来分割各个子Pod, 然后在<code>Podspec</code>文件中这样设置:</p>
 <pre><code>  s.subspec &#39;[子Pod名称]&#39; do |pod1|
@@ -487,7 +494,8 @@ git push origin master —tags</code></pre><h2 id="2-6-提交Podspec文件"><a h
 
   s.subspec &#39;[子Pod名称]&#39; do |pod2|
             pod2.source_files = &#39;SCCQRCode/Classes/[子文件夹名]/**/*&#39;
-  end</code></pre><p>我们也可以在各个子Pod中分别设置他们的资源路径, 对外暴露的header路径, 以及dependency.</p>
+  end
+</code></pre><p>我们也可以在各个子Pod中分别设置他们的资源路径, 对外暴露的header路径, 以及dependency.</p>
 <p>我们在外面引用该Pod的时候就可以使用<code>pod [Pod/子Pod]</code>的方式来只引用一个子Pod. </p>
 <h1 id="3-cocoapods的相关知识"><a href="#3-cocoapods的相关知识" class="headerlink" title="3 cocoapods的相关知识"></a>3 cocoapods的相关知识</h1><p>这里是CocoaPods的其他相关知识, 做一个备忘.</p>
 <h2 id="3-1-Pod的版本说明"><a href="#3-1-Pod的版本说明" class="headerlink" title="3.1 Pod的版本说明"></a>3.1 Pod的版本说明</h2><p>CocoaPods 使用<a href="http://semver.org/lang/zh-CN/" target="_blank" rel="noopener">语义版本控制 - Semantic Versioning</a>命名约定来解决对版本的依赖. 常见的版本说明符号有以下这些.</p>

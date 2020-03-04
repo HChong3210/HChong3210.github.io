@@ -268,7 +268,8 @@ ga('send', 'pageview');
    } else {
        NSLog(@&quot;没有安装&quot;);
    }
-}</code></pre><p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
+}
+</code></pre><p>options目前可传入参数Key在UIApplication头文件只有一个:UIApplicationOpenURLOptionUniversalLinksOnly, 其对应的Value为布尔值, 默认为False. 如该Key对应的Value为True, 那么打开所传入的Universal Link时, 只允许通过这个Link所代表的iOS应用跳转的方式打开这个链接, 否则就会返回success为false, 也就是说只有安装了Link所对应的App的情况下才能打开这个Universal Link, 而不是通过启动Safari方式打开这个Link的代表的网站. </p>
 <p>至此, 就可以正常跳转了, 如果我们不希望某个APP通过URL Scheme的方式打开我们的应用, 我们可以在<code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</code>方法中判断指定的Scheme然后返回<code>NO</code>, 如下所示, 只有<code>com.tencent.weixin</code>的Scheme才能打开我们的APP. </p>
 <pre><code>- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     NSLog(@&quot;sourceApplication: %@&quot;, sourceApplication);
@@ -282,6 +283,7 @@ ga('send', 'pageview');
         return NO;
     }
 }
+
 </code></pre><h3 id="Universal-Links方式跳转"><a href="#Universal-Links方式跳转" class="headerlink" title="Universal Links方式跳转"></a>Universal Links方式跳转</h3><p>使用这个功能可以使我们的App通过HTTP链接来启动App, 通用链接就是HTTP协议的普通URL, 通过在服务器上配置一些文件, 配合应用. 实现客户点击网页链接之后直接打开应用. 客户在微信\QQ中点击链接时不再需要点击右上’在Safari浏览器打开’才能打开软件, 实现客户操作的无缝跳转, 让客户体验更加连贯, 更顺畅. </p>
 <ol>
 <li><p>如果安装过App, 不管在微信里面http链接还是在Safari浏览器, 还是其他第三方浏览器, 都可以打开App. </p>
@@ -349,8 +351,9 @@ ga('send', 'pageview');
  @return 实现跳转协议类的self
  */
  - (id)open_present:(NSDictionary *)params callback:(void(^)(NSDictionary *))callback;
+
 </code></pre></li>
-<li><p><code>HCModuleCore</code>是个单例, 在初始化的时候, 通过runtime提供的方法把遵守``的类名缓存起来, 缓存信息存储在单例中, 存在于整个APP的生命周期中.</p>
+<li><p><code>HCModuleCore</code>是个单例, 在初始化的时候, 通过runtime提供的方法把遵守<code></code>的类名缓存起来, 缓存信息存储在单例中, 存在于整个APP的生命周期中.</p>
 <pre><code> HCModuleCore.m
 
  + (instancetype)moduleCore {
@@ -394,7 +397,8 @@ ga('send', 'pageview');
      }
      free(classes);
      self.cache = [tmpCache copy];
-}</code></pre></li>
+}
+</code></pre></li>
 <li><p>主要是通过传入的moduleName或者URl来获取到被打开页面的唯一标识, 再通过唯一标识从单例中缓存的遵守跳转协议的类中去找. 如果找到的话, <code>performSelector:withObject:withObject:</code>方法的返回值是响应的方法的返回值, 通过该函数获取到被跳转的类的实例. </p>
 <pre><code> HCModuleCore.m
 
@@ -428,7 +432,8 @@ ga('send', 'pageview');
          }
      }
      return module;
- }</code></pre></li>
+ }
+</code></pre></li>
 <li><p>然后有两个category, 分别是<code>UINavigationController+HCModuleCore</code>和<code>UIViewController+HCModuleCore</code>. 分别对应push和present的情况. 因为上面已经拿到了要跳转到的页面的实例, 这里就可以通过push或者present的方法跳转过去.   </p>
 </li>
 </ol>

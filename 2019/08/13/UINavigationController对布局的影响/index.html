@@ -249,11 +249,13 @@ ga('send', 'pageview');
 <h2 id="2-2-navigationBar-translucent"><a href="#2-2-navigationBar-translucent" class="headerlink" title="2.2 navigationBar.translucent"></a>2.2 navigationBar.translucent</h2><p>translucent属性值会决定导航栏是否有半透明效果. translucent为NO, 意味着导航栏为非透明. 我们可以通过更改这个属性解决问题.</p>
 <p>translucent会受navigationBar的backgroudImage属性的影响。也就是说当你使用了一张自定义图片作为navigationBar的背景图时，translucent的值将由系统根据该图片是否颜色值透明，来推断translucent是YES还是NO.</p>
 <pre><code class="OC">UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-nav.navigationBar.translucent = NO;</code></pre>
+nav.navigationBar.translucent = NO;
+</code></pre>
 <p>当navigationBar.translucent = NO时，两种方式给NavigationBar设置颜色:</p>
 <pre><code class="OC">self.navigationController.navigationBar.tintColor = [UIColor redColor];
 
-[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@&quot;1.png&quot;] forBarMetrics:(UIBarMetricsDefault)];</code></pre>
+[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@&quot;1.png&quot;] forBarMetrics:(UIBarMetricsDefault)];
+</code></pre>
 <h2 id="2-3-extendedLayoutIncludesOpaqueBars"><a href="#2-3-extendedLayoutIncludesOpaqueBars" class="headerlink" title="2.3 extendedLayoutIncludesOpaqueBars"></a>2.3 extendedLayoutIncludesOpaqueBars</h2><p>该属性的意思为在bar不透明的情况下根View是否进行延伸, 该属性只能使用在bar不透明的情况下, 在navgationBar透明的情况下, 设置无效.</p>
 <p>在navgationBar不透明的情况下edgesForExtendedLayout与extendedLayoutIncludesOpaqueBars需要配合使用才可以达到想要的效果.</p>
 <ul>
@@ -273,7 +275,8 @@ nav.navigationBar.translucent = NO;</code></pre>
 <p>为避免该情况, 应该将控制器B的extendedLayoutIncludesOpaqueBars设置为YES; 或是当B页面viewWillAppear:时, 再度将导航栏设置为半透明效果.</p>
 <h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><pre><code class="OC">self.navigationController.navigationBar.translucent = NO;
 self.extendedLayoutIncludesOpaqueBars = NO;
-self.edgesForExtendedLayout = UIRectEdgeNone;</code></pre>
+self.edgesForExtendedLayout = UIRectEdgeNone;
+</code></pre>
 <ul>
 <li>NO + NO + UIRectEdgeNone, 从导航栏下开始计算</li>
 <li>NO + NO + UIRectEdgeAll, 从导航栏下开始计算</li>

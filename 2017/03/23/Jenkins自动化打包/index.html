@@ -284,7 +284,7 @@ ga('send', 'pageview');
 <p>注: 这里会报一个<em>API Token for Gitlab access required</em>的错误, 可以暂时忽略, 是因为gitlab一般都是私有的仓库, Jenkins没有连接的权限导致的.</p>
 <h3 id="添加与gitlab连接的证书"><a href="#添加与gitlab连接的证书" class="headerlink" title="添加与gitlab连接的证书"></a>添加与gitlab连接的证书</h3><p>Jenkins -&gt; Credentials -&gt; Add Credentials, <a href="http://localhost:8080/credentials/store/system/domain/_/newCredentials" target="_blank" rel="noopener">http://localhost:8080/credentials/store/system/domain/_/newCredentials</a>增加一个新的证书, 用来连接gitlab. </p>
 <p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fh94ryjjgvj31kw0qngml.jpg" alt="连接gitlab的证书"></p>
-<p><em>kind</em> , <em>Scope</em> 和 <em>Private Key</em> 就按照如图所示选择好. <em>UserName</em> 表示这个证书的名字, <em>ID</em> 自动生成, 用来标记这个证书. <em>Description*是关于这个证书的描述. *key</em> 那里填写SSH的Private Key, <em>Passphrase</em> 那里填写生成SSH时填写的密码.  <a href="https://git-scm.com/book/zh/v1/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-%E7%94%9F%E6%88%90-SSH-%E5%85%AC%E9%92%A5" target="_blank" rel="noopener">关于SSH的申请</a>.</p>
+<p><em>kind</em> , <em>Scope</em> 和 <em>Private Key</em> 就按照如图所示选择好. <em>UserName</em> 表示这个证书的名字, <em>ID</em> 自动生成, 用来标记这个证书. <em>Description</em>是关于这个证书的描述. <em>key</em> 那里填写SSH的Private Key, <em>Passphrase</em> 那里填写生成SSH时填写的密码.  <a href="https://git-scm.com/book/zh/v1/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-%E7%94%9F%E6%88%90-SSH-%E5%85%AC%E9%92%A5" target="_blank" rel="noopener">关于SSH的申请</a>.</p>
 <p>注意: 这里记得要在你的gitlab的Profile Settings -&gt; SSH Keys中添加上一步生成的Public Key, </p>
 <h3 id="添加钥匙串和描述文件"><a href="#添加钥匙串和描述文件" class="headerlink" title="添加钥匙串和描述文件"></a>添加钥匙串和描述文件</h3><p>在Jenkins -&gt; 系统管理 -&gt; KeyChain and Provisioning Profiles Management 中添加 keychains 和 Provisioning Profile文件.<br><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fha7tvmt2uj30yg08ljrq.jpg" alt="添加钥匙串和描述文件"></p>
 <p>分别上传keychains 和 Provisioning Profile.</p>
@@ -310,7 +310,7 @@ ga('send', 'pageview');
 <li><p>关闭构建, 在必要的时候并发构建. 可选</p>
 </li>
 </ul>
-<h2 id="源码管理"><a href="#源码管理" class="headerlink" title="源码管理"></a>源码管理</h2><p>根据自己的实际需求, 不管是SVN或者Git. 因为我使用的是Git, 在一开始安装了Git管理的插件, 所以这里选择Git.<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fhab3vad6rj30tm0f3q3d.jpg" alt=""></p>
+<h2 id="源码管理"><a href="#源码管理" class="headerlink" title="源码管理"></a>源码管理</h2><p>根据自己的实际需求, 不管是SVN或者Git. 因为我使用的是Git, 在一开始安装了Git管理的插件, 所以这里选择Git.<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fhab3vad6rj30tm0f3q3d.jpg" alt></p>
 <ol>
 <li><p>这里的 <em>Credentials</em> 如果使用的是SSH模式, 那上面的 <em>Repository URL</em>就要使用SSH类型的地址. 如果是账号密码模式, 那上面的源码就要使用HTTP形式的地址. 两者必须保持一致.</p>
 </li>
@@ -327,7 +327,7 @@ ga('send', 'pageview');
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fhfrpjn2twj31kw0cegma.jpg" alt="构建触发器"></p>
 <h2 id="构建环境"><a href="#构建环境" class="headerlink" title="构建环境"></a>构建环境</h2><p>构建环境, 主要是对构建时一些环境变量的配置.<br><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fhgvjboomwj31a60eujrv.jpg" alt="构建环境"></p>
 <p>在该模块中 主要设置 xcode build 打包时需要的 keychains 和 Provision Profiles 配置文件。<br>如果不配置 就会使用 xcode 自动的配置，来去系统中查找相应的配置，不过有一点需要注意,就是钥匙串中，登陆钥匙串中的证书 要复制到 系统钥匙串中，因为jenkins 访问的是系统中的钥匙串 这样在第一次打包的时候，会提示 是否授权访问钥匙串，点击始终允许就可以了。</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fhjnx3dnwvj31gg0jo755.jpg" alt="Keychains and Code Signing Identities"><br><em>Keychains and Code Signing Identities</em> 中的选项, 因为在前面已经选择过了 * Keychain * 和 <em>Code Signing Identity</em>在前面已经填写过, 此处只用根据当前工程来选择正确的选项.</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fhjnx3dnwvj31gg0jo755.jpg" alt="Keychains and Code Signing Identities"><br><em>Keychains and Code Signing Identities</em> 中的选项, 因为在前面已经选择过了 <em> Keychain </em> 和 <em>Code Signing Identity</em>在前面已经填写过, 此处只用根据当前工程来选择正确的选项.</p>
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1fhjo37irdyj31g20hojs1.jpg" alt="Mobile Provisioning Profiles"></p>
 <p><em>Mobile Provisioning Profiles</em>由于前面已经填写过描述文件, 此处只需要选择与当前打包工程相匹配的描述文件.</p>
 <h2 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h2><p>在这里才进入了自动化集成的关键步骤, 前面的都是一些准备工作. 我们选择<em>增加构建步骤</em>, 按照自己的实际需求, 选择打包脚本的类型. 因为Jenkins自带Shell脚本集成, 所以此处我选择<em>Execute shell</em>, 使用shell脚本来进行构建.</p>
@@ -336,7 +336,8 @@ ga('send', 'pageview');
 rm -rf Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa
 security unlock-keychain  -p &quot;HChong&quot; ~/Library/Keychains/login.keychain
 sh /Users/Shared/Jenkins/Library/BuildScript/build.sh JenkinsTest 4c86cf7c8b4d00013c59b30b0c8d5e77
-fir p /Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa -T 4c86cf7c8b4d00013c59b30b0c8d5e77</code></pre><p>shell脚本的具体内容如下</p>
+fir p /Users/Shared/Jenkins/Library/ipa/JenkinsTest/JenkinsTest.ipa -T 4c86cf7c8b4d00013c59b30b0c8d5e77
+</code></pre><p>shell脚本的具体内容如下</p>
 <pre><code>#!/bin/bash
 
 #=================项目路径配置===============
@@ -407,9 +408,10 @@ else
 echo &quot;打包失败&quot;
 exit 0
 fi
+
 </code></pre><h2 id="构建后的操作"><a href="#构建后的操作" class="headerlink" title="构建后的操作"></a>构建后的操作</h2><p>顾名思义, 就是构建之后进行的操作. 在这里我们可以选择<em>Execute a set of scripts</em>, 通过脚本来实现构建后的操作. 常见的是将构建的结果, 上传到内测平台或者内部下载地址. 但是如果构建操作的脚本中包含有这一项, 这一个步骤也就可以忽略掉了.</p>
 <h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="找不到Fir命令"><a href="#找不到Fir命令" class="headerlink" title="找不到Fir命令"></a>找不到Fir命令</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fhjsalg3fej31b80cewfp.jpg" alt="找不到Fir命令"><br>出现如图所示的Error, 一般是由于没有安装fit-cli命令导致, 通过安装<code>gem install fir-cli -V --no-ri --no-rdoc</code>来解决. 如果提示安装成功, 但是还是报错的话, 那就在安装命令前加上<code>sudo</code>, 覆盖安装即可.</p>
-<h3 id="fir-cli-jenkins-fir-command-not-found"><a href="#fir-cli-jenkins-fir-command-not-found" class="headerlink" title="fir-cli jenkins fir:command not found"></a>fir-cli jenkins fir:command not found</h3><p>这个错误是由于没有导入fir-cli安装目录导致的, 可以先在终端输入<code>echo $PATH</code>, 然后把输出结果复制下来, 在Jenkins -&gt; 系统管理 -&gt; 添加全局变量. 然后在工程构建步骤, 先引入全局变量<code>export ${PATH}</code>. 如果没有设置全局变量的话, 也可以直接使用<code>export PATH=</code>echo $PATH 的输出结果``</p>
+<h3 id="fir-cli-jenkins-fir-command-not-found"><a href="#fir-cli-jenkins-fir-command-not-found" class="headerlink" title="fir-cli jenkins fir:command not found"></a>fir-cli jenkins fir:command not found</h3><p>这个错误是由于没有导入fir-cli安装目录导致的, 可以先在终端输入<code>echo $PATH</code>, 然后把输出结果复制下来, 在Jenkins -&gt; 系统管理 -&gt; 添加全局变量. 然后在工程构建步骤, 先引入全局变量<code>export ${PATH}</code>. 如果没有设置全局变量的话, 也可以直接使用<code>export PATH=</code>echo $PATH 的输出结果<code></code></p>
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fhk9pyt7nsj31dg0cmwen.jpg" alt="添加Path全局变量"></p>
 <h3 id="证书配置文件没有找到"><a href="#证书配置文件没有找到" class="headerlink" title="证书配置文件没有找到"></a>证书配置文件没有找到</h3><p>No iOS profile matching ‘xxxxxx/xxxxxxx’ found:Xcode couldn’t find a profile<br>matching ‘xxxxxx/xxxxxxx’.<br>Install the profile (by dragging and dropping it onto Xcode’s dock item)<br>or select a different one in the General tab of the target editor.<br>Code signing is required for product type ‘Application’ in SDK ‘iOS 10.3’ </p>
 <p>是因为Archive时没有找到profile导致的. 解决办法是, 把系统的<code>/Users/用户名/Library/MobileDevice/Provisioning Profiles</code>整个Provisioning Profiles文件夹复制到<code>/Users/Shared/Jenkins/Library/MobileDevice</code>目录下, 并且在Jenkins -&gt; Keychains and Provisioning Profiles Management 的Provisioning Profiles Directory Path中, 设置好profile的存放目录.</p>

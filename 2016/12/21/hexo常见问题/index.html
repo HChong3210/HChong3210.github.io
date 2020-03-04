@@ -25,18 +25,18 @@
     <meta name="keywords" content="hexo,个人博客,">
   
 
-  <meta name="description" content="hexo常见问题在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录. hexo的常见发布流程 hexo新建一篇文章使用hexo new type name, type有三种, 最常使用的是post, name是新建文档的名字.  hexo新建完成, 编辑之后发布会经常使用到下面几个命令:  hexo clean清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行. hex">
+  <meta name="description" content="hexo常见问题在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录. hexo的常见发布流程 hexo新建一篇文章使用hexo new type name, type有三种, 最常使用的是post, name是新建文档的名字. hexo新建完成, 编辑之后发布会经常使用到下面几个命令:  hexo clean清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行. hexo">
 <meta name="keywords" content="hexo,个人博客">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hexo常见问题">
 <meta property="og:url" content="http://hchong.net/2016/12/21/hexo常见问题/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="hexo常见问题在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录. hexo的常见发布流程 hexo新建一篇文章使用hexo new type name, type有三种, 最常使用的是post, name是新建文档的名字.  hexo新建完成, 编辑之后发布会经常使用到下面几个命令:  hexo clean清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行. hex">
+<meta property="og:description" content="hexo常见问题在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录. hexo的常见发布流程 hexo新建一篇文章使用hexo new type name, type有三种, 最常使用的是post, name是新建文档的名字. hexo新建完成, 编辑之后发布会经常使用到下面几个命令:  hexo clean清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行. hexo">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2016-12-25T16:06:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo常见问题">
-<meta name="twitter:description" content="hexo常见问题在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录. hexo的常见发布流程 hexo新建一篇文章使用hexo new type name, type有三种, 最常使用的是post, name是新建文档的名字.  hexo新建完成, 编辑之后发布会经常使用到下面几个命令:  hexo clean清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行. hex">
+<meta name="twitter:description" content="hexo常见问题在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录. hexo的常见发布流程 hexo新建一篇文章使用hexo new type name, type有三种, 最常使用的是post, name是新建文档的名字. hexo新建完成, 编辑之后发布会经常使用到下面几个命令:  hexo clean清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行. hexo">
 
   
 
@@ -231,8 +231,7 @@ ga('send', 'pageview');
     
       <h1 id="hexo常见问题"><a href="#hexo常见问题" class="headerlink" title="hexo常见问题"></a><strong>hexo常见问题</strong></h1><p>在使用hexo的过程中遇到了一些问题, 在这里列出来, 做一个记录.</p>
 <h2 id="hexo的常见发布流程"><a href="#hexo的常见发布流程" class="headerlink" title="hexo的常见发布流程"></a><strong>hexo的常见发布流程</strong></h2><ul>
-<li><p>hexo新建一篇文章使用<code>hexo new type name</code>, <code>type</code>有三种, 最常使用的是<code>post</code>, <code>name</code>是新建文档的名字.</p>
-</li>
+<li>hexo新建一篇文章使用<code>hexo new type name</code>, <code>type</code>有三种, 最常使用的是<code>post</code>, <code>name</code>是新建文档的名字.</li>
 <li><p>hexo新建完成, 编辑之后发布会经常使用到下面几个命令:</p>
 <ul>
 <li><code>hexo clean</code>清除之前缓存的一些信息, 例如主题之类的, 不是每次都必须执行.</li>
@@ -264,15 +263,18 @@ ga('send', 'pageview');
   enable: false
   line_number: false
   auto_detect: false
-  tab_replace:</code></pre>
+  tab_replace:
+</code></pre>
 <p>2.<code>cd 博客根目录/themes/fexo/layout/_partial</code>打开<em>head.ejs</em>文件, 最好是在<code>&lt;head&gt;&lt;/head&gt;</code>之间开头处插入代码</p>
 <pre><code class="html5">  &lt;link rel=&quot;stylesheet&quot; href=&quot;//cdn.bootcss.com/highlight.js/9.2.0/styles/rainbow.min.css&quot;&gt;
   &lt;script src=&quot;//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js&quot;&gt;&lt;/script&gt;
-  &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;</code></pre>
+  &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;
+</code></pre>
 <p>也可以使用下面的写法:</p>
 <pre><code class="h5">&lt;link rel=&quot;stylesheet&quot; href=&quot;/path/to/styles/default.css&quot;&gt;
 &lt;script src=&quot;/path/to/highlight.pack.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;</code></pre>
+&lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;
+</code></pre>
 <p>二者的区别在于, 第一种写法使用的是CDN创建的<a href="http://www.bootcdn.cn/?" target="_blank" rel="noopener">在线文档地址</a>, 该地址还保存了其他一些常见的文档, 非常强大.而第二种写法则是把文件下载到本地, 从本地读取代码高亮的配置.</p>
 <hr>
 <p>修改过程中, 我参考了以下两篇博文, 还趟过不少坑, 贴上博文的地址:</p>

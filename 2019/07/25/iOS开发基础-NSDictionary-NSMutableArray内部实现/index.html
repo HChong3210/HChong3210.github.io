@@ -245,7 +245,8 @@ ga('send', 'pageview');
     CFOptionFlags _xflags;
     const void **_keys;    
     const void **_values;
-};</code></pre>
+};
+</code></pre>
 <p>根据数据结构可以发现dictionary内部使用了两个指针数组分别来保存keys和values, dictionary采用的是连续存储的方式存储键值对. Apple给的查询复杂度可以快至O(1), 下面我们就来分析下是如何做到的. </p>
 <h1 id="1-1-原理分析"><a href="#1-1-原理分析" class="headerlink" title="1.1 原理分析"></a>1.1 原理分析</h1><p>创建N个空桶，N为排序数组中最大值加一。然后遍历排序数组，以元素值为下标，将其放入对应的桶中. 如果少量数据，可以根据数组里面的最大值+1创建出那么多空桶，然后遍历，根据索引在空桶的值上累加，最后遍历空桶（已装载），根据值遍历出对应的下标.</p>
 <p>虽然这样做效率非常高，但是如果数据过大，内存吃不消，这样就有了哈希排序的介绍。例如一组数据，我们可以根据hash算法后取模的值进行空桶排列，但是如果两个值例如 101和11 % 10都是余1，会被放入同一个桶里面，这样就会有需要二次排列。虽然这个排序效率并不高，因此哈希化就变成了数据存储的一种设计.</p>
@@ -270,7 +271,7 @@ ga('send', 'pageview');
 <h2 id="2-3-总结"><a href="#2-3-总结" class="headerlink" title="2.3 总结"></a>2.3 总结</h2><p>__NSArrayM 用了环形缓冲区 (circular buffer)。这个数据结构相当简单，只是比常规数组或缓冲区复杂点。环形缓冲区的内容能在到达任意一端时绕向另一端。</p>
 <p>环形缓冲区有一些非常酷的属性。尤其是，除非缓冲区满了(每当缓冲区满了，它会重新分配1.625倍大小的空间.)，否则在任意一端插入或删除均不会要求移动任何内存。我们来分析这个类如何充分利用环形缓冲区来使得自身比 C 数组强大得多。在任意一端插入或者删除，只是修改offset参数，不需要移动内存，我们访问的时候只是不和普通的数组一样index多少就是多少，这里会计算加上offset之后处理的值取数据，而不是插入头和尾巴的时候，环形结构会根据最少移动内存指针的方式插入，例如要在A和B之间插入，按照C的数组，我们需要把B到E的元素移动内存，但是环形缓冲区的设计，我们只要把A的值向前移动一个单位内存，即可，同时修改offset偏移量，就能保证最小的移动单元来完成中间插入.</p>
 <hr>
-<p>参考资料:<br>1.<a href="http://blog.joyingx.me/2015/05/03/NSMutableArray%20%E5%8E%9F%E7%90%86%E6%8F%AD%E9%9C%B2/" target="_blank" rel="noopener">NSMutableArray原理揭露</a><br>2.<a href="https://blog.csdn.net/Deft_MKJing/article/details/82732833" target="_blank" rel="noopener">NSDictionary和NSMutableArray底层原理（哈希表和环形缓冲区）</a><br>3.<a href="https://juejin.im/post/59bce186f265da065a63ad8d" target="_blank" rel="noopener">如何设计并实现一个线程安全的 Map ？(上篇)</a><br>4.<a href="https://juejin.im/post/59d8d7cc6fb9a00a496e93b2" target="_blank" rel="noopener">如何设计并实现一个线程安全的 Map ？(下篇)</a><br>5.<a href=""></a></p>
+<p>参考资料:<br>1.<a href="http://blog.joyingx.me/2015/05/03/NSMutableArray%20%E5%8E%9F%E7%90%86%E6%8F%AD%E9%9C%B2/" target="_blank" rel="noopener">NSMutableArray原理揭露</a><br>2.<a href="https://blog.csdn.net/Deft_MKJing/article/details/82732833" target="_blank" rel="noopener">NSDictionary和NSMutableArray底层原理（哈希表和环形缓冲区）</a><br>3.<a href="https://juejin.im/post/59bce186f265da065a63ad8d" target="_blank" rel="noopener">如何设计并实现一个线程安全的 Map ？(上篇)</a><br>4.<a href="https://juejin.im/post/59d8d7cc6fb9a00a496e93b2" target="_blank" rel="noopener">如何设计并实现一个线程安全的 Map ？(下篇)</a><br>5.<a href></a></p>
 
     
     <span class="asdf">

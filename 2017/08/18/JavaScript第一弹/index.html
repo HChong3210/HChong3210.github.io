@@ -240,7 +240,8 @@ ga('send', 'pageview');
 &lt;body&gt;
   ...
 &lt;/body&gt;
-&lt;/html&gt;</code></pre><p>或者把JavaScript代码放到一个单独的<code>.js</code>文件中, 然后在HTML中引用</p>
+&lt;/html&gt;
+</code></pre><p>或者把JavaScript代码放到一个单独的<code>.js</code>文件中, 然后在HTML中引用</p>
 <pre><code>&lt;html&gt;
 &lt;head&gt;
   &lt;script src=&quot;.js文件的路径&quot;&gt;&lt;/script&gt;
@@ -248,7 +249,8 @@ ga('send', 'pageview');
 &lt;body&gt;
   ...
 &lt;/body&gt;
-&lt;/html&gt;</code></pre><p>把JavaScript代码放入一个单独的<code>.js</code>文件中更利于维护代码，并且多个页面可以各自引用同一份<code>.js</code>文件。</p>
+&lt;/html&gt;
+</code></pre><p>把JavaScript代码放入一个单独的<code>.js</code>文件中更利于维护代码，并且多个页面可以各自引用同一份<code>.js</code>文件。</p>
 <p>可以在同一个页面中引入多个<code>.js</code>文件，还可以在页面中多次编写<code>&lt;script&gt; js代码... &lt;/script&gt;</code>，浏览器按照顺序依次执行。</p>
 <h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><p>JavaScript 拥有动态类型。这意味着相同的变量可用作不同的类型, 这一点和OC是有区别的.</p>
 <h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><p>字符串是以<code>单引号&#39;</code>或<code>双引号&quot;</code>括起来的任意文本, 这和OC的略有不同. 和OC的字符串初始化不同的是, JS只需用引号括起来就代表一个字符串了.</p>
@@ -265,7 +267,8 @@ alert(arr1 === arr2)//false
 
 var str1 = &#39;123&#39;;
 var str2 = &#39;123&#39;;
-alert(str1 === str2);//true</code></pre><p>关于数组元素的比较, 如果是OC的话, 可以使用<code>-(BOOL)isEquleToArray:(NSArray *)array;</code>来比较数组中的元素, 然而JS没有这种方法, 常见的做法是先排序, 再转成String, 再比较String是否相等. 参考<a href="https://gist.github.com/smallnewer/6535788" target="_blank" rel="noopener">equalArray.js</a></p>
+alert(str1 === str2);//true
+</code></pre><p>关于数组元素的比较, 如果是OC的话, 可以使用<code>-(BOOL)isEquleToArray:(NSArray *)array;</code>来比较数组中的元素, 然而JS没有这种方法, 常见的做法是先排序, 再转成String, 再比较String是否相等. 参考<a href="https://gist.github.com/smallnewer/6535788" target="_blank" rel="noopener">equalArray.js</a></p>
 <p><code>NaN</code>这个值通过<code>===</code>来比较大小永远为<code>false</code>, 包括与自身比较. 唯一的判断方法就是通过<code>isNaN()</code>函数.</p>
 <h3 id="null和undefined"><a href="#null和undefined" class="headerlink" title="null和undefined"></a>null和undefined</h3><p><code>null</code>表示一个“空”的值类似于OC的<code>nil</code>，它和0以及空字符串’’不同，0是一个数值，’’表示长度为0的字符串，而null表示“空”.</p>
 <p>还有一个和null类似的undefined，它表示“未定义”. JavaScript的设计者希望用null表示一个空的值，而undefined表示值未定义.</p>
@@ -277,7 +280,8 @@ alert(str1 === str2);//true</code></pre><p>关于数组元素的比较, 如果�
 <p>和OC一样, 使用<code>=</code>对变量进行赋值, 由于JS是一门动态语言, 在初始化变量时可以不指定变量类型, 这与OC略有不同.</p>
 <p>仅仅声明但是没有赋值的变量, 其值实际上是<code>undefined</code>.</p>
 <pre><code>var carname;
-console.log(carname);</code></pre><hr>
+console.log(carname);
+</code></pre><hr>
 <p>1.<a href="http://www.bootcss.com/p/underscore/" target="_blank" rel="noopener">Underscore - 一个JavaScript 工具库</a>.<br>2.<a href="https://halfrost.com/lost_in_javascript/" target="_blank" rel="noopener">JavaScript 新手的踩坑日记</a>.</p>
 
     

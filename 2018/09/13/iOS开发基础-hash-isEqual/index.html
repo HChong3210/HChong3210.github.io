@@ -273,14 +273,16 @@ ga('send', 'pageview');
 
   return [self isEqualToArray:(NSArray *)object];
 }
-@end</code></pre>
+@end
+</code></pre>
 <h2 id="自定义类型的isEqual"><a href="#自定义类型的isEqual" class="headerlink" title="自定义类型的isEqual"></a>自定义类型的isEqual</h2><p>Person.h</p>
 <pre><code class="OC">@interface Person : NSObject
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) NSDate *birthday;
 
-@end</code></pre>
+@end
+</code></pre>
 <p>Person.m</p>
 <pre><code class="OC">- (BOOL)isEqual:(id)object 
 {
@@ -305,12 +307,14 @@ ga('send', 'pageview');
     BOOL haveEqualBirthdays = (!self.birthday &amp;&amp; !person.birthday) || [self.birthday isEqualToDate:person.birthday];
 
     return haveEqualNames &amp;&amp; haveEqualBirthdays;
-}</code></pre>
+}
+</code></pre>
 <h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><pre><code class="OC">NSString *a = @&quot;Hello&quot;;
 NSString *b = @&quot;Hello&quot;;
-BOOL wtf = (a == b); // YES</code></pre>
+BOOL wtf = (a == b); // YES
+</code></pre>
 <p>比较 NSString 对象正确的方法是 -isEqualToString:. 任何情况下都不要直接使用 == 来对 NSString 进行比较. </p>
-<p>上面的结果返回YES是因为一种称为字符串驻留的优化技术，它把一个不可变字符串对象的值拷贝给各个不同的指针。NSString *a 和 *b都指向同样一个驻留字符串值 @”Hello”。 注意所有这些针对的都是静态定义的不可变字符串.</p>
+<p>上面的结果返回YES是因为一种称为字符串驻留的优化技术，它把一个不可变字符串对象的值拷贝给各个不同的指针。NSString <em>a 和 </em>b都指向同样一个驻留字符串值 @”Hello”。 注意所有这些针对的都是静态定义的不可变字符串.</p>
 <h1 id="2-hash"><a href="#2-hash" class="headerlink" title="2 hash"></a>2 hash</h1><p>hash 方法的存在，是因为将对象加到 NSSet 等集合中时，当成员被加入到Hash Table中时, 会给它分配一个hash值, 以标识该成员在集合中的位置, 通过这个位置标识可以将查找的时间复杂度优化到O(1), 当然如果多个成员都是同一个位置标识, 那么查找就不能达到O(1)了. 对于 Hash 值，系统默认是返回该对象的内存地址.</p>
 <h2 id="2-1-hash-Table"><a href="#2-1-hash-Table" class="headerlink" title="2.1 hash Table"></a>2.1 hash Table</h2><p>分配的这个hash值(即用于查找集合中成员的位置标识), 就是通过hash方法计算得来的, 且hash方法返回的hash值最好唯一.</p>
 <p>和数组相比, 基于hash值索引的Hash Table查找某个成员的过程就是: </p>
@@ -327,10 +331,12 @@ NSLog(@&quot;[person1 isEqual:person2] = %@&quot;, [person1 isEqual:person2] ? @
 NSMutableSet *set = [NSMutableSet set];
 [set addObject:person1];
 [set addObject:person2];
-NSLog(@&quot;set count = %ld&quot;, set.count);</code></pre>
+NSLog(@&quot;set count = %ld&quot;, set.count);
+</code></pre>
 <p>打印结果如下:</p>
 <pre><code class="OC">[person1 isEqual:person2] = YES
-set count = 2</code></pre>
+set count = 2
+</code></pre>
 <p>说明isEqual相同的两个对象都被加入到了同一个NSSet中. 所以直接返回[super hash]是不正确的.</p>
 <blockquote>
 <p>In reality, a simple XOR over the hash values of critical properties is sufficient 99% of the time(对关键属性的hash值进行位或运算作为hash值).</p>
@@ -338,7 +344,8 @@ set count = 2</code></pre>
 <p>对于上面Person类的hash方法实现如下:</p>
 <pre><code class="OC">- (NSUInteger)hash {
     return [self.name hash] ^ [self.birthday hash];
-}</code></pre>
+}
+</code></pre>
 <h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h1><ul>
 <li>对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象). isEqual只能用来比较对象类型.</li>
 <li>==运算符只是简单地判断是否是同一个对象, 而isEqual方法可以判断对象是否相同.</li>

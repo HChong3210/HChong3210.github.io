@@ -25,19 +25,19 @@
     <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  *浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; * 深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和m">
+  <meta name="description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="属性修饰符之copy和strong">
 <meta property="og:url" content="http://hchong.net/2016/09/21/属性修饰符之copy和strong/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  *浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; * 深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和m">
+<meta property="og:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png">
 <meta property="og:updated_time" content="2017-02-23T13:29:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="属性修饰符之copy和strong">
-<meta name="twitter:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  *浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; * 深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和m">
+<meta name="twitter:description" content="属性修饰符之copy和strong在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别. 深浅拷贝浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:  浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象;  深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.   copy和mut">
 <meta name="twitter:image" content="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png">
 
   
@@ -234,7 +234,7 @@ ga('send', 'pageview');
       <h1 id="属性修饰符之copy和strong"><a href="#属性修饰符之copy和strong" class="headerlink" title="属性修饰符之copy和strong"></a>属性修饰符之copy和strong</h1><p>在了解属性修饰符的copy和strong的区分之前, 我们先来了解下浅拷贝和深拷贝的区别.</p>
 <h2 id="深浅拷贝"><a href="#深浅拷贝" class="headerlink" title="深浅拷贝"></a>深浅拷贝</h2><p>浅复制并不是拷贝对象本身, 仅仅是拷贝指向对象的指针; 深复制是直接拷贝整个对象内存到另一块内存中. 简单地说:</p>
 <ul>
-<li>*<em>浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; *</em></li>
+<li><strong>浅复制就是指针拷贝,  不会产生新的对象，指向的是同一个对象; </strong></li>
 <li><strong>深复制就是内容拷贝，会产生新的对象, 不同的对象, 内容相同.</strong></li>
 </ul>
 <p><img src="http://7s1ssm.com1.z0.glb.clouddn.com/image_note50592_1.png" alt="浅复制和深复制"></p>
@@ -245,29 +245,34 @@ ga('send', 'pageview');
 <pre><code class="objective-c">NSString *originString = @&quot;origin&quot;;
 NSString *originStringCopy = [originString copy];
 NSMutableString *originStringMutableCopy = [originString mutableCopy];
-NSLog(@&quot;%p, %p, %p&quot;, originString, originStringCopy, originStringMutableCopy);</code></pre>
+NSLog(@&quot;%p, %p, %p&quot;, originString, originStringCopy, originStringMutableCopy);
+</code></pre>
 <p>内存地址分别是:</p>
 <pre><code class="objective-c">(lldb) p originString
 (__NSCFConstantString *) $0 = 0x0000000108dd8190 @&quot;origin&quot;
 (lldb) p originStringCopy
 (__NSCFConstantString *) $1 = 0x0000000108dd8190 @&quot;origin&quot;
 (lldb) p originStringMutableCopy
-(__NSCFString *) $2 = 0x0000608000262800 @&quot;origin&quot;</code></pre>
+(__NSCFString *) $2 = 0x0000608000262800 @&quot;origin&quot;
+</code></pre>
 <hr>
 <p>对<code>NSMutableString</code>进行copy和mutableCopy操作:</p>
 <pre><code class="objective-c">NSMutableString *mutableOriginString = [NSMutableString stringWithString:@&quot;mutableOrigin&quot;];
 NSString *mutableOriginStringCopy = [mutableOriginString copy];
-NSMutableString *mutableOriginStringMutableCopy = [mutableOriginString mutableCopy];</code></pre>
+NSMutableString *mutableOriginStringMutableCopy = [mutableOriginString mutableCopy];
+</code></pre>
 <p>内存地址分别是:</p>
 <pre><code class="objective-c">(lldb) p mutableOriginString
 (__NSCFString *) $0 = 0x000060800026aa40 @&quot;mutableOrigin&quot;
 (lldb) p mutableOriginStringCopy
 (__NSCFString *) $1 = 0x0000608000222340 @&quot;mutableOrigin&quot;
 (lldb) p mutableOriginStringMutableCopy
-(__NSCFString *) $2 = 0x000060800026a700 @&quot;mutableOrigin&quot;</code></pre>
+(__NSCFString *) $2 = 0x000060800026a700 @&quot;mutableOrigin&quot;
+</code></pre>
 <p>这里要注意的是:</p>
 <pre><code class="objective-c">NSMutableString *mutableOriginStringCopy = [mutableOriginString copy];
-[mutableOriginStringCopy appendString:@&quot;123&quot;];</code></pre>
+[mutableOriginStringCopy appendString:@&quot;123&quot;];
+</code></pre>
 <p>这样写是会crash的, 因为copy生成的是imutable对象, 不管声明是什么样的, 依旧是imutable的.</p>
 <p><strong>综上, 对于系统的非容器类对象:</strong></p>
 <ul>
@@ -283,14 +288,16 @@ for (NSInteger i = 0; i &lt; originArray.count; i++) {
     NSLog(@&quot;originArray--%p&quot;, originArray[i]);
     NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);
     NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);
-}</code></pre>
+}
+</code></pre>
 <p>内存地址分别是:</p>
 <pre><code class="objective-c">(lldb) p originArray
 (__NSArrayI *) $0 = 0x00006080002405a0 @&quot;3 elements&quot;
 (lldb) p originArrayCopy
 (__NSArrayI *) $1 = 0x00006080002405a0 @&quot;3 elements&quot;
 (lldb) p originArrayMutableCopy
-(__NSArrayM *) $2 = 0x00006080002403c0 @&quot;3 elements&quot;</code></pre>
+(__NSArrayM *) $2 = 0x00006080002403c0 @&quot;3 elements&quot;
+</code></pre>
 <p>可以看出, copy是浅复制, mutableCopy是深复制. 需要注意的是,mutableCopy的对象是一个可变对象,  数组内元素全都是浅复制.</p>
 <hr>
 <p>对<code>NSMutableArray</code>进行copy和mutableCopy操作:</p>
@@ -301,19 +308,22 @@ for (NSInteger i = 0; i &lt; originArray.count; i++) {
     NSLog(@&quot;originArray--%p&quot;, originArray[i]);
     NSLog(@&quot;originArrayCopy--%p&quot;, originArrayCopy[i]);
     NSLog(@&quot;originArrayMutableCopy--%p&quot;, originArrayMutableCopy[i]);
-}</code></pre>
+}
+</code></pre>
 <p>打印内存地址如下:</p>
 <pre><code class="objective-c">(lldb) p originArray
 (__NSArrayM *) $0 = 0x000060800005eae0 @&quot;3 elements&quot;
 (lldb) p originArrayCopy
 (__NSArrayI *) $1 = 0x000060800005e9f0 @&quot;3 elements&quot;
 (lldb) p originArrayMutableCopy
-(__NSArrayM *) $2 = 0x000060800005e900 @&quot;3 elements&quot;</code></pre>
+(__NSArrayM *) $2 = 0x000060800005e900 @&quot;3 elements&quot;
+</code></pre>
 <p>可以发现可以看出, copy是浅复制, mutableCopy是深复制. 数组内元素都是浅复制.</p>
 <p>需要注意的是, mutable对象copy的对象是imutable对象, 如果当做可变对象来用是会崩溃的.</p>
 <pre><code class="objective-c">NSMutableArray *originArray = [NSMutableArray arrayWithObjects:@&quot;a&quot;,@&quot;b&quot;,@&quot;c&quot;, nil];
 NSMutableArray *originArrayCopy1 = [originArray copy];
-[originArrayCopy1 addObject:@&quot;d&quot;];//crash</code></pre>
+[originArrayCopy1 addObject:@&quot;d&quot;];//crash
+</code></pre>
 <p>综上, 对于容器类对象:</p>
 <ul>
 <li><strong>如果对一不可变对象复制, copy是指针复制(浅复制), mutableCopy是内容复制(深复制).</strong></li>
@@ -323,7 +333,8 @@ NSMutableArray *originArrayCopy1 = [originArray copy];
 <h3 id="系统类对象的完全深复制"><a href="#系统类对象的完全深复制" class="headerlink" title="系统类对象的完全深复制"></a>系统类对象的完全深复制</h3><p>对于容器类对象而言, 元素对象始终是浅复制, 要想深复制可通过如下方法:</p>
 <pre><code class="objective-c">NSArray *array = [NSArray arrayWithObjects:[NSMutableString stringWithString:@&quot;a&quot;],[NSString stringWithString:@&quot;b&quot;],@&quot;c&quot;,nil];
 NSArray *deepCopyArray=[[NSArray alloc] initWithArray: array copyItems: YES];
-NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject: array]];</code></pre>
+NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject: array]];
+</code></pre>
 <p>打印元素内存地址可以发现, trueDeepCopyArray的元素都是深复制, 而deepCopyArray由于第一个元素是可变对象, 所以是深复制, 其他的元素都是浅复制.</p>
 <p><strong>综上, 要想实现容器对象所有元素的深复制, 只能通过归档来实现.</strong></p>
 <blockquote>
@@ -334,14 +345,16 @@ NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyed
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder; // NS_DESIGNATED_INITIALIZER
 
-@end</code></pre>
+@end
+</code></pre>
 <h3 id="自定义对象"><a href="#自定义对象" class="headerlink" title="自定义对象"></a>自定义对象</h3><p>对于自定义对象, 我们要实现<code>NSCopying</code>, <code>NSMutableCopying</code>协议, 这样我们就能调用copy和mutableCopy了.假设有一个<code>Person</code>类, 继承于<code>NSObject</code>.</p>
 <p><code>person.h</code></p>
 <pre><code class="objective-c">#import &lt;Foundation/Foundation.h&gt;
 @interface Person : NSobject
 
 @property (nonatomic, assign) NSInteger age;
-@end</code></pre>
+@end
+</code></pre>
 <p><code>person.m</code></p>
 <pre><code class="objective-c">
 #import &quot;Person.h&quot;
@@ -355,14 +368,16 @@ NSArray* trueDeepCopyArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyed
       person.age = self.age;
     return person;
 }
-@end</code></pre>
+@end
+</code></pre>
 <p>这样当我们在外面调用的时候:</p>
 <pre><code class="objective-c">Person *p = [[Person alloc] init];
 p.age = 20;
 
 Person *copyP = [p copy];
 NSLog(@&quot;p = %p copyP = %p&quot;, p, copyP);
-NSLog(@&quot;age = %ld&quot;, copyP.age);</code></pre>
+NSLog(@&quot;age = %ld&quot;, copyP.age);
+</code></pre>
 <p>通过打印地址:</p>
 <pre><code class="objective-c">(lldb) p p
 (Person *) $0 = 0x000060800002a1e0
@@ -371,7 +386,8 @@ NSLog(@&quot;age = %ld&quot;, copyP.age);</code></pre>
 (lldb) p p.age
 (NSInteger) $2 = 20
 (lldb) p copyP.age
-(NSInteger) $4 = 20</code></pre>
+(NSInteger) $4 = 20
+</code></pre>
 <p>我们可以发现, 自定义对象内部的属性都被浅拷贝, 自定义对象本身被深拷贝.</p>
 <p>需要注意的是, 如果我们的自定义对象不实现<code>NSCopying</code>协议而直接copy时, 是会crash的.</p>
 <h2 id="属性修饰之copy与strong"><a href="#属性修饰之copy与strong" class="headerlink" title="属性修饰之copy与strong"></a>属性修饰之copy与strong</h2><p>我们新建一个<code>Person</code>类, 添加几个属性来看一下copy和strong对属性使用的影响.</p>
@@ -382,13 +398,15 @@ NSLog(@&quot;age = %ld&quot;, copyP.age);</code></pre>
 @property (nonatomic, strong) NSString *strongName;
 @property (nonatomic, copy) NSString *copyName;
 
-@end</code></pre>
+@end
+</code></pre>
 <p>在外面调用<code>Person</code>类, 代码如下:</p>
 <pre><code class="objective-c">Person *person = [[Person alloc] init];
 NSMutableString *testString = [NSMutableString stringWithString:@&quot;test&quot;];
 person.nameCopy = testString;
 person.nameStrong = testString;
-[testString appendString:@&quot;copy&amp;&amp;strong&quot;];</code></pre>
+[testString appendString:@&quot;copy&amp;&amp;strong&quot;];
+</code></pre>
 <p>打印<code>testString</code>改变前后属性</p>
 <pre><code class="objective-c">//testString改变前
 (lldb) p person.nameCopy
@@ -399,7 +417,8 @@ person.nameStrong = testString;
 (lldb) p person.nameCopy
 (NSTaggedPointerString *) $3 = 0xa000000747365744 @&quot;test&quot;
 (lldb) p person.nameStrong
-(__NSCFString *) $4 = 0x0000600000260540 @&quot;testcopy&amp;&amp;strong&quot;</code></pre>
+(__NSCFString *) $4 = 0x0000600000260540 @&quot;testcopy&amp;&amp;strong&quot;
+</code></pre>
 <p>由以上可以看出:</p>
 <p>对源头是<code>NSMutableString</code>的字符串，strong仅仅是指针引用，增加了引用计数器，这样源头改变的时候，用这种strong方式声明的变量（无论被赋值的变量是可变的还是不可变的，它也会跟着改变, 相当于浅拷贝; 而copy属性则是对源字符串做了次深拷贝，产生一个新的对象，且copy属性对象指向这个新的对象。另外需要注意的是，这个copy属性对象的类型始终是<code>NSString</code>，而不是<code>NSMutableString</code>，因此其是不可变的。</p>
 <p>当源字符串是<code>NSString</code>时，由于字符串是不可变的，所以，不管是strong还是copy属性的对象，都是指向源对象，copy操作只是做了次浅拷贝。</p>

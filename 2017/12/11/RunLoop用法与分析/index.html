@@ -240,7 +240,8 @@ ga('send', 'pageview');
         var message = get_next_message();
         process_message(message);
     } while (message != quit);
-}</code></pre><p>在iOS开发中RunLoop的主要作用是:</p>
+}
+</code></pre><p>在iOS开发中RunLoop的主要作用是:</p>
 <ol>
 <li>保持程序的持续运行(如: 程序一启动就会开启一个主线程(线程中的 runloop 是自动创建并运行), runloop 保证主线程不会被销毁, 也就保证了程序的持续运行). </li>
 <li>处理App中的各种事件(如: touches 触摸事件, NSTimer 定时器事件, Selector事件(选择器 performSelector)).</li>
@@ -286,19 +287,22 @@ ga('send', 'pageview');
     kCFRunLoopExit          = (1UL &lt;&lt; 7), // 即将退出Loop      (128)
     kCFRunLoopAllActivities = 0x0FFFFFFU, // 包含上面所有状态
 
-};</code></pre><h3 id="CFRunLoopTimerRef"><a href="#CFRunLoopTimerRef" class="headerlink" title="CFRunLoopTimerRef"></a>CFRunLoopTimerRef</h3><p>是基于时间的触发器, 它和 NSTimer 是toll-free bridged 的, 可以混用, 我们基本上可以认为他就是NSTimer,  其包含一个时间长度和一个回调(函数指针), 当其加入到 RunLoop 时, RunLoop会注册对应的时间点, 当时间点到时, RunLoop会被唤醒以执行那个回调.<br>它受RunLoop的Mode影响, GCD的定时器不受RunLoop的Mode影响.<br>注意, 这里这个NSTimer实际是有误差的</p>
+};
+</code></pre><h3 id="CFRunLoopTimerRef"><a href="#CFRunLoopTimerRef" class="headerlink" title="CFRunLoopTimerRef"></a>CFRunLoopTimerRef</h3><p>是基于时间的触发器, 它和 NSTimer 是toll-free bridged 的, 可以混用, 我们基本上可以认为他就是NSTimer,  其包含一个时间长度和一个回调(函数指针), 当其加入到 RunLoop 时, RunLoop会注册对应的时间点, 当时间点到时, RunLoop会被唤醒以执行那个回调.<br>它受RunLoop的Mode影响, GCD的定时器不受RunLoop的Mode影响.<br>注意, 这里这个NSTimer实际是有误差的</p>
 <h3 id="CFRunLoopModeRef"><a href="#CFRunLoopModeRef" class="headerlink" title="CFRunLoopModeRef"></a>CFRunLoopModeRef</h3><p>一个runloop可以包含多个model, 每个model都是独立的, 而且runloop只能选择一个model运行, 也就是currentModel. 如果需要切换 Mode, 只能退出 Loop, 再重新指定一个 Mode 进入. 这样做主要是为了分隔开不同组的 Source/Timer/Observer, 让其互不影响.</p>
 <p>系统默认注册了5个Mode:<br>NSDefaultRunLoopMode: App的默认Mode, 通常主线程是在这个Mode下运行, App 平时就是处在这个状态.<br>UITrackingRunLoopMode: 界面跟踪 Mode, 用于 ScrollView 追踪触摸滑动, 保证界面滑动时不受其他 Mode 影响.<br>UIInitializationRunLoopMode: 在刚启动 App 时第进入的第一个 Mode, 启动完成后就不再使用.<br>GSEventReceiveRunLoopMode: 接受系统事件的内部 Mode, 通常用不到.<br>NSRunLoopCommonModes: 这是一个占位用的Mode, 不是一种真正的Mode.</p>
 <p>这里有个概念叫 “CommonModes”: 一个 Mode 可以将自己标记为”Common”属性(通过将其 ModeName 添加到 RunLoop 的 “commonModes” 中). 每当 RunLoop 的内容发生变化时, RunLoop 都会自动将 _commonModeItems 里的 Source/Observer/Timer 同步到具有 “Common”标记的所有Mode里.<br>应用场景举例: 主线程的 RunLoop 里有两个预置的 Mode：kCFRunLoopDefaultMode 和 UITrackingRunLoopMode。这两个 Mode 都已经被标记为”Common”属性。DefaultMode 是 App 平时所处的状态，TrackingRunLoopMode 是追踪 ScrollView 滑动时的状态。当你创建一个 Timer 并加到 DefaultMode 时，Timer 会得到重复回调，但此时滑动一个TableView时，RunLoop 会将 mode 切换为 TrackingRunLoopMode，这时 Timer 就不会被回调，并且也不会影响到滑动操作. 有时你需要一个 Timer，在两个 Mode 中都能得到回调，一种办法就是将这个 Timer 分别加入这两个 Mode。还有一种方式，就是将 Timer 加入到commonMode 中。那么所有被标记为commonMode的mode（defaultMode和TrackingMode）都会执行该timer。这样你在滑动界面的时候也能够调用timer，下面会有实例讲解</p>
 <p>CFRunLoop对外暴露的管理 Mode 接口只有下面2个:</p>
 <pre><code>CFRunLoopAddCommonMode(CFRunLoopRef runloop, CFStringRef modeName);
-CFRunLoopRunInMode(CFStringRef modeName, ...);</code></pre><p>Mode暴露的管理Mode item的接口有下面几个: </p>
+CFRunLoopRunInMode(CFStringRef modeName, ...);
+</code></pre><p>Mode暴露的管理Mode item的接口有下面几个: </p>
 <pre><code>CFRunLoopAddSource(CFRunLoopRef rl, CFRunLoopSourceRef source, CFStringRef modeName);
 CFRunLoopAddObserver(CFRunLoopRef rl, CFRunLoopObserverRef observer, CFStringRef modeName);
 CFRunLoopAddTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode);
 CFRunLoopRemoveSource(CFRunLoopRef rl, CFRunLoopSourceRef source, CFStringRef modeName);
 CFRunLoopRemoveObserver(CFRunLoopRef rl, CFRunLoopObserverRef observer, CFStringRef modeName);
-CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode);</code></pre><p>你只能通过 mode name 来操作内部的 mode, 当你传入一个新的 mode name 但 RunLoop 内部没有对应 mode 时, RunLoop会自动帮你创建对应的 CFRunLoopModeRef. 对于一个 RunLoop 来说, 其内部的 mode 只能增加不能删除.</p>
+CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode);
+</code></pre><p>你只能通过 mode name 来操作内部的 mode, 当你传入一个新的 mode name 但 RunLoop 内部没有对应 mode 时, RunLoop会自动帮你创建对应的 CFRunLoopModeRef. 对于一个 RunLoop 来说, 其内部的 mode 只能增加不能删除.</p>
 <h2 id="RunLoop的内部逻辑"><a href="#RunLoop的内部逻辑" class="headerlink" title="RunLoop的内部逻辑"></a>RunLoop的内部逻辑</h2><p><img src="http://upload-images.jianshu.io/upload_images/277755-1184c261c96d3116.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="官方的RunLoop逻辑"></p>
 <p>盗图一张, 大神总结的.<br><img src="https://blog.ibireme.com/wp-content/uploads/2015/05/RunLoop_1.png" alt="RunLoop内部逻辑"><br>运行RunLoop具体的流程如下: </p>
 <ol>
@@ -339,7 +343,8 @@ CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode)
 <p>原因是当滚动UIscrollview的时候, runloop会进入UITrackingRunLoopMode 模式, 而定时器运行在defaultMode下面, 系统一次只能处理一种模式的runloop, 所以导致defaultMode下的定时器失效. 解决方案有两种:</p>
 <ol>
 <li><p>把定时器的runloop的model改为NSRunLoopCommonModes 模式, 这个模式是一种占位mode, 并不是真正可以运行的mode, 它是用来标记一个mode的. 默认情况下default和tracking这两种mode 都会被标记上NSRunLoopCommonModes 标签 改变定时器的mode为commonmodel, 可以让定时器运行在defaultMode和trackingModel两种模式下, 不会出现滚动scrollview导致定时器失效的故障. </p>
-<pre><code> [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];</code></pre></li>
+<pre><code> [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+</code></pre></li>
 <li><p>使用GCD创建定时器</p>
 <pre><code> // 获得队列
  dispatch_queue_t queue = dispatch_get_main_queue();
@@ -363,10 +368,12 @@ CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode)
  });
 
  // 启动定时器
- dispatch_resume(self.timer);</code></pre><h3 id="图片下载"><a href="#图片下载" class="headerlink" title="图片下载"></a>图片下载</h3><p>由于图片渲染到屏幕需要消耗较多资源, 为了提高用户体验, 当用户滚动UIscrollview的时候, 只在后台下载图片, 但是不显示图片, 当用户停下来的时候才显示图片. 核心代码如下:</p>
+ dispatch_resume(self.timer);
+</code></pre><h3 id="图片下载"><a href="#图片下载" class="headerlink" title="图片下载"></a>图片下载</h3><p>由于图片渲染到屏幕需要消耗较多资源, 为了提高用户体验, 当用户滚动UIscrollview的时候, 只在后台下载图片, 但是不显示图片, 当用户停下来的时候才显示图片. 核心代码如下:</p>
 </li>
 </ol>
-<pre><code>[self.imageView performSelector:@selector(setImage:) withObject:[UIImage imageNamed:@&quot;placeholder&quot;] afterDelay:3.0 inModes:@[NSDefaultRunLoopMode]];</code></pre><p>这是因为限定了方法setImage只能在NSDefaultRunLoopMode 模式下使用. 而滚动UIscrollview的时候, 程序运行在tracking模式下面, 所以方法setImage不会执行. </p>
+<pre><code>[self.imageView performSelector:@selector(setImage:) withObject:[UIImage imageNamed:@&quot;placeholder&quot;] afterDelay:3.0 inModes:@[NSDefaultRunLoopMode]];
+</code></pre><p>这是因为限定了方法setImage只能在NSDefaultRunLoopMode 模式下使用. 而滚动UIscrollview的时候, 程序运行在tracking模式下面, 所以方法setImage不会执行. </p>
 <h3 id="常驻线程"><a href="#常驻线程" class="headerlink" title="常驻线程"></a>常驻线程</h3><p>需要创建一个在后台一直存在的程序, 来做一些需要频繁处理的任务. 比如检测网络状态等. 默认情况一个线程创建出来, 运行完要做的事情, 线程就会消亡. 而程序启动的时候, 就创建的主线程已经加入到runloop, 所以主线程不会消亡. AFN里面就有一条通过添加NSPort来实现常驻的线程, 常见的有两种方式: </p>
 <ol>
 <li><p>添加NSPort</p>
@@ -403,7 +410,8 @@ CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode)
 
  - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
      [self performSelector:@selector(test) onThread:self.thread withObject:nil waitUntilDone:NO];
- }</code></pre></li>
+ }
+</code></pre></li>
 <li><p>添加NSTimer</p>
 <pre><code> - (void)viewDidLoad {
      [super viewDidLoad];
@@ -415,7 +423,8 @@ CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode)
      [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(test) userInfo:nil repeats:YES];
 
      [[NSRunLoop currentRunLoop] run];
- }</code></pre><p>如果没有实现添加NSPort或者NSTimer, 会发现执行完run方法, 线程就会消亡, 后续再执行touchbegan方法无效. 我们必须保证线程不消亡, 才可以在后台接受时间处理.</p>
+ }
+</code></pre><p>如果没有实现添加NSPort或者NSTimer, 会发现执行完run方法, 线程就会消亡, 后续再执行touchbegan方法无效. 我们必须保证线程不消亡, 才可以在后台接受时间处理.</p>
 </li>
 </ol>
 <p>RunLoop 启动前内部必须要有至少一个 Timer/Observer/Source, 所以在 <code>[runLoop run]</code> 之前先创建了一个新的 NSMachPort 添加进去了. 通常情况下, 调用者需要持有这个 NSMachPort (mach_port) 并在外部线程通过这个 port 发送消息到 loop 内; 但此处添加 port 只是为了让 RunLoop 不至于退出, 并没有用于实际的发送消息. </p>
@@ -441,7 +450,8 @@ CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode)
 
     // 释放Observer
     CFRelease(observer);
-}</code></pre><pre><code>typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
+}
+</code></pre><pre><code>typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
     kCFRunLoopEntry = (1UL &lt;&lt; 0),   //1
     kCFRunLoopBeforeTimers = (1UL &lt;&lt; 1),    //2
     kCFRunLoopBeforeSources = (1UL &lt;&lt; 2),   //4
@@ -449,7 +459,8 @@ CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CFStringRef mode)
     kCFRunLoopAfterWaiting = (1UL &lt;&lt; 6),    //64
     kCFRunLoopExit = (1UL &lt;&lt; 7),    //128
     kCFRunLoopAllActivities = 0x0FFFFFFFU
-};</code></pre><h3 id="其他用法"><a href="#其他用法" class="headerlink" title="其他用法"></a>其他用法</h3><p>例如我们实现Cell高度的缓存计算, 我们可以在RunLoop空闲时来计算, 所以我们可以创建一个Observer, 来监听RunLoop的kCFRunLoopBeforeWaiting状态(这一次 RunLoop 迭代处理完成了所有事件, 马上要休眠时), 在其中来计算高度并且缓存, </p>
+};
+</code></pre><h3 id="其他用法"><a href="#其他用法" class="headerlink" title="其他用法"></a>其他用法</h3><p>例如我们实现Cell高度的缓存计算, 我们可以在RunLoop空闲时来计算, 所以我们可以创建一个Observer, 来监听RunLoop的kCFRunLoopBeforeWaiting状态(这一次 RunLoop 迭代处理完成了所有事件, 马上要休眠时), 在其中来计算高度并且缓存, </p>
 <pre><code>CFRunLoopRef runLoop = CFRunLoopGetCurrent();
 CFStringRef runLoopMode = kCFRunLoopDefaultMode;
 CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler
@@ -457,7 +468,8 @@ CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler
     // TODO here
 });
 CFRunLoopAddObserver(runLoop, observer, runLoopMode);
-在其中的 TODO 位置，就可以开始任务的收集和分发了，当然，不能忘记适时的移除这个 observer</code></pre><hr>
+在其中的 TODO 位置，就可以开始任务的收集和分发了，当然，不能忘记适时的移除这个 observer
+</code></pre><hr>
 <p>参考资料: </p>
 <p>1.<a href="http://www.bijishequ.com/detail/355655?p=70-67" target="_blank" rel="noopener">深入理解RunLoop</a></p>
 <p>2.<a href="https://blog.ibireme.com/2015/05/18/runloop/" target="_blank" rel="noopener">深入理解RunLoop</a>, 这个是经典之作</p>

@@ -270,14 +270,15 @@ ga('send', 'pageview');
     return size;
 }
 
-@end</code></pre><p>以上如果是单行label的话, 实现起来没问题. 但是如果label一行显示不下需要换行的话, 那事情就没这么简单了. 但是怎么计算多行label的高度呢? 有以下几种方法: </p>
+@end
+</code></pre><p>以上如果是单行label的话, 实现起来没问题. 但是如果label一行显示不下需要换行的话, 那事情就没这么简单了. 但是怎么计算多行label的高度呢? 有以下几种方法: </p>
 <p>下面几种方法都需要我们首先设置<code>preferredMaxLayoutWidth</code>, 也就是UILabel的Width最大值, label会根据这个最大值来换行. 再设置<code>numberOfLines = 0</code>, 来实现换行. ==注意:== <code>preferredMaxLayoutWidth</code>适用于没有指定UILabel的Width的情况, 如果设置了Width的约束, 又设置了<code>preferredMaxLayoutWidth</code>. 那么计算size会以<code>preferredMaxLayoutWidth</code>为准, 显示则以Width的约束为准.</p>
 <ol>
 <li><p><code>boundingRectWithSize:options:attributes:context:</code></p>
 <p> <code>boundingRectWithSize:options:attributes:context:</code>是NSString的方法. 理解起来也非常简单, 根据一些绘制字符的选项和字符属性(字体, 字号, 字体颜色)等信息返回一个可以容纳字符串内容的CGRect. 它同样也需要一个CGSize来确定绘制区域.<br> size: 通常你可以传一个任意的Size, 它会返回一个它认为最合适的CGSize给你. 不过如果要想把视图的内容显示完全(纵向), 最好是将视图的实际宽度和最大高度<code>CGFLOAT_MAX</code>作为参数传递. 这样返回的才是完全显示内容的Size.<br> options: 默认情况下这个方法不会绘制多行, 如果要绘制多行字符, 那么options参数必须为: <code>NSStringDrawingUsesLineFragmentOrigin</code>.<br> attributes: 字符属性信息也非常重要. 如果要显示UILabel的全部内容, 必须传递这个参数. 以确保绘制的字体大小和UILabel的字体大小一致, </p>
 <p> 最后一个关键点是，这个方法返回的CGRect中Size的width和height都是小数，所以必须使用ceil函数才能确保结果的准确性。</p>
 </li>
-<li><p><span id = 'sizeThatFits'>sizeThatFits:</span></p>
+<li><p><span id="sizeThatFits">sizeThatFits:</span></p>
 <blockquote>
 <p>Asks the view to calculate and return the size that best fits the specified size.</p>
 </blockquote>
@@ -289,7 +290,7 @@ ga('send', 'pageview');
 </blockquote>
 <p> sizeThatFits: 方法意味着「根据文本计算最适合的size」, 但是并不改变调用者的size. 它需要传入一个CGSize参数这个参数和<code>boundingRectWithSize:options:attributes:context:</code>中size的作用和意义是一样的. </p>
 </li>
-<li><p><span id = 'sizeToFit'>sizeToFit:</span></p>
+<li><p><span id="sizeToFit">sizeToFit:</span></p>
 <blockquote>
 <p>calls sizeThatFits: with current view bounds and changes bounds size. </p>
 </blockquote>
@@ -300,19 +301,20 @@ CGSize size = [self sizeThatFits:self.bounds.size];
 CGRect bounds = self.bounds;
 bounds.size.width = size.width;
 bounds.size.height = size.width;
-self.bounds = bounds;</code></pre></li>
-<li><p><span id = 'systemLayoutSizeFittingSize'>systemLayoutSizeFittingSize</span> </p>
+self.bounds = bounds;
+</code></pre></li>
+<li><p><span id="systemLayoutSizeFittingSize">systemLayoutSizeFittingSize</span> </p>
 <p> <code>systemLayoutSizeFittingSize</code>, 它也是UIView的方法, 是AutoLayout诞生后的产物. 所以使用它的前提是需要展示内容的控件(这里指的就是UILabel)必须约束完美. 不然就不会起作用。而且必须要设置UILabel的<code>preferredMaxLayoutWidth</code>属性.<br> 这个属性非常重要, 它影响着layout. 如果设置了<code>preferredMaxLayoutWidth</code>, 当内容超过约束区域, 就会自动换行并且更新约束. 在良好约束的前提下, <code>systemLayoutSizeFittingSize</code>同样接受一个CGSize, 不同的是这次不用计算了, 直接使用系统提供的Fitting Size即可:</p>
 <pre><code>const CGSize UILayoutFittingCompressedSize; //在保证适当尺寸的前提下尽量压缩CGSize的大小
-const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽量扩充CGSize的大小</code></pre><p> 所以为了刚好将UILabel的内容显示完全，应该使用UILayoutFittingCompressedSize。代码如下：</p>
-<p> ```</p>
+const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽量扩充CGSize的大小
+</code></pre><p> 所以为了刚好将UILabel的内容显示完全，应该使用UILayoutFittingCompressedSize。代码如下：</p>
+<p> <code>`</code></p>
 </li>
 </ol>
 <ul>
-<li><p>(void)layoutSubviews {<br>  [super layoutSubviews];<br>  self.label.preferredMaxLayoutWidth = CGRectGetWidth(self.label.bounds);<br>  CGSize size = [self.label systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];<br>  self.labelConstraintHeight.constant = size.height + (2 * MARGIN);<br>}</p>
-<pre><code>
-  需要注意的是: 约束的上下左右一定要写好, 但是不能约束UILabel的高度. 否则可能会导致返回的CGRect不准确. `numberOfLines = 0` 让Label可以显示多行内容. 设置`preferredMaxLayoutWidth`属性, 使UILabel能自适应多行内容. `UILayoutFittingCompressedSize` 使用这个参数会返回符合条件最合适的Size. 最后也要加上边距, 主要是因为这里我们在内部计算UILabel的Size, 而如果在外部对View调用`systemLayoutSizeFittingSize`方法, 就会得到整个View视图的Size. 
-</code></pre></li>
+<li><p>(void)layoutSubviews {<br>  [super layoutSubviews];<br>  self.label.preferredMaxLayoutWidth = CGRectGetWidth(self.label.bounds);<br>  CGSize size = [self.label systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];<br>  self.labelConstraintHeight.constant = size.height + (2 * MARGIN);<br>}<br>  <code>`</code></p>
+<p>  需要注意的是: 约束的上下左右一定要写好, 但是不能约束UILabel的高度. 否则可能会导致返回的CGRect不准确. <code>numberOfLines = 0</code> 让Label可以显示多行内容. 设置<code>preferredMaxLayoutWidth</code>属性, 使UILabel能自适应多行内容. <code>UILayoutFittingCompressedSize</code> 使用这个参数会返回符合条件最合适的Size. 最后也要加上边距, 主要是因为这里我们在内部计算UILabel的Size, 而如果在外部对View调用<code>systemLayoutSizeFittingSize</code>方法, 就会得到整个View视图的Size. </p>
+</li>
 </ul>
 <p><code>sizeThatFits:</code>和<code>boundingRectWithSize:options:attributes:context:</code>这两个API也可以在传统布局(基于Frame)的情况下使用. </p>
 <h3 id="非Leaf-level-views高度计算"><a href="#非Leaf-level-views高度计算" class="headerlink" title="非Leaf-level views高度计算"></a>非Leaf-level views高度计算</h3><p>以UITextView显示文本为例, 让其能够自适应文本, 即根据文本自动调整其大小; 由于<code>intrinsicContentSize</code>的特性, 当其内部含有subView时返回值是(-1, -1), 无法向auto layout system传递我们想要传达的值, 我们可以使用<a href="#sizeThatFits">sizeThatFits</a>或者<a href="#sizeToFit">sizeToFit</a>来计算或者改变UITextView的大小. </p>
@@ -320,12 +322,10 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 <h3 id="Leaf-level-views和非Leaf-level-views混合使用下高度计算"><a href="#Leaf-level-views和非Leaf-level-views混合使用下高度计算" class="headerlink" title="Leaf-level views和非Leaf-level views混合使用下高度计算"></a>Leaf-level views和非Leaf-level views混合使用下高度计算</h3><p>这里我们需要计算的是根据subView来确定superView的frame, 大致分为一下几种情况: </p>
 <ol>
 <li><p>多个纯Leaf-level views的组合使用</p>
-<p> 这个计算起来比较简单, 我们以一个UIView里面添加两个UILabel为例. 我们只需要从上到下, 把subViews的子约束撑满superView. 需要注意, 如果UILabel需要换行, 那么高度约束就不能写, 并且要设置<code>numberOfLines = 0</code>. 虽然我们什么也没做, 但是子控件会通过<code>intrinsicContentSize</code>方法将最合适的size告诉superView. 但是对于superView, 因为它本身是UIVIew, 他的<code>intrinsicContentSize</code>返回是(-1, -1), 那么它是怎么得出正确的结果呢. auto layout system在处理某个view的size时，<span id = 'size'>参考值</span>包括:</p>
+<p> 这个计算起来比较简单, 我们以一个UIView里面添加两个UILabel为例. 我们只需要从上到下, 把subViews的子约束撑满superView. 需要注意, 如果UILabel需要换行, 那么高度约束就不能写, 并且要设置<code>numberOfLines = 0</code>. 虽然我们什么也没做, 但是子控件会通过<code>intrinsicContentSize</code>方法将最合适的size告诉superView. 但是对于superView, 因为它本身是UIVIew, 他的<code>intrinsicContentSize</code>返回是(-1, -1), 那么它是怎么得出正确的结果呢. auto layout system在处理某个view的size时，<span id="size">参考值</span>包括:</p>
 <ul>
-<li><p>自身的<code>intrinsicContentSize</code>方法返回值;</p>
-</li>
-<li><p>subviews的<code>intrinsicContentSize</code>方法返回值;</p>
-</li>
+<li>自身的<code>intrinsicContentSize</code>方法返回值;</li>
+<li>subviews的<code>intrinsicContentSize</code>方法返回值;</li>
 <li><p>自身和subviews的constraints;</p>
 <p>系统会将superView的size和subViews的约束以及<code>intrinsicContentSize</code>返回的正确size相加, 然后比较两个值的大小, 然后取最大的一个.<br><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fjvnn0tr2lj30ok0ru0st.jpg" alt="约束"></p>
 <p>size1, size2, size3, 分别是label1, label2, superView的<code>intrinsicContentSize</code>方法返回的size.<br>width = max{91 + size1.width + 91 + size2.width, size3.width}<br>height = max{60 + size1.height + 36 + size2.height + 58, size3.height}</p>
@@ -335,7 +335,7 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 <li><p>多个纯非Leaf-level views的组合使用</p>
 <p> 仍旧以UITextView为例, 如果没有设定UItextView的height属性的话, 由于非Leaf-level views的<code>intrinsicContentSize</code>返回值值为(-1, -1). 设置某个View的size有三个<a href="#size">参考值</a>, 在<code>intrinsicContentSize</code>方法返回值和constraints中取最大值为0, 导致height=0不能正常显示. 解决方案参考<a href="#next">下一个</a>;</p>
 </li>
-<li><p><span id = 'next'>Leaf-level views和非Leaf-level views混合使用</span></p>
+<li><p><span id="next">Leaf-level views和非Leaf-level views混合使用</span></p>
 <p> 因为有UItextView这种非Leaf-level views的存在, 会导致superView的size不能得到正常值. 解决方案有两种:</p>
 <ol>
 <li><p>设置非Leaf-level views的height, width约束, 因为<code>intrinsicContentSize</code>方法不能正常的返回size, 但是如果我们设置了width和height约束, constraints就不为0, 那么就可以正常显示了. </p>
@@ -418,6 +418,7 @@ const CGSize UILayoutFittingExpandedSize; //在保证适当尺寸的前提下尽
 
     return fittingHeight;
 }
+
 </code></pre><p><a href="http://www.cocoachina.com/industry/20140604/8668.html" target="_blank" rel="noopener">这篇文章</a>也有一些常见cell布局的高度计算方法, 可以参考下.</p>
 <hr>
 <p>参考资料:</p>

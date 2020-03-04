@@ -267,7 +267,8 @@ ga('send', 'pageview');
     }
     // 循环结束,表示没有比自己更合适的view
     return self;
-}</code></pre><p>事件传递给窗口或者控件后, 就调用<code>hitTest:withEvent:</code>寻找最合适的View. 所以是先传递事件, 再根据事件在自己身上找到最合适的View. 不管子控件是不是最合适的View, 系统都会先把事件传递给子控件, 经过子控件的<code>hitTest:withEvent:</code>验证后才知道有没有最合适的View. 所以如果确定最终父控件是最合适的view, 那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的.</p>
+}
+</code></pre><p>事件传递给窗口或者控件后, 就调用<code>hitTest:withEvent:</code>寻找最合适的View. 所以是先传递事件, 再根据事件在自己身上找到最合适的View. 不管子控件是不是最合适的View, 系统都会先把事件传递给子控件, 经过子控件的<code>hitTest:withEvent:</code>验证后才知道有没有最合适的View. 所以如果确定最终父控件是最合适的view, 那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的.</p>
 <p>一般我们在父控件的hitTest:withEvent:中返回子控件作为最合适的view. 例如: 当遍历子控件时, 如果触摸点不在子控件A自己身上而是在子控件B身上, 还要要求返回子控件A作为最合适的view, 采用返回自己的方法可能会导致还没有来得及遍历A自己, 就有可能已经遍历了点真正所在的view, 也就是B. 这就导致了返回的不是自己而是触摸点真正所在的view, 所以还是建议在父控件的hitTest:withEvent:中返回子控件作为最合适的view.</p>
 <h2 id="2-3-pointInside-withEvent"><a href="#2-3-pointInside-withEvent" class="headerlink" title="2.3 pointInside:withEvent:"></a>2.3 pointInside:withEvent:</h2><p>pointInside:withEvent:方法判断点在不在当前view上(方法调用者的坐标系上)如果返回YES, 代表点在方法调用者的坐标系上; 返回NO代表点不在方法调用者的坐标系上, 那么方法调用者也就不能处理事件.</p>
 <h1 id="3-事件传递的总结"><a href="#3-事件传递的总结" class="headerlink" title="3 事件传递的总结"></a>3 事件传递的总结</h1><p>由上面可知: 事件的传递顺序应该如下:<br>产生触摸事件 -&gt; <code>UIApplication</code>事件队列 -&gt; <code>[UIWindow hitTest:withEvent:]</code> -&gt; 返回更合适的view -&gt; 子控件<code>[hitTest:withEvent:]</code> -&gt; 返回最合适的view</p>
@@ -298,7 +299,8 @@ ga('send', 'pageview');
 <pre><code>-(void)touchesBegan:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event {
   NSLog(@&quot;-- dosomething&quot;);
   [super touchesBegan:touches withEvent:event];
-}</code></pre><h2 id="6-2-扩大view的点击区域"><a href="#6-2-扩大view的点击区域" class="headerlink" title="6.2 扩大view的点击区域"></a>6.2 扩大view的点击区域</h2><pre><code>底层具体实现如下: 
+}
+</code></pre><h2 id="6-2-扩大view的点击区域"><a href="#6-2-扩大view的点击区域" class="headerlink" title="6.2 扩大view的点击区域"></a>6.2 扩大view的点击区域</h2><pre><code>底层具体实现如下: 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha &lt;= 0.01) return nil;
     CGRect touchRect = CGRectInset(self.bounds, -10, -10);
@@ -315,7 +317,8 @@ ga('send', 'pageview');
         return self;
     }
     return nil;
-}</code></pre><hr>
+}
+</code></pre><hr>
 <p>参考资料:<br>1.<a href="http://blog.flight.dev.qunar.com/2016/10/28/ios-event-mechanism-summary/" target="_blank" rel="noopener">iOS事件传递及响应</a></p>
 <p>2.<a href="https://zhoon.github.io/ios/2015/04/12/ios-event.html" target="_blank" rel="noopener">深入浅出iOS事件机制</a></p>
 <p>3.<a href="https://www.jianshu.com/p/2e074db792ba" target="_blank" rel="noopener">史上最详细的iOS之事件的传递</a></p>

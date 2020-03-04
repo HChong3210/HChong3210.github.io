@@ -249,7 +249,8 @@ constructor(props){
         key: value,
     };
 }
-```</code></pre></li>
+```
+</code></pre></li>
 <li><p><code>componentWillMount</code>, 该方法表示组件将要加载到虚拟DOM中, 在render()方法之前执行, 整个生命周期只执行一次.</p>
 </li>
 <li><p><code>componentDidMount</code>, 该方法在组件第一次绘制之后调用, 通知组件已经加载完成, 这个函数整个生命周期只被调用一次, 这个函数被调用的时候就说虚拟DOM已经构建完成, 可以在这个函数中获取其中的元素和子组件. 这个函数之后, 就进入了稳定状态, 只有等到其他事件触发才会再次调用其他的函数.</p>
@@ -263,25 +264,30 @@ constructor(props){
        this.setState({
          //key : value
        });
-  }</code></pre></li>
+  }
+</code></pre></li>
 <li><p><code>shouldComponentUpdate</code>, 当组件接收到新的props或者state改变时, 都会调用该方法, 该函数的返回值直接决定是否要更新组件. 该方法包含两个参数, 分别是props和state. 该方法在组件的整个生命周期可以多次执行. 如果该方法返回false, 则componentWillUpdate(nextProps, nextState)及其之后执行的方法都不会执行, 组件则不会进行重新渲染.</p>
 <pre><code>  shouldComponentUpdate(nextProps, nextState) {
     return true;
-  }</code></pre></li>
+  }
+</code></pre></li>
 <li><p><code>componentWillUpdate</code>, 如果组件状态或者属性改变, 并且<code>shouldComponentUpdate</code>的返回值为true, 就会更新组件, 在组件更新之前会先调用该方法, 该方法在整个声明周期中可以被多次执行. 在该方法中可以做一些更新界面之前要做的事情. <em>注意</em>, 在这个函数中不能使用set来修改state的值. 该函数调用之后, 就会把 nextProps 和 nextState 分别设置到 this.props 和 this.state 中. 紧接着这个函数, 就会调用 <code>render()</code> 来更新界面.</p>
 <pre><code>  componentWillUpdate(nextProps, nextState) {
 
-  }</code></pre></li>
+  }
+</code></pre></li>
 <li><p><code>render</code>, 方法用于渲染组件, 在初始化阶段和运行期阶段都会执行.</p>
 <pre><code>  render() {
     return(
       &lt;View/&gt;
     );
-  }</code></pre></li>
+  }
+</code></pre></li>
 <li><p><code>componentDidUpdate</code>, 该方法在<code>render()</code>之后立刻调用, 包含两个参数, 分别是props和state. 该方法在组件的整个生命周期可以多次执行. 因为到这里已经完成了属性和状态的更新, 此时, 函数的参数就变成prevProps和prevState.</p>
 <pre><code>  componentDidUpdate(prevProps, prevState)(  
 
-  )</code></pre></li>
+  )
+</code></pre></li>
 </ul>
 </li>
 <li><p>第三阶段: 是组件卸载消亡的阶段, 如图中右下角的虚线框中, 这里做一些组件的清理工作;</p>
@@ -293,8 +299,7 @@ constructor(props){
 <h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>RN布局采用的是前端的flex布局, 关于这种布局方式, 网上的教程一大堆, 强烈推荐阮阮一峰<a href="http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html" target="_blank" rel="noopener">这篇文章</a>.</p>
 <h2 id="组件间通信"><a href="#组件间通信" class="headerlink" title="组件间通信"></a>组件间通信</h2><p>RN的组件间通信主要分为父子组件和跨级组件间通信.</p>
 <ul>
-<li><p>父子组件通信, 父组件设置属性参数, 子组件通过props取得参数.</p>
-</li>
+<li>父子组件通信, 父组件设置属性参数, 子组件通过props取得参数.</li>
 <li><p>子父组件通信, 也通过props.</p>
 <pre><code>  //子组件
   class Son extends Component {
@@ -337,7 +342,8 @@ constructor(props){
       clickItem = (item) =&gt; {
           this.handleChange(item);
       }
-  }</code></pre></li>
+  }
+</code></pre></li>
 <li><p>跨级组件间通信<br>  如果是兄弟组件可以先把值向上传递到父组件, 在向下传递到子组件. 如果是嵌套多层的传值可以使用context对象. 参考<a href="https://www.jianshu.com/p/fb915d9c99c4" target="_blank" rel="noopener">React 中组件间通信的几种方式</a>.</p>
 </li>
 <li><p>观察者模式通信, 使用eventProxy对象. 该对象共有四个函数, 使用方法很简单.</p>
@@ -383,9 +389,11 @@ constructor(props){
           //调用组件的实例方法
           this.myCpt.doIt();
       }
-  }</code></pre></li>
+  }
+</code></pre></li>
 <li><p>使用global<br>  global 类似浏览器里的 window 对象, 它是全局的, 一处定义, 所有组件都可以访问, 一般用于存储一些全局的配置参数或方法. 使用场景: 全局参数不想通过 props 层层组件传递, 有些组件对此参数并不关心, 只有嵌套的某个组件使用.</p>
-<pre><code>  global.isOnline = true;</code></pre></li>
+<pre><code>  global.isOnline = true;
+</code></pre></li>
 </ul>
 <h2 id="MobX与RN的结合使用"><a href="#MobX与RN的结合使用" class="headerlink" title="MobX与RN的结合使用"></a>MobX与RN的结合使用</h2><p>强烈推荐使用<a href="https://mobx.js.org/index.html" target="_blank" rel="noopener">MobX</a>以数据驱动视图, 通过数据绑定, 我们只需修改数据本身, 便可自动更新视图. <a href="http://cn.mobx.js.org/" target="_blank" rel="noopener">中文文档</a></p>
 <h2 id="MobX与RN的结合使用范式"><a href="#MobX与RN的结合使用范式" class="headerlink" title="MobX与RN的结合使用范式"></a>MobX与RN的结合使用范式</h2><p>我们尽量推荐一个模块由若干pages, 若干models和stores组成. 他们分别对应到iOS开发中的VC, M和VM三层. 如果使用store, 那么建议不要再使用state来控制UI状态, 建议都放进store里面.</p>

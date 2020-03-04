@@ -283,7 +283,8 @@ ga('send', 'pageview');
          [self setup]; // Do whatever you want
          [[NSNotificationCenter defaultCenter] removeObserver:observer];
      }];
-}</code></pre><ul>
+}
+</code></pre><ul>
 <li><ul>
 <li>load方法在足够早的时间点被调用</li>
 </ul>
@@ -317,14 +318,14 @@ ga('send', 'pageview');
 <p>The superclass implementation may be called multiple times if subclasses do not implement initialize—the runtime will call the inherited implementation—or if subclasses explicitly call [super initialize]. If you want to protect yourself from being run multiple times, you can structure your implementation along these lines:</p>
 </blockquote>
 <blockquote>
-<pre><code></code></pre></blockquote>
-<ul>
-<li>(void)initialize {<br>if (self == [ClassName self]) {<br>  // … do the initialization …<br>}<br>}<pre><code>&gt; Because initialize is called in a blocking manner, it’s important to limit method implementations to the minimum amount of work necessary possible. Specifically, any code that takes locks that might be required by other classes in their initialize methods is liable to lead to deadlocks. Therefore, you should not rely on initialize for complex initialization, and should instead limit it to straightforward, class local initialization.
-&gt; 
-&gt; *Special Considerations*
-&gt; initialize is invoked only once per class. If you want to perform independent initialization for the class and for categories of the class, you should implement load methods.
-</code></pre></li>
-</ul>
+<pre><code>+ (void)initialize {
+  if (self == [ClassName self]) {
+    // ... do the initialization ...
+  }
+}
+</code></pre><p>Because initialize is called in a blocking manner, it’s important to limit method implementations to the minimum amount of work necessary possible. Specifically, any code that takes locks that might be required by other classes in their initialize methods is liable to lead to deadlocks. Therefore, you should not rely on initialize for complex initialization, and should instead limit it to straightforward, class local initialization.</p>
+<p><em>Special Considerations</em><br>initialize is invoked only once per class. If you want to perform independent initialization for the class and for categories of the class, you should implement load methods.</p>
+</blockquote>
 <p>关于上面这段话, 我们可以看出:</p>
 <ul>
 <li>+initialize方法是在 runtime 时被调用的</li>
@@ -345,7 +346,8 @@ ga('send', 'pageview');
     if (self == [Parent class]) {
         NSLog(@&quot;Initialize Parent, caller Class %@&quot;, [self class]);
     }
-}</code></pre><h2 id="2-1-initialize的使用场景"><a href="#2-1-initialize的使用场景" class="headerlink" title="2.1 initialize的使用场景"></a>2.1 initialize的使用场景</h2><p>initialize方法主要用来对一些不方便在编译期初始化的对象进行赋值。比如NSMutableArray这种类型的实例化依赖于runtime的消息发送，所以显然无法在编译器初始化.</p>
+}
+</code></pre><h2 id="2-1-initialize的使用场景"><a href="#2-1-initialize的使用场景" class="headerlink" title="2.1 initialize的使用场景"></a>2.1 initialize的使用场景</h2><p>initialize方法主要用来对一些不方便在编译期初始化的对象进行赋值。比如NSMutableArray这种类型的实例化依赖于runtime的消息发送，所以显然无法在编译器初始化.</p>
 <pre><code>// In Parent.m
 static int someNumber = 0;     // int类型可以在编译期赋值  
 static NSMutableArray *someObjects;
@@ -355,7 +357,8 @@ static NSMutableArray *someObjects;
         // 不方便编译期复制的对象在这里赋值
         someObjects = [[NSMutableArray alloc] init];
     }
-}</code></pre><h1 id="3-load-vs-initialize"><a href="#3-load-vs-initialize" class="headerlink" title="3 load vs initialize"></a>3 load vs initialize</h1><ul>
+}
+</code></pre><h1 id="3-load-vs-initialize"><a href="#3-load-vs-initialize" class="headerlink" title="3 load vs initialize"></a>3 load vs initialize</h1><ul>
 <li>load和initialize方法都会在实例化对象之前调用，以main函数为分水岭，前者在main函数之前调用，后者在之后调用。这两个方法会被自动调用，不能手动调用它们.</li>
 <li>load和initialize方法都不用显示的调用父类的方法而是自动调用，即使子类没有initialize方法也会调用父类的方法，而load方法则不会调用父类.</li>
 <li>load方法通常用来进行Method Swizzle，initialize方法一般用于初始化全局变量或静态变量.</li>
@@ -369,7 +372,8 @@ static NSMutableArray *someObjects;
 <th>+initialize</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>调用时机</td>
 <td>被添加到 runtime 时</td>
 <td>收到第一条消息前，可能永远不调用</td>
@@ -399,7 +403,8 @@ static NSMutableArray *someObjects;
 <td>类和分类都执行</td>
 <td>覆盖类中的方法，只执行分类的实现</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <hr>
 <p>参考资料:<br>1.<a href="https://bestswifter.com/load-and-initialize/#initialize" target="_blank" rel="noopener">细说OC中的load和initialize方法</a><br>2.<a href="http://blog.sunnyxx.com/2015/03/09/notification-once/" target="_blank" rel="noopener">Notification Once</a><br>3.<a href="https://zhangbuhuai.com/post/initialize-and-load-in-objective-c.html" target="_blank" rel="noopener">Objective-C 中的+initialize 和+load</a><br>4.<a href="http://blog.sunnyxx.com/2015/03/09/notification-once/" target="_blank" rel="noopener">Notification once</a><br>5.<a href="http://liumh.com/2015/07/29/ios-load-and-initialize/" target="_blank" rel="noopener">iOS初探+load和+initialize</a><br>6.<a href="http://blog.leichunfeng.com/blog/2015/05/02/objective-c-plus-load-vs-plus-initialize/" target="_blank" rel="noopener">Objective-C +load vs +initialize</a><br>7.<a href="https://draveness.me/load" target="_blank" rel="noopener">你真的了解 load 方法么？</a></p>
 

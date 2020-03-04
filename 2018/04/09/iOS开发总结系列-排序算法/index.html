@@ -279,7 +279,8 @@ ga('send', 'pageview');
     [self quickSortArray:array formLeft:left right:i - 1];
     //递归处理基准数右边
     [self quickSortArray:array formLeft:i + 1 right:right];
-}</code></pre><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><p>归并排序是建立在归并操作上的一种有效的排序算法, 该算法是采用分治法(Divide and Conquer)的一个非常典型的应用. 他的时间复杂度是O(nlogn).</p>
+}
+</code></pre><h1 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h1><p>归并排序是建立在归并操作上的一种有效的排序算法, 该算法是采用分治法(Divide and Conquer)的一个非常典型的应用. 他的时间复杂度是O(nlogn).</p>
 <p>它的原理是假设初始序列含有n个记录, 则可以看成是n个有序的子序列, 每个子序列的长度为1, 然后两两归并, 得到n/2个长度为2或者1的有序子序列; 再两两归并, 如此反复, 直到得到一个长度为n的有序序列为止, 这种排序方法称为归并排序.<br><img src="https://img-blog.csdn.net/20160908095240209" alt="归并排序"></p>
 <pre><code>- (void)mergeSortArray:(NSMutableArray *)array {
   //创建一个副本数组
@@ -340,7 +341,8 @@ ga('send', 'pageview');
         array[currentIndex +i] = auxiliaryArray[leftIndex +i ];
     }
   }
- }</code></pre><hr>
+ }
+</code></pre><hr>
 <p>参考资料:<br>1.<a href="https://www.jianshu.com/p/8fce5bfb0013" target="_blank" rel="noopener">归并排序</a></p>
 
     

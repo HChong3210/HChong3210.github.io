@@ -243,7 +243,8 @@ ga('send', 'pageview');
     UI.section &#39;Skipping User Project Integration&#39;
   end
   perform_post_install_actions
-end</code></pre>
+end
+</code></pre>
 <p>分析源码可以发现, install的执行分为如下几个步骤: <em>准备阶段, 查找依赖库, 下载依赖文件, 检验target, 生成pod工程, 整合project文件, 执行安装后操作</em>, 下面会逐步讲解一下.</p>
 <h2 id="1-1-准备阶段"><a href="#1-1-准备阶段" class="headerlink" title="1.1 准备阶段"></a>1.1 准备阶段</h2><pre><code class="ruby">def prepare
   # Raise if pwd is inside Pods
@@ -258,7 +259,8 @@ end</code></pre>
     ensure_plugins_are_installed!
     run_plugins_pre_install_hooks
   end
-end</code></pre>
+end
+</code></pre>
 <p>我们可以看到, 准备阶段(prepare)主要做了以下事情:</p>
 <ul>
 <li>检查podfile.lock的写入的cocoapods版本和当前cocoapods版本是否一致，如果不一致将会重塑工程，将除了Podfile、Podfile.lock、Workspace以外的其他关联和依赖全部重置</li>
@@ -286,7 +288,8 @@ end</code></pre>
   end if deployment?
 
   analyzer
-end</code></pre>
+end
+</code></pre>
 <p>我们可以看到, 查找依赖库(resolve_dependencies)主要做了以下事情:</p>
 <ul>
 <li>遍历注册的所有插件，其中通过HooksManager.register方法注册name为:source_provider的插件</li>
@@ -302,7 +305,8 @@ end</code></pre>
     run_podfile_pre_install_hooks
     clean_pod_sources
   end
-end</code></pre>
+end
+</code></pre>
 <p>我们可以看到, 下载依赖文件(download_dependencies)主要做了以下事情:</p>
 <ul>
 <li>下载安装Pods依赖库源文件</li>
@@ -312,7 +316,8 @@ end</code></pre>
 <h2 id="1-4-检验target"><a href="#1-4-检验target" class="headerlink" title="1.4 检验target"></a>1.4 检验target</h2><pre><code class="ruby">def validate_targets
   validator = Xcode::TargetValidator.new(aggregate_targets, pod_targets)
   validator.validate!
-end</code></pre>
+end
+</code></pre>
 <p>检验target(validate_targets), 主要做了以下事情:</p>
 <ul>
 <li>检测是否有多重引用 framework 或者 library 的情况(Framework的名字是否冲突, 如果冲突会抛出<code>frameworks with conflicting names</code>异常)</li>
@@ -335,7 +340,8 @@ end</code></pre>
 
   update_project_cache(cache_analysis_result, target_installation_results)
   write_lockfiles
-end</code></pre>
+end
+</code></pre>
 <p>生成Pods工程(generate_pods_project), 主要做了:</p>
 <ul>
 <li>调用Podfile中post_install钩子方法</li>
@@ -349,7 +355,8 @@ end</code></pre>
                                            :use_input_output_paths =&gt; !installation_options.disable_input_output_paths?)
     integrator.integrate!
   end
-end</code></pre>
+end
+</code></pre>
 <p>整合project文件(integrate_user_project), 主要做了:</p>
 <ul>
 <li>创建.xcworkspace文件</li>
@@ -362,7 +369,8 @@ end</code></pre>
   warn_for_deprecations
   warn_for_installed_script_phases
   print_post_install_message
-end</code></pre>
+end
+</code></pre>
 <p>执行安装后操作(perform_post_install_actions), 主要做了以下操作:</p>
 <ul>
 <li>unLock Pods库下的文件</li>

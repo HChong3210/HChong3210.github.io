@@ -243,7 +243,8 @@ dispatch_group_async(group, queue, ^{ /*加载图片2 */ });
 dispatch_group_async(group, queue, ^{ /*加载图片3 */ }); 
 dispatch_group_notify(group, dispatch_get_main_queue(), ^{
         // 合并图片
-});</code></pre><pre><code>- (void)groupTest2 {
+});
+</code></pre><pre><code>- (void)groupTest2 {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_group_t group = dispatch_group_create();
 
@@ -264,7 +265,8 @@ dispatch_group_notify(group, dispatch_get_main_queue(), ^{
     dispatch_group_notify(group, queue, ^{
         NSLog(@&quot;group finished&quot;);
     });
-}</code></pre><h2 id="dispatch-barrier-async的作用"><a href="#dispatch-barrier-async的作用" class="headerlink" title="dispatch_barrier_async的作用"></a>dispatch_barrier_async的作用</h2><p>在并行队列中, 为了保持某些任务的顺序, 需要等待一些任务完成后才能继续进行, 使用 barrier 来等待之前任务完成, 避免数据竞争等问题. 假设一个并行队列中添加了五个异步任务, 虽然遵循FIFO的原则, 这五个任务的执行必定是无序的. 当我们在第三个任务之后加入dispatch_barrier_async任务, 那么这五个任务就被分割成两部分, 前三次无序执行, 然后执行dispatch_barrier_async任务, 然后再无序执行后两次任务. 注意此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行.</p>
+}
+</code></pre><h2 id="dispatch-barrier-async的作用"><a href="#dispatch-barrier-async的作用" class="headerlink" title="dispatch_barrier_async的作用"></a>dispatch_barrier_async的作用</h2><p>在并行队列中, 为了保持某些任务的顺序, 需要等待一些任务完成后才能继续进行, 使用 barrier 来等待之前任务完成, 避免数据竞争等问题. 假设一个并行队列中添加了五个异步任务, 虽然遵循FIFO的原则, 这五个任务的执行必定是无序的. 当我们在第三个任务之后加入dispatch_barrier_async任务, 那么这五个任务就被分割成两部分, 前三次无序执行, 然后执行dispatch_barrier_async任务, 然后再无序执行后两次任务. 注意此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行.</p>
 <pre><code>- (void)barrierTest {
 
     //此处的队列只能使用自定义的并行队列, 系统提供的全局队列不行
@@ -289,7 +291,8 @@ dispatch_group_notify(group, dispatch_get_main_queue(), ^{
     dispatch_async(queue, ^{
         NSLog(@&quot;5&quot;);
     });
-}</code></pre><h2 id="为什么要废弃dispatch-get-current-queue"><a href="#为什么要废弃dispatch-get-current-queue" class="headerlink" title="为什么要废弃dispatch_get_current_queue"></a>为什么要废弃dispatch_get_current_queue</h2><p>dispatch_get_current_queue可能造成死锁, 详细的原因看<a href="为什么dispatch_get_current_queue被废弃">这里</a></p>
+}
+</code></pre><h2 id="为什么要废弃dispatch-get-current-queue"><a href="#为什么要废弃dispatch-get-current-queue" class="headerlink" title="为什么要废弃dispatch_get_current_queue"></a>为什么要废弃dispatch_get_current_queue</h2><p>dispatch_get_current_queue可能造成死锁, 详细的原因看<a href="为什么dispatch_get_current_queue被废弃">这里</a></p>
 <h2 id="如何取消一个正在运行的线程"><a href="#如何取消一个正在运行的线程" class="headerlink" title="如何取消一个正在运行的线程"></a>如何取消一个正在运行的线程</h2><h3 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h3><ol>
 <li><p>使用dispatch_block_cancel(iOS8之后)来取消, 但是必须使用 dispatch_block_create 创建 dispatch_block_t.</p>
 <pre><code> - (void)gcdBlockCancel{
@@ -311,10 +314,10 @@ dispatch_group_notify(group, dispatch_get_main_queue(), ^{
      dispatch_async(queue, block1);
      dispatch_async(queue, block2);
      dispatch_block_cancel(block3);
- }</code></pre><p> 注意: dispatch_block_cancel只能取消尚未执行的任务, 对正在执行的任务不起作用.</p>
+ }
+</code></pre><p> 注意: dispatch_block_cancel只能取消尚未执行的任务, 对正在执行的任务不起作用.</p>
 </li>
-<li><p>模仿NSOperation, 定义外部变量, 标记block是否需要取消</p>
-</li>
+<li>模仿NSOperation, 定义外部变量, 标记block是否需要取消</li>
 </ol>
 <pre><code>@property (nonatomic, assign) BOOL isCancel;
 
@@ -337,7 +340,8 @@ dispatch_group_notify(group, dispatch_get_main_queue(), ^{
             }
         }
     });
-}</code></pre><p>不等循环结束, self.isCancel已经被标记为YES, 线程就已经return, 结束.</p>
+}
+</code></pre><p>不等循环结束, self.isCancel已经被标记为YES, 线程就已经return, 结束.</p>
 <h3 id="NSOperation"><a href="#NSOperation" class="headerlink" title="NSOperation"></a>NSOperation</h3><p>NSOperation提供了cancel方法, 但是这也只是把状态标记为cancel, 已经执行的任务是还在继续跑的, 所以我们要要在Operation的声明周期函数中, 频繁的检查 .cancelled 状态, 只要 .cancelled == true我们就把operation的 finished 状态, 设置为true, 并且结束没有完成的任务.</p>
 <p>我们要在<code>- start</code>, <code>- main</code>等任何声明周期函数中检查, 也可以通过KVO观察cancel的变化来做相应的操作. </p>
 <blockquote>

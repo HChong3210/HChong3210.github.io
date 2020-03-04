@@ -266,10 +266,11 @@ ga('send', 'pageview');
         default:
             break;
     }
-}</code></pre>
+}
+</code></pre>
 <p>在App每次启动时调用这个方法, 来获取各个Host的地址, 完美解决. </p>
 <p>测试每次想要个新的包来测试, 都会有如下对话, “帮我打个包吧”, “你要什么环境的”, “预发环境”, “好的”. 于是 ,我们一同操作, 传入预发的status, 调用动态取Host的方法, 然后Product-&gt;Archive, 等个十几二十分钟, 打包完毕, 生成一个IPA文件, 自己拿ITunes安装. 嗯, 虽然辛苦点, 但是目前看来, 一切都很完美嘛, 打包的时候还能喝个茶.</p>
-<p>然而, 随着我司测试流程的规范化, 逐渐推进使用<a href="">Jenkins持续集成</a>来打包, 那么问题就来了. 你让测试也装个Xcode, 每次切换一下环境, 手动Archive吗, 呵呵. 于是我们有了方案二.</p>
+<p>然而, 随着我司测试流程的规范化, 逐渐推进使用<a href>Jenkins持续集成</a>来打包, 那么问题就来了. 你让测试也装个Xcode, 每次切换一下环境, 手动Archive吗, 呵呵. 于是我们有了方案二.</p>
 <h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>我们先来理一下方案二主要解决的问题: <em>测试要能够在不改代码的前提下使用Jenkins打不同环境的包</em>. 听起来有点复杂呢, 我们来逐个分析下.</p>
 <ol>
 <li>使用Jenkins来打包, 那就是跑脚本嘛, xcodebuild已经寂寞难耐.</li>
@@ -277,13 +278,14 @@ ga('send', 'pageview');
 <li>既然要用脚本来打包了, 那不能每次跑脚本之前, 先改一下代码吧, 于是想到我们应该有一个参数来在工程中区分不同的环境, </li>
 </ol>
 <p>以上就是我们方案二要解决的主要问题, 下面我们来逐个分析和解决.</p>
-<h3 id="打包脚本"><a href="#打包脚本" class="headerlink" title="打包脚本"></a>打包脚本</h3><p>关于打包的脚本, 版本很多, 有Python流, 有Shell流, 可以<a href="">参考这里</a>. 但说到底, 无非用的是xcodebuild来实现的, 在终端中输入<code>xcodebuild -help</code>可以查看xcodebuild的相关操作<a href="http://www.jianshu.com/p/4f4d16326152">这篇文章</a>将的也比较全面, 可以参考下.</p>
+<h3 id="打包脚本"><a href="#打包脚本" class="headerlink" title="打包脚本"></a>打包脚本</h3><p>关于打包的脚本, 版本很多, 有Python流, 有Shell流, 可以<a href>参考这里</a>. 但说到底, 无非用的是xcodebuild来实现的, 在终端中输入<code>xcodebuild -help</code>可以查看xcodebuild的相关操作<a href="http://www.jianshu.com/p/4f4d16326152" target="_blank" rel="noopener">这篇文章</a>将的也比较全面, 可以参考下.</p>
 <p>在这里, 我们主要用到的命令有两个.</p>
 <pre><code class="objective-c">//编译
 xcodebuild -workspace &lt;workspacename&gt; -scheme &lt;schemeName&gt; [-destination &lt;destinationspecifier&gt;]... [-configuration &lt;configurationname&gt;] [-arch &lt;architecture&gt;]... [-sdk [&lt;sdkname&gt;|&lt;sdkpath&gt;]] [-showBuildSettings] [&lt;buildsetting&gt;=&lt;value&gt;]... [&lt;buildaction&gt;]...
 
 //生成IPA
-xcodebuild -exportArchive -archivePath &lt;xcarchivepath&gt; -exportPath &lt;destinationpath&gt; -exportOptionsPlist &lt;plistpath&gt;</code></pre>
+xcodebuild -exportArchive -archivePath &lt;xcarchivepath&gt; -exportPath &lt;destinationpath&gt; -exportOptionsPlist &lt;plistpath&gt;
+</code></pre>
 <p>到这一步, 我们的打包脚本仅仅完成了第一步, 生成了IPA文件. </p>
 <h3 id="内测分发平台"><a href="#内测分发平台" class="headerlink" title="内测分发平台"></a>内测分发平台</h3><p>生成IPA之后, 我们要提供一个可供下载安装的链接. 此处我们使用的是<a href="https://fir.im/" target="_blank" rel="noopener">Fir</a>, 它提供的也有<a href="https://github.com/FIRHQ/fir-cli/blob/master/README.md" target="_blank" rel="noopener">命令行操作</a>, 可以直接上传IPA文件, 生成可供下载的二维码.👍</p>
 <p>当然有条件的公司也可以自己搭建一个下载地址, 制作一个管理后台, 用来管理自己的内测.</p>
@@ -300,18 +302,21 @@ HOST1 = @&quot;HOST1/PrePublish&quot;
 
 HOST2 = @&quot;HOST2/PrePublish&quot;
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HOST2=&#39;$(HOST2)&#39; HOST1=&#39;$(HOST1)&#39;</code></pre><p>注意, 此处必须要引入<code>pod install</code>生成的对应的Pod的xcconfig, 否则会报错.<br><img src="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl9102hzij30ji0aoglq.jpg" alt="报错"><br>7.Manage Schemes</p>
-<p>因为一般是多人合作开发, 所以此处的Scheme需要设置为Share状态<br><img src="http://ww1.sinaimg.cn/large/006tNbRwgy1ffl969kivwj316o0o0jrt.jpg" alt=""></p>
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HOST2=&#39;$(HOST2)&#39; HOST1=&#39;$(HOST1)&#39;
+</code></pre><p>注意, 此处必须要引入<code>pod install</code>生成的对应的Pod的xcconfig, 否则会报错.<br><img src="http://ww4.sinaimg.cn/large/006tNbRwgy1ffl9102hzij30ji0aoglq.jpg" alt="报错"><br>7.Manage Schemes</p>
+<p>因为一般是多人合作开发, 所以此处的Scheme需要设置为Share状态<br><img src="http://ww1.sinaimg.cn/large/006tNbRwgy1ffl969kivwj316o0o0jrt.jpg" alt></p>
 <p>至此, 已经可以在工程中使用我们在xcconfig中自定义的字段了. 因为我们使用了<code>GCC_PREPROCESSOR_DEFINITIONS</code>, 他会在编译时生成一个宏定义, 所以我们可以直接使用宏定义</p>
 <pre><code>NSLog(@&quot;----------%@&quot;, HOST1);
-NSLog(@&quot;----------%@&quot;, HOST2);</code></pre><p>注: 此外, 还有另外一种使用方式. 我们可以每个Scheme新建一个plist(也可使用Info.plist)文件与之对应, 在plist文件中新增<code>key-value</code>来与xcconfig中的自定义字段对应.</p>
+NSLog(@&quot;----------%@&quot;, HOST2);
+</code></pre><p>注: 此外, 还有另外一种使用方式. 我们可以每个Scheme新建一个plist(也可使用Info.plist)文件与之对应, 在plist文件中新增<code>key-value</code>来与xcconfig中的自定义字段对应.</p>
 <p>使用方法如下:</p>
 <p>1.在plist中新增与xcconfig中自定义字段对应的<code>key-value</code><br><img src="http://ww3.sinaimg.cn/large/006tNbRwgy1ffl9dzmseoj310y0nqjsm.jpg" alt="plist文件新增"></p>
 <p>2.使用方式如下:</p>
 <pre><code>    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@&quot;Info&quot; ofType:@&quot;plist&quot;];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:bundlePath];
     NSLog(@&quot;----------%@&quot;, [dict objectForKey:@&quot;HOST1&quot;]);
-    NSLog(@&quot;----------%@&quot;, [dict objectForKey:@&quot;HOST2&quot;]);</code></pre><p>至此, 我们已经实现不同Scheme下, 参数的动态化配置的两种方案, 下面我们分析下原理:</p>
+    NSLog(@&quot;----------%@&quot;, [dict objectForKey:@&quot;HOST2&quot;]);
+</code></pre><p>至此, 我们已经实现不同Scheme下, 参数的动态化配置的两种方案, 下面我们分析下原理:</p>
 <p>首先, 我们先来区分一下Xcode Workspace、Xcode Scheme、Xcode Project、Xcode Target、Build Settings 这5者的关系, 由于篇幅较长, <a href="http://hchong.net/2017/05/16/Settings%E5%85%B3%E7%B3%BB/">另开一文</a>.<br>这5者的关系在苹果官方文档上其实都已经说明的很清楚了。详情见文档<a href="https://developer.apple.com/library/content/featuredarticles/XcodeConcepts/Concept-Targets.html" target="_blank" rel="noopener">Xcode Concepts</a>。 </p>
 <p>总结起来, 一个Workspace可以包含多个Project,一个Project可以包含多个Target，Scheme包含了所有的Target集合，这个集合指定了，编译哪个target，使用哪个build configuration去编译target，提供运行target的执行环境等等.</p>
 <p>xcconfig文件是一个用来保存Build Settings键值对的纯文本文件, 这些键值对会覆盖Build Settings中的值. xcconifg支持可以根据不同的Configuration选项配置不同的文件. 不同的xcconfig可以指定不同的Build Settings里的属性值.</p>
@@ -326,7 +331,7 @@ NSLog(@&quot;----------%@&quot;, HOST2);</code></pre><p>注: 此外, 还有另�
 </ol>
 <hr>
 <p>附件下载地址:</p>
-<p>1.<a href="">打包脚本</a>    </p>
+<p>1.<a href>打包脚本</a>    </p>
 <p>2.<a href="https://github.com/HChong3210/MultipleChannel" target="_blank" rel="noopener">Demo</a>    </p>
 <hr>
 <p>参考文章:</p>

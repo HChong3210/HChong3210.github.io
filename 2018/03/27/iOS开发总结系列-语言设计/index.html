@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; }通过指针偏移量来获取每个元素, 同\">
+  <meta name="description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; } 通过指针偏移量来获取每个元素, 同">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS开发总结系列-语言设计">
 <meta property="og:url" content="http://hchong.net/2018/03/27/iOS开发总结系列-语言设计/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; }通过指针偏移量来获取每个元素, 同\">
+<meta property="og:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; } 通过指针偏移量来获取每个元素, 同">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2018-04-01T14:24:03.645Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发总结系列-语言设计">
-<meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; }通过指针偏移量来获取每个元素, 同\">
+<meta name="twitter:description" content="这里主要是一些语言设计方面的常见问题. NSString如何计算字符的个数首先我们要知道字符串末尾会自动加上一个\0, 因此我们可以设计这么一个函数:  int string_length(char *s) {     int c = 0;     while (*s[c] != `\0`){         c++:     }     return c; } 通过指针偏移量来获取每个元素, 同">
 
   
 
@@ -237,7 +237,8 @@ ga('send', 'pageview');
         c++:
     }
     return c;
-}</code></pre><p>通过指针偏移量来获取每个元素, 同<code>\0</code>比较, 相等时的指针偏移量就是字符串元素的个数.</p>
+}
+</code></pre><p>通过指针偏移量来获取每个元素, 同<code>\0</code>比较, 相等时的指针偏移量就是字符串元素的个数.</p>
 <h2 id="NSUserDefaults性能优化"><a href="#NSUserDefaults性能优化" class="headerlink" title="NSUserDefaults性能优化"></a>NSUserDefaults性能优化</h2><p>当使用NSUserDefaults写入文件后, 值会被存放到Library/Preferences/com.xxx.AppName.plist文件里(com.xxx.AppName是应用的标识符). 这个文件是个plist文件, 因此, 它可以存放plist可以存放的数据类型: NSData, NSString, NSNumber, NSDate, NSArray, 或者NSDictionary.<br>它是针对每个应用适用的, 只作用于自身应用内. sandbox的安全机制保证, 它不能修改其他应用的值, 也不会被其他应用修改.</p>
 <p>NSUserDefaults是个单例, 而且它访问的文件也只有一个, NSUserDefaults帮我们做了一层优化. NSUserDefaults是带缓存的, NSUserDefaults会把访问到的key缓存到内存里, 下次再访问时, 如果内存中命中就直接访问, 如果未命中再从文件中载入. 应用会时不时调用[defaults synchronize]方法来保证内存与文件中的数据的一致性, 有时在写入一个值后也最好调用下这个方法来保证数据真正写入文件.</p>
 <p>我们不能在一个地方大规模写入NSUserDefaults, 性能会有很大影响. 用plist文件读入内存在访问的瓶颈主要在读入的过程中, 如果文件很大会比较耗时, 但是一旦载好, 在内存中读取就很快; 但是, 对内存值的写入则会造成内存与文件数据不一致, 这时为了保证数据一致性就要写入文件, 写入后又要读入内存, 这就导致延迟.</p>
@@ -279,13 +280,11 @@ ga('send', 'pageview');
 </ol>
 <p>位图就是一个像素数组, 数组中的每个像素就代表着图片中的一个点. 我们在应用中经常用到的 JPEG 和 PNG 图片就是位图.</p>
 <p>不管是 JPEG 还是 PNG 图片, 都是一种压缩的位图图形格式. 只不过 PNG 图片是无损压缩, 并且支持 alpha 通道, 而 JPEG 图片则是有损压缩. 因此, 在将磁盘中的图片渲染到屏幕之前, 必须先要得到图片的原始像素数据, 才能执行后续的绘制操作, 这就是为什么需要对图片解压缩的原因.</p>
-<p>解压缩后的图片大小 = 图片的像素宽 * 图片的像素高 * 每个像素所占的字节数. 因为位图不用解压缩, 所以位图的内存大小就是图片的实际大小. 非位图的图片要解压缩, 所以非位图的图片在内存中的大小就是上面的公式.</p>
+<p>解压缩后的图片大小 = 图片的像素宽 <em> 图片的像素高 </em> 每个像素所占的字节数. 因为位图不用解压缩, 所以位图的内存大小就是图片的实际大小. 非位图的图片要解压缩, 所以非位图的图片在内存中的大小就是上面的公式.</p>
 <p>强制解压缩的原理就是对图片进行重新绘制, 得到一张新的解压缩后的位图. 其中, 用到的最核心的函数是 <code>CGBitmapContextCreate:</code>.</p>
 <h2 id="isEqual与hash"><a href="#isEqual与hash" class="headerlink" title="==, isEqual与hash"></a>==, isEqual与hash</h2><ul>
-<li><p>对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象)</p>
-</li>
-<li><p>常见类型的isEqual方法还有NSString isEqualToString / NSDate isEqualToDate / NSArray isEqualToArray / NSDictionary isEqualToDictionary / NSSet isEqualToSet. isEqual比较对象值是否相等, 如果是自定义对象, 那么对象所有的属性也要像等.</p>
-</li>
+<li>对于基本类型, ==运算符比较的是值; 对于对象类型, ==运算符比较的是对象的地址(即是否为同一对象)</li>
+<li>常见类型的isEqual方法还有NSString isEqualToString / NSDate isEqualToDate / NSArray isEqualToArray / NSDictionary isEqualToDictionary / NSSet isEqualToSet. isEqual比较对象值是否相等, 如果是自定义对象, 那么对象所有的属性也要像等.</li>
 <li><p>hash 值决定了该对象在 hash 表中存储的位置. hash值是对象判等的必要非充分条件, 集成成员的hash值和目标hash值相等, 并且进行对象判等为true, 则hash返回true.</p>
 <ul>
 <li>作为判等的结果 hash方法只在对象被添加至NSSet和设置为NSDictionary的key时会调用. </li>

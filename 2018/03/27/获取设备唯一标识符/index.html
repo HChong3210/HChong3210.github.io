@@ -231,7 +231,8 @@ ga('send', 'pageview');
     
       <p>获取设备的唯一标识符具体可以分为如下几种：UDID MAC IDFA IDFV UUID. 下面分别来介绍下.</p>
 <h2 id="UDID-Unique-Device-Identifier-Description"><a href="#UDID-Unique-Device-Identifier-Description" class="headerlink" title="UDID (Unique Device Identifier Description)"></a>UDID (Unique Device Identifier Description)</h2><p>UDID 是由子母和数字组成的40个字符串的序号, 用来区别每一个唯一的iOS设备, 这些编码看起来是随机的, 但实际上是跟硬件设备特点相关联的. 我们平时用开发者账号在设备上安装测试应用时, 往开发者账号上添加的就是设备的UDID.</p>
-<pre><code>NSString *UDID = [[UIDevice currentDevice] uniqueIdentifier];</code></pre><p>由于UDID是跟设备唯一对应的, 许多开发者试图通过UDID获取到用户的真实姓名, 密码, 地址等隐私数据. 为了避免引起麻烦, 苹果在iOS 5.0 的时候废除了UDID的代码获取权限, 现在应用试图获取UDID已被禁止且不允许上架.</p>
+<pre><code>NSString *UDID = [[UIDevice currentDevice] uniqueIdentifier];
+</code></pre><p>由于UDID是跟设备唯一对应的, 许多开发者试图通过UDID获取到用户的真实姓名, 密码, 地址等隐私数据. 为了避免引起麻烦, 苹果在iOS 5.0 的时候废除了UDID的代码获取权限, 现在应用试图获取UDID已被禁止且不允许上架.</p>
 <h2 id="MAC-Medium-Media-Access-Control"><a href="#MAC-Medium-Media-Access-Control" class="headerlink" title="MAC (Medium/Media Access Control)"></a>MAC (Medium/Media Access Control)</h2><p>这个就是常说的网卡地址, 一部iPhone上可能有多个MAC地址, 包括WIFI的, SIM的等. 具有全球唯一性, 这样就可以非常好的标识设备唯一性.</p>
 <pre><code>- (NSString *) getMacAddress {  
         int mib[6];  
@@ -274,18 +275,23 @@ ga('send', 'pageview');
         free(buf);  
 
         return [outstring uppercaseString]; 
-    }</code></pre><p>但MAC地址跟UDID一样, 存在隐私问题, 所以在 iOS 7.0 之后, Mac地址再次遭到苹果的无情封杀. 如果使用之前的方法请求Mac地址都会返回一个固定值 02:00:00:00:00:00, 这一条路再次被堵死.</p>
+    }
+</code></pre><p>但MAC地址跟UDID一样, 存在隐私问题, 所以在 iOS 7.0 之后, Mac地址再次遭到苹果的无情封杀. 如果使用之前的方法请求Mac地址都会返回一个固定值 02:00:00:00:00:00, 这一条路再次被堵死.</p>
 <h2 id="IDFA-Identifier-For-Identifier"><a href="#IDFA-Identifier-For-Identifier" class="headerlink" title="IDFA (Identifier For Identifier)"></a>IDFA (Identifier For Identifier)</h2><p>这是 iOS 6.0中提供的一个新方法, 在同一个设备上的所有App都会取到相同的值, 是苹果专门给各广告提供商用来追踪用户而设的. </p>
 <pre><code>#import &lt;AdSupport/AdSupport.h&gt;
 
-NSString *adId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];</code></pre><p>IDFA并不是唯一不变的, 如果用户完全重置系统(设置程序 -&gt; 通用 -&gt; 还原 -&gt; 还原位置与隐私), 这个广告标示符会重新生成. 另外如果用户明确的还原广告(设置程序-&gt; 通用 -&gt; 关于本机 -&gt; 广告 -&gt; 还原广告标示符), 那么广告标示符也会重新生成. 在iOS 10.0以后如果用户打开限制广告跟踪(设置程序-&gt; 通用 -&gt; 关于本机 -&gt; 广告 -&gt; 限制广告跟踪), 则获取到的IDFA为一个固定值00000000-0000-0000-0000-000000000000. 因此, 通过IDFA也无法唯一标识一个设备.<br>如果使用IDFA, 在上传Appstore时必须在iTunes Connect中的上传页面进行相应的设置.</p>
+NSString *adId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+</code></pre><p>IDFA并不是唯一不变的, 如果用户完全重置系统(设置程序 -&gt; 通用 -&gt; 还原 -&gt; 还原位置与隐私), 这个广告标示符会重新生成. 另外如果用户明确的还原广告(设置程序-&gt; 通用 -&gt; 关于本机 -&gt; 广告 -&gt; 还原广告标示符), 那么广告标示符也会重新生成. 在iOS 10.0以后如果用户打开限制广告跟踪(设置程序-&gt; 通用 -&gt; 关于本机 -&gt; 广告 -&gt; 限制广告跟踪), 则获取到的IDFA为一个固定值00000000-0000-0000-0000-000000000000. 因此, 通过IDFA也无法唯一标识一个设备.<br>如果使用IDFA, 在上传Appstore时必须在iTunes Connect中的上传页面进行相应的设置.</p>
 <h2 id="IDFV（Identifier-For-Vendor）"><a href="#IDFV（Identifier-For-Vendor）" class="headerlink" title="IDFV（Identifier For Vendor）"></a>IDFV（Identifier For Vendor）</h2><p>IDFV是给Vendor标识用户用的, 每个设备在所属同一个Vendor的应用里, 都有相同的值. 其中的Vendor是指应用提供商, 准确的说, 是通过BundleID的反转的前两部分进行匹配, 如果相同就是同一个Vendor, 例如对于com.abc.app1, com.abc.app2 这两个BundleID来说, 就属于同一个Vendor, 共享同一个IDFV的值. 当然, 对于同一个设备不同Vendor的话, 获取到的值是不同的. 和IDFA不同的是, IDFV的值是一定能取到的. 它是iOS 6中新增的.</p>
-<pre><code>NSString *strIDFV = [[[UIDevice currentDevice] identifierForVendor] UUIDString];</code></pre><p>但是使用IDFV也会存在一些问题, 如果用户将属于此Vendor的所有App卸载, 则IDFV的值会被重置, 即再重装此Vendor的App, IDFV的值也会和之前的不同.</p>
+<pre><code>NSString *strIDFV = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+</code></pre><p>但是使用IDFV也会存在一些问题, 如果用户将属于此Vendor的所有App卸载, 则IDFV的值会被重置, 即再重装此Vendor的App, IDFV的值也会和之前的不同.</p>
 <h2 id="UUID-Universally-Unique-Identifier"><a href="#UUID-Universally-Unique-Identifier" class="headerlink" title="UUID (Universally Unique Identifier)"></a>UUID (Universally Unique Identifier)</h2><p>UUID是Universally Unique Identifier的缩写, 中文意思是通用唯一识别码. 它是苹果提供的一个获取大随机数的方法, 据说UUID随机数算法得到的数重复概率为170亿分之一. 这样, 每个人都可以建立不与其它人冲突的 UUID.</p>
 <h3 id="CFUUID"><a href="#CFUUID" class="headerlink" title="CFUUID"></a>CFUUID</h3><p>从iOS 2.0开始, CFUUID就已经出现了. 它是CoreFoundation包的一部分, 因此API属于C语言风格.</p>
 <pre><code>CFUUIDRef cfuuid = CFUUIDCreate(kCFAllocatorDefault);
-NSString *cfuuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, cfuuid));</code></pre><h3 id="NSUUID"><a href="#NSUUID" class="headerlink" title="NSUUID"></a>NSUUID</h3><p>NSUUID在iOS 6.0中才出现, 这跟CFUUID几乎完全一样, 只不过它是Objective-C接口. 通过下面的代码可以获得一个UUID字符串:</p>
-<pre><code>NSString *uuid = [[NSUUID UUID] UUIDString];</code></pre><h2 id="比较完善的做法"><a href="#比较完善的做法" class="headerlink" title="比较完善的做法"></a>比较完善的做法</h2><pre><code>//获取UQID
+NSString *cfuuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, cfuuid));
+</code></pre><h3 id="NSUUID"><a href="#NSUUID" class="headerlink" title="NSUUID"></a>NSUUID</h3><p>NSUUID在iOS 6.0中才出现, 这跟CFUUID几乎完全一样, 只不过它是Objective-C接口. 通过下面的代码可以获得一个UUID字符串:</p>
+<pre><code>NSString *uuid = [[NSUUID UUID] UUIDString];
+</code></pre><h2 id="比较完善的做法"><a href="#比较完善的做法" class="headerlink" title="比较完善的做法"></a>比较完善的做法</h2><pre><code>//获取UQID
 + (NSString *)getUQID {
     //从本地沙盒取
     NSString *uqid = [[NSUserDefaults standardUserDefaults] objectForKey:UQID_KEY];
@@ -338,7 +344,8 @@ NSString *cfuuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(kCFAllo
             }
         }
     }
-    return uqid;</code></pre>
+    return uqid;
+</code></pre>
     
     <span class="asdf">
       <style type="text/css">

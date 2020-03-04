@@ -233,7 +233,8 @@ ga('send', 'pageview');
 <pre><code>- (void)addObserver:(NSObject *)observer
          forKeyPath:(NSString *)keyPath
             options:(NSKeyValueObservingOptions)options
-            context:(void *)context</code></pre><blockquote>
+            context:(void *)context
+</code></pre><blockquote>
 <ul>
 <li>observer: 观察者，负责处理监听事件的对象, 注册 KVO 通知的对象。观察者必须实现 key-value observing 方法 observeValueForKeyPath:ofObject:change:context:</li>
 </ul>
@@ -257,7 +258,8 @@ ga('send', 'pageview');
 <pre><code>- (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
-                       context:(void *)context</code></pre><blockquote>
+                       context:(void *)context
+</code></pre><blockquote>
 <ul>
 <li>keyPath 监听的属性名</li>
 </ul>
@@ -280,11 +282,13 @@ ga('send', 'pageview');
 <p>当一个观察者完成了监听一个对象的改变, 经常在 <code>-observeValueForKeyPath:ofObject:change:context:</code>，或者 <code>-dealloc</code> 中调用注销监听的方法:</p>
 <pre><code>- (void)removeObserver:(NSObject *)anObserver
             forKeyPath:(NSString *)keyPath
+
 </code></pre><hr>
 <p>这里有几个特殊的方法需要着重说明一下, </p>
 <pre><code>- (void)willChangeValueForKey:(NSString *)key;
 - (void)didChangeValueForKey:(NSString *)key;
-+ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key;</code></pre><p><code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>默认是在setter方法中实现的, 用KVO做键值观察后, 系统会在运行时重写属性的set方法, 并且在赋值前后分别调用.</p>
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key;
+</code></pre><p><code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>默认是在setter方法中实现的, 用KVO做键值观察后, 系统会在运行时重写属性的set方法, 并且在赋值前后分别调用.</p>
 <p><code>automaticallyNotifiesObserversForKey:</code>控制是否自动发送通知, 如果返回NO, KVO无法自动运作, 需手动触发.</p>
 <h2 id="KVO的原理"><a href="#KVO的原理" class="headerlink" title="KVO的原理"></a>KVO的原理</h2><p>KVO 的实现也依赖于 Objective-C 强大的 Runtime. Apple 的文档有简单提到过 KVO 的实现: </p>
 <blockquote>
@@ -313,7 +317,8 @@ if (![className hasPrefix:kHCKVOClassPrefix]) {
     class = [self makeKvoClassWithOriginalClassName:className];
     //为观测的对象设置一个指定的类
     object_setClass(self, class);
-}</code></pre></li>
+}
+</code></pre></li>
 <li><p>为新的子类添加set方法</p>
 <pre><code> //2.为新的子类添加set方法
 //2.1得到Setter方法
@@ -328,16 +333,19 @@ if (!setterMethod) {
 if (![self hasSelector:setterSelector]) {
     const char *types = method_getTypeEncoding(setterMethod);
     class_addMethod(class, setterSelector, (IMP)kvo_setter, types);
-}</code></pre></li>
+}
+</code></pre></li>
 <li><p>改变isa指针, 指向新的子类</p>
 <pre><code>//3改变isa指针，指向子类
-object_setClass(self, class);</code></pre></li>
+object_setClass(self, class);
+</code></pre></li>
 <li><p>保存set, get方法, 保存block</p>
 <pre><code>//保存set、get方法名
     objc_setAssociatedObject(self, kHCKVO_getter_key, key, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, kHCKVO_setter_key, setterForGetter(key), OBJC_ASSOCIATION_COPY_NONATOMIC);
     //保存block
-    objc_setAssociatedObject(self, kHCKVO_block_key, block, OBJC_ASSOCIATION_COPY_NONATOMIC);</code></pre></li>
+    objc_setAssociatedObject(self, kHCKVO_block_key, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+</code></pre></li>
 </ol>
 <p>这里面主要的难点在重写属性的set方法, 代码如下:</p>
 <pre><code>//新类的set方法
@@ -385,7 +393,8 @@ static void kvo_setter(id self, SEL _cmd, id newValue) {
     //取出block
     HCObservingBlock block = objc_getAssociatedObject(self, kHCKVO_block_key);
     block(self, getterName, oldValue, newValue);
-}</code></pre><p>其中, 关于调用父类的set方法有两种方式. 一种是直接向新类的superClass发送消息, 另外一种是先改变isa指向superclass, 调用完set方法后重新再改变isa指向新类.</p>
+}
+</code></pre><p>其中, 关于调用父类的set方法有两种方式. 一种是直接向新类的superClass发送消息, 另外一种是先改变isa指向superclass, 调用完set方法后重新再改变isa指向新类.</p>
 <h2 id="如何实现系统自带的KVO"><a href="#如何实现系统自带的KVO" class="headerlink" title="如何实现系统自带的KVO"></a>如何实现系统自带的KVO</h2><p>系统自带KVO的实现方法和自定义带block回调的KVO的实现方法一样, 不同的是我们在重写新类的set方法中不是调用父类的set方法, 而是调用父类的<code>observeValueForKeyPath: ofObject: change: context:</code>方法.</p>
 <hr>
 <p>完整代码查看<a href="https://github.com/HChong3210/HCKVO" target="_blank" rel="noopener">这里</a></p>
