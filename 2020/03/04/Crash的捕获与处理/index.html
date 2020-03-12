@@ -22,20 +22,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="HChong,ios,iOS,OC,Python,Swift,开发,程序猿,客户端,爬虫,数据分析,Objetivc-C">
+    <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="记录一下开发过程中遇到的问题">
+  <meta name="description" content="Crash的捕获与处理前面写过一篇iOS开发的崩溃日志分析与异常类型, 这里来聊一下Crash的类型以及如何捕获Crash. 对于常见的Crash而言, 可以分为两类, 一类是Objective-C异常, 另一类是Mach异常. 1 Objective-C异常Objective-C异常就是指在OC层面（iOS库、第三方库出现错误时）出现的异常. 如何捕获Objective-C异常之前我们先来看下常">
+<meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Crash的捕获与处理">
 <meta property="og:url" content="http://hchong.net/2020/03/04/Crash的捕获与处理/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="记录一下开发过程中遇到的问题">
+<meta property="og:description" content="Crash的捕获与处理前面写过一篇iOS开发的崩溃日志分析与异常类型, 这里来聊一下Crash的类型以及如何捕获Crash. 对于常见的Crash而言, 可以分为两类, 一类是Objective-C异常, 另一类是Mach异常. 1 Objective-C异常Objective-C异常就是指在OC层面（iOS库、第三方库出现错误时）出现的异常. 如何捕获Objective-C异常之前我们先来看下常">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-04T08:35:43.173Z">
+<meta property="og:image" content="http://mmbiz.qpic.cn/mmbiz/Oib5VlxS0YmI5lfHjqxmAPxHeib2zIIOiavFqNQ4pwrxvG34jaia7dDKXqBlSeYCoXpQ2kxLWsRf0074TsuvBCPicag/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:updated_time" content="2020-03-12T03:36:04.882Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Crash的捕获与处理">
-<meta name="twitter:description" content="记录一下开发过程中遇到的问题">
+<meta name="twitter:description" content="Crash的捕获与处理前面写过一篇iOS开发的崩溃日志分析与异常类型, 这里来聊一下Crash的类型以及如何捕获Crash. 对于常见的Crash而言, 可以分为两类, 一类是Objective-C异常, 另一类是Mach异常. 1 Objective-C异常Objective-C异常就是指在OC层面（iOS库、第三方库出现错误时）出现的异常. 如何捕获Objective-C异常之前我们先来看下常">
+<meta name="twitter:image" content="http://mmbiz.qpic.cn/mmbiz/Oib5VlxS0YmI5lfHjqxmAPxHeib2zIIOiavFqNQ4pwrxvG34jaia7dDKXqBlSeYCoXpQ2kxLWsRf0074TsuvBCPicag/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
 
   
 
@@ -181,6 +184,11 @@ ga('send', 'pageview');
 </div>
 
 
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Crash的捕获与处理"><span class="toc-text">Crash的捕获与处理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Objective-C异常"><span class="toc-text">1 Objective-C异常</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-常见的Objective-C异常"><span class="toc-text">1.1 常见的Objective-C异常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-捕获Objective-C异常"><span class="toc-text">1.2 捕获Objective-C异常</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Mach异常"><span class="toc-text">2 Mach异常</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Mach与Unix信号"><span class="toc-text">2.1 Mach与Unix信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Unix信号"><span class="toc-text">2.2 Unix信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Mach异常捕获"><span class="toc-text">2.3 Mach异常捕获</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Unix信号捕获"><span class="toc-text">2.4 Unix信号捕获</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Mach-异常-Unix-信号"><span class="toc-text">2.5 Mach 异常 + Unix 信号</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-总结"><span class="toc-text">3 总结</span></a></li></ol>
+  </div>
+
 
 
 <div class="content content-post LEFT">
@@ -202,6 +210,11 @@ ga('send', 'pageview');
       
 
       
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/基础知识/">基础知识</a>
+  </span>
+
 
 
       
@@ -218,7 +231,110 @@ ga('send', 'pageview');
 
   <div class="article-content">
     
-      
+      <h1 id="Crash的捕获与处理"><a href="#Crash的捕获与处理" class="headerlink" title="Crash的捕获与处理"></a>Crash的捕获与处理</h1><p>前面写过一篇<a href="http://hchong.net/2018/04/05/iOS%E5%BC%80%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E4%B8%8E%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%9E%8B/">iOS开发的崩溃日志分析与异常类型</a>, 这里来聊一下Crash的类型以及如何捕获Crash.</p>
+<p>对于常见的Crash而言, 可以分为两类, 一类是Objective-C异常, 另一类是Mach异常.</p>
+<h2 id="1-Objective-C异常"><a href="#1-Objective-C异常" class="headerlink" title="1 Objective-C异常"></a>1 Objective-C异常</h2><p>Objective-C异常就是指在OC层面（iOS库、第三方库出现错误时）出现的异常. 如何捕获Objective-C异常之前我们先来看下常见的Objective-C异常包括哪些.</p>
+<h3 id="1-1-常见的Objective-C异常"><a href="#1-1-常见的Objective-C异常" class="headerlink" title="1.1 常见的Objective-C异常"></a>1.1 常见的Objective-C异常</h3><p>Objective-C异常又称为应用级异常, 常见的Objective-C异常包括以下几种:</p>
+<ol>
+<li>NSInvalidArgumentException（非法参数异常） 这类异常的主要原因是没有对于参数的合法性进行校验，最常见的就是传入nil作为参数。例如，NSMutableDictionary添加key为nil的对象，测试代码如下</li>
+<li>NSRangeException（越界异常） 这类异常的主要原因是没有对于索引进行合法性的检查，导致索引落在集合数据的合法范围之外。例如，索引超出数组的范围从而导致数组越界的问题</li>
+<li>NSGenericException（通用异常） 这类异常最容易出现在foreach操作中，主要原因是在遍历过程中进行了元素的修改。例如，在for in循环中如果修改所遍历的数组则会导致该问题</li>
+<li>NSMallocException（内存分配异常） 这类异常的主要原因是无法分配足够的内存空间。例如，分配一块超大的内存空间就会导致此类的异常</li>
+<li>NSFileHandleOperationException（文件处理异常） 这类异常的主要原因是对文件进行相关操作时产生了异常，如手机没有足够的存储空间，文件读写权限问题等。例如，对于一个只有读权限的文件进行写操作</li>
+</ol>
+<h3 id="1-2-捕获Objective-C异常"><a href="#1-2-捕获Objective-C异常" class="headerlink" title="1.2 捕获Objective-C异常"></a>1.2 捕获Objective-C异常</h3><p>在开发过程中，通过添加全局断点, Objective-C异常导致的Crash会在Xcode的控制台输出异常的类型、原因以及调用堆栈.</p>
+<p>其他条件下, 可以使用<code>try catch</code>或者<code>NSSetUncaughtExceptionHandler()</code>来捕获.</p>
+<pre><code>// 记录之前的崩溃回调函数(防止多个Crash收集工具冲突)
+static NSUncaughtExceptionHandler *previousUncaughtExceptionHandler = NULL;
+
++ (void)registerHandler {
+    // Backup original handler
+    previousUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
+    NSSetUncaughtExceptionHandler(&amp;DoraemonUncaughtExceptionHandler);
+}
+
+// 崩溃时的回调函数
+static void DoraemonUncaughtExceptionHandler(NSException * exception) {
+    // 异常的堆栈信息
+    NSArray * stackArray = [exception callStackSymbols];
+    // 出现异常的原因
+    NSString * reason = [exception reason];
+    // 异常名称
+    NSString * name = [exception name];
+
+    NSString * exceptionInfo = [NSString stringWithFormat:@&quot;========uncaughtException异常错误报告========\nname:%@\nreason:\n%@\ncallStackSymbols:\n%@&quot;, name, reason, [stackArray componentsJoinedByString:@&quot;\n&quot;]];
+
+    // 保存崩溃日志到沙盒cache目录
+    [DoraemonCrashTool saveCrashLog:exceptionInfo fileName:@&quot;Crash(Uncaught)&quot;];
+
+    // 调用之前崩溃的回调函数(防止多个Crash收集工具冲突)
+    if (previousUncaughtExceptionHandler) {
+        previousUncaughtExceptionHandler(exception);
+    }
+}
+</code></pre><h2 id="2-Mach异常"><a href="#2-Mach异常" class="headerlink" title="2 Mach异常"></a>2 Mach异常</h2><p>iOS操作系统的内核部分都是XNU，而Mach就是XNU的微内核核心. Mach的职责主要是进程和线程抽象、虚拟内存管理、任务调度、进程间通信和消息传递机制等.</p>
+<h3 id="2-1-Mach与Unix信号"><a href="#2-1-Mach与Unix信号" class="headerlink" title="2.1 Mach与Unix信号"></a>2.1 Mach与Unix信号</h3><p>相信大家一定见过这样的错误提示:</p>
+<pre><code>Exception Type:         EXC_BAD_ACCESS (SIGSEGV)    
+Exception Subtype:      KERN_INVALID_ADDRESS at 0x041a6f3
+</code></pre><p>Apple’s Crash Reporter 记录在设备中的 Crash 日志, Exception Type 项通常会包含两个元素: Mach 异常 和 Unix 信号.</p>
+<p>Mach 是一个 XNU 的微内核核心，Mach 异常是指最底层的内核级异常，被定义在 &lt;mach/exception_types.h&gt;下 。每个 thread，task，host 都有一个异常端口数组，Mach 的部分 API 暴露给了用户态，用户态的开发者可以直接通过 Mach API 设置 thread，task，host 的异常端口，来捕获 Mach 异常，抓取 Crash 事件. Mach 异常允许在进程里或进程外处理，处理程序通过Mach RPC调用.</p>
+<p>所以, 上面代码里面的异常提醒就代表: Mach 层的EXC_BAD_ACCESS异常，在 host 层被转换成 SIGSEGV 信号投递到出错的线程.</p>
+<p>Mach 异常是指最底层的内核级异常。用户态的开发者可以直接通过Mach API设置thread，task，host的异常端口，来捕获Mach异常.</p>
+<h3 id="2-2-Unix信号"><a href="#2-2-Unix信号" class="headerlink" title="2.2 Unix信号"></a>2.2 Unix信号</h3><p>Unix 信号又称BSD 信号，如果开发者没有捕获Mach异常，则会被host层的方法ux_exception()将异常转换为对应的UNIX信号，并通过方法threadsignal()将信号投递到出错线程。可以通过方法signal(x, SignalHandler)来捕获single.</p>
+<p>Unix信号有很多种，详细的定义可以在&lt;sys/signal.h&gt;中找到.<br>常见的信号的释义可以参考<a href="http://www.iosxxx.com/blog/2015-08-29-iosyi-chang-bu-huo.html" target="_blank" rel="noopener">《iOS异常捕获》</a>.</p>
+<h3 id="2-3-Mach异常捕获"><a href="#2-3-Mach异常捕获" class="headerlink" title="2.3 Mach异常捕获"></a>2.3 Mach异常捕获</h3><p>捕获 Mach 异常或者 Unix 信号都可以抓到 crash 事件, 这两种方式哪个更好呢？优选 Mach 异常，因为 Mach 异常处理会先于 Unix 信号处理发生，如果 Mach 异常的 handler 让程序 exit 了，那么 Unix 信号就永远不会到达这个进程了。转换 Unix 信号是为了兼容更为流行的 POSIX 标准 (SUS 规范)，这样不必了解 Mach 内核也可以通过 Unix 信号的方式来兼容开发.</p>
+<p><img src="http://mmbiz.qpic.cn/mmbiz/Oib5VlxS0YmI5lfHjqxmAPxHeib2zIIOiavFqNQ4pwrxvG34jaia7dDKXqBlSeYCoXpQ2kxLWsRf0074TsuvBCPicag/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="Mach异常捕获"></p>
+<h3 id="2-4-Unix信号捕获"><a href="#2-4-Unix信号捕获" class="headerlink" title="2.4 Unix信号捕获"></a>2.4 Unix信号捕获</h3><p>因为硬件产生的信号 (通过 CPU 陷阱) 被 Mach 层捕获，然后才转换为对应的 Unix 信号；苹果为了统一机制，于是操作系统和用户产生的信号 (通过调用kill和pthread_kill) 也首先沉下来被转换为 Mach 异常，再转换为 Unix 信号</p>
+<p>参考捕获Objective-C异常时处理覆盖问题的思路，我们也可以先将已有的异常处理函数进行保存，然后在我们的异常处理函数执行之后，再调用之前保存的异常处理函数.</p>
+<pre><code>//注册异常捕获
+InstallSignalHandler();
+
+void SignalExceptionHandler(int signal)
+{
+    NSMutableString *mstr = [[NSMutableString alloc] init];
+    [mstr appendString:@&quot;Stack:\n&quot;];
+    void* callstack[128];
+    int i, frames = backtrace(callstack, 128);
+    char** strs = backtrace_symbols(callstack, frames);
+    for (i = 0; i &lt;frames; ++i) {
+        [mstr appendFormat:@&quot;%s\n&quot;, strs[i]];
+    }
+    [SignalHandler saveCreash:mstr];
+
+}
+
+void InstallSignalHandler(void)
+{
+    signal(SIGHUP, SignalExceptionHandler);
+    signal(SIGINT, SignalExceptionHandler);
+    signal(SIGQUIT, SignalExceptionHandler);
+
+    signal(SIGABRT, SignalExceptionHandler);
+    signal(SIGILL, SignalExceptionHandler);
+    signal(SIGSEGV, SignalExceptionHandler);
+    signal(SIGFPE, SignalExceptionHandler);
+    signal(SIGBUS, SignalExceptionHandler);
+    signal(SIGPIPE, SignalExceptionHandler);
+}
+</code></pre><h3 id="2-5-Mach-异常-Unix-信号"><a href="#2-5-Mach-异常-Unix-信号" class="headerlink" title="2.5 Mach 异常 + Unix 信号"></a>2.5 Mach 异常 + Unix 信号</h3><p>捕获Mach异常或者Unix信号都可以抓到Crash事件, 通常使用了Unix信号方式进行捕获. 主要原因如下:</p>
+<ol>
+<li>Mach异常没有比较便利的捕获方式，既然它最终会转化成信号，我们也可以通过捕获信号来捕获Crash事件。</li>
+<li>转换Unix信号是为了兼容更为流行的POSIX标准(SUS规范)，这样不必了解Mach内核也可以通过Unix信号的方式来兼容开发。</li>
+</ol>
+<p>Unix信号捕获可以参考上一章节内容.</p>
+<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h1><ol>
+<li>异常分为应用级异常(Obj-C异常)和Mach异常</li>
+<li>Obj-C异常使用<code>NSSetUncaughtExceptionHandler()</code>捕获</li>
+<li>Mach异常通过Mach API设置thread，task，host的异常端口，来捕获Mach异常</li>
+<li>未被捕获的Mach异常会被转换为Unix信号异常, 苹果将操作系统和用户产生的信号 (通过调用kill和pthread_kill) 也首先沉下来被转换为 Mach 异常, 再转换为 Unix 信号.</li>
+<li>Unix异常通过<code>signal(SIGSEGV,signalHandler);</code>方式来捕获</li>
+<li>其他操作系统优选Mach异常, 防止未被转化为Unix信号程序就结束.</li>
+<li>iOS基本上都会被转化为Unix异常, 优先考虑通过Unix 信号捕获异常.</li>
+<li>多个crash收集, 注意异常捕获的传递</li>
+</ol>
+<hr>
+<p>1.<a href="https://juejin.im/post/5cf769eb6fb9a07ea567dd9d" target="_blank" rel="noopener">iOS开发中crash常用处理</a><br>2.<a href="https://juejin.im/post/5d76184ce51d4561d106cc65" target="_blank" rel="noopener">DoKit支持iOS本地crash查看功能</a><br>3.<a href="http://www.iosxxx.com/blog/2015-08-29-iosyi-chang-bu-huo.html" target="_blank" rel="noopener">iOS异常捕获</a><br>4.<a href="https://toutiao.io/posts/r9ztjc/preview" target="_blank" rel="noopener">关于 iOS App 的 Crash 捕获简述</a><br>5.<a href="https://mp.weixin.qq.com/s?__biz=MjM5NTIyNTUyMQ==&amp;mid=208483273&amp;idx=1&amp;sn=37ee88e06e7426f59f3074c536370317&amp;scene=21" target="_blank" rel="noopener">漫谈 iOS Crash 收集框架</a></p>
+
     
     <span class="asdf">
       <style type="text/css">
@@ -231,7 +347,7 @@ ga('send', 'pageview');
     <a class="show pull-left" href="/2019/10/16/ffmpeg在iOS中的应用指南/">
         <i class="icon icon-angle-left"></i>
     </a>
-    <a class="hide pull-right" href="/">
+    <a class="show pull-right" href="/2020/03/11/iOS内存泄漏检查-原理/">
         <i class="icon icon-angle-right"></i>
     </a>
   </div>
