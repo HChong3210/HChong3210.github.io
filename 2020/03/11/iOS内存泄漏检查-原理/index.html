@@ -25,18 +25,18 @@
     <meta name="keywords" content="基础知识,">
   
 
-  <meta name="description" content="iOS内存泄漏检查&amp;amp;原理前面罗列了iOS中常见的会导致内存泄漏的场景, 这篇文章主要说一下内存泄漏的常见检测方式和原理.">
+  <meta name="description" content="iOS内存泄漏检查&amp;amp;原理前面罗列了iOS中常见的会导致内存泄漏的场景, 这篇文章主要说一下内存泄漏的常见检测方式和原理. 1 内存分类要想检查内存泄漏, 首先我们要了解一个 app 的内存分类. 苹果的开发者文档里可以看到，一个 app 的内存分三类:  Leaked memory: Memory unreferenced by your application that cannot b">
 <meta name="keywords" content="基础知识">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS内存泄漏检查&amp;原理">
 <meta property="og:url" content="http://hchong.net/2020/03/11/iOS内存泄漏检查-原理/index.html">
 <meta property="og:site_name" content="HChong的博客地址">
-<meta property="og:description" content="iOS内存泄漏检查&amp;amp;原理前面罗列了iOS中常见的会导致内存泄漏的场景, 这篇文章主要说一下内存泄漏的常见检测方式和原理.">
+<meta property="og:description" content="iOS内存泄漏检查&amp;amp;原理前面罗列了iOS中常见的会导致内存泄漏的场景, 这篇文章主要说一下内存泄漏的常见检测方式和原理. 1 内存分类要想检查内存泄漏, 首先我们要了解一个 app 的内存分类. 苹果的开发者文档里可以看到，一个 app 的内存分三类:  Leaked memory: Memory unreferenced by your application that cannot b">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-11T08:15:45.944Z">
+<meta property="og:updated_time" content="2020-03-12T07:06:10.425Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS内存泄漏检查&amp;原理">
-<meta name="twitter:description" content="iOS内存泄漏检查&amp;amp;原理前面罗列了iOS中常见的会导致内存泄漏的场景, 这篇文章主要说一下内存泄漏的常见检测方式和原理.">
+<meta name="twitter:description" content="iOS内存泄漏检查&amp;amp;原理前面罗列了iOS中常见的会导致内存泄漏的场景, 这篇文章主要说一下内存泄漏的常见检测方式和原理. 1 内存分类要想检查内存泄漏, 首先我们要了解一个 app 的内存分类. 苹果的开发者文档里可以看到，一个 app 的内存分三类:  Leaked memory: Memory unreferenced by your application that cannot b">
 
   
 
@@ -184,7 +184,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS内存泄漏检查-amp-原理"><span class="toc-text">iOS内存泄漏检查&amp;原理</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS内存泄漏检查-amp-原理"><span class="toc-text">iOS内存泄漏检查&amp;原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-内存分类"><span class="toc-text">1 内存分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-常见的检测内存泄漏的手段"><span class="toc-text">2 常见的检测内存泄漏的手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-系统提供的检测手段"><span class="toc-text">2.2 系统提供的检测手段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-MSLeakHunter"><span class="toc-text">2.3 MSLeakHunter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-MLeaksFinder"><span class="toc-text">2.4 MLeaksFinder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-PLeakSniffer"><span class="toc-text">2.5 PLeakSniffer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-FBMemoryProfiler"><span class="toc-text">2.6 FBMemoryProfiler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-OOMDetector"><span class="toc-text">2.7 OOMDetector</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-8-OOMDetector优化"><span class="toc-text">2.8 OOMDetector优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-HOOk"><span class="toc-text">3 HOOk</span></a></li></ol></li></ol>
   </div>
 
 
@@ -230,6 +230,72 @@ ga('send', 'pageview');
   <div class="article-content">
     
       <h1 id="iOS内存泄漏检查-amp-原理"><a href="#iOS内存泄漏检查-amp-原理" class="headerlink" title="iOS内存泄漏检查&amp;原理"></a>iOS内存泄漏检查&amp;原理</h1><p>前面罗列了<a href="http://hchong.net/2018/04/04/iOS%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">iOS中常见的会导致内存泄漏的场景</a>, 这篇文章主要说一下内存泄漏的常见检测方式和原理.</p>
+<h2 id="1-内存分类"><a href="#1-内存分类" class="headerlink" title="1 内存分类"></a>1 内存分类</h2><p>要想检查内存泄漏, 首先我们要了解一个 app 的内存分类. 苹果的开发者文档里可以看到，一个 app 的内存分三类:</p>
+<ul>
+<li>Leaked memory: Memory unreferenced by your application that cannot be used again or freed (also detectable by using the Leaks instrument).</li>
+<li>Abandoned memory: Memory still referenced by your application that has no useful purpose.</li>
+<li>Cached memory: Memory still referenced by your application that might be used again for better performance.</li>
+</ul>
+<p>Leaked memory 和 Abandoned memory 都属于应该释放而没释放的内存, 都是内存泄露.</p>
+<h2 id="2-常见的检测内存泄漏的手段"><a href="#2-常见的检测内存泄漏的手段" class="headerlink" title="2 常见的检测内存泄漏的手段"></a>2 常见的检测内存泄漏的手段</h2><h3 id="2-2-系统提供的检测手段"><a href="#2-2-系统提供的检测手段" class="headerlink" title="2.2 系统提供的检测手段"></a>2.2 系统提供的检测手段</h3><p>Leaked memory 可以用 Instrument 的 Leaks 检测出来. Leaks的实现思路是搜索所有可能包含指向malloc内存块指针的内存区域，比如全局数据内存块，寄存器和所有的栈。如果malloc内存块的地址被直接或者间接引用，则是reachable的，反之，则是leaks.</p>
+<p>Abandoned memory，可以用 Instrument 的 Allocations 检测出来。检测方法是用 Mark Generation 的方式，当你每次点击 Mark Generation 时，Allocations 会生成当前 App 的内存快照，而且 Allocations 会记录从上回内存快照到这次内存快照这个时间段内，新分配的内存信息.</p>
+<h3 id="2-3-MSLeakHunter"><a href="#2-3-MSLeakHunter" class="headerlink" title="2.3 MSLeakHunter"></a>2.3 MSLeakHunter</h3><p><a href="https://github.com/mindsnacks/MSLeakHunter" target="_blank" rel="noopener">MSLeakHunter</a>原理很简单, 它只检测UIViewController和UIView，通过hook掉UIViewController的<code>-viewDidDisappear</code>方法，并认为<code>-viewDidDisappear</code>执行后，UIViewController会很快被释放，如果UIViewController没有被释放，则打个建议日志.</p>
+<p>这种做法比较简单粗暴，只适合小场景，毕竟<code>-viewDidDisappear</code>被调用可能是因为有push进来一个新的ViewController，把当前的ViewController挡住了，所以存在很多错误的建议日志，需要结合实际情况具体分析.</p>
+<h3 id="2-4-MLeaksFinder"><a href="#2-4-MLeaksFinder" class="headerlink" title="2.4 MLeaksFinder"></a>2.4 MLeaksFinder</h3><p><a href="https://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="noopener">MLeaksFinder</a>是微信读书团队使用的内存泄漏检测工具. 他的主要原理如下.</p>
+<ol>
+<li>当一个 UIViewController 被 pop 或 dismiss 后，该 UIViewController 包括它的 view，view 的 subviews 等等将很快被释放</li>
+<li>在一个 ViewController 被 pop 或 dismiss 一小段时间后，看看该 UIViewController，它的 view，view 的 subviews 等等是否还存在</li>
+</ol>
+<p>具体实现如下:</p>
+<ol>
+<li><p>为基类 NSObject 添加一个方法 -willDealloc 方法，该方法的作用是，先用一个弱指针指向 self，并在一小段时间(3秒)后，通过这个弱指针调用 -assertNotDealloc，而 -assertNotDealloc 主要作用是直接中断言。</p>
+<pre><code> - (BOOL)willDealloc {
+     __weak id weakSelf = self;
+     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+         [weakSelf assertNotDealloc];
+     });
+     return YES;
+ }
+ - (void)assertNotDealloc {
+      NSAssert(NO, @“”);
+ }
+</code></pre></li>
+<li>当我们认为某个对象应该要被释放了，在释放前调用这个方法，如果3秒后它被释放成功，weakSelf 就指向 nil，不会调用到 -assertNotDealloc 方法，也就不会中断言，如果它没被释放（泄露了），-assertNotDealloc 就会被调用中断言。这样，当一个 UIViewController 被 pop 或 dismiss 时（我们认为它应该要被释放了），我们遍历该 UIViewController 上的所有 view，依次调 -willDealloc，若3秒后没被释放，就会中断言</li>
+</ol>
+<h3 id="2-5-PLeakSniffer"><a href="#2-5-PLeakSniffer" class="headerlink" title="2.5 PLeakSniffer"></a>2.5 PLeakSniffer</h3><p><a href="http://mrpeak.cn/blog/leak/" target="_blank" rel="noopener">PLeakSniffer</a>, PLeakSniffer的核心监测思路是: 如果Controller被释放了，但其曾经持有过的子对象如果还存在，那么这些子对象就是泄漏的可疑目标.</p>
+<p>子对象（比如view）建立一个对controller的weak引用，如果Controller被释放，这个weak引用也随之置为nil。那怎么知道子对象没有被释放呢？<br>通过Objective C的runtime机制，递归的将一个Controller所有强引用的property找出，并安装proxy监听Ping通知.用一个单例对象每个一小段时间发出一个ping通知去ping这个子对象，如果子对象还活着就会一个pong通知。所以结论就是：如果子对象的controller已不存在，但还能响应这个ping通知，那么这个对象就是可疑的泄漏对象.</p>
+<h3 id="2-6-FBMemoryProfiler"><a href="#2-6-FBMemoryProfiler" class="headerlink" title="2.6 FBMemoryProfiler"></a>2.6 FBMemoryProfiler</h3><p><a href="https://github.com/facebook/FBMemoryProfiler" target="_blank" rel="noopener">FBMemoryProfiler</a>是Facebook开源的一个用于分析iOS内存使用和检测循环引用的工具库.</p>
+<p>主要是通过runtime的两个方法, 来获取类中的哪些 ivar 是 strong 或是 weak，都未记录的就是基本类型和 __unsafe_unretained 的对象类型.</p>
+<pre><code>const char *class_getIvarLayout(Class cls)
+const char *class_getWeakIvarLayout(Class cls)
+</code></pre><p>把对象（包括 Block 对象）当成节点，以强引用为关系建立有向图，以深度优先遍历该有向图，寻找有向图中的环，一个环就代表一个循环引用.</p>
+<p>关于这两个API的详细使用, 可以参考<a href="https://blog.sunnyxx.com/2015/09/13/class-ivar-layout/" target="_blank" rel="noopener">Objective-C Class Ivar Layout 探索</a>, <a href="https://www.jianshu.com/p/6b218d12caae" target="_blank" rel="noopener">runtime使用篇: class_getIvarLayout 和 class_getWeakIvarLayout</a></p>
+<h3 id="2-7-OOMDetector"><a href="#2-7-OOMDetector" class="headerlink" title="2.7 OOMDetector"></a>2.7 OOMDetector</h3><p><a href="https://github.com/Tencent/OOMDetector" target="_blank" rel="noopener">OOMDetector</a>是手Q自研的IOS内存监控组件, 主要有爆内存堆栈统计和内存泄漏检测两个功能. 主要工作原理如下:</p>
+<p>Hook iOS系统底层内存分配的相关方法(包括malloc_zone相关的堆内存分配以及vm_allocate对应的VM内存分配方法). 跟踪并记录进程中每个对象内存的分配信息，包括分配堆栈、累计分配次数、累计分配内存等，这些信息也会被缓存到进程内存中. </p>
+<p>在程序可访问的进程内存空间中，是否有“指针变量”指向对应的内存块，那些在整个进程内存空间都没有指针指向的内存块，就是我们要找的泄漏内存块. 在iOS系统中，可能包含指针变量的内存区域有堆内存、栈内存、全局数据区和寄存器，OOMDetector 通过对这些区域遍历扫描即可找到所有可能的“指针变量”，整个扫描流程结束后都没有“指针变量”指向的内存块即是泄漏内存块.</p>
+<p>为了避免内存访问冲突，扫描过程需要挂起所有线程，整个过程会卡住程序1-2秒</p>
+<h3 id="2-8-OOMDetector优化"><a href="#2-8-OOMDetector优化" class="headerlink" title="2.8 OOMDetector优化"></a>2.8 OOMDetector优化</h3><ol>
+<li>hook malloc / free 等16个内存管理函数，malloc 调用是非常频繁的，一旦 hook 后能形成非常高速的 malloc / free 流。</li>
+<li>用个哈希表记录已经分配的内存块（key : 地址，value : (调用栈，块大小，计数器等等)）</li>
+<li>在hook后的 malloc / free 方法中能拿到申请和释放的地址。如果遇到 malloc 申请，向哈希表中插入一个key为该地址的元素。如果遇到 free 释放，在哈希表中删除一个key为该地址的元素。那么这个哈希表中就记录着当前进程中所有申请的内存块。</li>
+<li>发起内存泄漏检测的时候，遍历内存中所有指针指向的地址，然后在哈希表中查，如果有该地址，那么对应的value的计数器加一，如果没有则跳过。遍历完了之后，查哈希表中所有元素的计数器，显然计数器为 0 的内存块就是泄漏的，没有一个指针指向他，因为如果有指针指向他，他的计数器会被加一。<br>发现泄漏后，把value中的调用栈，地址等等上报到后台，程序员根据调用栈就能找到相关代码进行泄漏修复。</li>
+</ol>
+<h2 id="3-HOOk"><a href="#3-HOOk" class="headerlink" title="3 HOOk"></a>3 HOOk</h2><p>OC 的方法之所以可以 HOOK 是因为它的运行时特性，OC 的方法调用在底层都是 msg_send（id,SEL）的形式，这为我们提供了交换方法实现（IMP）的机会，但 C 函数在编译链接时就确定了函数指针的地址偏移量（Offset），这个偏移量在编译好的可执行文件中是固定的，而可执行文件每次被重新装载到内存中时被系统分配的起始地址（在 lldb 中用命令image List获取）是不断变化的.</p>
+<p>既然 C 函数的指针地址是相对固定且不可修改的，那么 fishhook 又是怎么实现 对 C 函数的 HOOK 呢？其实内部/自定义的 C 函数 fishhook 也 HOOK 不了，它只能HOOK Mach-O 外部（共享缓存库中）的函数。fishhook 利用了 MachO 的动态绑定机制, 苹果的共享缓存库不会被编译进我们的 MachO 文件，而是在动态链接时才去重新绑定.</p>
+<p>苹果采用了PIC（Position-independent code）技术成功让 C 的底层也能有动态的表现：</p>
+<ul>
+<li>编译时在 Mach-O 文件 _DATA 段的符号表中为每一个被引用的系统 C 函数建立一个指针（8字节的数据，放的全是0），这个指针用于动态绑定时重定位到共享库中的函数实现。</li>
+<li>在运行时当系统 C 函数被第一次调用时会动态绑定一次，然后将 Mach-O 中的 _DATA 段符号表中对应的指针，指向外部函数（其在共享库中的实际内存地址）。</li>
+</ul>
+<p>fishhook 正是利用了 PIC 技术做了这么两个操作：</p>
+<ul>
+<li>将指向系统方法（外部函数）的指针重新进行绑定指向内部函数/自定义 C 函数。</li>
+<li>将内部函数的指针在动态链接时指向系统方法的地址。</li>
+</ul>
+<p>这样就把系统方法与自己定义的方法进行了交换，达到 HOOK 系统 C 函数（共享库中的）的目的</p>
+<p>fishHook的具体原理可以参考<a href="https://www.jianshu.com/p/625a61dfe039" target="_blank" rel="noopener">动态修改 C 语言函数的实现</a> 和 <a href="https://juejin.im/post/5c7b43976fb9a04a05406312" target="_blank" rel="noopener">fishhook的实现原理浅析</a>两篇文章</p>
+<hr>
+<p>参考资料:<br>1.<a href="https://www.jianshu.com/p/12cadd05e370" target="_blank" rel="noopener">iOS内存深入探索之Leaks</a><br>2.<a href="https://www.jianshu.com/p/efb4e8ba2a7e" target="_blank" rel="noopener">iOS 线上内存泄漏检测方案与结果</a><br>3.<a href="https://segmentfault.com/a/1190000012825286" target="_blank" rel="noopener">【腾讯开源】iOS爆内存问题解决方案-OOMDetector组件</a><br>4.<a href="https://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="noopener">MLeaksFinder: 精准 iOS 内存泄露检测工具</a><br>5.<a href="http://cnsue.me/2017/04/03/iOS%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E8%87%AA%E5%8A%A8%E6%A3%80%E6%B5%8B/" target="_blank" rel="noopener">iOS内存泄漏自动检测盘点</a><br>6.<a href="http://mrpeak.cn/blog/leak/" target="_blank" rel="noopener">iOS内存泄漏自动检测工具PLeakSniffer</a><br>7.<a href="http://zhenby.com/blog/2016/04/29/FBRetainCycleDetector-Learning-1/" target="_blank" rel="noopener">FBRetainCycleDetector解析——获取一般对象的Strong成员变量</a></p>
 
     
     <span class="asdf">
